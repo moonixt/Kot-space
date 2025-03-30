@@ -1,4 +1,6 @@
 # Fair-note: 📓
+![image](https://github.com/user-attachments/assets/0e26d568-524c-4e14-889b-748c9796dc35)
+
 
 [![PWA Ready](https://img.shields.io/badge/PWA-Ready-blue.svg)](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps)
 [![Built with Next.js](https://img.shields.io/badge/Built%20with-Next.js-black)](https://nextjs.org)
