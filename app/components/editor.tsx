@@ -3,21 +3,47 @@
 import { useState } from "react";
 import { supabase } from "../../lib/supabase";
 import { Save } from "lucide-react";
+import { useAuth } from "../../context/AuthContext";
 
 function Editor() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [saving, setSaving] = useState(false);
+  const { user } = useAuth();
 
   // Função para salvar a nota no banco de dados
   const saveNote = async () => {
     if (!title.trim() && !content.trim()) return;
 
+    // Verificar se usuário está autenticado
+    if (!user) {
+      // Exibir mensagem de erro
+      const notification = document.createElement("div");
+      notification.className =
+        "fixed bottom-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-500 flex items-center gap-2";
+      notification.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 101.414 1.414L10 11.414l1.293 1.293a1 1 001.414-1.414L11.414 10l1.293-1.293a1 1 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+      </svg>Você precisa estar logado para salvar notas!`;
+      document.body.appendChild(notification);
+
+      setTimeout(() => {
+        notification.style.opacity = "0";
+        setTimeout(() => notification.remove(), 500);
+      }, 3000);
+      return;
+    }
+
     try {
       setSaving(true);
       const { error } = await supabase
         .from("notes")
-        .insert([{ title, content }])
+        .insert([
+          {
+            title,
+            content,
+            user_id: user.id, // Adiciona o ID do usuário à nota
+          },
+        ])
         .select();
 
       if (error) throw error;
@@ -29,9 +55,9 @@ function Editor() {
       // Notification toast instead of alert
       const notification = document.createElement("div");
       notification.className =
-        "fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-500 flex items-center gap-2";
+        "fixed bottom-4 left-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-500 flex items-center gap-2";
       notification.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 00-1.414 1.414l2 2a1 1 001.414 0l4-4z" clip-rule="evenodd" />
       </svg>Nota salva com sucesso!`;
       document.body.appendChild(notification);
 
@@ -41,6 +67,20 @@ function Editor() {
       }, 3000);
     } catch (error) {
       console.error("Erro ao salvar nota:", error);
+
+      // Notification toast para erro
+      const notification = document.createElement("div");
+      notification.className =
+        "fixed bottom-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-500 flex items-center gap-2";
+      notification.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 101.414 1.414L10 11.414l1.293 1.293a1 1 001.414-1.414L11.414 10l1.293-1.293a1 1 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+      </svg>Erro ao salvar nota. Tente novamente.`;
+      document.body.appendChild(notification);
+
+      setTimeout(() => {
+        notification.style.opacity = "0";
+        setTimeout(() => notification.remove(), 500);
+      }, 3000);
     } finally {
       setSaving(false);
     }

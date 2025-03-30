@@ -4,14 +4,9 @@ import { useEffect, useState } from "react";
 import { supabase } from "../../../lib/supabase";
 import Link from "next/link";
 import { useRouter, useParams } from "next/navigation";
-import {
-  ArrowLeft,
-  Trash2,
-  Calendar,
-  Edit,
-  Save,
-  X,
-} from "lucide-react";
+import { ArrowLeft, Trash2, Calendar, Edit, Save, X } from "lucide-react";
+import { useAuth } from "../../../context/AuthContext";
+import { ProtectedRoute } from "../../../components/ProtectedRoute"; // Importar o ProtectedRoute
 
 interface Note {
   id: string;
@@ -30,30 +25,39 @@ export default function NotePage() {
   const [editTitle, setEditTitle] = useState("");
   const [editContent, setEditContent] = useState("");
   const router = useRouter();
+  const { user } = useAuth();
 
   useEffect(() => {
     async function fetchNote() {
       try {
         setLoading(true);
+
+        if (!user) {
+          setNote(null);
+          return;
+        }
+
         const { data, error } = await supabase
           .from("notes")
           .select("*")
           .eq("id", params.id)
+          .eq("user_id", user.id) // Garantir que a nota pertence ao usuário
           .single();
-  
+
         if (error) throw error;
         setNote(data);
         setEditTitle(data.title || "");
         setEditContent(data.content || "");
       } catch (error) {
         console.error("Erro ao buscar nota:", error);
+        setNote(null);
       } finally {
         setLoading(false);
       }
     }
-  
+
     fetchNote();
-  }, [params.id]);
+  }, [params.id, user]);
 
   async function handleDelete() {
     const confirmDelete = confirm("Tem certeza que deseja excluir esta nota?");
@@ -64,7 +68,8 @@ export default function NotePage() {
       const { error } = await supabase
         .from("notes")
         .delete()
-        .eq("id", params.id);
+        .eq("id", params.id)
+        .eq("user_id", user?.id);
 
       if (error) throw error;
 
@@ -78,7 +83,7 @@ export default function NotePage() {
   }
 
   async function handleSave() {
-    if (!note) return;
+    if (!note || !user) return;
 
     try {
       setSaving(true);
@@ -88,11 +93,11 @@ export default function NotePage() {
           title: editTitle,
           content: editContent,
         })
-        .eq("id", note.id);
+        .eq("id", note.id)
+        .eq("user_id", user.id);
 
       if (error) throw error;
 
-      // Update the local note state
       setNote({
         ...note,
         title: editTitle,
@@ -186,125 +191,127 @@ export default function NotePage() {
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 to-slate-900 text-white p-4 md:p-8">
-      <div className="max-w-3xl mx-auto">
-        <nav className="flex items-center justify-between mb-8">
-          <Link
-            href="/"
-            className="flex items-center gap-2 text-slate-300 hover:text-white transition-colors"
-          >
-            <ArrowLeft size={18} />
-            <span>Voltar para notas</span>
-          </Link>
-
-          <div className="flex items-center gap-2">
-            {editMode ? (
-              <>
-                <button
-                  className="p-2 rounded-full hover:bg-green-500/20 text-green-500 transition-colors"
-                  title="Salvar alterações"
-                  onClick={handleSave}
-                  disabled={saving}
-                >
-                  {saving ? (
-                    <div className="w-4 h-4 border-2 border-green-300/30 border-t-transparent rounded-full animate-spin"></div>
-                  ) : (
-                    <Save size={18} />
-                  )}
-                </button>
-                <button
-                  className="p-2 rounded-full hover:bg-red-500/20 text-red-500 transition-colors"
-                  title="Cancelar edição"
-                  onClick={cancelEdit}
-                >
-                  <X size={18} />
-                </button>
-              </>
-            ) : (
-              <button
-                className="p-2 rounded-full hover:bg-slate-800 transition-colors"
-                title="Editar nota"
-                onClick={() => setEditMode(true)}
-              >
-                <Edit size={18} />
-              </button>
-            )}
-          </div>
-        </nav>
-
-        <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl overflow-hidden border border-slate-700 shadow-xl">
-          <div className="p-6 md:p-8">
-            {editMode ? (
-              <>
-                <input
-                  type="text"
-                  value={editTitle}
-                  onChange={(e) => setEditTitle(e.target.value)}
-                  placeholder="Título da nota"
-                  className="w-full text-3xl md:text-4xl font-bold mb-6 bg-transparent border-b border-slate-700 focus:border-blue-500 outline-none pb-2 transition-colors"
-                />
-
-                <div className="flex items-center gap-2 text-sm text-slate-400 mb-6">
-                  <Calendar size={14} />
-                  <span>{formattedDate}</span>
-                </div>
-
-                <textarea
-                  value={editContent}
-                  onChange={(e) => setEditContent(e.target.value)}
-                  placeholder="Conteúdo da nota"
-                  className="w-full h-64 md:h-96 text-lg md:text-xl bg-transparent focus:outline-none resize-none"
-                />
-              </>
-            ) : (
-              <>
-                <h1 className="text-3xl md:text-4xl font-bold mb-4 leading-tight">
-                  {note.title || "Sem título"}
-                </h1>
-
-                <div className="flex items-center gap-2 text-sm text-slate-400 mb-8 border-b border-slate-700 pb-6">
-                  <Calendar size={14} />
-                  <span>{formattedDate}</span>
-                </div>
-
-                <div className="prose prose-invert prose-lg max-w-none">
-                  <div className="text-lg md:text-xl whitespace-pre-wrap text-slate-200 leading-relaxed">
-                    {note.content}
-                  </div>
-                </div>
-              </>
-            )}
-          </div>
-
-          <div className="border-t border-slate-700 p-6 flex justify-between items-center">
-            <div className="text-sm text-slate-400">
-              ID: {note.id.slice(0, 8)}...
-            </div>
-
-            <button
-              onClick={handleDelete}
-              disabled={deleting || editMode}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
-                deleting || editMode
-                  ? "bg-slate-700 text-slate-400 cursor-not-allowed"
-                  : "bg-red-500/10 text-red-500 hover:bg-red-500/20"
-              }`}
+    <ProtectedRoute>
+      <div className="min-h-screen bg-gradient-to-br from-slate-950 to-slate-900 text-white p-4 md:p-8">
+        <div className="max-w-3xl mx-auto">
+          <nav className="flex items-center justify-between mb-8">
+            <Link
+              href="/"
+              className="flex items-center gap-2 text-slate-300 hover:text-white transition-colors"
             >
-              {deleting ? (
+              <ArrowLeft size={18} />
+              <span>Voltar para notas</span>
+            </Link>
+
+            <div className="flex items-center gap-2">
+              {editMode ? (
                 <>
-                  <div className="w-4 h-4 border-2 border-red-300/30 border-t-transparent rounded-full animate-spin"></div>
-                  <span>Excluindo...</span>
+                  <button
+                    className="p-2 rounded-full hover:bg-green-500/20 text-green-500 transition-colors"
+                    title="Salvar alterações"
+                    onClick={handleSave}
+                    disabled={saving}
+                  >
+                    {saving ? (
+                      <div className="w-4 h-4 border-2 border-green-300/30 border-t-transparent rounded-full animate-spin"></div>
+                    ) : (
+                      <Save size={18} />
+                    )}
+                  </button>
+                  <button
+                    className="p-2 rounded-full hover:bg-red-500/20 text-red-500 transition-colors"
+                    title="Cancelar edição"
+                    onClick={cancelEdit}
+                  >
+                    <X size={18} />
+                  </button>
+                </>
+              ) : (
+                <button
+                  className="p-2 rounded-full hover:bg-slate-800 transition-colors"
+                  title="Editar nota"
+                  onClick={() => setEditMode(true)}
+                >
+                  <Edit size={18} />
+                </button>
+              )}
+            </div>
+          </nav>
+
+          <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl overflow-hidden border border-slate-700 shadow-xl">
+            <div className="p-6 md:p-8">
+              {editMode ? (
+                <>
+                  <input
+                    type="text"
+                    value={editTitle}
+                    onChange={(e) => setEditTitle(e.target.value)}
+                    placeholder="Título da nota"
+                    className="w-full text-3xl md:text-4xl font-bold mb-6 bg-transparent border-b border-slate-700 focus:border-blue-500 outline-none pb-2 transition-colors"
+                  />
+
+                  <div className="flex items-center gap-2 text-sm text-slate-400 mb-6">
+                    <Calendar size={14} />
+                    <span>{formattedDate}</span>
+                  </div>
+
+                  <textarea
+                    value={editContent}
+                    onChange={(e) => setEditContent(e.target.value)}
+                    placeholder="Conteúdo da nota"
+                    className="w-full h-64 md:h-96 text-lg md:text-xl bg-transparent focus:outline-none resize-none"
+                  />
                 </>
               ) : (
                 <>
-                  <Trash2 size={16} />
-                  <span>Excluir nota</span>
+                  <h1 className="text-3xl md:text-4xl font-bold mb-4 leading-tight">
+                    {note.title || "Sem título"}
+                  </h1>
+
+                  <div className="flex items-center gap-2 text-sm text-slate-400 mb-8 border-b border-slate-700 pb-6">
+                    <Calendar size={14} />
+                    <span>{formattedDate}</span>
+                  </div>
+
+                  <div className="prose prose-invert prose-lg max-w-none">
+                    <div className="text-lg md:text-xl whitespace-pre-wrap text-slate-200 leading-relaxed">
+                      {note.content}
+                    </div>
+                  </div>
                 </>
               )}
-            </button>
+            </div>
+
+            <div className="border-t border-slate-700 p-6 flex justify-between items-center">
+              <div className="text-sm text-slate-400">
+                ID: {note.id.slice(0, 8)}...
+              </div>
+
+              <button
+                onClick={handleDelete}
+                disabled={deleting || editMode}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+                  deleting || editMode
+                    ? "bg-slate-700 text-slate-400 cursor-not-allowed"
+                    : "bg-red-500/10 text-red-500 hover:bg-red-500/20"
+                }`}
+              >
+                {deleting ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-red-300/30 border-t-transparent rounded-full animate-spin"></div>
+                    <span>Excluindo...</span>
+                  </>
+                ) : (
+                  <>
+                    <Trash2 size={16} />
+                    <span>Excluir nota</span>
+                  </>
+                )}
+              </button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </ProtectedRoute>
   );
 }

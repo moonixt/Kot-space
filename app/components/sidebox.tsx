@@ -12,6 +12,7 @@ import {
   X,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "../../context/AuthContext";
 
 function Sidebox() {
   interface Note {
@@ -26,27 +27,35 @@ function Sidebox() {
   const [searchTerm, setSearchTerm] = useState("");
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const router = useRouter();
+  const { user } = useAuth();
+  const [, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetchNotes();
-  }, []);
-
-  async function fetchNotes() {
+  // Mova a função fetchNotes para fora do useEffect
+  const fetchNotes = async () => {
     setLoading(true);
     try {
-      const { data, error } = await supabase
+      if (!user) {
+        setNotes([]);
+        return;
+      }
+
+      const { data } = await supabase
         .from("notes")
         .select("*")
+        .eq("user_id", user.id)
         .order("created_at", { ascending: false });
 
-      if (error) throw error;
       setNotes(data || []);
     } catch (error) {
       console.error("Erro ao buscar notas:", error);
     } finally {
       setLoading(false);
     }
-  }
+  };
+
+  useEffect(() => {
+    fetchNotes();
+  }, [user]);
 
   const filteredNotes = notes.filter(
     (note) =>
@@ -90,15 +99,15 @@ function Sidebox() {
       {/* Mobile toggle button */}
       <button
         onClick={toggleMobileSidebar}
-        className="fixed top-4 left-4 z-50 p-2 rounded-full bg-slate-800 text-white shadow-lg md:hidden"
+        className="fixed top-4 right-4 z-50 p-2 rounded-full bg-slate-800 text-white shadow-lg md:hidden"
       >
         {isMobileOpen ? <X size={20} /> : <Menu size={20} />}
       </button>
 
       {/* Sidebar */}
       <aside
-        className={`fixed inset-y-0 left-0 w-72 bg-slate-900 text-white shadow-xl transition-transform duration-300 ease-in-out z-40 
-        ${isMobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}`}
+        className={`fixed inset-y-0 right-0 w-72 bg-slate-900 text-white shadow-xl transition-transform duration-300 ease-in-out z-40 
+        ${isMobileOpen ? "translate-x-0" : "translate-x-full md:translate-x-0"}`}
       >
         <div className="flex flex-col h-full">
           {/* Header */}
@@ -179,7 +188,7 @@ function Sidebox() {
                   <div>
                     <p>Nenhuma nota ainda</p>
                     <button
-                      onClick={() => router.push("/editor")}
+                      onClick={() => router.push("/")}
                       className="text-blue-400 text-sm mt-2 hover:underline"
                     >
                       Criar primeira nota
@@ -197,7 +206,26 @@ function Sidebox() {
                 Total: {notes.length} {notes.length === 1 ? "nota" : "notas"}
               </div>
               <button
-                onClick={fetchNotes}
+                onClick={async () => {
+                  try {
+                    const { error } = await supabase.auth.signOut();
+                    if (error) {
+                      setError(error.message);
+                    } else {
+                      window.location.reload();
+                    }
+                  } catch (err: unknown) {
+                    if (err instanceof Error) {
+                      setError(err.message);
+                    }
+                  }
+                }}
+                className="bg-red-600 text-white hover:bg-red-700 px-4 py-2 rounded"
+              >
+                Logout
+              </button>
+              <button
+                onClick={fetchNotes} // Agora fetchNotes está acessível
                 className="p-1 hover:text-slate-300 transition-colors"
                 title="Atualizar"
               >
