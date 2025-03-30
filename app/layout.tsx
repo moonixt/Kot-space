@@ -55,9 +55,11 @@ export default function RootLayout({
       >
         <ServiceWorkerRegistration />
         <AuthProvider>
-          <div className="flex flex-row min-h-screen">
+          <div className="flex flex-col md:flex-row min-h-screen">
+            <div className="flex-1 md:mr-72">
+              {children}
+            </div>
             <Sidebox />
-            <div className="flex-1">{children}</div>
           </div>
         </AuthProvider>
       </body>
