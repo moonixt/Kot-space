@@ -4,8 +4,9 @@
 <div align="center">
 
 
+![fair-note icon](https://github.com/user-attachments/assets/f166da3d-eb83-4322-9f47-4cd136df8fea)
 
-![fair-note icon git](https://github.com/user-attachments/assets/03d08b14-adf3-4866-a4bd-4e0a06e5b2c0)
+
 
 
   <h1 align="center">Fair-note</h1>
