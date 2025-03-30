@@ -1,13 +1,32 @@
-# Fair-note: 📓
-![image](https://github.com/user-attachments/assets/0e26d568-524c-4e14-889b-748c9796dc35)
+
+<br>
+
+<div align="center">
+
+![fair-note icon](https://github.com/user-attachments/assets/fb18ed09-0e0a-4e9a-a637-6a4418ac20ee)
 
 
+
+  <h1 align="center">Fair-note</h1>
+
+  <p align="center">
+    <strong>Fair Note is a sleek, modern Progressive Web App (PWA) for note-taking that respects your privacy and gives you complete control over your notes. With a clean, intuitive interface, Fair Note makes it easy to capture, organize, and access your thoughts from any device.</strong>
+  </p>
+
+[![pt-BR](https://img.shields.io/badge/lang-pt--BR-green.svg)](./docs/README.pt-BR.md)
 [![PWA Ready](https://img.shields.io/badge/PWA-Ready-blue.svg)](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps)
 [![Built with Next.js](https://img.shields.io/badge/Built%20with-Next.js-black)](https://nextjs.org)
 [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![TailwindCSS](https://img.shields.io/badge/Tailwind%20CSS-38B2AC?logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 
-Fair Note is a sleek, modern Progressive Web App (PWA) for note-taking that respects your privacy and gives you complete control over your notes. With a clean, intuitive interface, Fair Note makes it easy to capture, organize, and access your thoughts from any device.
+
+
+![image](https://github.com/user-attachments/assets/0e26d568-524c-4e14-889b-748c9796dc35)
+
+</div>
+
+
+
 
 ## ✨ Features
 
