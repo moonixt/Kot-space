@@ -1,11 +1,11 @@
-GitHub Copilot: # Fair-note: Your Notes, Your Way 📝
+# Fair-note: 📓
 
 [![PWA Ready](https://img.shields.io/badge/PWA-Ready-blue.svg)](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps)
 [![Built with Next.js](https://img.shields.io/badge/Built%20with-Next.js-black)](https://nextjs.org)
 [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![TailwindCSS](https://img.shields.io/badge/Tailwind%20CSS-38B2AC?logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 
-Fair-note is a sleek, modern Progressive Web App (PWA) for note-taking that respects your privacy and gives you complete control over your data. With a clean, intuitive interface, Fair-note makes it easy to capture, organize, and access your thoughts from any device.
+Fair Note is a sleek, modern Progressive Web App (PWA) for note-taking that respects your privacy and gives you complete control over your notes. With a clean, intuitive interface, Fair Note makes it easy to capture, organize, and access your thoughts from any device.
 
 ## ✨ Features
 
@@ -92,34 +92,8 @@ Fair-note can be installed as a Progressive Web App on your device:
 - **[TypeScript](https://www.typescriptlang.org/)**: Type-safe JavaScript
 - **[TailwindCSS](https://tailwindcss.com/)**: Utility-first CSS framework
 - **[Lucide Icons](https://lucide.dev/)**: Beautiful & consistent icons
-- **[LocalForage](https://localforage.github.io/localForage/)**: Offline storage
-- **[Firebase Authentication](https://firebase.google.com/docs/auth)**: Secure user authentication
+- **[Supabase Authentication](https://supabase.com)**: Secure user authentication
 
-## 🔒 Privacy
-
-Fair-note prioritizes your privacy:
-
-- Notes are stored locally on your device by default
-- Optional cloud sync with end-to-end encryption
-- No tracking or analytics
-- Your data belongs to you and only you
-
-## 🧩 Project Structure
-
-```
-fair-note/
-├── app/                  # Next.js app directory
-│   ├── components/       # Reusable UI components
-│   ├── notes/            # Note-related pages
-│   ├── layout.tsx        # Root layout with authentication
-│   └── page.tsx          # Homepage
-├── context/              # React context for state management
-├── lib/                  # Utility functions and helpers
-├── public/               # Static assets and PWA files
-│   ├── icons/            # App icons for various sizes
-│   └── manifest.json     # PWA manifest
-└── README.md             # Project documentation
-```
 
 ## 🤝 Contributing
 
