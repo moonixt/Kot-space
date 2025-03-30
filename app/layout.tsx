@@ -28,7 +28,7 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "Fair-note"
+    title: "Fair-note",
   },
   viewport: {
     width: "device-width",
@@ -56,9 +56,7 @@ export default function RootLayout({
         <ServiceWorkerRegistration />
         <AuthProvider>
           <div className="flex flex-col md:flex-row min-h-screen">
-            <div className="flex-1 md:mr-72">
-              {children}
-            </div>
+            <div className="flex-1 md:mr-72">{children}</div>
             <Sidebox />
           </div>
         </AuthProvider>

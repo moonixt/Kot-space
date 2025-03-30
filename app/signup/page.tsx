@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function SignUpPage() {
   const [email, setEmail] = useState("");
@@ -46,7 +47,15 @@ export default function SignUpPage() {
             {error}
           </div>
         )}
-
+        <div>
+          <Image
+            src="/fair-note.png"
+            alt="Logo Fair-Note"
+            width={212}
+            height={212}
+            className="mx-auto mb-6 rounded-md"
+          />
+        </div>
         <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl overflow-hidden border border-slate-700 shadow-xl">
           <div className="p-8">
             <h2 className="text-2xl font-bold text-white mb-6">

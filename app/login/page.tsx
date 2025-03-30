@@ -5,6 +5,7 @@ import { useAuth } from "../../context/AuthContext";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { supabase } from "../../lib/supabase";
+import Image from "next/image";
 
 // Create a separate client component for the part that uses useSearchParams
 function LoginForm() {
@@ -82,7 +83,15 @@ function LoginForm() {
           {error}
         </div>
       )}
-
+      <div>
+        <Image
+          src="/fair-note.png"
+          alt="Logo Fair-Note"
+          width={212}
+          height={212}
+          className="mx-auto mb-6 rounded-md"
+        />
+      </div>
       <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl overflow-hidden border border-slate-700 shadow-xl">
         <div className="p-8">
           <h2 className="text-2xl font-bold text-white mb-6">

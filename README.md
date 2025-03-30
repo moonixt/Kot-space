@@ -1,13 +1,8 @@
-
 <br>
 
 <div align="center">
 
-
 ![fair-note icon](https://github.com/user-attachments/assets/f166da3d-eb83-4322-9f47-4cd136df8fea)
-
-
-
 
   <h1 align="center">Fair-note</h1>
 
@@ -21,14 +16,9 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![TailwindCSS](https://img.shields.io/badge/Tailwind%20CSS-38B2AC?logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 
-
-
 ![image](https://github.com/user-attachments/assets/0e26d568-524c-4e14-889b-748c9796dc35)
 
 </div>
-
-
-
 
 ## ✨ Features
 
@@ -116,7 +106,6 @@ Fair-note can be installed as a Progressive Web App on your device:
 - **[TailwindCSS](https://tailwindcss.com/)**: Utility-first CSS framework
 - **[Lucide Icons](https://lucide.dev/)**: Beautiful & consistent icons
 - **[Supabase Authentication](https://supabase.com)**: Secure user authentication
-
 
 ## 🤝 Contributing
 
