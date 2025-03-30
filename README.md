@@ -138,6 +138,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - [TailwindCSS](https://tailwindcss.com/) for the utility-first CSS framework
 - [Lucide Icons](https://lucide.dev/) for the beautiful icons
 - [Vercel](https://vercel.com/) for hosting and deployment
+- [Supabase](https://supabase.com) for database and authentication
 
 ---
 
