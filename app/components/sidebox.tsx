@@ -115,7 +115,7 @@ function Sidebox() {
             <div className="flex items-center justify-between mb-4">
               <h1 className="text-xl font-bold flex items-center gap-2">
                 <StickyNote size={20} className="text-blue-400" />
-                <span>Minhas Notas</span>
+                <span>Minhas Notas 🐈‍⬛</span>
               </h1>
 
               <button

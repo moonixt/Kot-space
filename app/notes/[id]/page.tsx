@@ -13,6 +13,7 @@ interface Note {
   title: string;
   content: string;
   created_at: string;
+  tags: string;
 }
 
 export default function NotePage() {
@@ -200,7 +201,7 @@ export default function NotePage() {
               className="flex items-center gap-2 text-slate-300 hover:text-white transition-colors"
             >
               <ArrowLeft size={18} />
-              <span>Voltar para notas</span>
+              <span>Voltar para notas 🐈</span>
             </Link>
 
             <div className="flex items-center gap-2">
@@ -273,8 +274,8 @@ export default function NotePage() {
                     <span>{formattedDate}</span>
                   </div>
 
-                  <div className="prose prose-invert prose-lg max-w-none">
-                    <div className="text-lg md:text-xl whitespace-pre-wrap text-slate-200 leading-relaxed">
+                  <div className="prose prose-invert prose-lg w-full break-words">
+                    <div className="text-lg md:text-xl whitespace-pre-wrap text-slate-200 leading-relaxed overflow-x-auto">
                       {note.content}
                     </div>
                   </div>
@@ -285,6 +286,12 @@ export default function NotePage() {
             <div className="border-t border-slate-700 p-6 flex justify-between items-center">
               <div className="text-sm text-slate-400">
                 ID: {note.id.slice(0, 8)}...
+              </div>
+              <div className="text-sm text-slate-400">
+                #
+                {note.tags
+                  ? note.tags.replace(/[\[\]"]/g, "").replace(/,/g, " #")
+                  : ""}
               </div>
 
               <button

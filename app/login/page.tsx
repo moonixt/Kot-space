@@ -43,23 +43,25 @@ function LoginForm() {
   const handleGoogleSignIn = async () => {
     setError(null);
     setGoogleLoading(true);
-    
+
     try {
       const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
+        provider: "google",
         options: {
           redirectTo: `${window.location.origin}/`,
-        }
+        },
       });
-      
+
       if (error) throw error;
-      
+
       // Não é necessário redirecionar, o Supabase já cuida disso
       // O redirecionamento será feito pelo próprio Supabase
     } catch (error) {
       if (error instanceof Error) {
         console.error("Erro ao fazer login com Google:", error);
-        setError(error.message || "Falha ao fazer login com Google. Tente novamente.");
+        setError(
+          error.message || "Falha ao fazer login com Google. Tente novamente.",
+        );
       } else {
         setError("Erro desconhecido ao fazer login com Google.");
       }
@@ -84,7 +86,7 @@ function LoginForm() {
       <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl overflow-hidden border border-slate-700 shadow-xl">
         <div className="p-8">
           <h2 className="text-2xl font-bold text-white mb-6">
-            Entrar no Fair-Note
+            Entrar no Fair-Note 😺
           </h2>
 
           {/* Botão de login com Google */}
@@ -145,10 +147,7 @@ function LoginForm() {
             </div>
 
             <div className="mb-6">
-              <label
-                className="block text-slate-300 mb-2"
-                htmlFor="password"
-              >
+              <label className="block text-slate-300 mb-2" htmlFor="password">
                 Senha
               </label>
               <input

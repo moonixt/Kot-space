@@ -10,6 +10,15 @@ function Editor() {
   const [content, setContent] = useState("");
   const [saving, setSaving] = useState(false);
   const { user } = useAuth();
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+
+  const toggleTag = (tag: string) => {
+    setSelectedTags((prevTags) =>
+      prevTags.includes(tag)
+        ? prevTags.filter((t) => t !== tag)
+        : [...prevTags, tag],
+    );
+  };
 
   // Função para salvar a nota no banco de dados
   const saveNote = async () => {
@@ -42,6 +51,7 @@ function Editor() {
             title,
             content,
             user_id: user.id, // Adiciona o ID do usuário à nota
+            tags: selectedTags, // Adiciona as tags selecionadas
           },
         ])
         .select();
@@ -51,6 +61,7 @@ function Editor() {
       // Feedback visual de sucesso
       setTitle("");
       setContent("");
+      setSelectedTags([]); // Limpar as tags selecionadas
 
       // Notification toast instead of alert
       const notification = document.createElement("div");
@@ -93,7 +104,7 @@ function Editor() {
           <div className="p-6 border-b border-slate-700">
             <input
               className="bg-transparent text-white focus:outline-none focus:ring-0 border-none w-full text-3xl font-bold placeholder-slate-500"
-              placeholder="Título da nota..."
+              placeholder="Título da nota... "
               maxLength={32}
               value={title}
               onChange={(e) => setTitle(e.target.value)}
@@ -107,6 +118,25 @@ function Editor() {
             value={content}
             onChange={(e) => setContent(e.target.value)}
           />
+
+          {/* Componente de tags na interface de criação/edição de notas */}
+          <div className="flex flex-wrap gap-2 mt-4">
+            {["tarefa", "meta", "organização", "lembrete", "importante"].map(
+              (tag) => (
+                <button
+                  key={tag}
+                  onClick={() => toggleTag(tag)}
+                  className={`px-3 py-1 rounded-full text-xs ${
+                    selectedTags.includes(tag)
+                      ? "bg-blue-500 text-white"
+                      : "bg-slate-700 text-slate-300"
+                  }`}
+                >
+                  #{tag}
+                </button>
+              ),
+            )}
+          </div>
 
           <div className="flex justify-between items-center p-4 bg-slate-800/80">
             <div className="text-sm text-slate-400">
