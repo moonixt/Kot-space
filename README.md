@@ -3,14 +3,15 @@
 
 <div align="center">
 
-![fair-note icon](https://github.com/user-attachments/assets/fb18ed09-0e0a-4e9a-a637-6a4418ac20ee)
 
+
+![fair-note icon git](https://github.com/user-attachments/assets/03d08b14-adf3-4866-a4bd-4e0a06e5b2c0)
 
 
   <h1 align="center">Fair-note</h1>
 
   <p align="center">
-    <strong>Fair Note is a sleek, modern Progressive Web App (PWA) for note-taking that respects your privacy and gives you complete control over your notes. With a clean, intuitive interface, Fair Note makes it easy to capture, organize, and access your thoughts from any device.</strong>
+    <strong>Fair Note is a sleek, modern Progressive Web App (PWA) for note-taking that gives you complete control over your notes. With a clean, intuitive interface, Fair Note makes it easy to capture, organize, and access your thoughts from any device.</strong>
   </p>
 
 [![pt-BR](https://img.shields.io/badge/lang-pt--BR-green.svg)](./docs/README.pt-BR.md)
