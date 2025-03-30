@@ -26,14 +26,14 @@
 
 ## ✨ Features
 
-- **Clean & Modern UI**: Intuitive interface with dark mode and responsive design
-- **Progressive Web App**: Install on any device and work offline
-- **Privacy-Focused**: Your notes stay on your device
-- **Tag Organization**: Categorize notes with hashtags
-- **Markdown Support**: Format your notes with simple markdown syntax
-- **Full-Text Search**: Quickly find the notes you need
-- **Responsive Design**: Works beautifully on desktop and mobile
-- **Offline Capability**: Create and edit notes even without an internet connection
+- **Clean & Modern UI**: Intuitive interface with dark mode and responsive design ✅
+- **Progressive Web App**: Install on any device and work offline (in progress ⚠️⚙️)
+- **Privacy-Focused**: Your notes stay on your device (in progress ⚠️⚙️)
+- **Tag Organization**: Categorize notes with hashtags ✅
+- **Markdown Support**: Format your notes with simple markdown syntax (in progress ⚠️⚙️)
+- **Full-Text Search**: Quickly find the notes you need ✅
+- **Responsive Design**: Works beautifully on desktop and mobile ✅
+- **Offline Capability**: Create and edit notes even without an internet connection (in progress ⚠️⚙️)
 
 ## 🚀 Getting Started
 
