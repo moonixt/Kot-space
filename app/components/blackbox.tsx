@@ -2,17 +2,19 @@ import Editor from "./editor";
 
 function Blackbox() {
   return (
-    <div className="flex justify-center  ">
-      <div className="text-white bg-gradient-to-br from-slate-950 to-slate-900 w-full h-screen">
-        <div className="flex justify-center md:pt-20 pt-5 ">
-          <h1 className="font-bold text-white text-5xl ">Fair-note 🐍</h1>
+    <div className="flex justify-center">
+      <div className="text-white bg-gradient-to-br from-slate-950 to-slate-900 w-full min-h-screen">
+        <div className="flex justify-center md:pt-20 pt-8 px-4">
+          <h1 className="font-bold text-white text-4xl md:text-5xl text-center">
+            Fair-note 🐍
+          </h1>
         </div>
-        <div className="flex justify-center pt-1">
-          <p className="text-white text-2xl italic">
+        <div className="flex justify-center pt-1 px-4">
+          <p className="text-white text-xl md:text-2xl italic text-center">
             Organize suas notas com facilidade.
           </p>
         </div>
-        <div className="grid grid-cols-1 gap-4 p-4">
+        <div className="px-2 sm:px-4 pb-4">
           <Editor></Editor>
         </div>
       </div>

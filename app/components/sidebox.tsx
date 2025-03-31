@@ -220,7 +220,7 @@ function Sidebox() {
                     }
                   }
                 }}
-                className="bg-red-600 text-white hover:bg-red-700 px-4 py-2 rounded"
+                className="bg-blue-400 text-white hover:bg-red-700 px-4 py-2 rounded"
               >
                 Logout
               </button>

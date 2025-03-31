@@ -75,7 +75,8 @@ export default function NotePage() {
       if (error) throw error;
 
       showToast("Nota excluída com sucesso!", "success");
-      router.push("/");
+
+      router.replace("/"); // Resolved bug of page locking after redirect
     } catch (error) {
       console.error("Erro ao excluir nota:", error);
       showToast("Erro ao excluir a nota.", "error");

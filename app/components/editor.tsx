@@ -95,15 +95,18 @@ function Editor() {
     } finally {
       setSaving(false);
     }
+    window.location.reload();
   };
 
   return (
-    <div className="min-h-screen  text-white p-6">
-      <div className="max-w-3xl mx-auto">
+    <div className="w-full text-white p-2 sm:p-6">
+      <div className="mx-auto ">
+        {" "}
+        {/* Container para o editor de notas, ajustar tamanho etc */}
         <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl shadow-xl overflow-hidden border border-slate-700">
-          <div className="p-6 border-b border-slate-700">
+          <div className="p-4 sm:p-6 border-b border-slate-700">
             <input
-              className="bg-transparent text-white focus:outline-none focus:ring-0 border-none w-full text-3xl font-bold placeholder-slate-500"
+              className="bg-transparent text-white focus:outline-none focus:ring-0 border-none w-full text-xl sm:text-3xl font-bold placeholder-slate-500"
               placeholder="Título da nota... "
               maxLength={32}
               value={title}
@@ -112,39 +115,74 @@ function Editor() {
           </div>
 
           <textarea
-            className="p-6 w-full bg-transparent text-white resize-none focus:outline-none min-h-[400px] text-lg placeholder-slate-500"
+            className="p-4 sm:p-6 w-full bg-transparent text-white resize-none focus:outline-none min-h-[250px] sm:min-h-[400px] text-base sm:text-lg placeholder-slate-500"
             placeholder="Escreva sua nota aqui..."
-            maxLength={1000}
+            maxLength={15000}
             value={content}
             onChange={(e) => setContent(e.target.value)}
           />
 
           {/* Componente de tags na interface de criação/edição de notas */}
-          <div className="flex flex-wrap gap-2 mt-4">
-            {["tarefa", "meta", "organização", "lembrete", "importante"].map(
-              (tag) => (
-                <button
-                  key={tag}
-                  onClick={() => toggleTag(tag)}
-                  className={`px-3 py-1 rounded-full text-xs ${
-                    selectedTags.includes(tag)
-                      ? "bg-blue-500 text-white"
-                      : "bg-slate-700 text-slate-300"
-                  }`}
-                >
-                  #{tag}
-                </button>
-              ),
-            )}
+          <div className="flex flex-wrap gap-2 mt-2 p-3 sm:p-4">
+            {[
+              "tarefa",
+              "meta",
+              "organização",
+              "lembrete",
+              "importante",
+              "ideia",
+              "desabafo",
+              "diário",
+              "estudo",
+              "trabalho",
+              "pessoal",
+              "saúde",
+              "finanças",
+              "projeto",
+              "inspiração",
+              "citação",
+              "reunião",
+              "evento",
+              "viagem",
+              "receita",
+              "code",
+              "bug",
+              "dica",
+              "artigo",
+              "livro",
+              "filme",
+              "música",
+              "podcast",
+              "curso",
+              "tutorial",
+              "experiência",
+              "reflexão",
+              "feedback",
+              "aprendizado",
+              "networking",
+              "mentoria",
+            ].map((tag) => (
+              <button
+                key={tag}
+                onClick={() => toggleTag(tag)}
+                className={`px-2 py-1 rounded-full text-xs ${
+                  selectedTags.includes(tag)
+                    ? "bg-blue-500 text-white"
+                    : "bg-slate-700 text-slate-300"
+                }`}
+              >
+                #{tag}
+              </button>
+            ))}
           </div>
 
-          <div className="flex justify-between items-center p-4 bg-slate-800/80">
-            <div className="text-sm text-slate-400">
-              {content.length} / 1000 caracteres
+          <div className="flex justify-between items-center p-3 sm:p-4 bg-slate-800/80">
+            <div className="text-xs sm:text-sm text-slate-400">
+              {content.length} / 15000
             </div>
 
             <button
-              className={`flex items-center gap-2 px-5 py-3 rounded-lg font-medium transition-all ${
+              className={`flex items-center gap-1 sm:gap-2 px-3 py-2 sm:px-5 sm:py-3 rounded-lg text-sm sm:text-base font-medium transition-all ${
                 saving
                   ? "bg-slate-700 text-slate-300"
                   : "bg-blue-600 hover:bg-blue-500 text-white"
@@ -154,12 +192,12 @@ function Editor() {
             >
               {saving ? (
                 <>
-                  <div className="w-4 h-4 border-2 border-slate-300 border-t-transparent rounded-full animate-spin"></div>
+                  <div className="w-3 h-3 sm:w-4 sm:h-4 border-2 border-slate-300 border-t-transparent rounded-full animate-spin"></div>
                   <span>Salvando</span>
                 </>
               ) : (
                 <>
-                  <Save size={18} />
+                  <Save size={16} />
                   <span>Salvar nota</span>
                 </>
               )}
