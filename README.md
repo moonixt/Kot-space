@@ -18,6 +18,10 @@
 
 ![image](https://github.com/user-attachments/assets/a12fee94-7c60-4fae-abf2-ab24d7112656)
 
+
+
+
+
 </div>
 
 ## ✨ Features
@@ -119,7 +123,17 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+Personal Use License
+
+© 2025 Derek W. All rights reserved.
+
+This document establishes the terms of use for the software developed by the Author. By this license, the Author grants any individual the right to use and modify the software for personal or internal purposes, respecting the conditions set forth herein.
+
+Distribution, with or without modification, is strictly prohibited without the express written authorization of the Author. Use of the software in corporate or organizational environments is permitted, provided it is for internal purposes and without redistribution of the source code or its modifications. Any form of commercialization or monetization of the software is prohibited unless formally authorized by the Author.
+
+If the software is used in a public service or made available in any way that allows third-party access, reference to the original Author is mandatory. The software is provided "as is," without any express or implied warranties, including, but not limited to, warranties of merchantability or fitness for a particular purpose. The Author is not liable for any damages resulting from the use or inability to use the software.
+
+The Author reserves the right to modify or update the terms of this license at any time, with continued use of the software constituting automatic acceptance of any changes. Use of the software implies full acceptance of the terms described herein.
 
 ## 🙏 Acknowledgements
 
