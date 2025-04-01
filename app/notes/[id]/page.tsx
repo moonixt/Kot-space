@@ -6,7 +6,9 @@ import Link from "next/link";
 import { useRouter, useParams } from "next/navigation";
 import { ArrowLeft, Trash2, Calendar, Edit, Save, X } from "lucide-react";
 import { useAuth } from "../../../context/AuthContext";
-import { ProtectedRoute } from "../../../components/ProtectedRoute"; // Importar o ProtectedRoute
+import { ProtectedRoute } from "../../components/ProtectedRoute"; // Importar o ProtectedRoute
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 interface Note {
   id: string;
@@ -257,10 +259,33 @@ export default function NotePage() {
                     <span>{formattedDate}</span>
                   </div>
 
+                  {editMode && (
+                    <div className="mb-4 text-xs text-slate-400 flex items-center gap-2 bg-slate-800/50 p-2 rounded">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                      <span>
+                        Esta nota suporta formatação Markdown. Use # para
+                        títulos, ** para negrito, * para itálico, etc.
+                      </span>
+                    </div>
+                  )}
+
                   <textarea
                     value={editContent}
                     onChange={(e) => setEditContent(e.target.value)}
-                    placeholder="Conteúdo da nota"
+                    placeholder="Conteúdo da nota (suporta formatação Markdown)"
                     className="w-full h-64 md:h-96 text-lg md:text-xl bg-transparent focus:outline-none resize-none"
                   />
                 </>
@@ -275,10 +300,10 @@ export default function NotePage() {
                     <span>{formattedDate}</span>
                   </div>
 
-                  <div className="prose prose-invert prose-lg w-full break-words">
-                    <div className="text-lg md:text-xl whitespace-pre-wrap text-slate-200 leading-relaxed overflow-x-auto">
+                  <div className="prose prose-invert prose-lg w-full break-words text-lg md:text-xl text-slate-200 leading-relaxed markdown-content">
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
                       {note.content}
-                    </div>
+                    </ReactMarkdown>
                   </div>
                 </>
               )}
