@@ -1,6 +1,6 @@
 // import Image from "next/image";
 import Blackbox from "./components/blackbox";
-import { ProtectedRoute } from "../components/ProtectedRoute";
+import { ProtectedRoute } from "./components/ProtectedRoute";
 
 export default function Home() {
   return (

@@ -1,3 +1,5 @@
+//service worker for the PWA functionality
+
 "use client";
 
 import { useEffect } from "react";

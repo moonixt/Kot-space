@@ -1,3 +1,5 @@
+//Main container component off the app, its has a title and a description.
+
 import Editor from "./editor";
 
 function Blackbox() {
