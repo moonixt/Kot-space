@@ -380,7 +380,7 @@ function Editor() {
               />
             </div>
           ) : (
-            <div className="p-4 sm:p-6 w-full bg-transparent text-white resize-none focus:outline-none min-h-[370px] sm:min-h-[400px] text-base sm:text-lg placeholder-slate-500 overflow-auto">
+            <div className=" markdown-content p-4 sm:p-6 w-full bg-transparent text-white resize-none focus:outline-none min-h-[370px] sm:min-h-[400px] text-base sm:text-lg placeholder-slate-500 overflow-auto">
               {content ? (
                 <ReactMarkdown remarkPlugins={[remarkGfm]}>
                   {content}
