@@ -2,10 +2,19 @@
 
 import { useState } from "react";
 import { supabase } from "../../lib/supabase";
-import { Save, Eye, Edit } from "lucide-react";
+import {
+  Save,
+  Eye,
+  Edit,
+  ListOrdered,
+  LayoutList,
+  SmilePlus,
+} from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import EmojiPicker, { Theme } from "emoji-picker-react";
+import { EmojiClickData } from "emoji-picker-react";
 
 function Editor() {
   const [title, setTitle] = useState("");
@@ -14,6 +23,8 @@ function Editor() {
   const { user } = useAuth();
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [isPreviewMode, setIsPreviewMode] = useState(false);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [showEmojiPickerContent, setShowEmojiPickerContent] = useState(false);
 
   const toggleTag = (tag: string) => {
     setSelectedTags((prevTags) =>
@@ -21,6 +32,17 @@ function Editor() {
         ? prevTags.filter((t) => t !== tag)
         : [...prevTags, tag],
     );
+  };
+
+  //Handle Emoji selector, working in the title and TextArea
+  const handleEmojiSelect = (emojiData: EmojiClickData) => {
+    setTitle((prev) => prev + emojiData.emoji);
+    setShowEmojiPicker(false);
+  };
+
+  const handleEmojiSelectContent = (emojiData: EmojiClickData) => {
+    setContent((prev) => prev + emojiData.emoji);
+    setShowEmojiPickerContent(false);
   };
 
   // Function to insert Markdown syntax into the content
@@ -43,11 +65,11 @@ function Editor() {
     switch (markdownSyntax) {
       case "bold":
         // Wrap the selected text (or placeholder text) with double asterisks for bold formatting
-        newText = `**${selectedText || "Insert between here the bold text "}**`;
+        newText = `**${selectedText || "text_example"}**`;
         break;
       case "italic":
         // Wrap the selected text (or placeholder text) with single asterisks for italic formatting
-        newText = `*${selectedText || "Insert between here the italic text"}*`;
+        newText = `*${selectedText || "text_example"}*`;
         break;
       case "heading1":
         // Add a single hash symbol followed by the selected text (or placeholder) for a level 1 heading
@@ -63,6 +85,29 @@ function Editor() {
         newText = selectedText.includes("\n")
           ? `\`\`\`\n${selectedText || "código aqui"}\n\`\`\``
           : `\`${selectedText || "code here"}\``;
+        break;
+      case "orderedList":
+        if (selectedText) {
+          // Se já tiver conteúdo, formatar cada linha como item de lista ordenada
+          const lines = selectedText.split("\n");
+          newText = lines
+            .map((line, index) => `${index + 1}. ${line}`)
+            .join("\n");
+        } else {
+          // Se não tiver, adicionar um template
+          newText = "1. Primeiro item\n2. Segundo item\n3. Terceiro item";
+        }
+        break;
+      case "unorderedList":
+        // Verificar se o texto selecionado já tem linhas
+        if (selectedText) {
+          // Se já tiver conteúdo, formatar cada linha como item de lista não ordenada
+          const lines = selectedText.split("\n");
+          newText = lines.map((line) => `- ${line}`).join("\n");
+        } else {
+          // Se não tiver, adicionar um template
+          newText = "- Primeiro item\n- Segundo item\n- Terceiro item";
+        }
         break;
       case "link":
         // Create a Markdown link with the selected text (or placeholder) as the link text and "url" as the placeholder URL
@@ -161,72 +206,140 @@ function Editor() {
   };
 
   return (
-    <div className="w-full text-white p-2 sm:p-6">
-      <div className="mx-auto">
+    <div className="w-full text-white p-2 sm:p-6 ">
+      <div className="mx-auto max-w-full">
         <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl shadow-xl overflow-hidden border border-slate-700">
-          <div className="p-4 sm:p-6 border-b border-slate-700">
-            <input
-              className="bg-transparent text-white focus:outline-none focus:ring-0 border-none w-full text-xl sm:text-3xl placeholder-slate-500"
-              placeholder="Título da nota... "
-              maxLength={32}
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-            />
-          </div>
-
-          <div className="bg-slate-600 h-full text-1xl space-x-2 px-2 py-1 text-white flex justify-between">
-            <div className="flex space-x-1">
+          <div className="p-4 sm:p-6 border-b border-slate-700 relative">
+            <div className="flex gap-4">
               <button
-                className="rounded hover:bg-pink-400 transition-colors px-2 font-bold"
+                onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                className=" text-slate-400 hover:text-white hover:bg-slate-700 rounded transition-colors"
+                title="Adicionar emoji"
+              >
+                <SmilePlus size={26} />
+              </button>
+              {showEmojiPicker && (
+                <div className="absolute z-10 right-4 mt-2">
+                  <div className="relative">
+                    <EmojiPicker
+                      onEmojiClick={handleEmojiSelect}
+                      skinTonesDisabled
+                      width={300}
+                      height={400}
+                      previewConfig={{ showPreview: false }}
+                      theme={Theme.DARK}
+                    />
+                  </div>
+                </div>
+              )}
+              <input
+                className=" bg-transparent text-white focus:outline-none focus:ring-0 border-none w-full text-xl sm:text-3xl placeholder-slate-500"
+                placeholder="Título da nota... "
+                maxLength={32}
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+              />
+            </div>
+          </div>
+          <div
+            id="nav1"
+            className="bg-slate-600 h-full text-1xl px-1 sm:px-2 py-1 text-white flex  justify-between"
+          >
+            <div className="flex  gap-1">
+              <button
+                className="rounded hover:bg-pink-400 transition-colors px-1 sm:px-2 font-bold "
                 onClick={() => insertMarkdown("bold")}
                 title="Negrito (Ctrl+B)"
               >
                 B
               </button>
               <button
-                className="rounded hover:bg-pink-400 transition-colors px-2 italic"
+                className="rounded hover:bg-pink-400 transition-colors px-1 sm:px-2 italic"
                 onClick={() => insertMarkdown("italic")}
                 title="Itálico (Ctrl+I)"
               >
                 I
               </button>
               <button
-                className="rounded hover:bg-pink-400 transition-colors px-2"
+                className="rounded hover:bg-pink-400 transition-colors px-1 sm:px-2"
                 onClick={() => insertMarkdown("link")}
                 title="Link"
               >
                 🔗
               </button>
               <button
-                className="rounded hover:bg-pink-400 transition-colors px-2"
+                className="rounded hover:bg-pink-400 transition-colors px-1 sm:px-2"
                 onClick={() => insertMarkdown("heading1")}
                 title="Título 1"
               >
                 H1
               </button>
               <button
-                className="rounded hover:bg-pink-400 transition-colors px-2"
+                className="rounded hover:bg-pink-400 transition-colors px-1 sm:px-2"
                 onClick={() => insertMarkdown("heading2")}
                 title="Título 2"
               >
                 H2
               </button>
               <button
-                className="rounded hover:bg-pink-400 transition-colors px-2"
+                className="rounded hover:bg-pink-400 transition-colors px-1 sm:px-2"
                 onClick={() => insertMarkdown("code")}
                 title="Código"
               >
                 &lt;/&gt;
               </button>
+              <div
+                id="Emojipicker"
+                className="flex justify-end items-center pr-2"
+              >
+                <button
+                  onClick={() =>
+                    setShowEmojiPickerContent(!showEmojiPickerContent)
+                  }
+                  className=" text-slate-400 hover:text-white hover:bg-slate-700 rounded transition-colors"
+                  title="Adicionar emoji"
+                >
+                  <SmilePlus size={16} />
+                </button>
+                {showEmojiPickerContent && (
+                  <div className="absolute z-10 right-2 top-10 mt-2 max-h-80vh overflow-auto">
+                    <div className="relative">
+                      <EmojiPicker
+                        onEmojiClick={handleEmojiSelectContent}
+                        skinTonesDisabled
+                        width={280} // Reduzido um pouco para caber melhor
+                        height={350} // Reduzido um pouco para caber melhor
+                        previewConfig={{ showPreview: false }}
+                        theme={Theme.DARK}
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
               <button
-                className={`rounded px-3 py-1 transition-colors flex items-center gap-1 ${isPreviewMode ? "bg-slate-700" : "bg-pink-500 hover:bg-pink-400"}`}
+                className=" hidden sm:block rounded hover:bg-pink-400 transition-colors px-1 sm:px-2 "
+                onClick={() => insertMarkdown("orderedList")}
+                title="Lista Numerada"
+              >
+                <ListOrdered size={16} />
+              </button>
+              <button
+                className="hidden sm:block rounded hover:bg-pink-400 transition-colors px-1 sm:px-2 "
+                onClick={() => insertMarkdown("unorderedList")}
+                title="Lista com Marcadores"
+              >
+                <LayoutList size={16} />
+              </button>
+
+              <button
+                className={`rounded sm:px-3 sm:py-1 py-1 transition-colors flex items-center sm:gap-1 ${isPreviewMode ? "bg-slate-700" : "bg-pink-500 hover:bg-pink-400"}`}
                 onClick={() => setIsPreviewMode(false)}
                 disabled={!isPreviewMode}
               >
                 <Edit size={16} /> Editar
               </button>
               <button
-                className={`rounded px-3 py-1 transition-colors flex items-center gap-1 ml-2 ${!isPreviewMode ? "bg-slate-700" : "bg-pink-500 hover:bg-pink-400"}`}
+                className={`rounded sm:px-3 sm:py-1 px-1 transition-colors flex items-center sm:gap-1 ml-2 ${!isPreviewMode ? "bg-slate-700" : "bg-pink-500 hover:bg-pink-400"}`}
                 onClick={() => setIsPreviewMode(true)}
                 disabled={isPreviewMode}
               >
@@ -234,17 +347,40 @@ function Editor() {
               </button>
             </div>
           </div>
+          <div
+            id="nav2-smallscreen"
+            className="bg-slate-600 h-full text-1xl px-1 sm:px-2 py-1 text-white flex  justify-between sm:hidden"
+          >
+            <div className="sm:flex sm:space-x-2 flex">
+              <button
+                className="rounded hover:bg-pink-400 transition-colors px-1 sm:px-2"
+                onClick={() => insertMarkdown("orderedList")}
+                title="Lista Numerada"
+              >
+                <ListOrdered size={20} />
+              </button>
+              <button
+                className="rounded hover:bg-pink-400 transition-colors px-1 sm:px-2"
+                onClick={() => insertMarkdown("unorderedList")}
+                title="Lista com Marcadores"
+              >
+                <LayoutList size={16} />
+              </button>
+            </div>
+          </div>
 
           {!isPreviewMode ? (
-            <textarea
-              className="p-4 sm:p-6 w-full bg-transparent text-white resize-none focus:outline-none min-h-[250px] sm:min-h-[400px] text-base sm:text-lg placeholder-slate-500"
-              placeholder="Escreva sua nota aqui usando Markdown..."
-              maxLength={15000}
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-            />
+            <div>
+              <textarea
+                className="p-4 sm:p-6 w-full bg-transparent text-white resize-none focus:outline-none min-h-[370px] sm:min-h-[400px] text-base sm:text-lg placeholder-slate-500 overflow-auto"
+                placeholder="Escreva sua nota aqui usando Markdown..."
+                maxLength={15000}
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+              />
+            </div>
           ) : (
-            <div className="p-4 sm:p-6 w-full min-h-[250px] sm:min-h-[400px] text-white prose prose-invert prose-sm sm:prose-base max-w-none markdown-content">
+            <div className="p-4 sm:p-6 w-full bg-transparent text-white resize-none focus:outline-none min-h-[370px] sm:min-h-[400px] text-base sm:text-lg placeholder-slate-500 overflow-auto">
               {content ? (
                 <ReactMarkdown remarkPlugins={[remarkGfm]}>
                   {content}
@@ -258,7 +394,7 @@ function Editor() {
           )}
 
           {/* Componente de tags na interface de criação/edição de notas */}
-          <div className="flex flex-wrap gap-2 mt-2 p-3 sm:p-4">
+          <div className="flex flex-wrap gap-1 sm:gap-2 mt-2 p-2 sm:p-4 overflow-x-auto max-h-32 sm:max-h-none">
             {[
               "tarefa",
               "meta",

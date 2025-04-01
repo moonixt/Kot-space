@@ -18,10 +18,6 @@
 
 ![image](https://github.com/user-attachments/assets/a12fee94-7c60-4fae-abf2-ab24d7112656)
 
-
-
-
-
 </div>
 
 ## ✨ Features

@@ -117,7 +117,11 @@ function Sidebox() {
             <div className="flex items-center justify-between mb-4">
               <h1 className="text-xl font-bold flex items-center gap-2">
                 <StickyNote size={20} className="text-blue-400" />
-                <span>Minhas Notas 🐈‍⬛</span>
+                {user ? (
+                  <span>Minhas Notas 🐈‍⬛</span>
+                ) : (
+                  <span>Faça login para ver suas notas.</span>
+                )}
               </h1>
 
               <button
@@ -188,13 +192,20 @@ function Sidebox() {
                   </div>
                 ) : (
                   <div>
-                    <p>Nenhuma nota ainda</p>
-                    <button
-                      onClick={() => router.push("/")}
-                      className="text-blue-400 text-sm mt-2 hover:underline"
-                    >
-                      Criar primeira nota
-                    </button>
+                    {user ? (
+                      <>
+                        <p>Nenhuma nota ainda</p>
+                        <p className="text-xs mt-1">Crie sua primeira nota!</p>
+                        <button
+                          onClick={() => router.push("/")}
+                          className="text-blue-400 text-sm mt-2 hover:underline"
+                        >
+                          Criar primeira nota
+                        </button>
+                      </>
+                    ) : (
+                      <p>Faça login para criar notas.</p>
+                    )}
                   </div>
                 )}
               </div>
@@ -207,25 +218,27 @@ function Sidebox() {
               <div>
                 Total: {notes.length} {notes.length === 1 ? "nota" : "notas"}
               </div>
-              <button
-                onClick={async () => {
-                  try {
-                    const { error } = await supabase.auth.signOut();
-                    if (error) {
-                      setError(error.message);
-                    } else {
-                      window.location.reload();
+              {user && (
+                <button
+                  onClick={async () => {
+                    try {
+                      const { error } = await supabase.auth.signOut();
+                      if (error) {
+                        setError(error.message);
+                      } else {
+                        window.location.reload();
+                      }
+                    } catch (err: unknown) {
+                      if (err instanceof Error) {
+                        setError(err.message);
+                      }
                     }
-                  } catch (err: unknown) {
-                    if (err instanceof Error) {
-                      setError(err.message);
-                    }
-                  }
-                }}
-                className="bg-blue-400 text-white hover:bg-red-700 px-4 py-2 rounded"
-              >
-                Logout
-              </button>
+                  }}
+                  className="bg-blue-400 text-white hover:bg-red-700 px-4 py-2 rounded"
+                >
+                  Logout
+                </button>
+              )}
               <button
                 onClick={fetchNotes} // Agora fetchNotes está acessível
                 className="p-1 hover:text-slate-300 transition-colors"
