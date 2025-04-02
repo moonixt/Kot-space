@@ -4,19 +4,24 @@ import Editor from "./editor";
 
 function Blackbox() {
   return (
-    <div className="flex justify-center overflow-x-hidden">
-      <div className="text-white bg-gradient-to-br from-slate-950 to-slate-900 w-full min-h-screen flex flex-col">
-        <div className="flex justify-center pt-2 md:pt-10 px-4">
-          <h1 className="font-bold text-white text-4xl md:text-5xl text-center">
+    <div className="flex justify-center overflow-hidden">
+      <div className="text-[var(--foreground)] bg-[var(--container)] w-full h-screen flex flex-col">
+        {/* Cabeçalho compacto em dispositivos móveis */}
+        <div className="flex justify-center pt-1 md:pt-4 px-2">
+          <h1 className="font-bold text-[var(--foreground)] text-2xl md:text-4xl text-center ">
             Fair-note 🐍
           </h1>
         </div>
-        <div className="flex justify-center px-4 mb-2 md:mb-4">
-          <p className="text-white text-xl md:text-2xl italic text-center hidden md:block">
+
+        {/* Descrição oculta em mobile */}
+        <div className="hidden md:flex justify-center px-4 mb-1 md:mb-2">
+          <p className="text-[var(--foreground)] text-lg md:text-xl italic text-center">
             Organize suas notas com facilidade.
           </p>
         </div>
-        <div className="px-2 sm:px-4 pb-4 flex-grow">
+
+        {/* Área do editor com altura restante da tela */}
+        <div className="px-0.5 sm:px-2 pb-1 md:pb-2 flex-grow flex flex-col h-[calc(100vh-50px)] md:h-[calc(100vh-120px)]">
           <Editor />
         </div>
       </div>

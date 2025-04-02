@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../../context/AuthContext";
+import ThemeToggle from "./ThemeToggle";
 
 function Sidebox() {
   interface Note {
@@ -97,7 +98,7 @@ function Sidebox() {
   };
 
   return (
-    <>
+    <div className="w-full md:w-72 bg-[var(--sidebar-bg)] border-t md:border-l border-[var(--border-color)] md:h-screen md:fixed md:right-0 md:top-0 overflow-y-auto">
       {/* Mobile toggle button */}
       <button
         onClick={toggleMobileSidebar}
@@ -108,7 +109,7 @@ function Sidebox() {
 
       {/* Sidebar */}
       <aside
-        className={`fixed inset-y-0 right-0 w-72 bg-slate-900 text-white shadow-xl transition-transform duration-300 ease-in-out z-40 
+        className={`fixed inset-y-0 right-0 w-72 bg-black text-white shadow-xl transition-transform duration-300 ease-in-out z-40 
         ${isMobileOpen ? "translate-x-0" : "translate-x-full md:translate-x-0"}`}
       >
         <div className="flex flex-col h-full">
@@ -116,7 +117,7 @@ function Sidebox() {
           <div className="p-4 border-b border-slate-700">
             <div className="flex items-center justify-between mb-4">
               <h1 className="text-xl font-bold flex items-center gap-2">
-                <StickyNote size={20} className="text-blue-400" />
+                <StickyNote size={20} className="text-white-400" />
                 {user ? (
                   <span>Minhas Notas 🐈‍⬛</span>
                 ) : (
@@ -129,7 +130,7 @@ function Sidebox() {
                 className="p-2 rounded-full hover:bg-slate-700 transition-colors"
                 title="Nova Nota"
               >
-                <PlusCircle size={20} className="text-blue-400" />
+                <PlusCircle size={20} className="text-white-400" />
               </button>
             </div>
 
@@ -164,17 +165,17 @@ function Sidebox() {
                 >
                   <div className="p-3 rounded-lg hover:bg-slate-800 cursor-pointer transition-colors border border-transparent hover:border-slate-700">
                     <div className="flex items-start space-x-3">
-                      <File size={16} className="mt-1 text-slate-500" />
+                      <File size={16} className="mt-1 text-white" />
                       <div className="flex-1 min-w-0">
                         <h2 className="font-medium truncate">
                           {note.title || "Sem título"}
                         </h2>
                         {note.content && (
-                          <p className="text-xs text-slate-400 mt-1 truncate">
+                          <p className="text-xs text-white mt-1 truncate">
                             {getExcerpt(note.content)}
                           </p>
                         )}
-                        <div className="flex items-center text-xs text-slate-500 mt-2">
+                        <div className="flex items-center text-xs text-white mt-2">
                           <Clock size={12} className="mr-1" />
                           <span>{formatDate(note.created_at)}</span>
                         </div>
@@ -213,7 +214,7 @@ function Sidebox() {
           </div>
 
           {/* Footer */}
-          <div className="p-4 border-t border-slate-700 text-xs text-slate-500">
+          <div className="p-4 border-t border-slate-700 text-xs text-white">
             <div className="flex justify-between items-center">
               <div>
                 Total: {notes.length} {notes.length === 1 ? "nota" : "notas"}
@@ -234,7 +235,7 @@ function Sidebox() {
                       }
                     }
                   }}
-                  className="bg-blue-400 text-white hover:bg-red-700 px-4 py-2 rounded"
+                  className="bg-red-500 text-white hover:bg-red-400 px-4 py-2 rounded"
                 >
                   Logout
                 </button>
@@ -263,9 +264,13 @@ function Sidebox() {
               </button>
             </div>
           </div>
+          <div className="p-4 border-t border-slate-500/30">
+            <p className="text-sm text-white mb-3">Theme</p>
+            <ThemeToggle />
+          </div>
         </div>
       </aside>
-    </>
+    </div>
   );
 }
 

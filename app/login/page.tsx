@@ -92,7 +92,7 @@ function LoginForm() {
           className="mx-auto mb-6 rounded-md"
         />
       </div>
-      <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl overflow-hidden border border-slate-700 shadow-xl">
+      <div className="bg-black backdrop-blur-sm rounded-xl overflow-hidden border border-slate-700 shadow-xl">
         <div className="p-8">
           <h2 className="text-2xl font-bold text-white mb-6">
             Entrar no Fair-Note 😺
@@ -219,7 +219,7 @@ function LoginFormLoading() {
 
 export default function LoginPage() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-950 to-slate-900 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-[var(--container)] p-4">
       <div className="w-full max-w-md">
         <Suspense fallback={<LoginFormLoading />}>
           <LoginForm />

@@ -206,10 +206,10 @@ function Editor() {
   };
 
   return (
-    <div className="w-full text-white p-2 sm:p-6 ">
-      <div className="mx-auto max-w-full">
-        <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl shadow-xl overflow-hidden border border-slate-700">
-          <div className="p-4 sm:p-6 border-b border-slate-700 relative">
+    <div id="Editor" className="w-full h-full flex flex-col">
+      <div className="mx-auto w-full h-full flex flex-col flex-grow">
+        <div className="bg-[var(--background)] backdrop-blur-sm rounded-xl shadow-xl overflow-hidden border border-[var(--card-border)] flex flex-col flex-grow h-full">
+          <div className="p-4 sm:p-6 border-b border-[var(--border-color)] relative">
             <div className="flex gap-4">
               <button
                 onClick={() => setShowEmojiPicker(!showEmojiPicker)}
@@ -233,8 +233,8 @@ function Editor() {
                 </div>
               )}
               <input
-                className=" bg-transparent text-white focus:outline-none focus:ring-0 border-none w-full text-xl sm:text-3xl placeholder-slate-500"
-                placeholder="Título da nota... "
+                className=" bg-transparent text-[var(--foreground)] focus:outline-none focus:ring-0 border-none w-full text-xl sm:text-3xl placeholder-[var(--foreground)]"
+                placeholder="Tema da nota..."
                 maxLength={32}
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
@@ -243,7 +243,7 @@ function Editor() {
           </div>
           <div
             id="nav1"
-            className="bg-slate-600 h-full text-1xl px-1 sm:px-2 py-1 text-white flex  justify-between"
+            className="bg-[var(--foreground)] bg-opacity-10  text-1xl px-1 sm:px-2 py-1 text-[var(--background)] flex justify-between"
           >
             <div className="flex  gap-1">
               <button
@@ -332,14 +332,14 @@ function Editor() {
               </button>
 
               <button
-                className={`rounded sm:px-3 sm:py-1 py-1 transition-colors flex items-center sm:gap-1 ${isPreviewMode ? "bg-slate-700" : "bg-pink-500 hover:bg-pink-400"}`}
+                className={`rounded sm:px-3 sm:py-1 py-1 transition-colors flex items-center sm:gap-1 text-[var(--foreground)] ${isPreviewMode ? "bg-[var(--background)]" : "bg-green-500 hover:bg-green-400"}`}
                 onClick={() => setIsPreviewMode(false)}
                 disabled={!isPreviewMode}
               >
                 <Edit size={16} /> Editar
               </button>
               <button
-                className={`rounded sm:px-3 sm:py-1 px-1 transition-colors flex items-center sm:gap-1 ml-2 ${!isPreviewMode ? "bg-slate-700" : "bg-pink-500 hover:bg-pink-400"}`}
+                className={`rounded sm:px-3 sm:py-1 px-1 transition-colors flex items-center sm:gap-1 ml-2 text-[var(--foreground)] ${!isPreviewMode ? "bg-[var(--background)]" : "bg-green-500 hover:bg-green-400"}`}
                 onClick={() => setIsPreviewMode(true)}
                 disabled={isPreviewMode}
               >
@@ -349,7 +349,7 @@ function Editor() {
           </div>
           <div
             id="nav2-smallscreen"
-            className="bg-slate-600 h-full text-1xl px-1 sm:px-2 py-1 text-white flex  justify-between sm:hidden"
+            className="bg-[var(--foreground)]  text-1xl px-1 sm:px-2 py-1 text-[var(--background)] flex  justify-between sm:hidden"
           >
             <div className="sm:flex sm:space-x-2 flex">
               <button
@@ -369,32 +369,34 @@ function Editor() {
             </div>
           </div>
 
-          {!isPreviewMode ? (
-            <div>
-              <textarea
-                className="p-4 sm:p-6 w-full bg-transparent text-white resize-none focus:outline-none min-h-[370px] sm:min-h-[400px] text-base sm:text-lg placeholder-slate-500 overflow-auto"
-                placeholder="Escreva sua nota aqui usando Markdown..."
-                maxLength={15000}
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-              />
-            </div>
-          ) : (
-            <div className=" markdown-content p-4 sm:p-6 w-full bg-transparent text-white resize-none focus:outline-none min-h-[370px] sm:min-h-[400px] text-base sm:text-lg placeholder-slate-500 overflow-auto">
-              {content ? (
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                  {content}
-                </ReactMarkdown>
-              ) : (
-                <p className="text-slate-500">
-                  Nenhum conteúdo para visualizar...
-                </p>
-              )}
-            </div>
-          )}
+          <div className="flex-grow overflow-auto">
+            {!isPreviewMode ? (
+              <div className="h-full">
+                <textarea
+                  className="p-4  sm:p-6 w-full bg-transparent text-[var(--foreground)] resize-none focus:outline-none min-h-[370px] h-full text-base sm:text-lg placeholder-[var(--foreground)] overflow-auto"
+                  placeholder="Escreva sua nota aqui..."
+                  maxLength={15000}
+                  value={content}
+                  onChange={(e) => setContent(e.target.value)}
+                  style={{ fontSize: "25px" }}
+                />
+              </div>
+            ) : (
+              <div className="markdown-content p-4 sm:p-6 w-full bg-transparent text-[var(--foreground)] min-h-[370px] h-full text-base sm:text-lg overflow-auto">
+                {content ? (
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                    {content}
+                  </ReactMarkdown>
+                ) : (
+                  <p className="text-[var(--foreground)]">
+                    Nenhum conteúdo para visualizar...
+                  </p>
+                )}
+              </div>
+            )}
+          </div>
 
-          {/* Componente de tags na interface de criação/edição de notas */}
-          <div className="flex flex-wrap gap-1 sm:gap-2 mt-2 p-2 sm:p-4 overflow-x-auto max-h-32 sm:max-h-none">
+          <div className="flex flex-wrap gap-1 sm:gap-2 p-2 sm:p-4 overflow-y-auto max-h-28">
             {[
               "tarefa",
               "meta",
@@ -439,7 +441,7 @@ function Editor() {
                 className={`px-2 py-1 rounded-full text-xs ${
                   selectedTags.includes(tag)
                     ? "bg-blue-500 text-white"
-                    : "bg-slate-700 text-slate-300"
+                    : "bg-[var(--foreground)] text-[var(--background)]"
                 }`}
               >
                 #{tag}
@@ -447,7 +449,10 @@ function Editor() {
             ))}
           </div>
 
-          <div className="flex justify-between items-center p-3 sm:p-4 bg-slate-800/80">
+          <div
+            id="footer"
+            className="flex justify-between items-center p-3 sm:p-4 bg-[var(--foreground)] mt-auto"
+          >
             <div className="text-xs sm:text-sm text-slate-400">
               {content.length} / 15000
             </div>
@@ -456,7 +461,7 @@ function Editor() {
               className={`flex items-center gap-1 sm:gap-2 px-3 py-2 sm:px-5 sm:py-3 rounded-lg text-sm sm:text-base font-medium transition-all ${
                 saving
                   ? "bg-slate-700 text-slate-300"
-                  : "bg-blue-600 hover:bg-blue-500 text-white"
+                  : "bg-[var(--background)] hover:bg-blue-500 text-[var(--foreground)]"
               }`}
               onClick={saveNote}
               disabled={saving || (!title.trim() && !content.trim())}

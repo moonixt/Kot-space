@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Sidebox from "./components/sidebox";
 import { AuthProvider } from "../context/AuthContext";
+import { ThemeProvider } from "../context/ThemeContext";
 import ServiceWorkerRegistration from "./components/ServiceWorkerRegistration";
 
 const geistSans = Geist({
@@ -51,14 +52,16 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[var(--background)] text-[var(--foreground)]`}
       >
         <ServiceWorkerRegistration />
         <AuthProvider>
-          <div className="flex flex-col md:flex-row min-h-screen">
-            <div className="flex-1 md:mr-72">{children}</div>
-            <Sidebox />
-          </div>
+          <ThemeProvider>
+            <div className="flex flex-col md:flex-row min-h-screen">
+              <div className="flex-1 md:mr-72">{children}</div>
+              <Sidebox />
+            </div>
+          </ThemeProvider>
         </AuthProvider>
       </body>
     </html>
