@@ -18,6 +18,8 @@
 ## Initial release with basic note-taking functionality.
 ![image](https://github.com/user-attachments/assets/a12fee94-7c60-4fae-abf2-ab24d7112656)
 ## v1.0.0 (Markdown Support)
+![chrome_nj6WTfe3He](https://github.com/user-attachments/assets/06d41088-17aa-45e0-a95e-9b8c9d93884b)
+## Preview mode
 ![chrome_W9Kbuzt69C](https://github.com/user-attachments/assets/91ddb711-ab28-46b4-9b63-9865cc0db536)
 ## Full Note Viewing and Editing
 ![chrome_B55zqoHoxA-ezgif com-video-to-gif-converter](https://github.com/user-attachments/assets/509781b6-2b1e-4cf1-846b-0b511a4392a4)
