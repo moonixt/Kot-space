@@ -208,12 +208,12 @@ function Editor() {
   return (
     <div id="Editor" className="w-full h-full flex flex-col">
       <div className="mx-auto w-full h-full flex flex-col flex-grow">
-        <div className="bg-[var(--background)] backdrop-blur-sm rounded-xl shadow-xl overflow-hidden border border-[var(--card-border)] flex flex-col flex-grow h-full">
+        <div className="bg-[var(--background)] backdrop-blur-sm  shadow-xl overflow-hidden  flex flex-col flex-grow h-full">
           <div className="p-4 sm:p-6 border-b border-[var(--border-color)] relative">
             <div className="flex gap-4">
               <button
                 onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-                className=" text-slate-400 hover:text-white hover:bg-slate-700 rounded transition-colors"
+                className=" text-[var(--foreground)] hover:text-[var(--background)] hover:bg-[var(--foreground)] rounded transition-colors"
                 title="Adicionar emoji"
               >
                 <SmilePlus size={26} />
@@ -233,7 +233,7 @@ function Editor() {
                 </div>
               )}
               <input
-                className=" bg-transparent text-[var(--foreground)] focus:outline-none focus:ring-0 border-none w-full text-xl sm:text-3xl placeholder-[var(--foreground)]"
+                className=" bg-transparent text-[var(--foreground)] focus:outline-none focus:ring-0 border-none w-full text-xl sm:text-3xl "
                 placeholder="Tema da nota..."
                 maxLength={32}
                 value={title}
@@ -243,46 +243,46 @@ function Editor() {
           </div>
           <div
             id="nav1"
-            className="bg-[var(--foreground)] bg-opacity-10  text-1xl px-1 sm:px-2 py-1 text-[var(--background)] flex justify-between"
+            className="bg-[var(--container)] bg-opacity-10  text-1xl px-1 sm:px-2 py-1 text-[var(--foreground)] flex justify-between"
           >
             <div className="flex  gap-1">
               <button
-                className="rounded hover:bg-pink-400 transition-colors px-1 sm:px-2 font-bold "
+                className="rounded hover:bg-green-400 transition-colors px-1 sm:px-2 font-bold "
                 onClick={() => insertMarkdown("bold")}
                 title="Negrito (Ctrl+B)"
               >
                 B
               </button>
               <button
-                className="rounded hover:bg-pink-400 transition-colors px-1 sm:px-2 italic"
+                className="rounded hover:bg-green-400 transition-colors px-1 sm:px-2 italic"
                 onClick={() => insertMarkdown("italic")}
                 title="Itálico (Ctrl+I)"
               >
                 I
               </button>
               <button
-                className="rounded hover:bg-pink-400 transition-colors px-1 sm:px-2"
+                className="rounded hover:bg-green-400 transition-colors px-1 sm:px-2"
                 onClick={() => insertMarkdown("link")}
                 title="Link"
               >
                 🔗
               </button>
               <button
-                className="rounded hover:bg-pink-400 transition-colors px-1 sm:px-2"
+                className="rounded hover:bg-green-400 transition-colors px-1 sm:px-2"
                 onClick={() => insertMarkdown("heading1")}
                 title="Título 1"
               >
                 H1
               </button>
               <button
-                className="rounded hover:bg-pink-400 transition-colors px-1 sm:px-2"
+                className="rounded hover:bg-green-400 transition-colors px-1 sm:px-2"
                 onClick={() => insertMarkdown("heading2")}
                 title="Título 2"
               >
                 H2
               </button>
               <button
-                className="rounded hover:bg-pink-400 transition-colors px-1 sm:px-2"
+                className="rounded hover:bg-green-400 transition-colors px-1 sm:px-2"
                 onClick={() => insertMarkdown("code")}
                 title="Código"
               >
@@ -296,7 +296,7 @@ function Editor() {
                   onClick={() =>
                     setShowEmojiPickerContent(!showEmojiPickerContent)
                   }
-                  className=" text-slate-400 hover:text-white hover:bg-slate-700 rounded transition-colors"
+                  className=" text-[var(--foreground)] hover:text-white hover:bg-slate-700 rounded transition-colors"
                   title="Adicionar emoji"
                 >
                   <SmilePlus size={16} />
@@ -317,14 +317,14 @@ function Editor() {
                 )}
               </div>
               <button
-                className=" hidden sm:block rounded hover:bg-pink-400 transition-colors px-1 sm:px-2 "
+                className=" hidden sm:block rounded hover:bg-green-400 transition-colors px-1 sm:px-2 "
                 onClick={() => insertMarkdown("orderedList")}
                 title="Lista Numerada"
               >
                 <ListOrdered size={16} />
               </button>
               <button
-                className="hidden sm:block rounded hover:bg-pink-400 transition-colors px-1 sm:px-2 "
+                className="hidden sm:block rounded hover:bg-green-400 transition-colors px-1 sm:px-2 "
                 onClick={() => insertMarkdown("unorderedList")}
                 title="Lista com Marcadores"
               >
@@ -349,18 +349,18 @@ function Editor() {
           </div>
           <div
             id="nav2-smallscreen"
-            className="bg-[var(--foreground)]  text-1xl px-1 sm:px-2 py-1 text-[var(--background)] flex  justify-between sm:hidden"
+            className="bg-[var(--container)]  text-1xl px-1 sm:px-2 py-1 text-[var(--foreground)] flex  justify-between sm:hidden"
           >
             <div className="sm:flex sm:space-x-2 flex">
               <button
-                className="rounded hover:bg-pink-400 transition-colors px-1 sm:px-2"
+                className="rounded hover:bg-green-400 transition-colors px-1 sm:px-2"
                 onClick={() => insertMarkdown("orderedList")}
                 title="Lista Numerada"
               >
                 <ListOrdered size={20} />
               </button>
               <button
-                className="rounded hover:bg-pink-400 transition-colors px-1 sm:px-2"
+                className="rounded hover:bg-green-400 transition-colors px-1 sm:px-2"
                 onClick={() => insertMarkdown("unorderedList")}
                 title="Lista com Marcadores"
               >
@@ -369,11 +369,11 @@ function Editor() {
             </div>
           </div>
 
-          <div className="flex-grow overflow-auto">
+          <div className="flex-grow overflow-auto scrollbar">
             {!isPreviewMode ? (
               <div className="h-full">
                 <textarea
-                  className="p-4  sm:p-6 w-full bg-transparent text-[var(--foreground)] resize-none focus:outline-none min-h-[370px] h-full text-base sm:text-lg placeholder-[var(--foreground)] overflow-auto"
+                  className="p-4 sm:p-6 w-full bg-transparent text-[var(--foreground)] resize-none focus:outline-none min-h-[370px] h-full text-base sm:text-lg  overflow-auto"
                   placeholder="Escreva sua nota aqui..."
                   maxLength={15000}
                   value={content}
@@ -382,7 +382,7 @@ function Editor() {
                 />
               </div>
             ) : (
-              <div className="markdown-content p-4 sm:p-6 w-full bg-transparent text-[var(--foreground)] min-h-[370px] h-full text-base sm:text-lg overflow-auto">
+              <div className="markdown-content  p-4 sm:p-6 w-full bg-transparent text-[var(--foreground)] min-h-[370px] h-full text-base sm:text-lg overflow-auto">
                 {content ? (
                   <ReactMarkdown remarkPlugins={[remarkGfm]}>
                     {content}
@@ -396,7 +396,7 @@ function Editor() {
             )}
           </div>
 
-          <div className="flex flex-wrap gap-1 sm:gap-2 p-2 sm:p-4 overflow-y-auto max-h-28">
+          <div className="flex flex-wrap gap-1 sm:gap-2 p-2 sm:p-4 overflow-y-auto max-h-28 scrollbar">
             {[
               "tarefa",
               "meta",
@@ -434,6 +434,101 @@ function Editor() {
               "aprendizado",
               "networking",
               "mentoria",
+              //mais tags kkk
+              "agenda",
+              "planejamento",
+              "rotina",
+              "checklist",
+              "prioridade",
+              "desenvolvimento",
+              "foco",
+              "objetivo",
+              "listagem",
+              "emoções",
+              "sentimentos",
+              "memórias",
+              "autoconhecimento",
+              "hábitos",
+              "conquista",
+              "autocuidado",
+              "autoestima",
+              "motivação",
+              "freelance",
+              "negócio",
+              "empreendedorismo",
+              "marketing",
+              "vendas",
+              "liderança",
+              "gestão",
+              "investimentos",
+              "salário",
+              "currículo",
+              "pesquisa",
+              "resumo",
+              "notas",
+              "tese",
+              "trabalho acadêmico",
+              "análise",
+              "documentação",
+              "referências",
+              "testes",
+              "esboço",
+              "prototipo",
+              "design",
+              "arte",
+              "poesia",
+              "contos",
+              "história",
+              "fotografia",
+              "inspiração visual",
+              "exercício",
+              "dieta",
+              "meditação",
+              "sono",
+              "terapia",
+              "autodisciplina",
+              "saúde mental",
+              "fitness",
+              "nutrição",
+              "hábitos saudáveis",
+              "programação",
+              "dev",
+              "sistema",
+              "software",
+              "hardware",
+              "inteligência artificial",
+              "cloud",
+              "segurança",
+              "automatização",
+              "série",
+              "jogo",
+              "hobby",
+              "coleção",
+              "evento cultural",
+              "animação",
+              "teatro",
+              "documentário",
+              "recomendações",
+              "listas",
+              "roteiro",
+              "destino",
+              "passeio",
+              "avaliação",
+              "cultura",
+              "dicas de viagem",
+              "mochilão",
+              "aventura",
+              "natureza",
+              "amizade",
+              "família",
+              "relacionamentos",
+              "conversa",
+              "debate",
+              "opinião",
+              "tendência",
+              "influência",
+              "comunidade",
+              "voluntariado",
             ].map((tag) => (
               <button
                 key={tag}
@@ -451,7 +546,7 @@ function Editor() {
 
           <div
             id="footer"
-            className="flex justify-between items-center p-3 sm:p-4 bg-[var(--foreground)] mt-auto"
+            className="flex justify-between items-center p-3 sm:p-4 bg-[var(--container)] mt-auto"
           >
             <div className="text-xs sm:text-sm text-slate-400">
               {content.length} / 15000
@@ -461,7 +556,7 @@ function Editor() {
               className={`flex items-center gap-1 sm:gap-2 px-3 py-2 sm:px-5 sm:py-3 rounded-lg text-sm sm:text-base font-medium transition-all ${
                 saving
                   ? "bg-slate-700 text-slate-300"
-                  : "bg-[var(--background)] hover:bg-blue-500 text-[var(--foreground)]"
+                  : "bg-[var(--background)] hover:bg-green-500 text-[var(--foreground)]"
               }`}
               onClick={saveNote}
               disabled={saving || (!title.trim() && !content.trim())}

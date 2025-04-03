@@ -2,12 +2,12 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
-  --container: #ffffff;
+  --foreground: #010409;
+  --container: #f6f8fa;
   --accent-color: #3b82f6;
   --border-color: #e2e8f0;
   --code-bg: #f1f5f9;
-  --blockquote-color: #64748b;
+  --blockquote-color: #2275ea;
   --table-header-bg: #f8fafc;
   --table-border: #e2e8f0;
   --selection-bg: rgba(59, 130, 246, 0.2);
@@ -18,7 +18,9 @@
   --input-bg: rgba(255, 255, 255, 0.9);
   --heading-font:
     system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --body-font: Georgia, "Times New Roman", Times, serif;
+  --body-font:
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans",
+    Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
   --mono-font:
     ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
     "Courier New", monospace;
@@ -28,9 +30,9 @@
 }
 
 .dark {
-  --background: #000000;
+  --background: #0d1117;
   --foreground: #ffffff;
-  --container: #000000;
+  --container: #010409;
   --accent-color: #60a5fa;
   --border-color: #334155;
   --code-bg: #2e3a4b;
@@ -41,7 +43,6 @@
   --selection-text: #ffffff;
   --card-bg: rgba(15, 23, 42, 0.7);
   --card-border: #334155;
-  --sidebar-bg: #0f172a;
   --input-bg: rgba(15, 23, 42, 0.8);
 }
 
@@ -57,10 +58,14 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+.ghub {
+  background-color: #010409;
+}
+
 /* Remove blue outline from text selections */
 ::selection {
-  background-color: rgba(0, 0, 0, 0.1);
-  color: var(--foreground);
+  background-color: var(--selection-bg);
+  color: var(--selection-text);
 }
 
 /* Remove focus outlines from all elements */
@@ -144,8 +149,8 @@ select:focus {
 .markdown-content h6:hover::before {
   content: "#";
   position: absolute;
-  left: -1.5rem;
-  color: var(--accent-color);
+  left: -1rem;
+  color: var(--foreground);
   opacity: 0.8;
   font-weight: normal;
 }
@@ -501,4 +506,9 @@ button:focus {
 
 .markdown-content {
   animation: fade-in 0.3s ease-in-out;
+}
+
+.scrollbar {
+  scrollbar-width: none;
+  scrollbar-color: var(--container) var(--background);
 }

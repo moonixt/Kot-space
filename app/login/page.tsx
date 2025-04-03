@@ -92,9 +92,9 @@ function LoginForm() {
           className="mx-auto mb-6 rounded-md"
         />
       </div>
-      <div className="bg-black backdrop-blur-sm rounded-xl overflow-hidden border border-slate-700 shadow-xl">
+      <div className="bg-[var(--background)] backdrop-blur-sm rounded-xl overflow-hidden border border-slate-700 shadow-xl">
         <div className="p-8">
-          <h2 className="text-2xl font-bold text-white mb-6">
+          <h2 className="text-2xl font-bold text-[var(--foreground)] mb-6">
             Entrar no Fair-Note 😺
           </h2>
 
@@ -106,8 +106,8 @@ function LoginForm() {
             className={`w-full py-3 mb-6 rounded-lg font-medium flex items-center justify-center ${
               googleLoading
                 ? "bg-slate-700 cursor-not-allowed"
-                : "bg-white hover:bg-gray-100"
-            } text-slate-800 transition-colors`}
+                : "bg-[var(--foreground)] "
+            } text-[var(--background)] transition-colors`}
           >
             {googleLoading ? (
               <div className="w-5 h-5 border-2 border-slate-500 border-t-transparent rounded-full animate-spin mr-2"></div>
@@ -136,13 +136,18 @@ function LoginForm() {
 
           <div className="relative flex items-center my-6">
             <div className="flex-grow border-t border-slate-700"></div>
-            <span className="flex-shrink mx-4 text-slate-500 text-sm">ou</span>
+            <span className="flex-shrink mx-4 text-[var(--foreground)] text-sm">
+              ou
+            </span>
             <div className="flex-grow border-t border-slate-700"></div>
           </div>
 
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
-              <label className="block text-slate-300 mb-2" htmlFor="email">
+              <label
+                className="block text-[var(--foreground)] mb-2"
+                htmlFor="email"
+              >
                 Email
               </label>
               <input
@@ -151,12 +156,15 @@ function LoginForm() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full px-4 py-2 bg-slate-900/50 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white"
+                className="w-full px-4 py-2 bg-[var(--container)] border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-[var(--foreground)]"
               />
             </div>
 
             <div className="mb-6">
-              <label className="block text-slate-300 mb-2" htmlFor="password">
+              <label
+                className="block text-[var(--foreground)] mb-2"
+                htmlFor="password"
+              >
                 Senha
               </label>
               <input
@@ -165,7 +173,7 @@ function LoginForm() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full px-4 py-2 bg-slate-900/50 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white"
+                className="w-full px-4 py-2 bg-[var(--container)] border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-[var(--foreground)]"
               />
             </div>
 
@@ -174,15 +182,15 @@ function LoginForm() {
               disabled={loading}
               className={`w-full py-3 rounded-lg font-medium ${
                 loading
-                  ? "bg-blue-600/50 cursor-not-allowed"
-                  : "bg-blue-600 hover:bg-blue-700"
-              } text-white transition-colors`}
+                  ? "bg-[var(--foreground)] cursor-not-allowed"
+                  : "bg-[var(--foreground)] "
+              } text-[var(--background)] transition-colors`}
             >
               {loading ? "Entrando..." : "Entrar com Email"}
             </button>
           </form>
 
-          <div className="mt-6 text-center text-slate-400">
+          <div className="mt-6 text-center text-[var(--foreground)]">
             Não tem uma conta?{" "}
             <Link href="/signup" className="text-blue-400 hover:underline">
               Criar conta

@@ -7,12 +7,12 @@ export default function ThemeToggle() {
   const { theme, setTheme } = useTheme();
 
   return (
-    <div className="flex items-center space-x-2 p-2 rounded-lg bg-[var(--card-bg)] border border-slate-500/30">
+    <div className="flex items-center space-x-2 p-2 rounded-lg bg-[var(--background)] border border-slate-500/30">
       <button
         onClick={() => setTheme("light")}
         className={`p-2 rounded-md transition-colors ${
           theme === "light"
-            ? "bg-[var(--accent-color)] text-white"
+            ? "bg-green-500 text-white"
             : "hover:bg-[var(--card-border)] "
         }`}
         aria-label="Light mode"
@@ -24,7 +24,7 @@ export default function ThemeToggle() {
         onClick={() => setTheme("dark")}
         className={`p-2 rounded-md transition-colors ${
           theme === "dark"
-            ? "bg-[var(--accent-color)] text-white"
+            ? "bg-green-500 text-white"
             : "hover:bg-[var(--card-border)] "
         }`}
         aria-label="Dark mode"
@@ -36,7 +36,7 @@ export default function ThemeToggle() {
         onClick={() => setTheme("system")}
         className={`p-2 rounded-md transition-colors ${
           theme === "system"
-            ? "bg-[var(--accent-color)] text-white"
+            ? "bg-green-500 text-white"
             : "hover:bg-[var(--card-border)] "
         }`}
         aria-label="System preference"
