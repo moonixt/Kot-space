@@ -146,15 +146,15 @@ export default function NotePage() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen bg-gradient-to-br from-slate-950 to-slate-900">
-        <div className="w-12 h-12 border-4 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
+      <div className="flex justify-center items-center h-screen text-[var(--foreground)]">
+        <div className="w-12 h-12 border-4 border-text-[var(--foreground)] border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
   }
 
   if (!note) {
     return (
-      <div className="flex flex-col justify-center items-center h-screen bg-gradient-to-br from-slate-950 to-slate-900 text-white">
+      <div className="flex flex-col justify-center items-center h-screen bg-gradient-to-br from-slate-950 to-slate-900 text-[var(--foreground)]">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           className="h-16 w-16 text-slate-600 mb-4"
@@ -196,17 +196,20 @@ export default function NotePage() {
 
   return (
     <ProtectedRoute>
-      <div className="min-h-screen bg-gradient-to-br from-slate-950 to-slate-900 text-white p-4 md:p-8">
-        <div className="max-w-3xl mx-auto">
+      <div className="min-h-screen bg-[var(--container)] text-[var(--foreground)] p-4 md:p-8">
+        <div className=" ">
           <nav className="flex items-center justify-between mb-8">
             <Link
               href="/"
-              className="flex items-center gap-2 text-slate-300 hover:text-white transition-colors"
+              className="flex items-center gap-2 text-[var(--foreground)]  "
             >
               <ArrowLeft size={18} />
-              <span>Voltar para notas 🐈</span>
+              <span className="text-[var(--foreground)]">
+                Voltar para notas 🐈
+              </span>
             </Link>
-
+          </nav>
+          <nav className="flex items-center justify-end mb-4">
             <div className="flex items-center gap-2">
               {editMode ? (
                 <>
@@ -232,7 +235,7 @@ export default function NotePage() {
                 </>
               ) : (
                 <button
-                  className="p-2 rounded-full hover:bg-slate-800 transition-colors"
+                  className="rounded-full hover:bg-slate-800 transition-colors"
                   title="Editar nota"
                   onClick={() => setEditMode(true)}
                 >
@@ -242,7 +245,7 @@ export default function NotePage() {
             </div>
           </nav>
 
-          <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl overflow-hidden border border-slate-700 shadow-xl">
+          <div className=" bg-[var(--background)] backdrop-blur-sm rounded-xl overflow-hidden border border-slate-700 shadow-xl">
             <div className="p-6 md:p-8">
               {editMode ? (
                 <>
@@ -254,13 +257,13 @@ export default function NotePage() {
                     className="w-full text-3xl md:text-4xl font-bold mb-6 bg-transparent border-b border-slate-700 focus:border-blue-500 outline-none pb-2 transition-colors"
                   />
 
-                  <div className="flex items-center gap-2 text-sm text-slate-400 mb-6">
+                  <div className="flex items-center gap-2 text-sm text-[var(--foreground)] mb-6">
                     <Calendar size={14} />
                     <span>{formattedDate}</span>
                   </div>
 
                   {editMode && (
-                    <div className="mb-4 text-xs text-slate-400 flex items-center gap-2 bg-slate-800/50 p-2 rounded">
+                    <div className="mb-4 text-xs text-[var(--foreground)] flex items-center gap-2 bg-[var(--foreground)] p-2 rounded">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         className="h-4 w-4"
@@ -275,7 +278,7 @@ export default function NotePage() {
                           d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                         />
                       </svg>
-                      <span>
+                      <span className="text-[var(--background)] ">
                         Esta nota suporta formatação Markdown. Use # para
                         títulos, ** para negrito, * para itálico, etc.
                       </span>
@@ -286,7 +289,7 @@ export default function NotePage() {
                     value={editContent}
                     onChange={(e) => setEditContent(e.target.value)}
                     placeholder="Conteúdo da nota (suporta formatação Markdown)"
-                    className="w-full h-64 md:h-96 text-lg md:text-xl bg-transparent focus:outline-none resize-none"
+                    className="w-full min-h-[300px]  text-lg md:text-xl bg-transparent focus:outline-none "
                   />
                 </>
               ) : (
@@ -295,25 +298,27 @@ export default function NotePage() {
                     {note.title || "Sem título"}
                   </h1>
 
-                  <div className="flex items-center gap-2 text-sm text-slate-400 mb-8 border-b border-slate-700 pb-6">
+                  <div className="flex items-center gap-2 text-sm text-[var(--foreground)] mb-8 border-b border-slate-700 pb-6">
                     <Calendar size={14} />
                     <span>{formattedDate}</span>
                   </div>
 
-                  <div className="prose prose-invert prose-lg w-full break-words text-lg md:text-xl text-slate-200 leading-relaxed markdown-content">
-                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                      {note.content}
-                    </ReactMarkdown>
+                  <div className="h-full  overflow-auto pr-2">
+                    <div className="prose prose-invert prose-lg w-full break-words text-lg md:text-xl text-[var(--foreground)] leading-relaxed markdown-content">
+                      <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                        {note.content}
+                      </ReactMarkdown>
+                    </div>
                   </div>
                 </>
               )}
             </div>
 
             <div className="border-t border-slate-700 p-6 flex justify-between items-center">
-              <div className="text-sm text-slate-400">
+              <div className="text-sm text-[var(--foreground)]">
                 ID: {note.id.slice(0, 8)}...
               </div>
-              <div className="text-sm text-slate-400">
+              <div className="text-sm text-[var(--foreground)]">
                 #
                 {note.tags
                   ? note.tags.replace(/[\[\]"]/g, "").replace(/,/g, " #")
