@@ -16,6 +16,7 @@ import {
 import { useRouter } from "next/navigation";
 import { useAuth } from "../../context/AuthContext";
 import ThemeToggle from "./ThemeToggle";
+import Image from "next/image";
 
 function Sidebox() {
   interface Note {
@@ -230,7 +231,7 @@ function Sidebox() {
                       if (error) {
                         setError(error.message);
                       } else {
-                        window.location.reload();
+                        router.push("/login");
                       }
                     } catch (err: unknown) {
                       if (err instanceof Error) {
@@ -271,6 +272,18 @@ function Sidebox() {
             <p className="text-sm text-[var(--foreground)] mb-3">Theme</p>
             <ThemeToggle />
           </div>
+          {user && (
+            <div className="px-8 py-4 bg-[var(--container)] text-[var(--foreground)] flex justify-between items-center">
+              <p> {user ? user.email : ""}</p>
+              <Image
+                src="/icons/icon-512x512.png"
+                alt="Avatar"
+                width={40}
+                height={40}
+                className="rounded-full border[var(--container)] "
+              />
+            </div>
+          )}
         </div>
       </aside>
     </div>
