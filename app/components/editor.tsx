@@ -332,14 +332,14 @@ function Editor() {
               </button>
 
               <button
-                className={`rounded sm:px-3 sm:py-1 py-1 transition-colors flex items-center sm:gap-1 text-[var(--foreground)] ${isPreviewMode ? "bg-[var(--background)]" : "bg-green-500 hover:bg-green-400"}`}
+                className={`rounded sm:px-3 sm:py-1 py-1 transition-colors flex items-center sm:gap-1 text-[var(--foreground)] ${isPreviewMode ? "bg-[var(--background)]" : "bg-[var(--button-bg)] hover:bg-[var(--hover-color)]"}`}
                 onClick={() => setIsPreviewMode(false)}
                 disabled={!isPreviewMode}
               >
                 <Edit size={16} /> Editar
               </button>
               <button
-                className={`rounded sm:px-3 sm:py-1 px-1 transition-colors flex items-center sm:gap-1 ml-2 text-[var(--foreground)] ${!isPreviewMode ? "bg-[var(--background)]" : "bg-green-500 hover:bg-green-400"}`}
+                className={`rounded sm:px-3 sm:py-1 px-1 transition-colors flex items-center sm:gap-1 ml-2 text-[var(--foreground)] ${!isPreviewMode ? "bg-[var(--background)]" : "bg-[var(--button-bg)] hover:bg-[var(--hover-color)]"}`}
                 onClick={() => setIsPreviewMode(true)}
                 disabled={isPreviewMode}
               >
@@ -555,7 +555,7 @@ function Editor() {
               className={`flex items-center gap-1 sm:gap-2 px-3 py-2 sm:px-5 sm:py-3 rounded-lg text-sm sm:text-base font-medium transition-all ${
                 saving
                   ? "bg-slate-700 text-slate-300"
-                  : "bg-[var(--background)] hover:bg-green-500 text-[var(--foreground)]"
+                  : "bg-[var(--button-bg)] hover:bg-[var(--hover-color)] text-[var(--foreground)]"
               }`}
               onClick={saveNote}
               disabled={saving || (!title.trim() && !content.trim())}

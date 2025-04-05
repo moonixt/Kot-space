@@ -1,7 +1,7 @@
 "use client";
 
 import { useTheme } from "../../context/ThemeContext";
-import { Sun, Moon, Monitor } from "lucide-react";
+import { Sun, Moon, Monitor, Gem, Rabbit } from "lucide-react";
 
 export default function ThemeToggle() {
   const { theme, setTheme } = useTheme();
@@ -12,7 +12,7 @@ export default function ThemeToggle() {
         onClick={() => setTheme("light")}
         className={`p-2 rounded-md transition-colors ${
           theme === "light"
-            ? "bg-green-500 text-white"
+            ? "bg-blue-500 text-white"
             : "hover:bg-[var(--card-border)] "
         }`}
         aria-label="Light mode"
@@ -30,6 +30,30 @@ export default function ThemeToggle() {
         aria-label="Dark mode"
       >
         <Moon size={18} />
+      </button>
+
+      <button
+        onClick={() => setTheme("purple")}
+        className={`p-2 rounded-md transition-colors ${
+          theme === "purple"
+            ? "bg-purple-500 text-white"
+            : "hover:bg-[var(--card-border)] "
+        }`}
+        aria-label="Purple mode"
+      >
+        <Gem size={18} />
+      </button>
+
+      <button
+        onClick={() => setTheme("yellow")}
+        className={`p-2 rounded-md transition-colors ${
+          theme === "yellow"
+            ? "bg-yellow-300 text-white"
+            : "hover:bg-[var(--card-border)] "
+        }`}
+        aria-label="Yellow mode"
+      >
+        <Rabbit size={18} />
       </button>
 
       <button

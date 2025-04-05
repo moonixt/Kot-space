@@ -2,12 +2,12 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 
-type Theme = "dark" | "light" | "system";
+type Theme = "dark" | "light" | "purple" | "yellow" | "system";
 
 interface ThemeContextType {
   theme: Theme;
   setTheme: (theme: Theme) => void;
-  resolvedTheme: "dark" | "light";
+  resolvedTheme: "dark" | "light" | "purple" | "yellow";
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -15,7 +15,9 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   // Inicializar com a preferência salva ou "system"
   const [theme, setTheme] = useState<Theme>("system");
-  const [resolvedTheme, setResolvedTheme] = useState<"dark" | "light">("dark");
+  const [resolvedTheme, setResolvedTheme] = useState<
+    "dark" | "light" | "purple" | "yellow"
+  >("dark");
 
   useEffect(() => {
     // Carregar tema das preferências do usuário
@@ -40,13 +42,23 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       setResolvedTheme(systemTheme);
 
       // Adicionar a classe ao elemento html
-      document.documentElement.classList.remove("light", "dark");
+      document.documentElement.classList.remove(
+        "light",
+        "dark",
+        "purple",
+        "yellow",
+      );
       document.documentElement.classList.add(systemTheme);
     } else {
       setResolvedTheme(theme);
 
       // Adicionar a classe ao elemento html
-      document.documentElement.classList.remove("light", "dark");
+      document.documentElement.classList.remove(
+        "light",
+        "dark",
+        "purple",
+        "yellow",
+      );
       document.documentElement.classList.add(theme);
     }
   }, [theme]);
@@ -59,7 +71,12 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       if (theme === "system") {
         const newTheme = mediaQuery.matches ? "dark" : "light";
         setResolvedTheme(newTheme);
-        document.documentElement.classList.remove("light", "dark");
+        document.documentElement.classList.remove(
+          "light",
+          "dark",
+          "purple",
+          "yellow",
+        );
         document.documentElement.classList.add(newTheme);
       }
     };

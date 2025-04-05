@@ -10,6 +10,7 @@
     "format": "prettier --write ."
   },
   "dependencies": {
+    "@radix-ui/react-avatar": "^1.1.3",
     "@supabase/auth-helpers-nextjs": "^0.10.0",
     "@supabase/supabase-js": "^2.49.3",
     "emoji-picker-react": "^4.12.2",
@@ -21,6 +22,7 @@
     "react-dom": "^19.0.0",
     "react-markdown": "^10.1.0",
     "react-syntax-highlighter": "^5.8.0",
+    "react-type-animation": "^3.2.0",
     "remark-gfm": "^4.0.1"
   },
   "devDependencies": {

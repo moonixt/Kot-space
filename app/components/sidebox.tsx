@@ -4,19 +4,19 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../../lib/supabase";
 import Link from "next/link";
+import ClientLayout from "./ClientLayout";
 import {
   PlusCircle,
   Search,
-  StickyNote,
-  File,
   Clock,
   Menu,
   X,
+  BookOpen,
+  BookOpenText,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../../context/AuthContext";
 import ThemeToggle from "./ThemeToggle";
-import Image from "next/image";
 
 function Sidebox() {
   interface Note {
@@ -34,7 +34,6 @@ function Sidebox() {
   const { user } = useAuth();
   const [, setError] = useState<string | null>(null);
 
-  // Mova a função fetchNotes para fora do useEffect
   const fetchNotes = async () => {
     setLoading(true);
     try {
@@ -110,7 +109,7 @@ function Sidebox() {
 
       {/* Sidebar */}
       <aside
-        className={`fixed inset-y-0 right-0 w-72 bg-[var(--background)] text-green-300 shadow-xl transition-transform duration-400 ease-in-out z-40 
+        className={`fixed inset-y-0 right-0 w-72 bg-[var(--background)] text-[var(--text-color)] shadow-xl transition-transform duration-400 ease-in-out z-40 
         ${isMobileOpen ? "translate-x-0" : "translate-x-full md:translate-x-0"}`}
       >
         <div className="flex flex-col h-full">
@@ -118,11 +117,19 @@ function Sidebox() {
           <div className="p-4 border-b border-slate-700">
             <div className="flex items-center justify-between mb-4">
               <h1 className="text-xl font-bold flex items-center gap-2">
-                <StickyNote size={20} className="text-[var(--foreground)]" />
+                <BookOpen size={20} className="text-[var(--button-bg)]" />
                 {user ? (
-                  <span className="text-[var(--foreground)]">Fair-note 🐍</span>
+                  <Link href={"/dashboard"}>
+                    <span
+                      className="text-[var(--foreground)] hover:bg-[var(--container)] hover:rounded-lg hover:"
+                      onClick={() => setIsMobileOpen(false)}
+                    >
+                      Fair-note{" "}
+                    </span>
+                    {/* {localStorage.getItem("theme") === "purple" ? "🐧" : "🐍"} */}
+                  </Link>
                 ) : (
-                  <span className="text-[var(--foreground)]">Fair-note 🐍</span>
+                  <span className="text-[var(--foreground)]">Fair-note</span>
                 )}
               </h1>
 
@@ -166,7 +173,7 @@ function Sidebox() {
                 >
                   <div className="p-3 rounded-lg hover:bg-[var(--container)] cursor-pointer transition-colors border border-transparent hover:border-slate-700">
                     <div className="flex items-start space-x-3">
-                      <File
+                      <BookOpenText
                         size={16}
                         className="mt-1 text-[var(--foreground)]"
                       />
@@ -275,13 +282,9 @@ function Sidebox() {
           {user && (
             <div className="px-8 py-4 bg-[var(--container)] text-[var(--foreground)] flex justify-between items-center">
               <p> {user ? user.email : ""}</p>
-              <Image
-                src="/icons/icon-512x512.png"
-                alt="Avatar"
-                width={40}
-                height={40}
-                className="rounded-full border[var(--container)] "
-              />
+              <div>
+                <ClientLayout />
+              </div>
             </div>
           )}
         </div>
