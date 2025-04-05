@@ -3,6 +3,9 @@
 :root {
   --background: #ffffff;
   --foreground: #010409;
+  --text-color: oklch(70.7% 0.165 254.624);
+  --button-bg: oklch(62.3% 0.214 259.815);
+  --hover-color: oklch(80.9% 0.105 251.813);
   --container: #f6f8fa;
   --accent-color: #3b82f6;
   --border-color: #e2e8f0;
@@ -32,6 +35,49 @@
 .dark {
   --background: #0d1117;
   --foreground: #ffffff;
+  --text-color: oklch(0.871 0.15 154.449);
+  --button-bg: oklch(72.3% 0.219 149.579);
+  --hover-color: oklch(79.2% 0.209 151.711);
+  --container: #010409;
+  --accent-color: #60a5fa;
+  --border-color: #334155;
+  --code-bg: #2e3a4b;
+  --blockquote-color: #94a3b8;
+  --table-header-bg: rgba(30, 41, 59, 0.7);
+  --table-border: #334155;
+  --selection-bg: rgba(59, 130, 246, 0.3);
+  --selection-text: #ffffff;
+  --card-bg: rgba(15, 23, 42, 0.7);
+  --card-border: #334155;
+  --input-bg: rgba(15, 23, 42, 0.8);
+}
+
+.purple {
+  --background: #0d1117;
+  --foreground: #ffffff;
+  --text-color: #a78bfa;
+  --button-bg: #8b5cf6;
+  --hover-color: #a78bfa;
+  --container: #010409;
+  --accent-color: #60a5fa;
+  --border-color: #334155;
+  --code-bg: #2e3a4b;
+  --blockquote-color: #94a3b8;
+  --table-header-bg: rgba(30, 41, 59, 0.7);
+  --table-border: #334155;
+  --selection-bg: rgba(59, 130, 246, 0.3);
+  --selection-text: #ffffff;
+  --card-bg: rgba(15, 23, 42, 0.7);
+  --card-border: #334155;
+  --input-bg: rgba(15, 23, 42, 0.8);
+}
+
+.yellow {
+  --background: #0d1117;
+  --foreground: #ffffff;
+  --text-color: oklch(90.5% 0.182 98.111);
+  --button-bg: oklch(90.5% 0.182 98.111);
+  --hover-color: oklch(85.2% 0.199 91.936);
   --container: #010409;
   --accent-color: #60a5fa;
   --border-color: #334155;
