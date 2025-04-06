@@ -95,7 +95,7 @@ function LoginForm() {
       <div className="bg-[var(--background)] backdrop-blur-sm rounded-xl overflow-hidden border border-slate-700 shadow-xl">
         <div className="p-8">
           <h2 className="text-2xl font-bold text-[var(--foreground)] mb-6">
-            Entrar no Fair-note 
+            Entrar no Fair-note
           </h2>
 
           {/* Botão de login com Google */}

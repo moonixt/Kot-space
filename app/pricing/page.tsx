@@ -26,9 +26,11 @@ export default function PricingPage() {
     }
 
     // Criar URL com parâmetros de query
-    const checkoutUrl = new URL("https://buy.stripe.com/test_eVaaFG14ugrtbSMaEE");
+    const checkoutUrl = new URL(
+      "https://buy.stripe.com/test_eVaaFG14ugrtbSMaEE",
+    );
     checkoutUrl.searchParams.append("client_reference_id", user.id);
-    
+
     // Abrir em nova aba
     window.open(checkoutUrl.toString(), "_blank");
   };
@@ -48,7 +50,9 @@ export default function PricingPage() {
         <div className="bg-[var(--container)] rounded-2xl shadow-lg overflow-hidden mb-8">
           <div className="bg-[var(--button-bg)] px-6 py-4">
             <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-bold text-[var(--foreground)]">Plano PRO</h2>
+              <h2 className="text-2xl font-bold text-[var(--foreground)]">
+                Plano PRO
+              </h2>
               <div className="bg-[var(--hover-color)] text-[var(--foreground)] px-3 py-1 text-sm font-medium rounded-full">
                 Mais Popular
               </div>
@@ -86,7 +90,9 @@ export default function PricingPage() {
                     >
                       <polyline points="20 6 9 17 4 12"></polyline>
                     </svg>
-                    <span className="ml-3 text-[var(--foreground)]">{feature}</span>
+                    <span className="ml-3 text-[var(--foreground)]">
+                      {feature}
+                    </span>
                   </li>
                 ))}
               </ul>
@@ -97,7 +103,9 @@ export default function PricingPage() {
         <div className="bg-[var(--container)] rounded-2xl shadow-lg overflow-hidden">
           <div className="p-6">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-bold text-[var(--foreground)]">Resumo do pedido</h3>
+              <h3 className="text-xl font-bold text-[var(--foreground)]">
+                Resumo do pedido
+              </h3>
               <div className="flex items-center text-green-600">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -111,7 +119,14 @@ export default function PricingPage() {
                   strokeLinejoin="round"
                   className="h-4 w-4 mr-1"
                 >
-                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                  <rect
+                    x="3"
+                    y="11"
+                    width="18"
+                    height="11"
+                    rx="2"
+                    ry="2"
+                  ></rect>
                   <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                 </svg>
                 <span className="text-sm font-medium">Pagamento seguro</span>
@@ -119,17 +134,25 @@ export default function PricingPage() {
             </div>
 
             <div className="flex justify-between py-4 border-t border-[var(--border-color)]">
-              <span className="text-[var(--foreground)]">Plano {planDetails.name}</span>
-              <span className="font-medium text-[var(--foreground)]">R$ {planDetails.price}</span>
+              <span className="text-[var(--foreground)]">
+                Plano {planDetails.name}
+              </span>
+              <span className="font-medium text-[var(--foreground)]">
+                R$ {planDetails.price}
+              </span>
             </div>
 
             <div className="flex justify-between py-4 border-t border-b border-[var(--border-color)]">
               <span className="text-[var(--foreground)]">Impostos</span>
-              <span className="font-medium text-[var(--foreground)]">Inclusos</span>
+              <span className="font-medium text-[var(--foreground)]">
+                Inclusos
+              </span>
             </div>
 
             <div className="flex justify-between py-4 mt-2">
-              <span className="text-lg font-bold text-[var(--foreground)]">Total</span>
+              <span className="text-lg font-bold text-[var(--foreground)]">
+                Total
+              </span>
               <span className="text-lg font-bold text-[var(--foreground)]">
                 R$ {planDetails.price}/{planDetails.period}
               </span>
