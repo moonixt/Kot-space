@@ -19,9 +19,9 @@
   --card-border: #000000;
   --sidebar-bg: #f8fafc;
   --input-bg: rgba(255, 255, 255, 0.9);
-  --heading-font:
+  --heading-font: 
     system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --body-font:
+  --body-font:Georgia;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans",
     Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
   --mono-font:

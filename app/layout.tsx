@@ -5,6 +5,8 @@ import Sidebox from "./components/sidebox";
 import { AuthProvider } from "../context/AuthContext";
 import { ThemeProvider } from "../context/ThemeContext";
 import ServiceWorkerRegistration from "./components/ServiceWorkerRegistration";
+import Script from "next/script";
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -54,6 +56,10 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[var(--background)] text-[var(--foreground)]`}
       >
+        <Script
+          src="https://pay.google.com/gp/p/js/pay.js"
+          strategy="afterInteractive" // Carrega o script após a interação inicial
+        />
         <ServiceWorkerRegistration />
         <AuthProvider>
           <ThemeProvider>
