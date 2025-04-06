@@ -12,6 +12,7 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const [isTrialActive, setIsTrialActive] = useState(false);
 
   useEffect(() => {
+    //Consertado BUG the loading state infinito
     if (!isLoading && !user) {
       console.log("Usuário não autenticado, redirecionando para login");
       router.push("/login");
