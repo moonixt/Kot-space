@@ -17,7 +17,7 @@ self.addEventListener("install", (event) => {
 // Função para verificar se há conexão com a internet
 const isOnline = () => {
   return fetch("/online-check.txt?rand=" + Math.random())
-    .then(response => {
+    .then((response) => {
       return response.ok;
     })
     .catch(() => {
@@ -28,15 +28,19 @@ const isOnline = () => {
 // Alterando para estratégia "network-first" com verificação de conexão
 self.addEventListener("fetch", (event) => {
   event.respondWith(
-    isOnline().then(online => {
+    isOnline().then((online) => {
       // Se estiver online, tenta buscar da rede primeiro
       if (online) {
         return fetch(event.request)
-          .then(response => {
+          .then((response) => {
             // Cache a resposta nova para uso futuro
-            if (response && response.status === 200 && response.type === "basic") {
+            if (
+              response &&
+              response.status === 200 &&
+              response.type === "basic"
+            ) {
               const responseToCache = response.clone();
-              caches.open(CACHE_NAME).then(cache => {
+              caches.open(CACHE_NAME).then((cache) => {
                 cache.put(event.request, responseToCache);
               });
             }
@@ -48,11 +52,11 @@ self.addEventListener("fetch", (event) => {
           });
       } else {
         // Se estiver offline, vai direto para o cache
-        return caches.match(event.request).then(response => {
+        return caches.match(event.request).then((response) => {
           return response || fetch(event.request);
         });
       }
-    })
+    }),
   );
 });
 

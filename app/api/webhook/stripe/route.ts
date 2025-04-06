@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { supabase } from "../../../../lib/supabase";
+import { supabaseAdmin } from "../../../../lib/supabase"; // Import the admin client
 import Stripe from "stripe";
 
 // Improved Stripe initialization with better error handling
@@ -67,21 +67,54 @@ export async function POST(request: Request) {
       const subscriptionEndDate = new Date();
       subscriptionEndDate.setMonth(subscriptionEndDate.getMonth() + 1);
 
-      // Atualizar o metadata do usuário no Supabase
-      const { error } = await supabase.from("user_metadata").upsert(
-        {
+      // Em vez de upsert, tente uma verificação + update/insert
+
+      // Verificar se o registro existe
+      const { data: existingUser, error: checkError } = await supabaseAdmin
+        .from("user_metadata")
+        .select("id")
+        .eq("id", userId)
+        .single();
+
+      console.log("Verificação de usuário existente:", {
+        existingUser,
+        checkError,
+      });
+
+      let updateResult;
+      if (existingUser) {
+        // Usuário existe, usar update
+        console.log("Atualizando usuário existente:", userId);
+        updateResult = await supabaseAdmin
+          .from("user_metadata")
+          .update({
+            is_trial_active: true,
+            trial_end_date: subscriptionEndDate.toISOString(),
+            stripe_customer_id: customerId,
+            subscription_status: "active",
+            subscription_created_at: new Date().toISOString(),
+          })
+          .eq("id", userId);
+      } else {
+        // Usuário não existe, usar insert
+        console.log("Inserindo novo usuário:", userId);
+        updateResult = await supabaseAdmin.from("user_metadata").insert({
           id: userId,
           is_trial_active: true,
           trial_end_date: subscriptionEndDate.toISOString(),
           stripe_customer_id: customerId,
           subscription_status: "active",
           subscription_created_at: new Date().toISOString(),
-        },
-        { onConflict: "id" },
-      );
+        });
+      }
 
-      if (error) {
-        console.error("Erro ao atualizar metadata do usuário:", error);
+      console.log("Resultado da operação:", updateResult);
+
+      if (updateResult.error) {
+        console.error(
+          "Erro ao atualizar metadata do usuário:",
+          updateResult.error,
+        );
         return NextResponse.json(
           { error: "Database update failed" },
           { status: 500 },
