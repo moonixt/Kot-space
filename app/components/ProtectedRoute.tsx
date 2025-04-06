@@ -12,6 +12,10 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const [isTrialActive, setIsTrialActive] = useState(false);
 
   useEffect(() => {
+    if (!isLoading && !user) {
+      console.log("Usuário não autenticado, redirecionando para login");
+      router.push("/login");
+    }
     const verifyTrial = async () => {
       if (!isLoading && user) {
         const { isTrialActive } = await checkFreeTrial(user.id);
