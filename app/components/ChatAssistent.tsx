@@ -56,7 +56,7 @@ const Ia = () => {
             "GroqModel-l81mn": {
               api_key: "", // API key handled on server
               base_url: "https://api.groq.com",
-              model_name: "gemma2-9b-it",
+              model_name: "llama-3.3-70b-versatile",
               temperature: 0.1,
               stream: true,
             },
