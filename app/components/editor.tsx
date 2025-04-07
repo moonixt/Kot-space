@@ -2,8 +2,8 @@
 
 "use client";
 
-import { useState } from "react";
-import { supabase } from "../../lib/supabase";
+import { useState } from "react"; //import Usestate, the hook to managge state in react
+import { supabase } from "../../lib/supabase"; //import the supabase client to connect to the database
 import {
   Save,
   Eye,
@@ -11,24 +11,24 @@ import {
   ListOrdered,
   LayoutList,
   SmilePlus,
-} from "lucide-react";
-import { useAuth } from "../../context/AuthContext";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
-import EmojiPicker, { Theme } from "emoji-picker-react";
-import { EmojiClickData } from "emoji-picker-react";
+} from "lucide-react"; //import of some icons from Lucide-React library
+import { useAuth } from "../../context/AuthContext"; //import of the auth context to manage the authentication of the user
+import ReactMarkdown from "react-markdown"; //Library to render markdown 
+import remarkGfm from "remark-gfm"; //Plugin to support GFM (GitHub Flavored Markdown) in ReactMarkdown
+import EmojiPicker, { Theme } from "emoji-picker-react"; //LIbrary to enable support of emojis inside the text area
+import { EmojiClickData } from "emoji-picker-react"; //Type for the emoji click data
 
-function Editor() {
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
-  const [saving, setSaving] = useState(false);
-  const { user } = useAuth();
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  const [isPreviewMode, setIsPreviewMode] = useState(false);
-  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-  const [showEmojiPickerContent, setShowEmojiPickerContent] = useState(false);
+function Editor() { //main function for the editor component 
+  const [title, setTitle] = useState(""); //state for the title of the note, initialized as empty string
+  const [content, setContent] = useState(""); //state for the content of the note, initialized as empty string
+  const [saving, setSaving] = useState(false); //state for the saving process, inatilized as false
+  const { user } = useAuth(); // get the user method for the context auth, to get the user data from the context
+  const [selectedTags, setSelectedTags] = useState<string[]>([]); // state for the selected tags, initialized as empty array of strings
+  const [isPreviewMode, setIsPreviewMode] = useState(false); // state for preview mode, start as a false, and are active when the user click on preview button
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false); // state for the emoji picker 
+  const [showEmojiPickerContent, setShowEmojiPickerContent] = useState(false); //state for the emoji picker in the content area
 
-  const toggleTag = (tag: string) => {
+  const toggleTag = (tag: string) => { //function to togle in the tags, if the tag is already selected, it will be removed, otherwise it will be added to the selected tags
     setSelectedTags((prevTags) =>
       prevTags.includes(tag)
         ? prevTags.filter((t) => t !== tag)
@@ -47,18 +47,17 @@ function Editor() {
     setShowEmojiPickerContent(false);
   };
 
-  // Function to insert Markdown syntax into the content
-  const insertMarkdown = (markdownSyntax: string) => {
+  const insertMarkdown = (markdownSyntax: string) => { //main function to insert markdown in the text area
     // Get the textarea element where the content is being edited
-    const textarea = document.querySelector("textarea");
+    const textarea = document.querySelector("textarea"); // Select the textarea by its tag name
     if (!textarea) return; // Exit if no textarea is found
 
     // Get the current selection range in the textarea
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
+    const start = textarea.selectionStart; // get the select the start position of the text area
+    const end = textarea.selectionEnd; // get the select the end position of the text area
 
     // Extract the selected text from the content
-    const selectedText = content.substring(start, end);
+    const selectedText = content.substring(start, end); // get the selected text from the content
 
     // Initialize a variable to hold the new text with Markdown syntax
     let newText = "";
@@ -67,19 +66,19 @@ function Editor() {
     switch (markdownSyntax) {
       case "bold":
         // Wrap the selected text (or placeholder text) with double asterisks for bold formatting
-        newText = `**${selectedText || "text_example"}**`;
+        newText = `**${selectedText || "text_example"}**`; //bold text example 
         break;
       case "italic":
         // Wrap the selected text (or placeholder text) with single asterisks for italic formatting
-        newText = `*${selectedText || "text_example"}*`;
+        newText = `*${selectedText || "text_example"}*`; //italic text example
         break;
       case "heading1":
         // Add a single hash symbol followed by the selected text (or placeholder) for a level 1 heading
-        newText = `# ${selectedText || " "}`;
+        newText = `# ${selectedText || " "}`; // heading level 1 exemple 
         break;
       case "heading2":
         // Add two hash symbols followed by the selected text (or placeholder) for a level 2 heading
-        newText = `## ${selectedText || " "}`;
+        newText = `## ${selectedText || " "}`; //heading level 2 example 
         break;
       case "code":
         // If the selected text contains newlines, wrap it in triple backticks for a code block
@@ -87,23 +86,21 @@ function Editor() {
         newText = selectedText.includes("\n")
           ? `\`\`\`\n${selectedText || "código aqui"}\n\`\`\``
           : `\`${selectedText || "code here"}\``;
-        break;
+        break; 
       case "orderedList":
         if (selectedText) {
-          // Se já tiver conteúdo, formatar cada linha como item de lista ordenada
-          const lines = selectedText.split("\n");
+          const lines = selectedText.split("\n");  // of has already content it will be formated 
           newText = lines
             .map((line, index) => `${index + 1}. ${line}`)
             .join("\n");
         } else {
-          // Se não tiver, adicionar um template
+          // if not add a basic template 
           newText = "1. Primeiro item\n2. Segundo item\n3. Terceiro item";
         }
         break;
       case "unorderedList":
-        // Verificar se o texto selecionado já tem linhas
-        if (selectedText) {
-          // Se já tiver conteúdo, formatar cada linha como item de lista não ordenada
+        if (selectedText) { 
+          // if has already a content , format the text 
           const lines = selectedText.split("\n");
           newText = lines.map((line) => `- ${line}`).join("\n");
         } else {
@@ -129,13 +126,12 @@ function Editor() {
     // }, 0);
   };
 
-  // Função para salvar a nota no banco de dados
-  const saveNote = async () => {
-    if (!title.trim() && !content.trim()) return;
+  const saveNote = async () => { //main fuction to save the notes in the database 
+    if (!title.trim() && !content.trim()) return; //if the title is with space, removed it 
 
-    // Verificar se usuário está autenticado
-    if (!user) {
-      // Exibir mensagem de erro
+    // Verify if the user is verified 
+    if (!user) { //if the user is not verified
+      // Show the notification error
       const notification = document.createElement("div");
       notification.className =
         "fixed bottom-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-500 flex items-center gap-2";
@@ -144,35 +140,35 @@ function Editor() {
       </svg>Você precisa estar logado para salvar notas!`;
       document.body.appendChild(notification);
 
-      setTimeout(() => {
+      setTimeout(() => { //timeout for delay the notification
         notification.style.opacity = "0";
         setTimeout(() => notification.remove(), 500);
       }, 3000);
       return;
     }
 
-    try {
-      setSaving(true);
-      const { error } = await supabase
-        .from("notes")
-        .insert([
+    try { //Saving of the notes 
+      setSaving(true); //change the state to true 
+      const { error } = await supabase   //call the supabase client
+        .from("notes") //from the notes table 
+        .insert([  //insert the following values 
           {
-            title,
-            content,
-            user_id: user.id, // Adiciona o ID do usuário à nota
-            tags: selectedTags, // Adiciona as tags selecionadas
+            title, //Insert the title in the database
+            content, // insert the content in the database
+            user_id: user.id, // Add the user id in the note 
+            tags: selectedTags, // Add the selected tags in the dabase 
           },
         ])
-        .select();
+        .select();   //return and apply the values in the database 
 
-      if (error) throw error;
+      if (error) throw error;  //if error trow a error saved in the variable 
 
-      // Feedback visual de sucesso
-      setTitle("");
-      setContent("");
-      setSelectedTags([]); // Limpar as tags selecionadas
+      // If success, this flow will be executed:
+      setTitle(""); // the title notes will be empty
+      setContent(""); // the content of the notes will be empty
+      setSelectedTags([]); // Clean the selected tags 
 
-      // Notification toast instead of alert
+      // Notification toast for the success 
       const notification = document.createElement("div");
       notification.className =
         "fixed bottom-4 left-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-500 flex items-center gap-2";
@@ -181,14 +177,14 @@ function Editor() {
       </svg>Nota salva com sucesso!`;
       document.body.appendChild(notification);
 
-      setTimeout(() => {
+      setTimeout(() => { //delay for the notification desappear
         notification.style.opacity = "0";
         setTimeout(() => notification.remove(), 500);
       }, 3000);
     } catch (error) {
-      console.error("Erro ao salvar nota:", error);
+      console.error("Erro ao salvar nota:", error); //error logged in the console
 
-      // Notification toast para erro
+      // Notification toast for erro 
       const notification = document.createElement("div");
       notification.className =
         "fixed bottom-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-500 flex items-center gap-2";
@@ -197,17 +193,17 @@ function Editor() {
       </svg>Erro ao salvar nota. Tente novamente.`;
       document.body.appendChild(notification);
 
-      setTimeout(() => {
+      setTimeout(() => { //delay for the notification desappear
         notification.style.opacity = "0";
         setTimeout(() => notification.remove(), 500);
       }, 3000);
     } finally {
-      setSaving(false);
+      setSaving(false); //after save, the state of the setSaving will be false 
     }
-    window.location.reload();
+    window.location.reload(); //reload the page 
   };
 
-  return (
+  return (  //return of the Divs
     <div id="Editor" className="w-full h-full flex flex-col">
       <div className="mx-auto w-full h-full flex flex-col flex-grow">
         <div className="bg-[var(--background)] backdrop-blur-sm  shadow-xl overflow-hidden  flex flex-col flex-grow h-full">
