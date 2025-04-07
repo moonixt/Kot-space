@@ -1,13 +1,14 @@
 <br>
 
 <div align="center">
+  
+![FAIR-NOTE (2)](https://github.com/user-attachments/assets/5a4968a9-c026-409e-bf90-f995aa56474b)
 
-![fair-note icon](https://github.com/user-attachments/assets/f166da3d-eb83-4322-9f47-4cd136df8fea)
 
   <h1 align="center">Fair-note</h1>
 
   <p align="center">
-    <strong>Fair Note is a sleek, modern Progressive Web App (PWA) for note-taking that gives you complete control over your notes. With a clean, intuitive interface, Fair Note makes it easy to capture, organize, and access your thoughts from any device.</strong>
+    <strong>Fair Note is a sleek, modern Progressive Web App that puts your note-taking experience first. With its intuitive interface, powerful organization features, and cross-device compatibility, it gives you complete control over your digital thoughts while respecting your privacy. Capture, organize, and access your ideas anywhere—elegantly and efficiently.</strong>
   </p>
 
 [![pt-BR](https://img.shields.io/badge/lang-pt--BR-green.svg)](./docs/README.pt-BR.md)
@@ -19,14 +20,18 @@
 ## Initial release with basic note-taking functionality.
 
 ![image](https://github.com/user-attachments/assets/a12fee94-7c60-4fae-abf2-ab24d7112656)
-
-## v1.0.0 (Markdown Support)
-
+# (Markdown Support)
+## v1.0.0 
 ![chrome_nj6WTfe3He](https://github.com/user-attachments/assets/06d41088-17aa-45e0-a95e-9b8c9d93884b)
+## v2.0.0 (Now)
+![msedge_0xDa4d6b79](https://github.com/user-attachments/assets/809ceecf-c9b2-4d8e-af98-e2c92e32f38d)
 
-## Preview mode
-
+# Preview mode
+## v1.0.0 (Markdown Support)
 ![chrome_W9Kbuzt69C](https://github.com/user-attachments/assets/91ddb711-ab28-46b4-9b63-9865cc0db536)
+## v2.0.0 (Now)
+![image](https://github.com/user-attachments/assets/0e1567fb-4ee2-4be7-9563-3380095edbbe)
+
 
 ## Full Note Viewing and Editing
 
