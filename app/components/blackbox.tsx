@@ -1,10 +1,10 @@
 //Main container component off the app, its has a title and a description.
+// NEED REVIEW
+import Editor from "./editor"; //importa o editor para ser renderizado na tela dentro do componente de container blackbox
 
-import Editor from "./editor";
-
-function Blackbox() {
+function Blackbox() {       //Abertura de função principal onde o componente Blackbox é criado
   return (
-    <div className="flex justify-center overflow-hidden">
+    <div className="flex justify-center overflow-hidden">  {/* Container flexível para centralizar o conteúdo */}
       <div className="text-[var(--foreground)] bg-[var(--container)] w-full h-screen flex flex-col">
         {/* <div className="flex justify-center pt-1 md:pt-4 px-2">
           <h1 className="font-bold text-[var(--foreground)] text-2xl md:text-4xl text-center ">

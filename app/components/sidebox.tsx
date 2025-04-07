@@ -1,4 +1,5 @@
 //Sidebar component, for fetching notes and display them in a list.
+// NEED REVIEW
 
 "use client";
 import { useEffect, useState } from "react";

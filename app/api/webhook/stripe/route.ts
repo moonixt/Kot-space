@@ -76,10 +76,10 @@ export async function POST(request: Request) {
         .eq("id", userId)
         .single();
 
-      console.log("Verificação de usuário existente:", {
-        existingUser,
-        checkError,
-      });
+    //   console.log("Verificação de usuário existente:", {
+    //     existingUser,
+    //     checkError,
+    //   });
 
       let updateResult;
       if (existingUser) {
@@ -108,7 +108,7 @@ export async function POST(request: Request) {
         });
       }
 
-      console.log("Resultado da operação:", updateResult);
+    //   console.log("Resultado da operação:", updateResult);
 
       if (updateResult.error) {
         console.error(

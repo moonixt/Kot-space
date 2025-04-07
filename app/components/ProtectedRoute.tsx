@@ -1,4 +1,5 @@
 //protected routes for authenticated users
+// NEED REVIEW
 
 "use client";
 import { useEffect, useState } from "react";
