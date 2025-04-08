@@ -142,7 +142,7 @@ const Ia = () => {
                   <Avatar>
                     <AvatarImage
                       className="h-10 w-10 rounded-full border-2 border-red-300 object-cover"
-                      src="/icons/icon-512x512.png"
+                      src="/icons/cop-note.png"
                     />
                   </Avatar>
                 </div>
@@ -152,7 +152,7 @@ const Ia = () => {
                     sequence={[
                       "Olá",
                       1000,
-                      "Olá! Eu sou a Fair-IA!",
+                      "Olá! Eu sou o Fair-IA!",
                       1000,
                       "Me envie um texto para ser formatado",
                       1000,
@@ -182,7 +182,7 @@ const Ia = () => {
                         <Avatar>
                           <AvatarImage
                             className="h-10 w-10 rounded-full border-2 border-slate-300"
-                            src="/icons/icon-512x512.png"
+                            src="/icons/cop-note.png"
                           />
                         </Avatar>
                       </div>
@@ -190,8 +190,8 @@ const Ia = () => {
                     <div
                       className={`max-w-[85%] rounded-lg p-2 text-sm ${
                         isUser
-                          ? "bg-[var(--button-bg)] text-white"
-                          : "bg-gray-950 text-slate-200"
+                          ? "bg-[var(--button-bg1)] text-[var(--background)]"
+                          : "bg-[var(--button-bg1)] text-[var(--background)]"
                       }`}
                       style={{ whiteSpace: "pre-wrap" }}
                     >
@@ -199,7 +199,7 @@ const Ia = () => {
                     </div>
                     {isUser && (
                       <div className="flex-shrink-0">
-                        <div className="flex h-8 w-15 items-center justify-center rounded-full bg-[var(--button-bg)] font-semibold text-white">
+                        <div className="flex h-8 w-15 items-center justify-center rounded-full bg-[var(--button-bg2)] font-semibold text-white">
                           U
                         </div>
                       </div>
@@ -215,7 +215,7 @@ const Ia = () => {
                     <Avatar>
                       <AvatarImage
                         className="ro15nded-full h-8 w-15 border-2 border-blue-300"
-                        src="/icons/icon-512x512.png"
+                        src="/icons/cop-note.png"
                       />
                     </Avatar>
                   </div>
@@ -233,14 +233,14 @@ const Ia = () => {
           <form onSubmit={handleSubmit} className="flex gap-2">
             <input
               type="text"
-              className="h-10 w-full rounded-lg border border-gray-600 bg-gray-800 p-2 text-sm text-white"
+              className="h-10 w-full rounded-lg border border-gray-600 bg-[var(--foreground)] p-2 text-sm text-[var(--background)]"
               placeholder="Digite uma mensagem"
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               disabled={isLoading}
             />
             <button
-              className="rounded-lg bg-[var(--button-bg)] px-4 text-white hover:bg-green-400"
+              className="rounded-lg bg-[var(--button-bg1)] px-4 text-[var(--background)]"
               type="submit"
               disabled={isLoading}
             >

@@ -41,7 +41,7 @@ export default function ClientLayout() {
           aria-label="Open chat assistant"
         >
           <Image
-            src="/icons/icon-512x512.png"
+            src="/icons/cop-note.png"
             alt="Avatar"
             width={40}
             height={40}

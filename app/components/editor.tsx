@@ -20,6 +20,7 @@ import ReactMarkdown from "react-markdown"; //Library to render markdown
 import remarkGfm from "remark-gfm"; //Plugin to support GFM (GitHub Flavored Markdown) in ReactMarkdown
 import EmojiPicker, { Theme } from "emoji-picker-react"; //LIbrary to enable support of emojis inside the text area
 import { EmojiClickData } from "emoji-picker-react"; //Type for the emoji click data
+import ClientLayout from "./ClientLayout";
 
 function Editor() {
   //main function for the editor component
@@ -269,21 +270,21 @@ function Editor() {
     }
   };
 
-  const handleDrop = async (e: React.DragEvent<HTMLTextAreaElement>) => {
-    e.preventDefault();
+  // const handleDrop = async (e: React.DragEvent<HTMLTextAreaElement>) => {
+  //   e.preventDefault();
 
-    const files = e.dataTransfer.files;
-    if (!files || files.length === 0 || !files[0].type.startsWith("image/"))
-      return;
+  //   const files = e.dataTransfer.files;
+  //   if (!files || files.length === 0 || !files[0].type.startsWith("image/"))
+  //     return;
 
-    // Simular um upload de arquivo como se fosse pelo input
-    const dataTransfer = new DataTransfer();
-    dataTransfer.items.add(files[0]);
+  //   // Simular um upload de arquivo como se fosse pelo input
+  //   const dataTransfer = new DataTransfer();
+  //   dataTransfer.items.add(files[0]);
 
-    if (fileInputRef.current) {
-      fileInputRef.current.files = dataTransfer.files;
-    }
-  };
+  //   if (fileInputRef.current) {
+  //     fileInputRef.current.files = dataTransfer.files;
+  //   }
+  // };
 
   return (
     //return of the Divs
@@ -370,7 +371,7 @@ function Editor() {
                 &lt;/&gt;
               </button>
               <button
-                className="rounded hover:bg-green-400 transition-colors px-1 sm:px-2 relative"
+                className="rounded hover:bg-green-400 transition-colors px-1 sm:px-2 relative hidden sm:block"
                 onClick={() => {
                   if (imageUploadLoading) return;
                   if (fileInputRef.current) {
@@ -389,7 +390,7 @@ function Editor() {
                 )}
               </button>
 
-              {/* Input de arquivo oculto para upload de imagem */}
+         
               <input
                 type="file"
                 ref={fileInputRef}
@@ -516,10 +517,13 @@ function Editor() {
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
                   style={{ fontSize: "25px" }}
-                  onDrop={handleDrop}
+                  // onDrop={handleDrop}
                   onDragOver={(e) => e.preventDefault()}
                 />
-              </div>
+                <div className="absolute bottom-65 right-4">
+      <ClientLayout />
+    </div>
+  </div>                 
             ) : (
               <div className="markdown-content  p-4 sm:p-6 w-full bg-transparent text-[var(--foreground)] min-h-[370px] h-full text-base sm:text-lg overflow-auto">
                 {content ? (
@@ -720,7 +724,7 @@ function Editor() {
             <div className="text-xs sm:text-sm text-slate-400">
               {content.length} / 15000
             </div>
-
+             
             <button
               className={`flex items-center gap-1 sm:gap-2 px-3 py-2 sm:px-5 sm:py-3 rounded-lg text-sm sm:text-base font-medium transition-all ${
                 saving

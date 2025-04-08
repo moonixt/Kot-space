@@ -5,7 +5,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../../lib/supabase";
 import Link from "next/link";
-import ClientLayout from "./ClientLayout";
 import {
   PlusCircle,
   Search,
@@ -283,9 +282,7 @@ function Sidebox() {
           {user && (
             <div className="px-4 py-4 bg-[var(--container)] text-[var(--foreground)] flex justify-center items-center text-sm">
               <p> {user ? user.email : ""}</p>
-              <div>
-                <ClientLayout />
-              </div>
+            
             </div>
           )}
         </div>
