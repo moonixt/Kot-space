@@ -118,14 +118,14 @@ function Sidebox() {
           <div className="p-4 border-b border-slate-700">
             <div className="flex items-center justify-between mb-4">
               <h1 className="text-xl font-bold flex items-center gap-2">
-                <BookOpen size={20} className="text-[var(--button-bg)]" />
+                <BookOpen size={20} className="text-[var(--foreground)]" />
                 {user ? (
                   <Link href={"/dashboard"}>
                     <span
-                      className="text-[var(--foreground)] hover:bg-[var(--container)] hover:rounded-lg hover:"
+                      className="text-[var(--foreground)] px-2 py-1 rounded-lg transition-colors duration-200 hover:bg-[var(--container)] hover:shadow-sm"
                       onClick={() => setIsMobileOpen(false)}
                     >
-                      Fair-note{" "}
+                      My Workspace
                     </span>
                     {/* {localStorage.getItem("theme") === "purple" ? "🐧" : "🐍"} */}
                   </Link>

@@ -2,22 +2,22 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 
-type Theme = "dark" | "light" | "purple" | "yellow" | "system";
+type Theme = "green" | "light" | "purple" | "yellow" | "dark" | "system";
 
 interface ThemeContextType {
   theme: Theme;
   setTheme: (theme: Theme) => void;
-  resolvedTheme: "dark" | "light" | "purple" | "yellow";
+  resolvedTheme: "green" | "light" | "purple" | "yellow" | "dark";
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   // Inicializar com a preferência salva ou "system"
-  const [theme, setTheme] = useState<Theme>("system");
+  const [theme, setTheme] = useState<Theme>("purple");
   const [resolvedTheme, setResolvedTheme] = useState<
-    "dark" | "light" | "purple" | "yellow"
-  >("dark");
+    "green" | "light" | "purple" | "yellow" | "dark"
+  >("green");
 
   useEffect(() => {
     // Carregar tema das preferências do usuário
@@ -44,9 +44,10 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       // Adicionar a classe ao elemento html
       document.documentElement.classList.remove(
         "light",
-        "dark",
+        "green",
         "purple",
         "yellow",
+        "dark",
       );
       document.documentElement.classList.add(systemTheme);
     } else {
@@ -55,9 +56,10 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       // Adicionar a classe ao elemento html
       document.documentElement.classList.remove(
         "light",
-        "dark",
+        "green",
         "purple",
         "yellow",
+        "dark",
       );
       document.documentElement.classList.add(theme);
     }
@@ -73,9 +75,10 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         setResolvedTheme(newTheme);
         document.documentElement.classList.remove(
           "light",
-          "dark",
+          "green",
           "purple",
           "yellow",
+          "dark",
         );
         document.documentElement.classList.add(newTheme);
       }

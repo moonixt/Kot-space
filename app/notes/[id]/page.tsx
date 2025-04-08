@@ -133,7 +133,7 @@ export default function NotePage() {
     const icon =
       type === "success"
         ? '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg>'
-        : '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" /></svg>';
+        : '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 001.414-1.414L11.414 10l1.293-1.293a1 1 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" /></svg>';
 
     toast.innerHTML = icon + message;
     document.body.appendChild(toast);
@@ -196,157 +196,148 @@ export default function NotePage() {
 
   return (
     <ProtectedRoute>
-      <div className="min-h-screen bg-[var(--container)] text-[var(--foreground)] p-4 md:p-8">
-        <div className=" ">
-          <nav className="flex items-center justify-between mb-8">
+      <div className="min-h-screen bg-[var(--container)] flex justify-center">
+        <div className="w-full max-w-7xl bg-[var(--background)] min-h-screen shadow-xl flex flex-col">
+          {/* Barra de navegação superior */}
+          <div className="bg-[var(--container)] bg-opacity-10 px-4 py-2 text-[var(--foreground)] flex justify-between items-center border-b border-[var(--border-color)]">
             <Link
               href="/"
-              className="flex items-center gap-2 text-[var(--foreground)]  "
+              className="flex items-center gap-2 text-[var(--foreground)] hover:text-[var(--foreground-light)] transition-colors"
             >
               <ArrowLeft size={18} />
-              <span className="text-[var(--foreground)]">
-                Voltar para notas 🐈
-              </span>
+              <span>Voltar para notas 🐈</span>
             </Link>
-          </nav>
-          <nav className="flex items-center justify-end mb-4">
-            <div className="flex items-center gap-2">
+
+            <div className="flex items-center gap-2 pr-10">
               {editMode ? (
                 <>
                   <button
-                    className="p-2 rounded-full hover:bg-green-500/20 text-green-500 transition-colors"
+                    className="rounded hover:bg-green-400 transition-colors px-2 py-1 flex items-center gap-1"
                     title="Salvar alterações"
                     onClick={handleSave}
                     disabled={saving}
                   >
                     {saving ? (
-                      <div className="w-4 h-4 border-2 border-green-300/30 border-t-transparent rounded-full animate-spin"></div>
+                      <div className="w-4 h-4 border-2 border-green-300 border-t-transparent rounded-full animate-spin"></div>
                     ) : (
-                      <Save size={18} />
+                      <>
+                        <Save size={16} /> Salvar
+                      </>
                     )}
                   </button>
                   <button
-                    className="p-2 rounded-full hover:bg-red-500/20 text-red-500 transition-colors"
+                    className="rounded hover:bg-red-400 transition-colors px-2 py-1 flex items-center gap-1"
                     title="Cancelar edição"
                     onClick={cancelEdit}
                   >
-                    <X size={18} />
+                    <X size={16} /> Cancelar
                   </button>
                 </>
               ) : (
                 <button
-                  className="rounded-full hover:bg-slate-800 transition-colors"
+                  className="rounded hover:bg-green-400 transition-colors px-2 py-1 flex items-center gap-1"
                   title="Editar nota"
                   onClick={() => setEditMode(true)}
                 >
-                  <Edit size={18} />
+                  <Edit size={16} /> Editar
                 </button>
               )}
             </div>
-          </nav>
+          </div>
 
-          <div className=" bg-[var(--background)] backdrop-blur-sm rounded-xl overflow-hidden border border-slate-700 shadow-xl">
-            <div className="p-6 md:p-8">
-              {editMode ? (
-                <>
-                  <input
-                    type="text"
-                    value={editTitle}
-                    onChange={(e) => setEditTitle(e.target.value)}
-                    placeholder="Título da nota"
-                    className="w-full text-3xl md:text-4xl font-bold mb-6 bg-transparent border-b border-slate-700 focus:border-blue-500 outline-none pb-2 transition-colors"
-                  />
+          {/* Área do título */}
+          <div className="p-4 border-b border-[var(--border-color)]">
+            {editMode ? (
+              <input
+                type="text"
+                value={editTitle}
+                onChange={(e) => setEditTitle(e.target.value)}
+                placeholder="Título da nota"
+                className="w-full text-xl sm:text-2xl font-bold bg-transparent focus:outline-none text-[var(--foreground)]"
+              />
+            ) : (
+              <h1 className="text-xl sm:text-2xl font-bold text-[var(--foreground)]">
+                {note.title || "Sem título"}
+              </h1>
+            )}
 
-                  <div className="flex items-center gap-2 text-sm text-[var(--foreground)] mb-6">
-                    <Calendar size={14} />
-                    <span>{formattedDate}</span>
+            <div className="flex items-center gap-2 text-sm text-[var(--foreground)] mt-2">
+              <Calendar size={14} />
+              <span>{formattedDate}</span>
+            </div>
+          </div>
+
+          {/* Área de conteúdo */}
+          <div className="flex-grow overflow-auto p-4">
+            {editMode ? (
+              <>
+                {editMode && (
+                  <div className="mb-4 text-xs bg-[var(--foreground)] text-[var(--background)] p-2 rounded flex items-center gap-2">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-4 w-4"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                    <span>Esta nota suporta formatação Markdown.</span>
                   </div>
+                )}
+                <textarea
+                  value={editContent}
+                  onChange={(e) => setEditContent(e.target.value)}
+                  placeholder="Conteúdo da nota (suporta formatação Markdown)"
+                  className="w-full h-full min-h-[300px] text-lg bg-transparent focus:outline-none resize-none text-[var(--foreground)]"
+                />
+              </>
+            ) : (
+              <div className="h-full overflow-auto pr-2">
+                <div className="prose prose-invert prose-lg w-full break-words text-lg text-[var(--foreground)] leading-relaxed markdown-content">
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                    {note.content}
+                  </ReactMarkdown>
+                </div>
+              </div>
+            )}
+          </div>
 
-                  {editMode && (
-                    <div className="mb-4 text-xs text-[var(--foreground)] flex items-center gap-2 bg-[var(--foreground)] p-2 rounded">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-4 w-4"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                        />
-                      </svg>
-                      <span className="text-[var(--background)] ">
-                        Esta nota suporta formatação Markdown. Use # para
-                        títulos, ** para negrito, * para itálico, etc.
-                      </span>
-                    </div>
-                  )}
+          <div className="border-t border-slate-700 p-6 flex justify-between items-center">
+            <div className="text-sm text-[var(--foreground)]">
+              ID: {note.id.slice(0, 8)}...
+            </div>
+            <div className="text-sm text-[var(--foreground)]">
+              #
+              {note.tags
+                ? note.tags.replace(/[\[\]"]/g, "").replace(/,/g, " #")
+                : ""}
+            </div>
 
-                  <textarea
-                    value={editContent}
-                    onChange={(e) => setEditContent(e.target.value)}
-                    placeholder="Conteúdo da nota (suporta formatação Markdown)"
-                    className="w-full min-h-[300px]  text-lg md:text-xl bg-transparent focus:outline-none "
-                  />
-                </>
+            <button
+              onClick={handleDelete}
+              disabled={deleting || editMode}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+                deleting || editMode
+                  ? "bg-slate-700 text-slate-400 cursor-not-allowed"
+                  : "bg-red-500/10 text-red-500 hover:bg-red-500/20"
+              }`}
+              title="Excluir nota"
+            >
+              {deleting ? (
+                <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
               ) : (
                 <>
-                  <h1 className="text-3xl md:text-4xl font-bold mb-4 leading-tight">
-                    {note.title || "Sem título"}
-                  </h1>
-
-                  <div className="flex items-center gap-2 text-sm text-[var(--foreground)] mb-8 border-b border-slate-700 pb-6">
-                    <Calendar size={14} />
-                    <span>{formattedDate}</span>
-                  </div>
-
-                  <div className="h-full  overflow-auto pr-2">
-                    <div className="prose prose-invert prose-lg w-full break-words text-lg md:text-xl text-[var(--foreground)] leading-relaxed markdown-content">
-                      <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                        {note.content}
-                      </ReactMarkdown>
-                    </div>
-                  </div>
+                  <Trash2 size={14} />
+                  <span>Excluir</span>
                 </>
               )}
-            </div>
-
-            <div className="border-t border-slate-700 p-6 flex justify-between items-center">
-              <div className="text-sm text-[var(--foreground)]">
-                ID: {note.id.slice(0, 8)}...
-              </div>
-              <div className="text-sm text-[var(--foreground)]">
-                #
-                {note.tags
-                  ? note.tags.replace(/[\[\]"]/g, "").replace(/,/g, " #")
-                  : ""}
-              </div>
-
-              <button
-                onClick={handleDelete}
-                disabled={deleting || editMode}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
-                  deleting || editMode
-                    ? "bg-slate-700 text-slate-400 cursor-not-allowed"
-                    : "bg-red-500/10 text-red-500 hover:bg-red-500/20"
-                }`}
-              >
-                {deleting ? (
-                  <>
-                    <div className="w-4 h-4 border-2 border-red-300/30 border-t-transparent rounded-full animate-spin"></div>
-                    <span>Excluindo...</span>
-                  </>
-                ) : (
-                  <>
-                    <Trash2 size={16} />
-                    <span>Excluir nota</span>
-                  </>
-                )}
-              </button>
-            </div>
+            </button>
           </div>
         </div>
       </div>

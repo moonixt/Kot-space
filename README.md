@@ -4,7 +4,6 @@
   
 ![FAIR-NOTE (2)](https://github.com/user-attachments/assets/5a4968a9-c026-409e-bf90-f995aa56474b)
 
-
   <h1 align="center">Fair-note</h1>
 
   <p align="center">
@@ -20,18 +19,26 @@
 ## Initial release with basic note-taking functionality.
 
 ![image](https://github.com/user-attachments/assets/a12fee94-7c60-4fae-abf2-ab24d7112656)
+
 # (Markdown Support)
-## v1.0.0 
+
+## v1.0.0
+
 ![chrome_nj6WTfe3He](https://github.com/user-attachments/assets/06d41088-17aa-45e0-a95e-9b8c9d93884b)
+
 ## v2.0.0 (Now)
+
 ![msedge_0xDa4d6b79](https://github.com/user-attachments/assets/809ceecf-c9b2-4d8e-af98-e2c92e32f38d)
 
 # Preview mode
-## v1.0.0 (Markdown Support)
-![chrome_W9Kbuzt69C](https://github.com/user-attachments/assets/91ddb711-ab28-46b4-9b63-9865cc0db536)
-## v2.0.0 (Now)
-![image](https://github.com/user-attachments/assets/0e1567fb-4ee2-4be7-9563-3380095edbbe)
 
+## v1.0.0 (Markdown Support)
+
+![chrome_W9Kbuzt69C](https://github.com/user-attachments/assets/91ddb711-ab28-46b4-9b63-9865cc0db536)
+
+## v2.0.0 (Now)
+
+![image](https://github.com/user-attachments/assets/0e1567fb-4ee2-4be7-9563-3380095edbbe)
 
 ## Full Note Viewing and Editing
 

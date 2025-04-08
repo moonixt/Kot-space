@@ -3,8 +3,10 @@
 :root {
   --background: #ffffff;
   --foreground: #010409;
-  --text-color: oklch(70.7% 0.165 254.624);
-  --button-bg: oklch(62.3% 0.214 259.815);
+  --button-bg1: #010409;
+  --button-bg2: #0000008d;
+  --text-color: #0d1117;
+  --button-bg: #f8f8f845;
   --hover-color: oklch(80.9% 0.105 251.813);
   --container: #f6f8fa;
   --accent-color: #3b82f6;
@@ -33,9 +35,41 @@
     0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
+#Editor {
+  /* Usa height disponível em vez de viewport height */
+  height: -webkit-fill-available;
+  height: 100%;
+  overflow: auto;
+  /* Impede ajustes de rolagem automáticos */
+  overscroll-behavior: none;
+}
+
 .dark {
   --background: #0d1117;
   --foreground: #ffffff;
+  --text-color: #ffffff;
+  --button-bg: #f5f5f5;
+  --button-bg1: #ffffff;
+  --button-bg2: #f8f8f845;
+  --container: #010409;
+  --accent-color: #60a5fa;
+  --border-color: #334155;
+  --code-bg: #2e3a4b;
+  --blockquote-color: #94a3b8;
+  --table-header-bg: rgba(30, 41, 59, 0.7);
+  --table-border: #334155;
+  --selection-bg: rgba(59, 130, 246, 0.3);
+  --selection-text: #ffffff;
+  --card-bg: rgba(15, 23, 42, 0.7);
+  --card-border: #334155;
+  --input-bg: rgba(15, 23, 42, 0.8);
+}
+
+.green {
+  --background: #0d1117;
+  --foreground: #ffffff;
+  --button-bg1: oklch(72.3% 0.219 149.579);
+  --button-bg2: #f8f8f845;
   --text-color: oklch(0.871 0.15 154.449);
   --button-bg: oklch(72.3% 0.219 149.579);
   --hover-color: oklch(79.2% 0.209 151.711);
@@ -56,6 +90,8 @@
 .purple {
   --background: #0d1117;
   --foreground: #ffffff;
+  --button-bg1: #8b5cf6;
+  --button-bg2: #f8f8f845;
   --text-color: #a78bfa;
   --button-bg: #8b5cf6;
   --hover-color: #a78bfa;
@@ -76,6 +112,8 @@
 .yellow {
   --background: #0d1117;
   --foreground: #ffffff;
+  --button-bg1: oklch(90.5% 0.182 98.111);
+  --button-bg2: #f8f8f845;
   --text-color: oklch(90.5% 0.182 98.111);
   --button-bg: oklch(90.5% 0.182 98.111);
   --hover-color: oklch(85.2% 0.199 91.936);
@@ -552,7 +590,11 @@ button:focus {
 }
 
 .markdown-content {
-  animation: fade-in 0.3s ease-in-out;
+  animation: fade-in 0.5s ease-in-out;
+}
+
+.smooth {
+  animation: fade-in 0.5s ease-in-out;
 }
 
 .scrollbar {
