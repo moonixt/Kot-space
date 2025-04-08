@@ -14,7 +14,7 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   // Inicializar com a preferência salva ou "system"
-  const [theme, setTheme] = useState<Theme>("purple");
+  const [theme, setTheme] = useState<Theme>("system");
   const [resolvedTheme, setResolvedTheme] = useState<
     "green" | "light" | "purple" | "yellow" | "dark"
   >("green");

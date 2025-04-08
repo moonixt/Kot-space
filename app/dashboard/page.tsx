@@ -50,7 +50,7 @@ export default function DashboardPage() {
 
   return (
     <ProtectedRoute>
-      <div className="p-4 smooth ">
+      <div className="p-4 smooth overflow-y-auto max-h-screen scrollbar">
         <div className="grid">
           <h1 className="text-2xl font-bold mb-4">All your work </h1>
           <button
