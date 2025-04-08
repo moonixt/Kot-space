@@ -282,7 +282,6 @@ function Sidebox() {
           {user && (
             <div className="px-4 py-4 bg-[var(--container)] text-[var(--foreground)] flex justify-center items-center text-sm">
               <p> {user ? user.email : ""}</p>
-            
             </div>
           )}
         </div>

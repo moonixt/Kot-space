@@ -4,7 +4,7 @@
 
 // import Papa from "papaparse";
 // import * as XLSX from "xlsx";
-import { useState, useRef } from "react"; //import Usestate, the hook to managge state in react
+import { useState, useRef, useEffect } from "react"; //import Usestate, the hook to managge state in react
 import { supabase } from "../../lib/supabase"; //import the supabase client to connect to the database
 import {
   Save,
@@ -35,6 +35,27 @@ function Editor() {
   const [imageUploadLoading, setImageUploadLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [tagSearchTerm, setTagSearchTerm] = useState("");
+
+  // Carregar dados do localStorage quando o componente montar
+  useEffect(() => {
+    // Verificar se estamos no navegador (não em SSR)
+    if (typeof window !== "undefined") {
+      const savedTitle = localStorage.getItem("fair-note-title");
+      const savedContent = localStorage.getItem("fair-note-content");
+      const savedTags = localStorage.getItem("fair-note-tags");
+
+      if (savedTitle) setTitle(savedTitle);
+      if (savedContent) setContent(savedContent);
+      if (savedTags) setSelectedTags(JSON.parse(savedTags));
+    }
+  }, []);
+
+  // Salvar dados no localStorage quando mudarem
+  useEffect(() => {
+    localStorage.setItem("fair-note-title", title);
+    localStorage.setItem("fair-note-content", content);
+    localStorage.setItem("fair-note-tags", JSON.stringify(selectedTags));
+  }, [title, content, selectedTags]);
 
   const toggleTag = (tag: string) => {
     //function to togle in the tags, if the tag is already selected, it will be removed, otherwise it will be added to the selected tags
@@ -186,6 +207,13 @@ function Editor() {
       setContent(""); // the content of the notes will be empty
       setSelectedTags([]); // Clean the selected tags
 
+      // Limpar localStorage após salvar com sucesso
+      if (!error) {
+        localStorage.removeItem("fair-note-title");
+        localStorage.removeItem("fair-note-content");
+        localStorage.removeItem("fair-note-tags");
+      }
+
       // Notification toast for the success
       const notification = document.createElement("div");
       notification.className =
@@ -220,7 +248,9 @@ function Editor() {
     } finally {
       setSaving(false); //after save, the state of the setSaving will be false
     }
-    window.location.reload(); //reload the page
+    setTitle("");
+    setContent("");
+    setSelectedTags([]);
   };
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -390,7 +420,6 @@ function Editor() {
                 )}
               </button>
 
-         
               <input
                 type="file"
                 ref={fileInputRef}
@@ -521,9 +550,9 @@ function Editor() {
                   onDragOver={(e) => e.preventDefault()}
                 />
                 <div className="absolute bottom-65 right-4">
-      <ClientLayout />
-    </div>
-  </div>                 
+                  <ClientLayout />
+                </div>
+              </div>
             ) : (
               <div className="markdown-content  p-4 sm:p-6 w-full bg-transparent text-[var(--foreground)] min-h-[370px] h-full text-base sm:text-lg overflow-auto">
                 {content ? (
@@ -724,7 +753,7 @@ function Editor() {
             <div className="text-xs sm:text-sm text-slate-400">
               {content.length} / 15000
             </div>
-             
+
             <button
               className={`flex items-center gap-1 sm:gap-2 px-3 py-2 sm:px-5 sm:py-3 rounded-lg text-sm sm:text-base font-medium transition-all ${
                 saving
