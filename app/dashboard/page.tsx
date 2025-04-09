@@ -6,6 +6,7 @@ import { useAuth } from "../../context/AuthContext";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ProtectedRoute } from "../components/ProtectedRoute";
+import Profile from "../profile/page";
 
 interface Note {
   id: string;
@@ -53,6 +54,9 @@ export default function DashboardPage() {
       <div className="p-4 smooth overflow-y-auto max-h-screen scrollbar">
         <div className="grid">
           <h1 className="text-2xl font-bold mb-4">All your work </h1>
+          <div >
+          <Profile />
+          </div>
           <button
             className="px-5 mb-4 py-2 bg-[var(--foreground)] text-[var(--background)] hover:bg-opacity-60 transition-all hover:translate-x-1 hover:shadow-md transition-colors flex items-center gap-2"
             onClick={() => router.push("/editor")}
