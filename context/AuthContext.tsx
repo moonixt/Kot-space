@@ -34,7 +34,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (event === "SIGNED_IN") {
         console.log("Usuário conectado, redirecionando para home");
-        router.push("/");
+        // router.push("/");  //Causando Bug de redirecionamento ao minimizar
       } else if (event === "SIGNED_OUT") {
         console.log("Usuário desconectado, redirecionando para login");
         router.push("/login");

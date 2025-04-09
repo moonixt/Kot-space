@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { supabase } from "../../lib/supabase";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 // Create a separate client component for the part that uses useSearchParams
 function LoginForm() {
@@ -17,6 +18,7 @@ function LoginForm() {
   const searchParams = useSearchParams();
   const message = searchParams?.get("message");
   const { signIn } = useAuth();
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -27,8 +29,7 @@ function LoginForm() {
       console.log("Tentando fazer login na página de login");
       await signIn(email, password);
       console.log("Login realizado com sucesso");
-
-      // O redirecionamento agora é feito pelo onAuthStateChange
+      router.push("/"); // Consertado Bug de redirecionamento, Authcontext linha 37
     } catch (error) {
       if (error instanceof Error) {
         console.error("Erro ao fazer login:", error);
