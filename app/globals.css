@@ -35,6 +35,39 @@
     0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
+/* Adicionando rolamento suave global */
+html {
+  scroll-behavior: smooth;
+  /* Personalizar a curva e a duração da animação de rolagem */
+  scroll-timeline: 800ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Classe para aplicar rolamento suave em elementos específicos */
+.smooth-scroll {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch; /* Para melhor suporte em iOS */
+  /* Personalizar a curva e a duração da animação de rolagem */
+  scroll-timeline: 800ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Rolamento suave para divs com rolagem */
+.scroll-container {
+  overflow-y: auto;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  /* Personalizar a curva e a duração da animação de rolagem */
+  scroll-timeline: 800ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Redefinição para usuários que preferem menos animações */
+@media (prefers-reduced-motion: reduce) {
+  html, 
+  .smooth-scroll, 
+  .scroll-container {
+    scroll-behavior: auto;
+  }
+}
+
 #Editor {
   /* Usa height disponível em vez de viewport height */
   height: -webkit-fill-available;

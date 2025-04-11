@@ -15,6 +15,7 @@
     "@supabase/auth-helpers-nextjs": "^0.10.0",
     "@supabase/supabase-js": "^2.49.3",
     "@types/crypto-js": "^4.2.2",
+    "@types/react-datepicker": "^6.2.0",
     "emoji-picker-react": "^4.12.2",
     "lucide-react": "^0.485.0",
     "next": "^15.2.4",
@@ -22,6 +23,7 @@
     "papaparse": "^5.5.2",
     "prettier": "^3.5.3",
     "react": "^19.0.0",
+    "react-datepicker": "^8.3.0",
     "react-dom": "^19.0.0",
     "react-markdown": "^10.1.0",
     "react-syntax-highlighter": "^5.8.0",
@@ -31,6 +33,7 @@
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
+    "@supabase/mcp-server-supabase": "^0.3.5",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/papaparse": "^5.3.15",

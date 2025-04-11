@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ProtectedRoute } from "../components/ProtectedRoute";
 import Profile from "../profile/page";
+import Tasks from "../components/tasks";
 
 interface Note {
   id: string;
@@ -18,6 +19,7 @@ interface Note {
 export default function DashboardPage() {
   const [notes, setNotes] = useState<Note[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showTasks, setShowTasks] = useState(true);
   const { user } = useAuth();
 
   // Fetch notes from Supabase
@@ -54,9 +56,38 @@ export default function DashboardPage() {
       <div className="p-4 smooth overflow-y-auto max-h-screen scrollbar">
         <div className="grid">
           <h1 className="text-2xl font-bold mb-4">All your work </h1>
-          <div >
-          <Profile />
+          <div>
+            <Profile />
           </div>
+          
+          {/* Toggle tasks button */}
+          <div className="flex justify-between items-center ">
+           
+            <button 
+              onClick={() => setShowTasks(!showTasks)}
+              className="flex items-center gap-1 text-sm px-3 py-1 border border-[var(--border-color)] rounded hover:bg-[var(--container)] transition-colors"
+            >
+              {showTasks ? (
+                <>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M18 15l-6-6-6 6"/>
+                  </svg>
+                  <span>Hide Tasks</span>
+                </>
+              ) : (
+                <>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M6 9l6 6 6-6"/>
+                  </svg>
+                  <span>Show Tasks</span>
+                </>
+              )}
+            </button>
+          </div>
+          
+          {/* Tasks component with conditional rendering */}
+          {showTasks && <Tasks />}
+          
           <button
             className="px-5 mb-4 py-2 bg-[var(--foreground)] text-[var(--background)] hover:bg-opacity-60 transition-all hover:translate-x-1 hover:shadow-md transition-colors flex items-center gap-2"
             onClick={() => router.push("/editor")}
@@ -109,7 +140,7 @@ export default function DashboardPage() {
                       strokeLinecap="round"
                       strokeLinejoin="round"
                     >
-                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1-2-2h6"></path>
                       <polyline points="15 3 21 3 21 9"></polyline>
                       <line x1="10" y1="14" x2="21" y2="3"></line>
                     </svg>

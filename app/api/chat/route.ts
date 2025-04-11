@@ -8,6 +8,7 @@ export async function POST(request: Request) {
     const body = await request.json();
 
     // Forward the request to your actual endpoint
+    
     const response = await fetch(`${ENDPOINT_URL}?stream=true`, {
       method: "POST",
       headers: {

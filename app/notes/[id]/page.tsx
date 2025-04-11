@@ -1,14 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { supabase } from "../../../lib/supabase";
 import Link from "next/link";
 import { useRouter, useParams } from "next/navigation";
-import { ArrowLeft, Trash2, Calendar, Edit, Save, X } from "lucide-react";
+import { ArrowLeft, Trash2, Calendar, Edit, Save, X, Image, SmilePlus, LayoutList, ListOrdered, Eye } from "lucide-react";
 import { useAuth } from "../../../context/AuthContext";
-import { ProtectedRoute } from "../../components/ProtectedRoute"; // Importar o ProtectedRoute
+import { ProtectedRoute } from "../../components/ProtectedRoute";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import EmojiPicker, { Theme, EmojiClickData } from "emoji-picker-react";
 
 interface Note {
   id: string;
@@ -29,6 +30,11 @@ export default function NotePage() {
   const [editContent, setEditContent] = useState("");
   const router = useRouter();
   const { user } = useAuth();
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [isPreviewMode, setIsPreviewMode] = useState(false);
+  const [imageUploadLoading, setImageUploadLoading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [showEmojiPickerContent, setShowEmojiPickerContent] = useState(false);
 
   useEffect(() => {
     async function fetchNote() {
@@ -61,6 +67,126 @@ export default function NotePage() {
 
     fetchNote();
   }, [params.id, user]);
+
+  // Função para inserir formatação Markdown
+  const insertMarkdown = (markdownSyntax: string) => {
+    const textarea = document.querySelector("textarea");
+    if (!textarea) return;
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+
+    const selectedText = editContent.substring(start, end);
+    let newText = "";
+
+    switch (markdownSyntax) {
+      case "bold":
+        newText = `**${selectedText || "texto em negrito"}**`;
+        break;
+      case "italic":
+        newText = `*${selectedText || "texto em itálico"}*`;
+        break;
+      case "heading1":
+        newText = `# ${selectedText || " "}`;
+        break;
+      case "heading2":
+        newText = `## ${selectedText || " "}`;
+        break;
+      case "code":
+        newText = selectedText.includes("\n")
+          ? `\`\`\`\n${selectedText || "código aqui"}\n\`\`\``
+          : `\`${selectedText || "código"}\``;
+        break;
+      case "orderedList":
+        if (selectedText) {
+          const lines = selectedText.split("\n");
+          newText = lines
+            .map((line, index) => `${index + 1}. ${line}`)
+            .join("\n");
+        } else {
+          newText = "1. Primeiro item\n2. Segundo item\n3. Terceiro item";
+        }
+        break;
+      case "unorderedList":
+        if (selectedText) {
+          const lines = selectedText.split("\n");
+          newText = lines.map((line) => `- ${line}`).join("\n");
+        } else {
+          newText = "- Primeiro item\n- Segundo item\n- Terceiro item";
+        }
+        break;
+      case "link":
+        newText = `[${selectedText || "texto do link"}](url)`;
+        break;
+      case "image":
+        newText = `![${selectedText || "descrição da imagem"}](url_da_imagem)`;
+        break;
+    }
+
+    const newContent =
+      editContent.substring(0, start) + newText + editContent.substring(end);
+    setEditContent(newContent);
+
+    setTimeout(() => {
+      textarea.focus();
+      const newCursorPos = start + newText.length;
+      textarea.setSelectionRange(newCursorPos, newCursorPos);
+    }, 0);
+  };
+
+  // Função para lidar com a seleção de emojis
+  const handleEmojiSelect = (emojiData: EmojiClickData) => {
+    setEditTitle((prev) => prev + emojiData.emoji);
+    setShowEmojiPicker(false);
+  };
+
+  const handleEmojiSelectContent = (emojiData: EmojiClickData) => {
+    setEditContent((prev) => prev + emojiData.emoji);
+    setShowEmojiPickerContent(false);
+  };
+
+  // Função para lidar com upload de imagens
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    if (!user) {
+      alert("Você precisa estar logado para fazer upload de imagens!");
+      return;
+    }
+
+    try {
+      setImageUploadLoading(true);
+
+      const file = files[0];
+      const fileExt = file.name.split(".").pop();
+      const fileName = `${Math.random().toString(36).substring(2, 15)}.${fileExt}`;
+      const filePath = `${user.id}/${fileName}`;
+
+      const { error } = await supabase.storage
+        .from("images")
+        .upload(filePath, file);
+
+      if (error) throw error;
+
+      const { data: publicUrlData } = supabase.storage
+        .from("images")
+        .getPublicUrl(filePath);
+
+      const imageUrl = publicUrlData.publicUrl;
+      const imageMarkdown = `\n\n![${file.name}](${imageUrl})\n`;
+
+      setEditContent((currentContent) => currentContent + imageMarkdown);
+    } catch (error) {
+      console.error("Erro ao fazer upload da imagem:", error);
+      alert("Erro ao fazer upload da imagem. Tente novamente.");
+    } finally {
+      setImageUploadLoading(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
+  };
 
   async function handleDelete() {
     const confirmDelete = confirm("Tem certeza que deseja excluir esta nota?");
@@ -132,8 +258,8 @@ export default function NotePage() {
 
     const icon =
       type === "success"
-        ? '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg>'
-        : '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 001.414-1.414L11.414 10l1.293-1.293a1 1 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" /></svg>';
+        ? '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 00-1.414 1.414l2 2a1 1 001.414 0l4-4z" clip-rule="evenodd" /></svg>'
+        : '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 101.414 1.414L10 11.414l1.293-1.293a1 1 001.414-1.414L11.414 10l1.293-1.293a1 1 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" /></svg>';
 
     toast.innerHTML = icon + message;
     document.body.appendChild(toast);
@@ -248,13 +374,34 @@ export default function NotePage() {
           {/* Área do título */}
           <div className="p-4 border-b border-[var(--border-color)]">
             {editMode ? (
-              <input
-                type="text"
-                value={editTitle}
-                onChange={(e) => setEditTitle(e.target.value)}
-                placeholder="Título da nota"
-                className="w-full text-xl sm:text-2xl font-bold bg-transparent focus:outline-none text-[var(--foreground)]"
-              />
+              <div className="flex items-center gap-3 relative">
+                <button
+                  onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                  className="p-2 text-[var(--foreground)] hover:bg-[var(--container)] rounded-full transition-all duration-200"
+                  title="Adicionar emoji"
+                >
+                  <SmilePlus size={22} />
+                </button>
+                <input
+                  type="text"
+                  value={editTitle}
+                  onChange={(e) => setEditTitle(e.target.value)}
+                  placeholder="Título da nota"
+                  className="w-full text-xl sm:text-2xl font-bold bg-transparent focus:outline-none text-[var(--foreground)]"
+                />
+                {showEmojiPicker && (
+                  <div className="absolute z-50 top-14 left-4 shadow-xl rounded-lg overflow-hidden">
+                    <EmojiPicker
+                      onEmojiClick={handleEmojiSelect}
+                      skinTonesDisabled
+                      width={300}
+                      height={400}
+                      previewConfig={{ showPreview: false }}
+                      theme={Theme.DARK}
+                    />
+                  </div>
+                )}
+              </div>
             ) : (
               <h1 className="text-xl sm:text-2xl font-bold text-[var(--foreground)]">
                 {note.title || "Sem título"}
@@ -267,35 +414,195 @@ export default function NotePage() {
             </div>
           </div>
 
+          {/* Barra de ferramentas de formatação - aparece apenas no modo de edição */}
+          {editMode && (
+            <>
+              <div className="bg-[var(--container)] bg-opacity-30 border-b border-[var(--border-color)] text-sm px-2 sm:px-4 py-2 text-[var(--foreground)] flex flex-wrap items-center gap-2">
+                <div className="flex items-center space-x-1 mr-2">
+                  <button
+                    className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors font-bold"
+                    onClick={() => insertMarkdown("bold")}
+                    title="Negrito"
+                  >
+                    B
+                  </button>
+                  <button
+                    className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors italic"
+                    onClick={() => insertMarkdown("italic")}
+                    title="Itálico"
+                  >
+                    I
+                  </button>
+                  <button
+                    className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors"
+                    onClick={() => insertMarkdown("link")}
+                    title="Link"
+                  >
+                    🔗
+                  </button>
+                </div>
+
+                <div className="flex items-center space-x-1 mr-2">
+                  <button
+                    className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors"
+                    onClick={() => insertMarkdown("heading1")}
+                    title="Título 1"
+                  >
+                    H1
+                  </button>
+                  <button
+                    className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors"
+                    onClick={() => insertMarkdown("heading2")}
+                    title="Título 2"
+                  >
+                    H2
+                  </button>
+                </div>
+
+                <div className="flex items-center space-x-1 mr-2">
+                  <button
+                    className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors"
+                    onClick={() => insertMarkdown("code")}
+                    title="Código"
+                  >
+                    &lt;/&gt;
+                  </button>
+                  <button
+                    className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors flex items-center justify-center relative"
+                    onClick={() => {
+                      if (imageUploadLoading) return;
+                      if (fileInputRef.current) {
+                        fileInputRef.current.click();
+                      } else {
+                        insertMarkdown("image");
+                      }
+                    }}
+                    title="Inserir Imagem"
+                  >
+                    <Image size={16} />
+                    {imageUploadLoading && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-[var(--accent-color)] bg-opacity-70 rounded-md">
+                        <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      </div>
+                    )}
+                  </button>
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleImageUpload}
+                    accept="image/*"
+                    style={{ display: "none" }}
+                  />
+                </div>
+
+                <div className="flex items-center space-x-1 mr-2">
+                  <button
+                    className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors flex items-center justify-center"
+                    onClick={() => insertMarkdown("orderedList")}
+                    title="Lista Numerada"
+                  >
+                    <ListOrdered size={16} />
+                  </button>
+                  <button
+                    className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors flex items-center justify-center"
+                    onClick={() => insertMarkdown("unorderedList")}
+                    title="Lista com Marcadores"
+                  >
+                    <LayoutList size={16} />
+                  </button>
+                  <button
+                    onClick={() => setShowEmojiPickerContent(!showEmojiPickerContent)}
+                    className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors"
+                    title="Adicionar emoji"
+                  >
+                    <SmilePlus size={16} />
+                  </button>
+                  {showEmojiPickerContent && (
+                    <div className="absolute z-50 mt-28 shadow-xl rounded-lg overflow-hidden">
+                      <EmojiPicker
+                        onEmojiClick={handleEmojiSelectContent}
+                        skinTonesDisabled
+                        width={280}
+                        height={350}
+                        previewConfig={{ showPreview: false }}
+                        theme={Theme.DARK}
+                      />
+                    </div>
+                  )}
+                </div>
+
+                <div className="ml-auto flex items-center gap-2">
+                  <button
+                    className={`rounded-md px-3 py-1.5 transition-all duration-200 flex items-center gap-1.5 ${
+                      isPreviewMode
+                        ? "bg-transparent text-[var(--foreground)] border border-[var(--border-color)]"
+                        : "bg-[var(--button-bg1)] text-[var(--background)]"
+                    }`}
+                    onClick={() => setIsPreviewMode(false)}
+                    disabled={!isPreviewMode}
+                  >
+                    <Edit size={16} /> Editar
+                  </button>
+                  <button
+                    className={`rounded-md px-3 py-1.5 transition-all duration-200 flex items-center gap-1.5 ${
+                      !isPreviewMode
+                        ? "bg-transparent text-[var(--foreground)] border border-[var(--border-color)]"
+                        : "bg-[var(--button-bg1)] text-[var(--background)]"
+                    }`}
+                    onClick={() => setIsPreviewMode(true)}
+                    disabled={isPreviewMode}
+                  >
+                    <Eye size={16} /> Visualizar
+                  </button>
+                </div>
+              </div>
+            </>
+          )}
+
           {/* Área de conteúdo */}
           <div className="flex-grow overflow-auto p-4">
             {editMode ? (
               <>
-                {editMode && (
-                  <div className="mb-4 text-xs bg-[var(--foreground)] text-[var(--background)] p-2 rounded flex items-center gap-2">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-4 w-4"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                      />
-                    </svg>
-                    <span>Esta nota suporta formatação Markdown.</span>
+                {!isPreviewMode ? (
+                  <div className="h-full">
+                    <div className="mb-4 text-xs bg-[var(--container)] bg-opacity-50 p-2 rounded flex items-center gap-2 text-[var(--foreground)]">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                      <span>Esta nota suporta formatação Markdown.</span>
+                    </div>
+                    <textarea
+                      value={editContent}
+                      onChange={(e) => setEditContent(e.target.value)}
+                      placeholder="Conteúdo da nota (suporta formatação Markdown)"
+                      className="w-full h-full min-h-[300px] text-lg bg-transparent focus:outline-none resize-none text-[var(--foreground)] p-2"
+                      style={{ fontSize: "18px", lineHeight: "1.7" }}
+                    />
+                  </div>
+                ) : (
+                  <div className="markdown-content p-5 w-full bg-transparent text-[var(--foreground)] min-h-[300px] h-full text-lg overflow-auto border border-[var(--border-color)] rounded-md">
+                    {editContent ? (
+                      <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                        {editContent}
+                      </ReactMarkdown>
+                    ) : (
+                      <p className="text-[var(--foreground)] opacity-60 italic">
+                        Nenhum conteúdo para visualizar...
+                      </p>
+                    )}
                   </div>
                 )}
-                <textarea
-                  value={editContent}
-                  onChange={(e) => setEditContent(e.target.value)}
-                  placeholder="Conteúdo da nota (suporta formatação Markdown)"
-                  className="w-full h-full min-h-[300px] text-lg bg-transparent focus:outline-none resize-none text-[var(--foreground)]"
-                />
               </>
             ) : (
               <div className="h-full overflow-auto pr-2">

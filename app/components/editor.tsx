@@ -300,185 +300,177 @@ function Editor() {
     }
   };
 
-  // const handleDrop = async (e: React.DragEvent<HTMLTextAreaElement>) => {
-  //   e.preventDefault();
-
-  //   const files = e.dataTransfer.files;
-  //   if (!files || files.length === 0 || !files[0].type.startsWith("image/"))
-  //     return;
-
-  //   // Simular um upload de arquivo como se fosse pelo input
-  //   const dataTransfer = new DataTransfer();
-  //   dataTransfer.items.add(files[0]);
-
-  //   if (fileInputRef.current) {
-  //     fileInputRef.current.files = dataTransfer.files;
-  //   }
-  // };
-
   return (
-    //return of the Divs
-    <div id="Editor" className="w-full h-full flex flex-col">
+    <div id="Editor" className="w-full h-full flex flex-col bg-[var(--background)]">
       <div className="mx-auto w-full h-full flex flex-col flex-grow">
-        <div className="bg-[var(--background)] backdrop-blur-sm  shadow-xl overflow-hidden  flex flex-col flex-grow h-full">
-          <div className="p-4 sm:p-6 border-b border-[var(--border-color)] relative">
-            <div className="flex gap-4">
+        <div className="bg-[var(--background)] backdrop-blur-sm shadow-lg rounded-lg overflow-hidden flex flex-col flex-grow h-full border border-[var(--border-color)] transition-all duration-300">
+          {/* Title Section */}
+          <div className="p-5 sm:p-6 border-b border-[var(--border-color)] relative">
+            <div className="flex items-center gap-3">
               <button
                 onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-                className=" text-[var(--foreground)] hover:text-[var(--background)] hover:bg-[var(--foreground)] rounded transition-colors"
+                className="p-2 text-[var(--foreground)] hover:bg-[var(--container)] rounded-full transition-all duration-200"
                 title="Adicionar emoji"
               >
-                <SmilePlus size={26} />
+                <SmilePlus size={22} />
               </button>
-              {showEmojiPicker && (
-                <div className="absolute z-10 right-4 mt-2">
-                  <div className="relative">
-                    <EmojiPicker
-                      onEmojiClick={handleEmojiSelect}
-                      skinTonesDisabled
-                      width={300}
-                      height={400}
-                      previewConfig={{ showPreview: false }}
-                      theme={Theme.DARK}
-                    />
-                  </div>
-                </div>
-              )}
               <input
-                className=" bg-transparent text-[var(--foreground)] focus:outline-none focus:ring-0 border-none w-full text-xl sm:text-3xl "
+                className="bg-transparent text-[var(--foreground)] focus:outline-none focus:ring-0 border-none w-full text-xl sm:text-2xl font-medium placeholder-opacity-60 placeholder-[var(--foreground)]"
                 placeholder="Tema da nota..."
                 maxLength={40}
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
               />
+              {showEmojiPicker && (
+                <div className="absolute z-50 top-16 left-4 sm:left-6 shadow-xl rounded-lg overflow-hidden">
+                  <EmojiPicker
+                    onEmojiClick={handleEmojiSelect}
+                    skinTonesDisabled
+                    width={300}
+                    height={400}
+                    previewConfig={{ showPreview: false }}
+                    theme={Theme.DARK}
+                  />
+                </div>
+              )}
             </div>
           </div>
-          <div
-            id="nav1"
-            className="bg-[var(--container)] bg-opacity-10  text-1xl px-1 sm:px-2 py-1 text-[var(--foreground)] flex justify-between"
-          >
-            <div className="flex  gap-1">
-              <button
-                className="rounded hover:bg-green-400 transition-colors px-1 sm:px-2 font-bold "
-                onClick={() => insertMarkdown("bold")}
-                title="Negrito (Ctrl+B)"
-              >
-                B
-              </button>
-              <button
-                className="rounded hover:bg-green-400 transition-colors px-1 sm:px-2 italic"
-                onClick={() => insertMarkdown("italic")}
-                title="Itálico (Ctrl+I)"
-              >
-                I
-              </button>
-              <button
-                className="rounded hover:bg-green-400 transition-colors px-1 sm:px-2"
-                onClick={() => insertMarkdown("link")}
-                title="Link"
-              >
-                🔗
-              </button>
-              <button
-                className="rounded hover:bg-green-400 transition-colors px-1 sm:px-2"
-                onClick={() => insertMarkdown("heading1")}
-                title="Título 1"
-              >
-                H1
-              </button>
-              <button
-                className="rounded hover:bg-green-400 transition-colors px-1 sm:px-2"
-                onClick={() => insertMarkdown("heading2")}
-                title="Título 2"
-              >
-                H2
-              </button>
-              <button
-                className="rounded hover:bg-green-400 transition-colors px-1 sm:px-2"
-                onClick={() => insertMarkdown("code")}
-                title="Código"
-              >
-                &lt;/&gt;
-              </button>
-              <button
-                className="rounded hover:bg-green-400 transition-colors px-1 sm:px-2 relative hidden sm:block"
-                onClick={() => {
-                  if (imageUploadLoading) return;
-                  if (fileInputRef.current) {
-                    fileInputRef.current.click();
-                  } else {
-                    insertMarkdown("image");
-                  }
-                }}
-                title="Inserir Imagem"
-              >
-                <Image size={16} />
-                {imageUploadLoading && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-green-400 bg-opacity-50 rounded">
-                    <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  </div>
-                )}
-              </button>
 
-              <input
-                type="file"
-                ref={fileInputRef}
-                onChange={handleImageUpload}
-                accept="image/*"
-                style={{ display: "none" }}
-              />
-              <div
-                id="Emojipicker"
-                className="flex justify-end items-center pr-2"
-              >
+          {/* Toolbar Section */}
+          <div className="bg-[var(--container)] bg-opacity-30 border-b border-[var(--border-color)] text-sm px-2 sm:px-3 py-2 text-[var(--foreground)] flex justify-between items-center sticky top-0 z-10">
+            <div className="flex flex-wrap items-center gap-1 sm:gap-2">
+              <div className="flex items-center space-x-1 mr-2">
                 <button
-                  onClick={() =>
-                    setShowEmojiPickerContent(!showEmojiPickerContent)
-                  }
-                  className=" text-[var(--foreground)] hover:text-white hover:bg-slate-700 rounded transition-colors"
+                  className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors font-bold"
+                  onClick={() => insertMarkdown("bold")}
+                  title="Negrito (Ctrl+B)"
+                >
+                  B
+                </button>
+                <button
+                  className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors italic"
+                  onClick={() => insertMarkdown("italic")}
+                  title="Itálico (Ctrl+I)"
+                >
+                  I
+                </button>
+                <button
+                  className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors"
+                  onClick={() => insertMarkdown("link")}
+                  title="Link"
+                >
+                  🔗
+                </button>
+              </div>
+
+              <div className="flex items-center space-x-1 mr-2">
+                <button
+                  className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors"
+                  onClick={() => insertMarkdown("heading1")}
+                  title="Título 1"
+                >
+                  H1
+                </button>
+                <button
+                  className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors"
+                  onClick={() => insertMarkdown("heading2")}
+                  title="Título 2"
+                >
+                  H2
+                </button>
+              </div>
+
+              <div className="flex items-center space-x-1 mr-2">
+                <button
+                  className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors"
+                  onClick={() => insertMarkdown("code")}
+                  title="Código"
+                >
+                  &lt;/&gt;
+                </button>
+                <button
+                  className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors hidden sm:flex items-center justify-center relative"
+                  onClick={() => {
+                    if (imageUploadLoading) return;
+                    if (fileInputRef.current) {
+                      fileInputRef.current.click();
+                    } else {
+                      insertMarkdown("image");
+                    }
+                  }}
+                  title="Inserir Imagem"
+                >
+                  <Image size={16} />
+                  {imageUploadLoading && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-[var(--accent-color)] bg-opacity-70 rounded-md">
+                      <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    </div>
+                  )}
+                </button>
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleImageUpload}
+                  accept="image/*"
+                  style={{ display: "none" }}
+                />
+              </div>
+
+              <div className="flex items-center space-x-1 mr-2">
+                <button
+                  className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors hidden sm:flex items-center justify-center"
+                  onClick={() => insertMarkdown("orderedList")}
+                  title="Lista Numerada"
+                >
+                  <ListOrdered size={16} />
+                </button>
+                <button
+                  className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors hidden sm:flex items-center justify-center"
+                  onClick={() => insertMarkdown("unorderedList")}
+                  title="Lista com Marcadores"
+                >
+                  <LayoutList size={16} />
+                </button>
+                <button
+                  onClick={() => setShowEmojiPickerContent(!showEmojiPickerContent)}
+                  className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors"
                   title="Adicionar emoji"
                 >
                   <SmilePlus size={16} />
                 </button>
                 {showEmojiPickerContent && (
-                  <div className="absolute z-10 right-2 top-10 mt-2 max-h-80vh overflow-auto">
-                    <div className="relative">
-                      <EmojiPicker
-                        onEmojiClick={handleEmojiSelectContent}
-                        skinTonesDisabled
-                        width={280} // Reduzido um pouco para caber melhor
-                        height={350} // Reduzido um pouco para caber melhor
-                        previewConfig={{ showPreview: false }}
-                        theme={Theme.DARK}
-                      />
-                    </div>
+                  <div className="absolute z-50 mt-36 right-4 shadow-xl rounded-lg overflow-hidden">
+                    <EmojiPicker
+                      onEmojiClick={handleEmojiSelectContent}
+                      skinTonesDisabled
+                      width={280}
+                      height={350}
+                      previewConfig={{ showPreview: false }}
+                      theme={Theme.DARK}
+                    />
                   </div>
                 )}
               </div>
-              <button
-                className=" hidden sm:block rounded hover:bg-green-400 transition-colors px-1 sm:px-2 "
-                onClick={() => insertMarkdown("orderedList")}
-                title="Lista Numerada"
-              >
-                <ListOrdered size={16} />
-              </button>
-              <button
-                className="hidden sm:block rounded hover:bg-green-400 transition-colors px-1 sm:px-2 "
-                onClick={() => insertMarkdown("unorderedList")}
-                title="Lista com Marcadores"
-              >
-                <LayoutList size={16} />
-              </button>
+            </div>
 
+            <div className="flex items-center gap-2">
               <button
-                className={`rounded sm:px-3 sm:py-1 py-1 transition-colors flex items-center sm:gap-1 text-[var(--background)] ${isPreviewMode ? "bg-[var(--button-bg2)]" : "bg-[var(--button-bg1)] hover:bg-[var(--hover-color)]"}`}
+                className={`rounded-md px-3 py-1.5 transition-all duration-200 flex items-center gap-1.5 ${
+                  isPreviewMode
+                    ? "bg-transparent text-[var(--foreground)] border border-[var(--border-color)]"
+                    : "bg-[var(--button-bg1)] text-[var(--background)]"
+                }`}
                 onClick={() => setIsPreviewMode(false)}
                 disabled={!isPreviewMode}
               >
                 <Edit size={16} /> Editar
               </button>
               <button
-                className={`rounded sm:px-3 sm:py-1 px-1 transition-colors flex items-center sm:gap-1 ml-2 text-[var(--background)] ${!isPreviewMode ? "bg-[var(--button-bg2)]" : "bg-[var(--button-bg1)] hover:bg-[var(--hover-color)]"}`}
+                className={`rounded-md px-3 py-1.5 transition-all duration-200 flex items-center gap-1.5 ${
+                  !isPreviewMode
+                    ? "bg-transparent text-[var(--foreground)] border border-[var(--border-color)]"
+                    : "bg-[var(--button-bg1)] text-[var(--background)]"
+                }`}
                 onClick={() => setIsPreviewMode(true)}
                 disabled={isPreviewMode}
               >
@@ -486,27 +478,26 @@ function Editor() {
               </button>
             </div>
           </div>
-          <div
-            id="nav2-smallscreen"
-            className="bg-[var(--container)]  text-1xl px-1 sm:px-2 py-1 text-[var(--foreground)] flex  justify-between sm:hidden"
-          >
-            <div className="sm:flex sm:space-x-2 flex">
+
+          {/* Mobile Toolbar */}
+          <div className="bg-[var(--container)] border-b border-[var(--border-color)] py-2 px-2 flex justify-between items-center sm:hidden">
+            <div className="flex items-center space-x-2">
               <button
-                className="rounded hover:bg-green-400 transition-colors px-1 sm:px-2"
+                className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors flex items-center justify-center"
                 onClick={() => insertMarkdown("orderedList")}
                 title="Lista Numerada"
               >
-                <ListOrdered size={20} />
+                <ListOrdered size={18} />
               </button>
               <button
-                className="rounded hover:bg-green-400 transition-colors px-1 sm:px-2"
+                className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors flex items-center justify-center"
                 onClick={() => insertMarkdown("unorderedList")}
                 title="Lista com Marcadores"
               >
-                <LayoutList size={16} />
+                <LayoutList size={18} />
               </button>
               <button
-                className="rounded hover:bg-green-400 transition-colors px-1 sm:px-2 relative"
+                className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors flex items-center justify-center relative"
                 onClick={() => {
                   if (imageUploadLoading) return;
                   if (fileInputRef.current) {
@@ -517,50 +508,41 @@ function Editor() {
                 }}
                 title="Inserir Imagem"
               >
-                <Image size={20} />
+                <Image size={18} />
                 {imageUploadLoading && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-green-400 bg-opacity-50 rounded">
+                  <div className="absolute inset-0 flex items-center justify-center bg-[var(--accent-color)] bg-opacity-70 rounded-md">
                     <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                   </div>
                 )}
               </button>
-
-              {/* Input de arquivo oculto para upload de imagem */}
-              <input
-                type="file"
-                ref={fileInputRef}
-                onChange={handleImageUpload}
-                accept="image/*"
-                style={{ display: "none" }}
-              />
             </div>
           </div>
 
-          <div className="flex-grow overflow-auto scrollbar">
+          {/* Content Area */}
+          <div className="flex-grow overflow-auto scrollbar bg-[var(--background)] relative">
             {!isPreviewMode ? (
-              <div className="h-full">
+              <div className="h-full relative">
                 <textarea
-                  className="p-4 sm:p-6 w-full bg-transparent text-[var(--foreground)] resize-none focus:outline-none min-h-[370px] h-full text-base sm:text-lg  overflow-auto"
+                  className="p-5 sm:p-6 w-full bg-transparent text-[var(--foreground)] resize-none focus:outline-none min-h-[370px] h-full text-base sm:text-lg overflow-auto transition-all duration-300"
                   placeholder="Escreva sua nota aqui..."
                   maxLength={15000}
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
-                  style={{ fontSize: "25px" }}
-                  // onDrop={handleDrop}
+                  style={{ fontSize: "18px", lineHeight: "1.7" }}
                   onDragOver={(e) => e.preventDefault()}
                 />
-                <div className="absolute bottom-65 right-4">
+                <div className="absolute bottom-4 right-4">
                   <ClientLayout />
                 </div>
               </div>
             ) : (
-              <div className="markdown-content  p-4 sm:p-6 w-full bg-transparent text-[var(--foreground)] min-h-[370px] h-full text-base sm:text-lg overflow-auto">
+              <div className="markdown-content p-5 sm:p-6 w-full bg-transparent text-[var(--foreground)] min-h-[370px] h-full text-base sm:text-lg overflow-auto">
                 {content ? (
                   <ReactMarkdown remarkPlugins={[remarkGfm]}>
                     {content}
                   </ReactMarkdown>
                 ) : (
-                  <p className="text-[var(--foreground)]">
+                  <p className="text-[var(--foreground)] opacity-60 italic">
                     Nenhum conteúdo para visualizar...
                   </p>
                 )}
@@ -568,22 +550,26 @@ function Editor() {
             )}
           </div>
 
-          <div className="border-t border-[var(--border-color)] p-2 sm:p-3 bg-[var(--container)] bg-opacity-20">
-            <div className="flex items-center">
-              <span className="text-xs sm:text-sm mr-2 text-[var(--foreground)]">
+          {/* Tags Search Section */}
+          <div className="border-t border-[var(--border-color)] p-3 sm:p-4 bg-[var(--container)] bg-opacity-20">
+            <div className="flex items-center gap-2">
+              <span className="text-xs sm:text-sm text-[var(--foreground)] font-medium">
                 Tags:
               </span>
-              <input
-                type="text"
-                placeholder="Procurar tags..."
-                value={tagSearchTerm}
-                onChange={(e) => setTagSearchTerm(e.target.value)}
-                className="flex-grow px-2 py-1 text-xs sm:text-sm rounded bg-[var(--background)] text-[var(--foreground)] border border-[var(--border-color)] focus:outline-none focus:ring-1 focus:ring-blue-500"
-              />
+              <div className="relative flex-grow">
+                <input
+                  type="text"
+                  placeholder="Procurar tags..."
+                  value={tagSearchTerm}
+                  onChange={(e) => setTagSearchTerm(e.target.value)}
+                  className="w-full px-3 py-2 text-xs sm:text-sm rounded-md bg-[var(--background)] text-[var(--foreground)] border border-[var(--border-color)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-color)] transition-all duration-200"
+                />
+              </div>
             </div>
           </div>
 
-          <div className="flex flex-wrap gap-1 sm:gap-2 p-2 sm:p-4 overflow-y-auto max-h-28 scrollbar">
+          {/* Tags Selection Section */}
+          <div className="flex flex-wrap gap-1.5 sm:gap-2 p-3 sm:p-4 overflow-y-auto max-h-28 scrollbar bg-[var(--background)] border-t border-[var(--border-color)]">
             {[
               "agenda",
               "amizade",
@@ -725,10 +711,10 @@ function Editor() {
                 <button
                   key={tag}
                   onClick={() => toggleTag(tag)}
-                  className={`px-2 py-1 rounded-full text-xs ${
+                  className={`px-2.5 py-1 rounded-full text-xs font-medium transition-all duration-200 ${
                     selectedTags.includes(tag)
-                      ? "bg-blue-500 text-white"
-                      : "bg-[var(--foreground)] text-[var(--background)]"
+                      ? "bg-[var(--accent-color)] text-white shadow-sm"
+                      : "bg-[var(--container)] text-[var(--foreground)] hover:bg-opacity-80"
                   }`}
                 >
                   #{tag}
@@ -736,41 +722,39 @@ function Editor() {
               ))}
             {tagSearchTerm !== "" &&
               [
-                /* ...todas as tags... */
+                /* ...existing code... */
               ].filter((tag: string) =>
                 tag.toLowerCase().includes(tagSearchTerm.toLowerCase()),
               ).length === 0 && (
-                <div className="w-full text-center py-2 text-sm text-[var(--foreground)]">
+                <div className="w-full text-center py-2 text-sm text-[var(--foreground)] italic opacity-70">
                   Nenhuma tag encontrada para {tagSearchTerm}
                 </div>
               )}
           </div>
 
-          <div
-            id="footer"
-            className="flex justify-between items-center p-3 sm:p-4 bg-[var(--container)] mt-auto"
-          >
-            <div className="text-xs sm:text-sm text-slate-400">
-              {content.length} / 15000
+          {/* Footer Section */}
+          <div className="flex justify-between items-center p-4 sm:p-5 bg-[var(--container)] border-t border-[var(--border-color)]">
+            <div className="text-xs sm:text-sm text-[var(--foreground)] opacity-70">
+              <span className="font-medium">{content.length}</span> / 15000 caracteres
             </div>
 
             <button
-              className={`flex items-center gap-1 sm:gap-2 px-3 py-2 sm:px-5 sm:py-3 rounded-lg text-sm sm:text-base font-medium transition-all ${
+              className={`flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 rounded-md text-sm sm:text-base font-medium transition-all duration-300 ${
                 saving
-                  ? "bg-slate-700 text-slate-300"
-                  : "bg-[var(--button-bg1)] hover:bg-[var(--hover-color)] text-[var(--background)]"
+                  ? "bg-[var(--container)] text-[var(--foreground)] opacity-70"
+                  : "bg-[var(--button-bg1)] hover:bg-[var(--hover-color)] text-[var(--background)] shadow-sm"
               }`}
               onClick={saveNote}
               disabled={saving || (!title.trim() && !content.trim())}
             >
               {saving ? (
                 <>
-                  <div className="w-3 h-3 sm:w-4 sm:h-4 border-2 border-slate-300 border-t-transparent rounded-full animate-spin"></div>
+                  <div className="w-4 h-4 border-2 border-[var(--foreground)] border-t-transparent rounded-full animate-spin"></div>
                   <span>Salvando</span>
                 </>
               ) : (
                 <>
-                  <Save size={16} />
+                  <Save size={18} />
                   <span>Salvar nota</span>
                 </>
               )}
