@@ -17,13 +17,13 @@ import {
 import { useRouter } from "next/navigation";
 import { useAuth } from "../../context/AuthContext";
 import ThemeToggle from "./ThemeToggle";
-import dynamic from 'next/dynamic';
+// import dynamic from 'next/dynamic';
 
 // Importação dinâmica do Clock com carregamento apenas do lado do cliente
-const ClientOnlyClock = dynamic(() => import('react-live-clock'), { 
-  ssr: false,
-  loading: () => <span className="text-[var(--foreground)]">Carregando relógio...</span>
-});
+// const ClientOnlyClock = dynamic(() => import('react-live-clock'), { 
+//   ssr: false,
+//   loading: () => <span className="text-[var(--foreground)]">Carregando relógio...</span>
+// });
 
 function Sidebox() {
   interface Note {
@@ -154,9 +154,9 @@ function Sidebox() {
                 <PlusCircle size={20} className="text-[var(--foreground)]" />
               </button>
             </div>
-            <span className="flex items-center justify-center">
+            {/* <span className="flex items-center justify-center">
             <ClientOnlyClock format={'dddd HH:mm:ss'} ticking={true} />
-            </span>
+            </span> */}
             {/* Search */}
             <div className="relative ">
               <input
