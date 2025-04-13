@@ -13,7 +13,7 @@ const Ia = () => {
   const [prevResult, setPrevResult] = useState<string[]>([]);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const [test, setTest] = useState<Response | string>("");
-  const [counter,setCounter] = useState(0);
+  const [counter, setCounter] = useState(0);
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
@@ -21,7 +21,6 @@ const Ia = () => {
       scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight;
     }
   }, [chatResult, prevResult]);
-
 
   function countTime(): number {
     const start = counter;
@@ -33,7 +32,7 @@ const Ia = () => {
   useEffect(() => {
     console.log("Use Effect executed");
     countTime();
-  },[test]);
+  }, [test]);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -79,7 +78,7 @@ const Ia = () => {
         }),
       });
 
-     setTest(response);
+      setTest(response);
 
       if (!response.ok) {
         throw new Error(`Erro na API: ${response.statusText}`);

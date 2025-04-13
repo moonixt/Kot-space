@@ -198,11 +198,14 @@ function LoginForm() {
             </Link>
           </div>
           <div className="mt-6 text-center text-[var(--foreground)]">
-          Esqueceu sua senha?{" "}
-          <Link href="/reset-password" className="text-blue-400 hover:underline">
-            Redefinir senha
-          </Link>
-        </div>
+            Esqueceu sua senha?{" "}
+            <Link
+              href="/reset-password"
+              className="text-blue-400 hover:underline"
+            >
+              Redefinir senha
+            </Link>
+          </div>
         </div>
       </div>
     </>

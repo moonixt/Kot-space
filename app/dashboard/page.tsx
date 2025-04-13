@@ -59,35 +59,58 @@ export default function DashboardPage() {
           <div>
             <Profile />
           </div>
-          
+
           {/* Toggle tasks button */}
           <div className="flex justify-between items-center ">
-           
-            <button 
+            <button
               onClick={() => setShowTasks(!showTasks)}
-              className="flex items-center gap-1 text-sm px-3 py-1 border border-[var(--border-color)] rounded hover:bg-[var(--container)] transition-colors"
+              className="flex items-center gap-1 text-sm px-3 py-1 border border-[var(--border-color)] rounded hover:bg-[var(--container)] transition-colors "
             >
               {showTasks ? (
-                <>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M18 15l-6-6-6 6"/>
-                  </svg>
-                  <span>Hide Tasks</span>
-                </>
+          <>
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M18 15l-6-6-6 6" />
+            </svg>
+            <span>Hide Tasks</span>
+          </>
               ) : (
-                <>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M6 9l6 6 6-6"/>
-                  </svg>
-                  <span>Show Tasks</span>
-                </>
+          <>
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+            <span>Show Tasks</span>
+          </>
               )}
             </button>
           </div>
-          
-          {/* Tasks component with conditional rendering */}
-          {showTasks && <Tasks />}
-          
+
+          {/* Tasks component with conditional rendering and animation */}
+            <div 
+            className={`transition-all  duration-600 ease-in-out  overflow-hidden  ${
+              showTasks ? 'max-h-[1000px] opacity-100 ' : 'max-h-0 opacity-0 mb-0'
+            }`}
+            >
+            {showTasks && <Tasks />}
+          </div>
+
           <button
             className="px-5 mb-4 py-2 bg-[var(--foreground)] text-[var(--background)] hover:bg-opacity-60 transition-all hover:translate-x-1 hover:shadow-md transition-colors flex items-center gap-2"
             onClick={() => router.push("/editor")}

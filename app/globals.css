@@ -23,7 +23,9 @@
   --input-bg: rgba(255, 255, 255, 0.9);
   --heading-font:
     system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --body-font: Georgia;
+  --body-font: 
+    'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
   font-family:
     -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica,
     Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
@@ -61,8 +63,8 @@ html {
 
 /* Redefinição para usuários que preferem menos animações */
 @media (prefers-reduced-motion: reduce) {
-  html, 
-  .smooth-scroll, 
+  html,
+  .smooth-scroll,
   .scroll-container {
     scroll-behavior: auto;
   }
@@ -87,7 +89,7 @@ html {
   --container: #010409;
   --accent-color: #60a5fa;
   --border-color: #334155;
-  --code-bg: #2e3a4b;
+  --code-bg: #34344b;
   --blockquote-color: #94a3b8;
   --table-header-bg: rgba(30, 41, 59, 0.7);
   --table-border: #334155;

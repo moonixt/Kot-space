@@ -26,7 +26,10 @@ const Tasks = () => {
 
     // Close date picker when clicking outside
     const handleClickOutside = (event: MouseEvent) => {
-      if (datePickerRef.current && !datePickerRef.current.contains(event.target as Node)) {
+      if (
+        datePickerRef.current &&
+        !datePickerRef.current.contains(event.target as Node)
+      ) {
         setEditingTaskId(null);
       }
     };
@@ -75,7 +78,10 @@ const Tasks = () => {
     }
   };
 
-  const toggleTaskCompletion = async (taskId: string, currentStatus: boolean) => {
+  const toggleTaskCompletion = async (
+    taskId: string,
+    currentStatus: boolean,
+  ) => {
     try {
       const { error } = await supabase
         .from("tasks")
@@ -91,10 +97,7 @@ const Tasks = () => {
 
   const deleteTask = async (taskId: string) => {
     try {
-      const { error } = await supabase
-        .from("tasks")
-        .delete()
-        .eq("id", taskId);
+      const { error } = await supabase.from("tasks").delete().eq("id", taskId);
 
       if (error) throw error;
       fetchTasks();
@@ -138,7 +141,7 @@ const Tasks = () => {
 
   return (
     <div className="mb-8">
-      <h2 className="text-xl font-bold flex justify-center">Pin</h2>
+    
       <form onSubmit={addTask} className="mb-4">
         <div className="flex flex-col sm:flex-row gap-2">
           <div className="flex-grow flex gap-2">
@@ -150,22 +153,38 @@ const Tasks = () => {
                 title="Set due date"
                 onClick={() => setEditingTaskId("new")}
               >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
                   <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                   <line x1="16" y1="2" x2="16" y2="6"></line>
                   <line x1="8" y1="2" x2="8" y2="6"></line>
                   <line x1="3" y1="10" x2="21" y2="10"></line>
                 </svg>
-                {newTaskDueDate && <span className="ml-2 text-xs">{newTaskDueDate.toLocaleDateString()}</span>}
+                {newTaskDueDate && (
+                  <span className="ml-2 text-xs">
+                    {newTaskDueDate.toLocaleDateString()}
+                  </span>
+                )}
               </button>
-              
+
               {/* Date picker modal appears below the button */}
               {editingTaskId === "new" && (
-                <div 
+                <div
                   ref={datePickerRef}
                   className="fixed inset-0 z-20 flex items-center justify-center"
                 >
-                  <div className="absolute inset-0 bg-black bg-opacity-25" onClick={() => setEditingTaskId(null)}></div>
+                  <div
+                    className="absolute inset-0 bg-black bg-opacity-25"
+                    onClick={() => setEditingTaskId(null)}
+                  ></div>
                   <div className="relative z-30 bg-[var(--background)] border border-[var(--border-color)] rounded shadow-lg p-4">
                     <DatePicker
                       selected={newTaskDueDate}
@@ -193,16 +212,17 @@ const Tasks = () => {
                 </div>
               )}
             </div>
-            
+
             <input
               type="text"
               value={newTask}
+              maxLength={32}
               onChange={(e) => setNewTask(e.target.value)}
               placeholder="Add a new task"
-              className="flex-grow p-2 bg-[var(--container)] border border-[var(--border-color)] focus:outline-none focus:ring-1 focus:ring-[var(--foreground)]"
+              className="flex-grow  p-2 bg-[var(--container)] border border-[var(--border-color)] focus:outline-none focus:ring-1 focus:ring-[var(--foreground)]"
             />
           </div>
-          
+
           <button
             type="submit"
             className="px-4 py-2 bg-[var(--foreground)] text-[var(--background)] hover:bg-opacity-80 transition-colors"
@@ -211,78 +231,117 @@ const Tasks = () => {
           </button>
         </div>
       </form>
-      
+
       {tasks.length > 0 ? (
         <div className="grid grid-cols-2 sm:grid-cols-2 gap-3">
           {tasks.map((task) => (
             <div
               key={task.id}
               className={`p-3 bg-[var(--container)] hover:bg-opacity-60 transition-all border-l-2 ${
-                task.is_completed ? "border-green-500 opacity-60" : 
-                task.due_date && isOverdue(task.due_date) ? "border-red-500" : 
-                "border-[var(--foreground)]"
+                task.is_completed
+                  ? "border-green-500 opacity-60"
+                  : task.due_date && isOverdue(task.due_date)
+                    ? "border-red-500"
+                    : "border-[var(--foreground)]"
               }`}
             >
               <div className="flex items-start gap-2">
-                <button 
-                  onClick={() => toggleTaskCompletion(task.id, task.is_completed)}
+                <button
+                  onClick={() =>
+                    toggleTaskCompletion(task.id, task.is_completed)
+                  }
                   className="flex-shrink-0 mt-1"
                 >
-                  <div className={`w-5 h-5 border ${
-                    task.is_completed 
-                      ? "bg-green-500 border-green-500" 
-                      : "border-[var(--foreground)]"
-                  } rounded flex items-center justify-center`}>
+                  <div
+                    className={`w-5 h-5 border ${
+                      task.is_completed
+                        ? "bg-green-500 border-green-500"
+                        : "border-[var(--foreground)]"
+                    } rounded flex items-center justify-center`}
+                  >
                     {task.is_completed && (
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                      <svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="white"
+                        strokeWidth="3"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
                         <polyline points="20 6 9 17 4 12"></polyline>
                       </svg>
                     )}
                   </div>
                 </button>
-                
+
                 <div className="flex-grow">
                   <span
                     className={
                       task.is_completed ? "line-through opacity-70" : ""
                     }
                   >
-                    {task.title}
+                    <span className="">{task.title}</span>
                   </span>
-                  
+
                   <div className="flex flex-wrap gap-x-3 text-xs text-[var(--foreground)] opacity-50 mt-1">
                     <span>Created: {formatDate(task.created_at)}</span>
-                    
+
                     {task.due_date && (
-                      <span className={isOverdue(task.due_date) && !task.is_completed ? "text-red-500 opacity-100" : ""}>
+                      <span
+                        className={
+                          isOverdue(task.due_date) && !task.is_completed
+                            ? "text-red-500 opacity-100"
+                            : ""
+                        }
+                      >
                         Due: {formatDate(task.due_date)}
                       </span>
                     )}
                   </div>
                 </div>
-                
+
                 <div className="flex gap-1">
                   {/* Calendar button for existing task */}
                   <div className="relative">
                     <button
                       onClick={() => {
                         setEditingTaskId(task.id);
-                        setEditingTaskDate(task.due_date ? new Date(task.due_date) : null);
+                        setEditingTaskDate(
+                          task.due_date ? new Date(task.due_date) : null,
+                        );
                       }}
                       className="p-1 text-[var(--foreground)] opacity-40 hover:opacity-100"
                       title="Set due date"
                     >
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <rect
+                          x="3"
+                          y="4"
+                          width="18"
+                          height="18"
+                          rx="2"
+                          ry="2"
+                        ></rect>
                         <line x1="16" y1="2" x2="16" y2="6"></line>
                         <line x1="8" y1="2" x2="8" y2="6"></line>
                         <line x1="3" y1="10" x2="21" y2="10"></line>
                       </svg>
                     </button>
-                    
+
                     {/* DatePicker for existing task */}
                     {editingTaskId === task.id && (
-                      <div 
+                      <div
                         ref={datePickerRef}
                         className="absolute z-10 top-full right-0 mt-1 bg-[var(--background)] border border-[var(--border-color)] rounded shadow-lg p-2"
                       >
@@ -302,13 +361,22 @@ const Tasks = () => {
                       </div>
                     )}
                   </div>
-                  
+
                   <button
                     onClick={() => deleteTask(task.id)}
                     className="p-1 text-red-500 hover:text-red-700"
                     title="Delete task"
                   >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
                       <path d="M3 6h18"></path>
                       <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
                       <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
@@ -321,7 +389,9 @@ const Tasks = () => {
         </div>
       ) : (
         <div className="p-4 border border-dashed border-[var(--border-color)] text-center">
-          <p className="text-sm opacity-70">No tasks yet. Add your first task!</p>
+          <p className="text-sm opacity-70">
+            No tasks yet. Add your first task!
+          </p>
         </div>
       )}
     </div>

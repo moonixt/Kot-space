@@ -22,6 +22,8 @@ import EmojiPicker, { Theme } from "emoji-picker-react"; //LIbrary to enable sup
 import { EmojiClickData } from "emoji-picker-react"; //Type for the emoji click data
 import ClientLayout from "./ClientLayout";
 
+
+
 function Editor() {
   //main function for the editor component
   const [title, setTitle] = useState(""); //state for the title of the note, initialized as empty string
@@ -253,9 +255,21 @@ function Editor() {
     setSelectedTags([]);
   };
 
+  const isImageFile = (file: File) => {
+    const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+    return allowedTypes.includes(file.type);
+  };
+
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
+
+    const file = files[0];
+
+    if (!isImageFile(file)) {
+      alert("Only image files are allowed.");
+      return;
+    }
 
     // Verificar se o usuário está autenticado
     if (!user) {
@@ -266,7 +280,6 @@ function Editor() {
     try {
       setImageUploadLoading(true);
 
-      const file = files[0];
       const fileExt = file.name.split(".").pop();
       const fileName = `${Math.random().toString(36).substring(2, 15)}.${fileExt}`;
       const filePath = `${user.id}/${fileName}`;
@@ -301,7 +314,10 @@ function Editor() {
   };
 
   return (
-    <div id="Editor" className="w-full h-full flex flex-col bg-[var(--background)]">
+    <div
+      id="Editor"
+      className="w-full h-full flex flex-col bg-[var(--background)]"
+    >
       <div className="mx-auto w-full h-full flex flex-col flex-grow">
         <div className="bg-[var(--background)] backdrop-blur-sm shadow-lg rounded-lg overflow-hidden flex flex-col flex-grow h-full border border-[var(--border-color)] transition-all duration-300">
           {/* Title Section */}
@@ -418,21 +434,9 @@ function Editor() {
 
               <div className="flex items-center space-x-1 mr-2">
                 <button
-                  className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors hidden sm:flex items-center justify-center"
-                  onClick={() => insertMarkdown("orderedList")}
-                  title="Lista Numerada"
-                >
-                  <ListOrdered size={16} />
-                </button>
-                <button
-                  className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors hidden sm:flex items-center justify-center"
-                  onClick={() => insertMarkdown("unorderedList")}
-                  title="Lista com Marcadores"
-                >
-                  <LayoutList size={16} />
-                </button>
-                <button
-                  onClick={() => setShowEmojiPickerContent(!showEmojiPickerContent)}
+                  onClick={() =>
+                    setShowEmojiPickerContent(!showEmojiPickerContent)
+                  }
                   className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors"
                   title="Adicionar emoji"
                 >
@@ -735,7 +739,8 @@ function Editor() {
           {/* Footer Section */}
           <div className="flex justify-between items-center p-4 sm:p-5 bg-[var(--container)] border-t border-[var(--border-color)]">
             <div className="text-xs sm:text-sm text-[var(--foreground)] opacity-70">
-              <span className="font-medium">{content.length}</span> / 15000 caracteres
+              <span className="font-medium">{content.length}</span> / 15000
+              caracteres
             </div>
 
             <button

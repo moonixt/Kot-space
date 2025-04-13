@@ -4,7 +4,19 @@ import { useEffect, useState, useRef } from "react";
 import { supabase } from "../../../lib/supabase";
 import Link from "next/link";
 import { useRouter, useParams } from "next/navigation";
-import { ArrowLeft, Trash2, Calendar, Edit, Save, X, Image, SmilePlus, LayoutList, ListOrdered, Eye } from "lucide-react";
+import {
+  ArrowLeft,
+  Trash2,
+  Calendar,
+  Edit,
+  Save,
+  X,
+  Image,
+  SmilePlus,
+  LayoutList,
+  ListOrdered,
+  Eye,
+} from "lucide-react";
 import { useAuth } from "../../../context/AuthContext";
 import { ProtectedRoute } from "../../components/ProtectedRoute";
 import ReactMarkdown from "react-markdown";
@@ -322,7 +334,7 @@ export default function NotePage() {
 
   return (
     <ProtectedRoute>
-      <div className="min-h-screen bg-[var(--container)] flex justify-center">
+      <div className="min-h-screen bg-[var(--container)] flex justify-center ">
         <div className="w-full max-w-7xl bg-[var(--background)] min-h-screen shadow-xl flex flex-col">
           {/* Barra de navegação superior */}
           <div className="bg-[var(--container)] bg-opacity-10 px-4 py-2 text-[var(--foreground)] flex justify-between items-center border-b border-[var(--border-color)]">
@@ -511,7 +523,9 @@ export default function NotePage() {
                     <LayoutList size={16} />
                   </button>
                   <button
-                    onClick={() => setShowEmojiPickerContent(!showEmojiPickerContent)}
+                    onClick={() =>
+                      setShowEmojiPickerContent(!showEmojiPickerContent)
+                    }
                     className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors"
                     title="Adicionar emoji"
                   >
