@@ -224,7 +224,7 @@ function Sidebox() {
                         <p>Nenhuma nota ainda</p>
                         <p className="text-xs mt-1">Crie sua primeira nota!</p>
                         <button
-                          onClick={() => router.push("/")}
+                          onClick={() => router.push("/editor")}
                           className="text-blue-400 text-sm mt-2 hover:underline"
                         >
                           Criar primeira nota

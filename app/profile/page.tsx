@@ -8,9 +8,9 @@ import { useAuth } from "../../context/AuthContext";
 
 const Profile = () => {
   const [wallpaperUrl, setWallpaperUrl] = useState(
-    "/static/images/default2.jpg",
+    "/static/images/default.jpg",
   );
-  const [avatar_url, setAvatarUrl] = useState("/icons/plus.png");
+  const [avatar_url, setAvatarUrl] = useState("");
   const [showWallpaperModal, setShowWallpaperModal] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
