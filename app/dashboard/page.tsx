@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { ProtectedRoute } from "../components/ProtectedRoute";
 import Profile from "../profile/page";
 import Tasks from "../components/tasks";
+import CalendarView from "../components/CalendarView";
 
 interface Note {
   id: string;
@@ -19,7 +20,21 @@ interface Note {
 export default function DashboardPage() {
   const [notes, setNotes] = useState<Note[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showTasks, setShowTasks] = useState(true);
+  const [showTasks, setShowTasks] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const savedShowTasks = localStorage.getItem('showTasks');
+      return savedShowTasks === null ? true : savedShowTasks === 'true';
+    }
+    return true;
+  });
+
+  const [showCalendar, setShowCalendar] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const savedShowCalendar = localStorage.getItem('showCalendar');
+      return savedShowCalendar === null ? true : savedShowCalendar === 'true';
+    }
+    return true;
+  });
   const { user } = useAuth();
 
   // Fetch notes from Supabase
@@ -45,11 +60,39 @@ export default function DashboardPage() {
     }
   };
 
+  // Load display preferences from localStorage on initial render
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const savedShowTasks = localStorage.getItem('showTasks');
+      const savedShowCalendar = localStorage.getItem('showCalendar');
+      
+      setShowTasks(savedShowTasks === null ? true : savedShowTasks === 'true');
+      setShowCalendar(savedShowCalendar === null ? true : savedShowCalendar === 'true');
+    }
+  }, []);
+
+  // Save display preferences to localStorage whenever they change
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('showTasks', showTasks.toString());
+      localStorage.setItem('showCalendar', showCalendar.toString());
+    }
+  }, [showTasks, showCalendar]);
+
   useEffect(() => {
     fetchNotes();
   }, [user]);
 
   const router = useRouter();
+
+  // Toggle functions that update state
+  const toggleTasks = () => {
+    setShowTasks(!showTasks);
+  };
+
+  const toggleCalendar = () => {
+    setShowCalendar(!showCalendar);
+  };
 
   return (
     <ProtectedRoute>
@@ -60,60 +103,117 @@ export default function DashboardPage() {
             <Profile />
           </div>
 
-          {/* Toggle tasks button */}
-          <div className="flex justify-between items-center ">
+          {/* Toggle buttons container */}
+          <div className="flex space-x-4 ">
+            {/* Toggle tasks button */}
             <button
-              onClick={() => setShowTasks(!showTasks)}
-              className="flex items-center gap-1 text-sm px-3 py-1 border border-[var(--border-color)] rounded hover:bg-[var(--container)] transition-colors "
+              onClick={toggleTasks}
+              className="flex items-center gap-1 text-sm px-3 py-1 border border-[var(--border-color)] rounded hover:bg-[var(--container)] transition-colors"
             >
               {showTasks ? (
-          <>
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M18 15l-6-6-6 6" />
-            </svg>
-            <span>Hide Tasks</span>
-          </>
+                <>
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M18 15l-6-6-6 6" />
+                  </svg>
+                  <span>Hide Tasks</span>
+                </>
               ) : (
-          <>
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+                <>
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M6 9l6 6 6-6" />
+                  </svg>
+                  <span>Tasks</span>
+                </>
+              )}
+            </button>
+
+            {/* Calendar toggle button */}
+            <button
+              onClick={toggleCalendar}
+              className="flex items-center gap-1 text-sm px-3 py-1 border border-[var(--border-color)] rounded hover:bg-[var(--container)] transition-colors"
             >
-              <path d="M6 9l6 6 6-6" />
-            </svg>
-            <span>Show Tasks</span>
-          </>
+              {showCalendar ? (
+                <>
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M18 15l-6-6-6 6" />
+                  </svg>
+                  <span>Hide Calendar</span>
+                </>
+              ) : (
+                <>
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M6 9l6 6 6-6" />
+                  </svg>
+                  <span>Calendar</span>
+                </>
               )}
             </button>
           </div>
 
           {/* Tasks component with conditional rendering and animation */}
-            <div 
-            className={`transition-all  duration-600 ease-in-out  overflow-hidden  ${
-              showTasks ? 'max-h-[1000px] opacity-100 ' : 'max-h-0 opacity-0 mb-0'
+          <div 
+            className={`transition-all duration-600 ease-in-out overflow-hidden ${
+              showTasks ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0 mb-0'
             }`}
-            >
+          >
             {showTasks && <Tasks />}
           </div>
 
+          {/* Calendar component with conditional rendering */}
+          <div 
+            className={`transition-all duration-600 ease-in-out overflow-hidden mt-4 ${
+              showCalendar ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0 mb-0'
+            }`}
+          >
+            {showCalendar && (
+              <div>
+                <h2 className="text-xl font-semibold ">Calendar</h2>
+                <CalendarView />
+              </div>
+            )}
+          </div>
+
+          {/* New document button */}
           <button
-            className="px-5 mb-4 py-2 bg-[var(--foreground)] text-[var(--background)] hover:bg-opacity-60 transition-all hover:translate-x-1 hover:shadow-md transition-colors flex items-center gap-2"
+            className="px-5 my-6 py-2 bg-[var(--foreground)] text-[var(--background)] hover:bg-opacity-60 transition-all hover:translate-x-1 hover:shadow-md transition-colors flex items-center gap-2"
             onClick={() => router.push("/editor")}
+  
           >
             <span>Novo documento</span>
             <svg

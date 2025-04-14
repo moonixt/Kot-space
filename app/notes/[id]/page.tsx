@@ -256,6 +256,36 @@ export default function NotePage() {
     }
   }
 
+  function handleExportTxt() {
+    if (!note) return;
+    
+    try {
+      // Create content with title and note content
+      const fileName = `${note.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.txt`;
+      const fileContent = `${note.title}\n\n${note.content}`;
+      
+      // Create a blob with the text content
+      const blob = new Blob([fileContent], { type: 'text/plain;charset=utf-8' });
+      
+      // Create an anchor element and trigger download
+      const href = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = href;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      
+      // Clean up
+      document.body.removeChild(link);
+      URL.revokeObjectURL(href);
+      
+      showToast("Nota exportada com sucesso!", "success");
+    } catch (error) {
+      console.error("Erro ao exportar nota:", error);
+      showToast("Erro ao exportar nota.", "error");
+    }
+  }
+
   function cancelEdit() {
     setEditTitle(note?.title || "");
     setEditContent(note?.content || "");
@@ -639,26 +669,42 @@ export default function NotePage() {
                 ? note.tags.replace(/[\[\]"]/g, "").replace(/,/g, " #")
                 : ""}
             </div>
-
-            <button
-              onClick={handleDelete}
-              disabled={deleting || editMode}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
-                deleting || editMode
-                  ? "bg-slate-700 text-slate-400 cursor-not-allowed"
-                  : "bg-red-500/10 text-red-500 hover:bg-red-500/20"
-              }`}
-              title="Excluir nota"
-            >
-              {deleting ? (
-                <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-              ) : (
-                <>
-                  <Trash2 size={14} />
-                  <span>Excluir</span>
-                </>
-              )}
-            </button>
+            
+            <div className="flex gap-2">
+              <button
+                onClick={handleExportTxt}
+                disabled={!note}
+                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 transition-colors"
+                title="Exportar como TXT"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="7 10 12 15 17 10"></polyline>
+                  <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                <span>Exportar</span>
+              </button>
+              
+              <button
+                onClick={handleDelete}
+                disabled={deleting || editMode}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+                  deleting || editMode
+                    ? "bg-slate-700 text-slate-400 cursor-not-allowed"
+                    : "bg-red-500/10 text-red-500 hover:bg-red-500/20"
+                }`}
+                title="Excluir nota"
+              >
+                {deleting ? (
+                  <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                ) : (
+                  <>
+                    <Trash2 size={14} />
+                    <span>Excluir</span>
+                  </>
+                )}
+              </button>
+            </div>
           </div>
         </div>
       </div>

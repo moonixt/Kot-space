@@ -10,7 +10,7 @@ const Profile = () => {
   const [wallpaperUrl, setWallpaperUrl] = useState(
     "/static/images/default2.jpg",
   );
-  const [avatar_url, setAvatarUrl] = useState("/icons/cop-note.png");
+  const [avatar_url, setAvatarUrl] = useState("/icons/plus.png");
   const [showWallpaperModal, setShowWallpaperModal] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
