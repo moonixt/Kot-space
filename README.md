@@ -11,43 +11,15 @@
   </p>
 
 [![pt-BR](https://img.shields.io/badge/lang-pt--BR-green.svg)](./docs/README.pt-BR.md)
-[![PWA Ready](https://img.shields.io/badge/PWA-Ready-blue.svg)](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps)
-[![Built with Next.js](https://img.shields.io/badge/Built%20with-Next.js-black)](https://nextjs.org)
-[![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![TailwindCSS](https://img.shields.io/badge/Tailwind%20CSS-38B2AC?logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
-
-## Initial release with basic note-taking functionality.
-
-![image](https://github.com/user-attachments/assets/a12fee94-7c60-4fae-abf2-ab24d7112656)
-
-# (Markdown Support)
-
-## v1.0.0
-
-![chrome_nj6WTfe3He](https://github.com/user-attachments/assets/06d41088-17aa-45e0-a95e-9b8c9d93884b)
-
-## v2.0.0 (Now)
-
-![msedge_0xDa4d6b79](https://github.com/user-attachments/assets/809ceecf-c9b2-4d8e-af98-e2c92e32f38d)
-
-# Preview mode
-
-## v1.0.0 (Markdown Support)
-
-![chrome_W9Kbuzt69C](https://github.com/user-attachments/assets/91ddb711-ab28-46b4-9b63-9865cc0db536)
-
-## v2.0.0 (Now)
-
-![image](https://github.com/user-attachments/assets/0e1567fb-4ee2-4be7-9563-3380095edbbe)
-
-## Full Note Viewing and Editing
-
-![chrome_B55zqoHoxA-ezgif com-video-to-gif-converter](https://github.com/user-attachments/assets/509781b6-2b1e-4cf1-846b-0b511a4392a4)
-
-## Mobile and cross platform compatibility 🐧
-
-![mobile](https://github.com/user-attachments/assets/6a43b897-995f-47a9-8632-1543473a4fce)
-
+  [![PWA Ready](https://img.shields.io/badge/PWA-Ready-blue.svg)](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps)
+  [![Built with Next.js](https://img.shields.io/badge/Built%20with-Next.js-black)](https://nextjs.org)
+  [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+  [![TailwindCSS](https://img.shields.io/badge/Tailwind%20CSS-38B2AC?logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+  [![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?logo=supabase&logoColor=white)](https://supabase.com)
+  [![Markdown](https://img.shields.io/badge/Markdown-000000?logo=markdown&logoColor=white)](https://www.markdownguide.org/)
+  [![Offline Support](https://img.shields.io/badge/Offline-Support-purple)](https://web.dev/offline-cookbook/)
+  [![License](https://img.shields.io/badge/License-Personal_Use_Only-red)](LICENSE)
+  [![Vercel](https://img.shields.io/badge/Vercel-000000?logo=vercel&logoColor=white)](https://vercel.com)
 </div>
 
 ## ✨ Features
@@ -60,13 +32,16 @@
 - **Full-Text Search**: Quickly find the notes you need ✅
 - **Responsive Design**: Works beautifully on desktop and mobile ✅
 - **Offline Capability**: Create and edit notes even without an internet connection (in progress ⚠️⚙️)
+- **Calendar Events**: Add, manage, and customize colorful events with descriptions ✅
+
 
 ## 🚀 Getting Started
 
 ### Prerequisites
 
 - [Node.js](https://nodejs.org/) (v18 or higher)
-- npm, yarn, or pnpm
+- npm or yarn
+- [Supabase](https://supabase.com) account for backend services
 
 ### Installation
 
@@ -83,8 +58,6 @@ cd fair-note
 npm install
 # or
 yarn
-# or
-pnpm install
 ```
 
 3. Start the development server:
