@@ -1,11 +1,13 @@
 "use client";
 
-import React from "react";
-import { CreditCard } from "lucide-react";
+import React, { useState } from "react";
+import { CreditCard, Check, Shield, HardDrive, Smartphone, FileEdit, LayoutDashboard, CheckSquare, Calendar } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 
 export default function PricingPage() {
   const { user } = useAuth();
+  const [isHovered, setIsHovered] = useState(false);
+  
   const planDetails = {
     name: "Pro",
     price: "19.99",
@@ -15,6 +17,8 @@ export default function PricingPage() {
       "Sincronização em todos dispositivos",
       "Suporte a formatação Markdown",
       "Visualização em dashboard avançado",
+      "Gerenciamento de tarefas avançado",
+      "Calendário integrado com notificações",
     ],
   };
 
@@ -36,99 +40,108 @@ export default function PricingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--background)] py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-b from-[var(--background)] to-[var(--background-secondary)] py-16 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-extrabold text-[var(--foreground)] mb-4">
+        <div className="text-center mb-10">
+          <div className="inline-block py-1 px-3 bg-red-500 text-white text-sm font-bold rounded-full animate-pulse mb-4">
+            OFERTA POR TEMPO LIMITADO
+          </div>
+          <h1 className="text-5xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-[var(--foreground)] to-[var(--accent)] mb-6">
             Plano PRO
           </h1>
-          <p className="text-xl text-[var(--foreground)] max-w-2xl mx-auto">
-            Desbloqueie todo o potencial do Fair-note com nosso plano premium
+          <p className="text-xl text-[var(--foreground)] max-w-2xl mx-auto leading-relaxed">
+            Desbloqueie todo o potencial do Fair-note com nosso plano premium e 
+            <span className="font-bold"> potencialize sua produtividade</span>
           </p>
+          
+          <div className="flex items-center justify-center mt-8 space-x-4">
+            <div className="flex items-center text-green-500">
+              <Check className="mr-1 h-5 w-5" />
+                <span className="text-sm">Acesso contínuo em qualquer dispositivo</span>
+            </div>
+            <div className="w-1 h-1 rounded-full bg-[var(--muted)]"></div>
+            <div className="flex items-center text-green-500">
+              <Shield className="mr-1 h-5 w-5" />
+              <span className="text-sm">Garantia de 30 dias</span>
+            </div>
+          </div>
         </div>
 
-        <div className="bg-[var(--container)] rounded-2xl shadow-lg overflow-hidden mb-8">
-          <div className="bg-[var(--button-bg)] px-6 py-4">
+        <div className="relative bg-[var(--container)] rounded-3xl shadow-2xl overflow-hidden mb-12 border border-[var(--accent)]">
+          <div className="absolute top-0 right-0 bg-red-500 text-white px-4 py-1 rounded-bl-lg font-semibold">
+            OFERTA POR TEMPO LIMITADO
+          </div>
+          <div className="bg-[var(--foreground)] px-6 py-5">
             <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-bold text-[var(--foreground)]">
+              <h2 className="text-2xl font-bold text-[var(--background)]">
                 Plano PRO
               </h2>
-              <div className="bg-[var(--hover-color)] text-[var(--foreground)] px-3 py-1 text-sm font-medium rounded-full">
+              <div className="bg-[var(--accent)] text-white px-3 py-5 text-sm font-medium rounded-full">
                 Mais Popular
               </div>
             </div>
           </div>
 
-          <div className="p-6">
-            <div className="mb-6 flex items-baseline">
+          <div className="p-8">
+            <div className="mb-8 flex items-baseline">
               <span className="text-5xl font-extrabold text-[var(--foreground)]">
                 R$ {planDetails.price}
               </span>
-              <span className="ml-1 text-xl font-medium text-[var(--foreground)]">
+              <span className="ml-2 text-xl font-medium text-[var(--foreground)]">
                 /{planDetails.period}
+              </span>
+              <span className="ml-4 line-through text-[var(--muted)] text-lg">
+                R$ 29.99
               </span>
             </div>
 
-            <div className="mb-6">
-              <h3 className="text-lg font-medium text-[var(--foreground)] mb-4">
+            <div className="mb-8">
+              <h3 className="text-xl font-bold text-[var(--foreground)] mb-6">
                 O que está incluído:
               </h3>
-              <ul className="space-y-3">
-                {planDetails.features.map((feature, index) => (
-                  <li key={index} className="flex items-start">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="20"
-                      height="20"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="flex-shrink-0 h-5 w-5 text-green-500"
-                    >
-                      <polyline points="20 6 9 17 4 12"></polyline>
-                    </svg>
-                    <span className="ml-3 text-[var(--foreground)]">
-                      {feature}
-                    </span>
-                  </li>
-                ))}
+              <ul className="space-y-4 ">
+                {planDetails.features.map((feature, index) => {
+                  // Select the right icon based on the feature
+                  let FeatureIcon = Check;
+                  
+                  if (feature.includes("Armazenamento")) {
+                    FeatureIcon = HardDrive;
+                  } else if (feature.includes("Sincronização")) {
+                    FeatureIcon = Smartphone;
+                  } else if (feature.includes("Markdown")) {
+                    FeatureIcon = FileEdit;
+                  } else if (feature.includes("dashboard")) {
+                    FeatureIcon = LayoutDashboard;
+                  } else if (feature.includes("tarefas")) {
+                    FeatureIcon = CheckSquare;
+                  } else if (feature.includes("Calendário")) {
+                    FeatureIcon = Calendar;
+                  }
+                  
+                  return (
+                    <li key={index} className="flex items-start bg-[var(--highlight)] p-3 rounded-lg transition-all duration-200 hover:shadow-md">
+                      <div className="flex-shrink-0 h-6 w-6 bg-[var(--accent)] rounded-full flex items-center justify-center text-white">
+                        <FeatureIcon className="h-4 w-4 text-[var(--foreground)]" />
+                      </div>
+                      <span className="ml-3 text-[var(--foreground)] font-medium">
+                        {feature}
+                      </span>
+                    </li>
+                  );
+                })}
               </ul>
             </div>
           </div>
         </div>
 
-        <div className="bg-[var(--container)] rounded-2xl shadow-lg overflow-hidden">
-          <div className="p-6">
+        <div className="bg-[var(--container)] rounded-3xl shadow-xl overflow-hidden border border-[var(--border-color)]">
+          <div className="p-8">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-bold text-[var(--foreground)]">
+              <h3 className="text-2xl font-bold text-[var(--foreground)]">
                 Resumo do pedido
               </h3>
               <div className="flex items-center text-green-600">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="h-4 w-4 mr-1"
-                >
-                  <rect
-                    x="3"
-                    y="11"
-                    width="18"
-                    height="11"
-                    rx="2"
-                    ry="2"
-                  ></rect>
-                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                </svg>
+                <Shield className="h-5 w-5 mr-2" />
                 <span className="text-sm font-medium">Pagamento seguro</span>
               </div>
             </div>
@@ -150,24 +163,41 @@ export default function PricingPage() {
             </div>
 
             <div className="flex justify-between py-4 mt-2">
-              <span className="text-lg font-bold text-[var(--foreground)]">
+              <span className="text-xl font-bold text-[var(--foreground)]">
                 Total
               </span>
-              <span className="text-lg font-bold text-[var(--foreground)]">
-                R$ {planDetails.price}/{planDetails.period}
-              </span>
+              <div>
+                <span className="text-xl font-bold text-[var(--accent)]">
+                  R$ {planDetails.price}
+                </span>
+                <span className="text-[var(--foreground)]">/{planDetails.period}</span>
+              </div>
             </div>
 
-            <div className="mt-6">
+            <div className="mt-8">
               <button
                 onClick={handleCheckout}
-                className="w-full bg-[var(--button-bg)] hover:bg-[var(--hover-color)] text-[var(--foreground)] py-4 px-6 rounded-xl font-semibold flex items-center justify-center transition-all duration-200"
+                onMouseEnter={() => setIsHovered(true)}
+                onMouseLeave={() => setIsHovered(false)}
+                className="w-full bg-[var(--foreground)] hover:from-[var(--accent)] hover:to-[var(--foreground)] text-[var(--background)] py-5 px-6 rounded-xl font-bold flex items-center justify-center transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
               >
-                <CreditCard className="mr-2 h-5 w-5" />
-                <span>Finalizar Pagamento</span>
+                <CreditCard className={`mr-2 h-5 w-5 ${isHovered ? 'animate-pulse' : ''}`} />
+                <span className="text-lg">Assinar Agora</span>
               </button>
+              <p className="text-center text-[var(--muted)] mt-4 text-sm">
+                Cancele a qualquer momento. Sem compromisso.
+              </p>
             </div>
           </div>
+        </div>
+        
+        <div className="mt-12 bg-[var(--highlight)] p-6 rounded-2xl border-l-4 border-red-500">
+          <h4 className="font-bold text-[var(--foreground)] text-center">
+            Oferta especial por tempo limitado! Economize 33%
+          </h4>
+          <p className="text-[var(--muted)] text-center mt-2">
+            Organize, planeje e realize mais com recursos avançados de calendário e gerenciamento de tarefas
+          </p>
         </div>
       </div>
     </div>
