@@ -49,7 +49,7 @@ export default function SignUpPage() {
         )}
         <div>
           <Image
-            src="/fair-note.png"
+            src="/crowlyH.png"
             alt="Logo Fair-Note"
             width={212}
             height={212}

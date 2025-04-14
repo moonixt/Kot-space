@@ -1,46 +1,71 @@
 import { createClient } from "@supabase/supabase-js";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
+// Certifique-se de que as variáveis de ambiente estão definidas corretamente
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-  auth: {
-    persistSession: true,
-    storageKey: "sb-auth-token",
-    storage: {
-      getItem: (key) => {
-        if (typeof window === "undefined") return null;
+// Verificação para navegador
+if (typeof window !== "undefined" && (!supabaseUrl || !supabaseAnonKey)) {
+  console.error(
+    "Supabase URL ou chave anônima não definidas. Verifique suas variáveis de ambiente.",
+  );
+}
 
-        // Tentar obter do localStorage primeiro
-        const value = window.localStorage.getItem(key);
-        if (value) return value;
+// Cliente para operações do usuário (browser)
+export const supabase = createClient(
+  supabaseUrl || "https://placeholder-url.supabase.co", // Nunca será uma string vazia
+  supabaseAnonKey || "placeholder-key-for-type-checking", // Nunca será uma string vazia
+  {
+    auth: {
+      persistSession: true,
+      storageKey: "sb-auth-token",
+      storage: {
+        getItem: (key) => {
+          if (typeof window === "undefined") return null;
 
-        // Fallback para cookie se não estiver no localStorage
-        const cookie = document.cookie
-          .split("; ")
-          .find((row) => row.startsWith(`${key}=`));
+          // Tentar obter do localStorage primeiro
+          const value = window.localStorage.getItem(key);
+          if (value) return value;
 
-        return cookie ? cookie.split("=")[1] : null;
-      },
-      setItem: (key, value) => {
-        if (typeof window === "undefined") return;
+          // Fallback para cookie se não estiver no localStorage
+          const cookie = document.cookie
+            .split("; ")
+            .find((row) => row.startsWith(`${key}=`));
 
-        // Armazenar no localStorage
-        window.localStorage.setItem(key, value);
+          return cookie ? cookie.split("=")[1] : null;
+        },
+        setItem: (key, value) => {
+          if (typeof window === "undefined") return;
 
-        // E também em um cookie
-        const maxAge = 100 * 365 * 24 * 60 * 60; // 100 anos em segundos
-        document.cookie = `${key}=${value}; path=/; max-age=${maxAge}; SameSite=Lax`;
-      },
-      removeItem: (key) => {
-        if (typeof window === "undefined") return;
+          // Armazenar no localStorage
+          window.localStorage.setItem(key, value);
 
-        // Remover do localStorage
-        window.localStorage.removeItem(key);
+          // E também em um cookie
+          const maxAge = 100 * 365 * 24 * 60 * 60; // 100 anos em segundos
+          document.cookie = `${key}=${value}; path=/; max-age=${maxAge}; SameSite=Lax`;
+        },
+        removeItem: (key) => {
+          if (typeof window === "undefined") return;
 
-        // E também do cookie
-        document.cookie = `${key}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+          // Remover do localStorage
+          window.localStorage.removeItem(key);
+
+          // E também do cookie
+          document.cookie = `${key}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+        },
       },
     },
   },
-});
+);
+
+// Cliente para operações de servidor (APIs, webhooks) - com permissões completas
+export const supabaseAdmin = createClient(
+  supabaseUrl || "https://placeholder-url.supabase.co",
+  supabaseServiceKey || "placeholder-key-for-type-checking",
+  {
+    auth: {
+      persistSession: false, // Não precisamos persistir sessão para operações de servidor
+    },
+  },
+);

@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { supabase } from "../../lib/supabase";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 // Create a separate client component for the part that uses useSearchParams
 function LoginForm() {
@@ -17,6 +18,7 @@ function LoginForm() {
   const searchParams = useSearchParams();
   const message = searchParams?.get("message");
   const { signIn } = useAuth();
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -27,8 +29,7 @@ function LoginForm() {
       console.log("Tentando fazer login na página de login");
       await signIn(email, password);
       console.log("Login realizado com sucesso");
-
-      // O redirecionamento agora é feito pelo onAuthStateChange
+      router.push("/"); // Consertado Bug de redirecionamento, Authcontext linha 37
     } catch (error) {
       if (error instanceof Error) {
         console.error("Erro ao fazer login:", error);
@@ -85,7 +86,7 @@ function LoginForm() {
       )}
       <div>
         <Image
-          src="/fair-note.png"
+          src="/crowlyH.png"
           alt="Logo Fair-Note"
           width={212}
           height={212}
@@ -95,7 +96,7 @@ function LoginForm() {
       <div className="bg-[var(--background)] backdrop-blur-sm rounded-xl overflow-hidden border border-slate-700 shadow-xl">
         <div className="p-8">
           <h2 className="text-2xl font-bold text-[var(--foreground)] mb-6">
-            Entrar no Fair-Note 😺
+            Entrar no Fair-note
           </h2>
 
           {/* Botão de login com Google */}
@@ -194,6 +195,15 @@ function LoginForm() {
             Não tem uma conta?{" "}
             <Link href="/signup" className="text-blue-400 hover:underline">
               Criar conta
+            </Link>
+          </div>
+          <div className="mt-6 text-center text-[var(--foreground)]">
+            Esqueceu sua senha?{" "}
+            <Link
+              href="/reset-password"
+              className="text-blue-400 hover:underline"
+            >
+              Redefinir senha
             </Link>
           </div>
         </div>

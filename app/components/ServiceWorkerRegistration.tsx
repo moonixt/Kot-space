@@ -1,4 +1,5 @@
 //service worker for the PWA functionality
+// NEED REVIEW
 
 "use client";
 
