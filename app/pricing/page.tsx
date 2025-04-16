@@ -1,5 +1,6 @@
 "use client";
 
+
 import React, { useEffect } from "react";
 import { CreditCard } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
@@ -9,7 +10,6 @@ import i18n from "../../i18n"; // Import i18n instance directly
 export default function PricingPage() {
   const { user } = useAuth();
   const { t } = useTranslation();
-  
   // Initialize language detection based on browser language
   useEffect(() => {
     const browserLang = navigator.language;
@@ -23,7 +23,6 @@ export default function PricingPage() {
       i18n.changeLanguage('pt-BR');
     }
   }, []);
-  
   // Get features from translation
   const features = [
     t('pricing.plan.features.storage'),
@@ -33,26 +32,22 @@ export default function PricingPage() {
     t('pricing.plan.features.themes'),
     t('pricing.plan.features.export')
   ];
-
   // Function to redirect to Stripe checkout with user ID
   const handleCheckout = () => {
     if (!user) {
       alert(t('pricing.alerts.loginRequired'));
       return;
     }
-
     // Create URL with query parameters
     const checkoutUrl = new URL(
       "https://buy.stripe.com/test_eVaaFG14ugrtbSMaEE",
     );
     checkoutUrl.searchParams.append("client_reference_id", user.id);
-
     // Open in new tab
     window.open(checkoutUrl.toString(), "_blank");
   };
-
   return (
-    <div className="min-h-screen bg-[var(--background)] py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-b from-[var(--background)] to-[var(--background-secondary)] py-16 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-extrabold text-[var(--foreground)] mb-4">
@@ -61,8 +56,18 @@ export default function PricingPage() {
           <p className="text-xl text-[var(--foreground)] max-w-2xl mx-auto">
             {t('pricing.subtitle')}
           </p>
+          <div className="flex items-center justify-center mt-8 space-x-4">
+            <div className="flex items-center text-green-500">
+              <Check className="mr-1 h-5 w-5" />
+                <span className="text-sm">Acesso contínuo em qualquer dispositivo</span>
+            </div>
+            <div className="w-1 h-1 rounded-full bg-[var(--muted)]"></div>
+            <div className="flex items-center text-green-500">
+              <Shield className="mr-1 h-5 w-5" />
+              <span className="text-sm">Garantia de 30 dias</span>
+            </div>
+          </div>
         </div>
-
         <div className="bg-[var(--container)] rounded-2xl shadow-lg overflow-hidden mb-8">
           <div className="bg-[var(--container)] px-6 py-4">
             <div className="flex justify-between items-center">
@@ -73,19 +78,20 @@ export default function PricingPage() {
                 {t('pricing.plan.mostPopular')}
               </div>
             </div>
-          
           </div>
-
-          <div className="p-6">
-            <div className="mb-6 flex items-baseline">
+          <div className="p-8">
+            <div className="mb-8 flex items-baseline">
               <span className="text-5xl font-extrabold text-[var(--foreground)]">
                 R$ {t('pricing.plan.price')}
               </span>
+
               <span className="ml-1 text-xl font-medium text-[var(--foreground)]">
                 {t('pricing.plan.perPeriod')}
               </span>
+              <span className="ml-4 line-through text-[var(--muted)] text-lg">
+                R$ 29.99
+              </span>
             </div>
-
             <div className="mb-6">
               <h3 className="text-lg font-medium text-[var(--foreground)] mb-4">
                 {t('pricing.plan.included')}
@@ -116,9 +122,8 @@ export default function PricingPage() {
             </div>
           </div>
         </div>
-
-        <div className="bg-[var(--container)] rounded-2xl shadow-lg overflow-hidden">
-          <div className="p-6">
+        <div className="bg-[var(--container)] rounded-3xl shadow-xl overflow-hidden border border-[var(--border-color)]">
+          <div className="p-8">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-xl font-bold text-[var(--foreground)]">
                 {t('pricing.orderSummary.title')}
@@ -149,7 +154,6 @@ export default function PricingPage() {
                 <span className="text-sm font-medium">{t('pricing.orderSummary.securePayment')}</span>
               </div>
             </div>
-
             <div className="flex justify-between py-4 border-t border-[var(--border-color)]">
               <span className="text-[var(--foreground)]">
                 {t('pricing.orderSummary.planLabel')} {t('pricing.plan.name')}
@@ -158,14 +162,12 @@ export default function PricingPage() {
                 R$ {t('pricing.plan.price')}
               </span>
             </div>
-
             <div className="flex justify-between py-4 border-t border-b border-[var(--border-color)]">
               <span className="text-[var(--foreground)]">{t('pricing.orderSummary.taxes')}</span>
               <span className="font-medium text-[var(--foreground)]">
                 {t('pricing.orderSummary.included')}
               </span>
             </div>
-
             <div className="flex justify-between py-4 mt-2">
               <span className="text-lg font-bold text-[var(--foreground)]">
                 {t('pricing.orderSummary.total')}
@@ -174,8 +176,7 @@ export default function PricingPage() {
                 R$ {t('pricing.plan.price')}{t('pricing.plan.perPeriod')}
               </span>
             </div>
-
-            <div className="mt-6">
+            <div className="mt-8">
               <button
                 onClick={handleCheckout}
                 className="w-full bg-[var(--foreground)] hover:bg-[var(--hover-color)] text-[var(--background)] py-4 px-6 rounded-xl font-semibold flex items-center justify-center transition-all duration-200"
@@ -183,8 +184,19 @@ export default function PricingPage() {
                 <CreditCard className="mr-2 h-5 w-5" />
                 <span>{t('pricing.orderSummary.checkout')}</span>
               </button>
+              <p className="text-center text-[var(--muted)] mt-4 text-sm">
+                Cancele a qualquer momento. Sem compromisso.
+              </p>
             </div>
           </div>
+        </div>
+        <div className="mt-12 bg-[var(--highlight)] p-6 rounded-2xl border-l-4 border-red-500">
+          <h4 className="font-bold text-[var(--foreground)] text-center">
+            Oferta especial por tempo limitado! Economize 33%
+          </h4>
+          <p className="text-[var(--muted)] text-center mt-2">
+            Organize, planeje e realize mais com recursos avançados de calendário e gerenciamento de tarefas
+          </p>
         </div>
       </div>
     </div>
