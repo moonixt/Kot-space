@@ -130,7 +130,7 @@ export default function DashboardPage() {
           
 
           {/* Toggle buttons container */}
-          <div className="flex space-x-4 py-6">
+          <div className="flex space-x-4 ">
             {/* Toggle tasks button */}
             <button
               onClick={toggleTasks}
