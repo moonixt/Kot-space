@@ -57,15 +57,6 @@ export default function PricingPage() {
             {t('pricing.subtitle')}
           </p>
           <div className="flex items-center justify-center mt-8 space-x-4">
-            <div className="flex items-center text-green-500">
-              <Check className="mr-1 h-5 w-5" />
-                <span className="text-sm">Acesso contínuo em qualquer dispositivo</span>
-            </div>
-            <div className="w-1 h-1 rounded-full bg-[var(--muted)]"></div>
-            <div className="flex items-center text-green-500">
-              <Shield className="mr-1 h-5 w-5" />
-              <span className="text-sm">Garantia de 30 dias</span>
-            </div>
           </div>
         </div>
         <div className="bg-[var(--container)] rounded-2xl shadow-lg overflow-hidden mb-8">
@@ -87,9 +78,6 @@ export default function PricingPage() {
 
               <span className="ml-1 text-xl font-medium text-[var(--foreground)]">
                 {t('pricing.plan.perPeriod')}
-              </span>
-              <span className="ml-4 line-through text-[var(--muted)] text-lg">
-                R$ 29.99
               </span>
             </div>
             <div className="mb-6">
