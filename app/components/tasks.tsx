@@ -3,6 +3,7 @@ import { supabase } from "../../lib/supabase";
 import { useAuth } from "../../context/AuthContext";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { useTranslation } from "react-i18next";
 
 interface Task {
   id: string;
@@ -13,6 +14,7 @@ interface Task {
 }
 
 const Tasks = () => {
+  const { t } = useTranslation();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [newTask, setNewTask] = useState("");
   const [newTaskDueDate, setNewTaskDueDate] = useState<Date | null>(null);
@@ -149,8 +151,8 @@ const Tasks = () => {
             <div className="relative">
               <button
                 type="button"
-                className="h-full px-3 bg-[var(--container)] border border-[var(--border-color)] flex items-center justify-center"
-                title="Set due date"
+                className="h-full px-3 bg-[var(--container)]  flex items-center justify-center"
+                title={t('tasks.setDueDate')}
                 onClick={() => setEditingTaskId("new")}
               >
                 <svg
@@ -185,7 +187,7 @@ const Tasks = () => {
                     className="absolute inset-0 bg-black bg-opacity-25"
                     onClick={() => setEditingTaskId(null)}
                   ></div>
-                  <div className="relative z-30 bg-[var(--background)] border border-[var(--border-color)] rounded shadow-lg p-4">
+                  <div className="relative z-30 bg-[var(--background)]  rounded shadow-lg p-4">
                     <DatePicker
                       selected={newTaskDueDate}
                       onChange={(date) => setNewTaskDueDate(date)}
@@ -198,14 +200,14 @@ const Tasks = () => {
                         onClick={() => setNewTaskDueDate(null)}
                         className="text-xs px-3 py-1.5 hover:bg-[var(--container)] rounded"
                       >
-                        Clear
+                        {t('tasks.clear')}
                       </button>
                       <button
                         type="button"
                         onClick={() => setEditingTaskId(null)}
                         className="text-xs px-3 py-1.5 bg-[var(--foreground)] text-[var(--background)] rounded"
                       >
-                        Done
+                        {t('tasks.done')}
                       </button>
                     </div>
                   </div>
@@ -218,8 +220,8 @@ const Tasks = () => {
               value={newTask}
               maxLength={32}
               onChange={(e) => setNewTask(e.target.value)}
-              placeholder="Add a new task"
-              className="flex-grow  p-2 bg-[var(--container)] border border-[var(--border-color)] focus:outline-none focus:ring-1 focus:ring-[var(--foreground)]"
+              placeholder={t('tasks.addNew')}
+              className="flex-grow  p-2 bg-[var(--container)]  focus:outline-none focus:ring-1 focus:ring-[var(--foreground)]"
             />
           </div>
 
@@ -227,7 +229,7 @@ const Tasks = () => {
             type="submit"
             className="px-4 py-2 bg-[var(--foreground)] text-[var(--background)] hover:bg-opacity-80 transition-colors"
           >
-            Add
+            {t('tasks.add')}
           </button>
         </div>
       </form>
@@ -265,7 +267,7 @@ const Tasks = () => {
                         height="12"
                         viewBox="0 0 24 24"
                         fill="none"
-                        stroke="white"
+                        stroke="currentColor"
                         strokeWidth="3"
                         strokeLinecap="round"
                         strokeLinejoin="round"
@@ -286,7 +288,7 @@ const Tasks = () => {
                   </span>
 
                   <div className="flex flex-wrap gap-x-3 text-xs text-[var(--foreground)] opacity-50 mt-1">
-                    <span>Created: {formatDate(task.created_at)}</span>
+                    <span>{t('tasks.created')}: {formatDate(task.created_at)}</span>
 
                     {task.due_date && (
                       <span
@@ -296,7 +298,7 @@ const Tasks = () => {
                             : ""
                         }
                       >
-                        Due: {formatDate(task.due_date)}
+                        {t('tasks.due')}: {formatDate(task.due_date)}
                       </span>
                     )}
                   </div>
@@ -313,7 +315,7 @@ const Tasks = () => {
                         );
                       }}
                       className="p-1 text-[var(--foreground)] opacity-40 hover:opacity-100"
-                      title="Set due date"
+                      title={t('tasks.setDueDate')}
                     >
                       <svg
                         width="16"
@@ -343,7 +345,7 @@ const Tasks = () => {
                     {editingTaskId === task.id && (
                       <div
                         ref={datePickerRef}
-                        className="absolute z-10 top-full right-0 mt-1 bg-[var(--background)] border border-[var(--border-color)] rounded shadow-lg p-2"
+                        className="absolute z-10 top-full right-0 mt-1 bg-[var(--background)]  rounded shadow-lg p-2"
                       >
                         <DatePicker
                           selected={editingTaskDate}
@@ -356,7 +358,7 @@ const Tasks = () => {
                           onClick={() => updateTaskDueDate(task.id, null)}
                           className="w-full text-xs text-left px-2 py-1 mt-1 hover:bg-[var(--container)]"
                         >
-                          Clear date
+                          {t('tasks.clear')}
                         </button>
                       </div>
                     )}
@@ -365,7 +367,7 @@ const Tasks = () => {
                   <button
                     onClick={() => deleteTask(task.id)}
                     className="p-1 text-red-500 hover:text-red-700"
-                    title="Delete task"
+                    title={t('tasks.deleteTask')}
                   >
                     <svg
                       width="16"
@@ -390,7 +392,7 @@ const Tasks = () => {
       ) : (
         <div className="p-4 border border-dashed border-[var(--border-color)] text-center">
           <p className="text-sm opacity-70">
-            No tasks yet. Add your first task!
+            {t('tasks.noTasksYet')}
           </p>
         </div>
       )}

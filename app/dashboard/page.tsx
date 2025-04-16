@@ -9,6 +9,8 @@ import { ProtectedRoute } from "../components/ProtectedRoute";
 import Profile from "../profile/page";
 import Tasks from "../components/tasks";
 import CalendarView from "../components/CalendarView";
+import { decrypt } from "../components/Encryption";
+import { useTranslation } from "react-i18next";
 
 interface Note {
   id: string;
@@ -18,6 +20,7 @@ interface Note {
 }
 
 export default function DashboardPage() {
+  const { t } = useTranslation();
   const [notes, setNotes] = useState<Note[]>([]);
   const [loading, setLoading] = useState(true);
   const [showTasks, setShowTasks] = useState(() => {
@@ -96,19 +99,42 @@ export default function DashboardPage() {
 
   return (
     <ProtectedRoute>
-      <div className="p-4 smooth overflow-y-auto max-h-screen scrollbar">
-        <div className="grid">
-          <h1 className="text-2xl font-bold mb-4">All your work </h1>
-          <div>
+      <div className="  smooth overflow-y-auto max-h-screen scrollbar">
+        <div className="">
             <Profile />
           </div>
+          <div className="p-4">
+        <div className="grid">
+           {/* New document button */}
+           <button
+            className="px-5 justify-center my-4 py-2 bg-[var(--text-color)] text-[var(--background)] hover:bg-opacity-60 transition-all hover:translate-x-1 hover:shadow-md transition-colors flex items-center gap-2"
+            onClick={() => router.push("/editor")}
+  
+          >
+            <span>{t('dashboard.newDocument')}</span>
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+          </button>
+          {/* <h1 className="text-2xl font-bold mb-4">All your work </h1> */}
+          
 
           {/* Toggle buttons container */}
-          <div className="flex space-x-4 py-6">
+          <div className="flex space-x-4 ">
             {/* Toggle tasks button */}
             <button
               onClick={toggleTasks}
-              className="flex items-center gap-1 text-sm px-3 py-1 border border-[var(--border-color)] rounded hover:bg-[var(--container)] transition-colors"
+              className="flex items-center gap-1 text-sm px-3 py-1  rounded hover:bg-[var(--container)] transition-colors"
             >
               {showTasks ? (
                 <>
@@ -124,7 +150,7 @@ export default function DashboardPage() {
                   >
                     <path d="M18 15l-6-6-6 6" />
                   </svg>
-                  <span>Hide Tasks</span>
+                  <span>{t('dashboard.hideTasks')}</span>
                 </>
               ) : (
                 <>
@@ -140,7 +166,7 @@ export default function DashboardPage() {
                   >
                     <path d="M6 9l6 6 6-6" />
                   </svg>
-                  <span>Tasks</span>
+                  <span>{t('dashboard.tasks')}</span>
                 </>
               )}
             </button>
@@ -148,7 +174,7 @@ export default function DashboardPage() {
             {/* Calendar toggle button */}
             <button
               onClick={toggleCalendar}
-              className="flex items-center gap-1 text-sm px-3 py-1 border border-[var(--border-color)] rounded hover:bg-[var(--container)] transition-colors"
+              className="flex items-center gap-1 text-sm px-3 py-1  rounded hover:bg-[var(--container)] transition-colors"
             >
               {showCalendar ? (
                 <>
@@ -164,7 +190,7 @@ export default function DashboardPage() {
                   >
                     <path d="M18 15l-6-6-6 6" />
                   </svg>
-                  <span>Hide Calendar</span>
+                  <span>{t('dashboard.hideCalendar')}</span>
                 </>
               ) : (
                 <>
@@ -180,7 +206,7 @@ export default function DashboardPage() {
                   >
                     <path d="M6 9l6 6 6-6" />
                   </svg>
-                  <span>Calendar</span>
+                  <span>{t('dashboard.calendar')}</span>
                 </>
               )}
             </button>
@@ -203,51 +229,31 @@ export default function DashboardPage() {
           >
             {showCalendar && (
               <div>
-                <h2 className="text-xl font-semibold ">Calendar</h2>
+                <h2 className="text-xl font-semibold ">{t('dashboard.calendar')}</h2>
                 <CalendarView />
               </div>
             )}
           </div>
 
-          {/* New document button */}
-          <button
-            className="px-5 my-6 py-2 bg-[var(--foreground)] text-[var(--background)] hover:bg-opacity-60 transition-all hover:translate-x-1 hover:shadow-md transition-colors flex items-center gap-2"
-            onClick={() => router.push("/editor")}
-  
-          >
-            <span>Novo documento</span>
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <line x1="12" y1="5" x2="12" y2="19"></line>
-              <line x1="5" y1="12" x2="19" y2="12"></line>
-            </svg>
-          </button>
+         
         </div>
 
         {loading ? (
-          <p>Loading...</p>
+          <p>{t('dashboard.loading')}</p>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 pt-5">
             {notes.map((note) => (
               <Link
                 href={`/notes/${note.id}`}
                 key={note.id}
                 className="block h-full"
               >
-                <div className="h-full p-5 border-t-2  border-[var(--foreground)] bg-[var(--container)] bg-opacity-40 hover:bg-opacity-60 transition-all hover:translate-x-1 hover:shadow-md">
+                <div className="h-full p-5 border-t-2  border-[var(--text-color)] bg-[var(--container)] bg-opacity-40 hover:bg-opacity-60 transition-all hover:translate-x-1 hover:shadow-md">
                   <h2 className="text-lg font-semibold mb-3 line-clamp-1">
-                    {note.title || "Sem título"}
+                    {note.title ? decrypt(note.title) : t('dashboard.note.untitled')}
                   </h2>
                   <p className="text-sm text-[var(--foreground)] opacity-80 line-clamp-3 mb-4 h-14">
-                    {note.content.replace(/[#*`_]/g, "") || "Sem conteúdo"}
+                    {decrypt(note.content).replace(/[#*`_]/g, "") || t('dashboard.note.noContent')}
                   </p>
                   <div className="flex justify-between items-center text-xs text-gray-500 mt-auto">
                     <span>
@@ -293,16 +299,16 @@ export default function DashboardPage() {
               <line x1="9" y1="15" x2="15" y2="15"></line>
             </svg>
             <h3 className="text-lg font-semibold mb-2">
-              Nenhum documento encontrado
+              {t('dashboard.emptyState.title')}
             </h3>
             <p className="text-sm text-[var(--foreground)] opacity-70 mb-4 text-center">
-              Você ainda não criou nenhum documento. Comece agora mesmo!
+              {t('dashboard.emptyState.description')}
             </p>
             <button
               className="px-4 py-2 bg-[var(--foreground)] text-[var(--background)] hover:bg-opacity-80 transition-colors flex items-center gap-2"
               onClick={() => router.push("/editor")}
             >
-              <span>Criar primeira nota</span>
+              <span>{t('dashboard.emptyState.createFirstNote')}</span>
               <svg
                 width="16"
                 height="16"
@@ -319,6 +325,7 @@ export default function DashboardPage() {
             </button>
           </div>
         )}
+        </div>
       </div>
     </ProtectedRoute>
   );

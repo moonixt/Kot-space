@@ -6,6 +6,10 @@ import { AuthProvider } from "../context/AuthContext";
 import { ThemeProvider } from "../context/ThemeContext";
 import ServiceWorkerRegistration from "./components/ServiceWorkerRegistration";
 import Script from "next/script";
+import TranslationProvider from "../components/TranslationProvider";
+import LanguageLoader from "../components/LanguageLoader";
+import { cookies } from "next/headers";
+// import Profile from "./profile/page";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -41,13 +45,18 @@ export const viewport = {
   userScalable: false,
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Get preferred language from cookie or default to browser language
+  const cookieStore = await cookies();
+  const langCookie = cookieStore.get('NEXT_LOCALE');
+  const lang = langCookie?.value || 'en'; // Default to English if no cookie
+
   return (
-    <html lang="pt-BR">
+    <html lang={lang}>
       <head>
         <meta
           name="viewport"
@@ -66,15 +75,24 @@ export default function RootLayout({
           strategy="afterInteractive" // Carrega o script após a interação inicial
         />
         <ServiceWorkerRegistration />
-        <AuthProvider>
-          <ThemeProvider>
-            <div className="flex flex-col md:flex-row min-h-screen">
-              <div className="flex-1 md:mr-72">{children}</div>
+        <TranslationProvider locale={lang}>
+          <LanguageLoader>
+            <AuthProvider>
+              <ThemeProvider>
+                <div className="flex flex-col md:flex-row min-h-screen">
+                
+                  <div className="flex-1 md:mr-72 flex flex-col">
+                  {/* <Profile /> */}
+                    {children}
+              
+                  </div>
 
-              <Sidebox />
-            </div>
-          </ThemeProvider>
-        </AuthProvider>
+                  <Sidebox />
+                </div>
+              </ThemeProvider>
+            </AuthProvider>
+          </LanguageLoader>
+        </TranslationProvider>
       </body>
     </html>
   );

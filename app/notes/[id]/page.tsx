@@ -16,12 +16,18 @@ import {
   LayoutList,
   ListOrdered,
   Eye,
-} from "lucide-react";
+  FileText,
+  BookMarked,
+  } from "lucide-react";
 import { useAuth } from "../../../context/AuthContext";
 import { ProtectedRoute } from "../../components/ProtectedRoute";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import EmojiPicker, { Theme, EmojiClickData } from "emoji-picker-react";
+import Profile from "../../profile/page";
+import { decrypt, encrypt } from "../../components/Encryption"; // Importar funções de criptografia
+import jsPDF from 'jspdf';
+import { useTranslation } from "react-i18next"; // Import translation hook
 
 interface Note {
   id: string;
@@ -47,6 +53,7 @@ export default function NotePage() {
   const [imageUploadLoading, setImageUploadLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [showEmojiPickerContent, setShowEmojiPickerContent] = useState(false);
+  const { t, i18n } = useTranslation(); // Initialize translation hook
 
   useEffect(() => {
     async function fetchNote() {
@@ -66,9 +73,20 @@ export default function NotePage() {
           .single();
 
         if (error) throw error;
-        setNote(data);
-        setEditTitle(data.title || "");
-        setEditContent(data.content || "");
+
+        // Descriptografar o conteúdo da nota antes de exibir
+        const decryptedTitle = decrypt(data.title);
+        const decryptedContent = decrypt(data.content);
+        
+        const decryptedNote = {
+          ...data,
+          title: decryptedTitle,
+          content: decryptedContent
+        };
+
+        setNote(decryptedNote);
+        setEditTitle(decryptedNote.title || "");
+        setEditContent(decryptedNote.content || "");
       } catch (error) {
         console.error("Erro ao buscar nota:", error);
         setNote(null);
@@ -201,7 +219,7 @@ export default function NotePage() {
   };
 
   async function handleDelete() {
-    const confirmDelete = confirm("Tem certeza que deseja excluir esta nota?");
+    const confirmDelete = confirm(t('editor.confirmDelete'));
     if (!confirmDelete) return;
 
     try {
@@ -214,12 +232,12 @@ export default function NotePage() {
 
       if (error) throw error;
 
-      showToast("Nota excluída com sucesso!", "success");
+      showToast(t('editor.noteDeleted'), "success");
 
       router.replace("/"); // Resolved bug of page locking after redirect
     } catch (error) {
       console.error("Erro ao excluir nota:", error);
-      showToast("Erro ao excluir a nota.", "error");
+      showToast(t('editor.deleteError'), "error");
       setDeleting(false);
     }
   }
@@ -229,17 +247,23 @@ export default function NotePage() {
 
     try {
       setSaving(true);
+      
+      // Criptografar o conteúdo antes de salvar
+      const encryptedTitle = encrypt(editTitle);
+      const encryptedContent = encrypt(editContent);
+
       const { error } = await supabase
         .from("notes")
         .update({
-          title: editTitle,
-          content: editContent,
+          title: encryptedTitle,
+          content: encryptedContent,
         })
         .eq("id", note.id)
         .eq("user_id", user.id);
 
       if (error) throw error;
 
+      // Atualizar o estado com os valores descriptografados (para visualização)
       setNote({
         ...note,
         title: editTitle,
@@ -279,10 +303,69 @@ export default function NotePage() {
       document.body.removeChild(link);
       URL.revokeObjectURL(href);
       
-      showToast("Nota exportada com sucesso!", "success");
+      showToast(t('editor.exportSuccess'), "success");
     } catch (error) {
       console.error("Erro ao exportar nota:", error);
-      showToast("Erro ao exportar nota.", "error");
+      showToast(t('editor.exportError'), "error");
+    }
+  }
+
+  function handleExportPdf() {
+    if (!note) return;
+    
+    try {
+      // Create a new PDF document with orientation 'portrait' (default) and unit 'mm'
+      const pdf = new jsPDF({
+        orientation: "portrait",
+        unit: "mm",
+      });
+      
+      // Add title with larger font size
+      pdf.setFontSize(18);
+      pdf.setFont("helvetica", "bold");
+      pdf.text(note.title || "Sem título", 20, 20);
+      
+      // Add content with normal font size
+      pdf.setFontSize(12);
+      pdf.setFont("helvetica", "normal");
+      
+      // Get the current position after the title
+      let yPosition = 30;
+      
+      // Split content into lines that fit on the page
+      // PDF page width is ~180-190 in jsPDF's internal units at default settings
+      const content = note.content || "";
+      const splitContent = pdf.splitTextToSize(content, 170);
+      
+      // Calculate the height of each line (approximate)
+      const lineHeight = 7;
+      
+      // Get page height (in the internal units)
+      const pageHeight = pdf.internal.pageSize.height - 20; // margin bottom
+      
+      // Add content line by line, adding new pages when needed
+      for (let i = 0; i < splitContent.length; i++) {
+        // Check if we need a new page
+        if (yPosition + lineHeight > pageHeight) {
+          pdf.addPage();
+          yPosition = 20; // Reset position for the new page
+        }
+        
+        // Add the line to the PDF
+        pdf.text(splitContent[i], 20, yPosition);
+        yPosition += lineHeight;
+      }
+      
+      // Generate filename from the note title
+      const fileName = `${note.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.pdf`;
+      
+      // Save PDF
+      pdf.save(fileName);
+      
+      showToast(t('editor.exportSuccess'), "success");
+    } catch (error) {
+      console.error("Erro ao exportar PDF:", error);
+      showToast(t('editor.exportError'), "error");
     }
   }
 
@@ -323,6 +406,7 @@ export default function NotePage() {
   if (!note) {
     return (
       <div className="flex flex-col justify-center items-center h-screen bg-gradient-to-br from-slate-950 to-slate-900 text-[var(--foreground)]">
+      
         <svg
           xmlns="http://www.w3.org/2000/svg"
           className="h-16 w-16 text-slate-600 mb-4"
@@ -338,42 +422,47 @@ export default function NotePage() {
           />
         </svg>
         <h3 className="text-2xl font-bold text-slate-400">
-          Nota não encontrada
+          {t('notes.noteNotFound')}
         </h3>
         <p className="text-slate-500 mt-2">
-          A nota que você está procurando não existe ou foi removida.
+          {t('notes.noteNotExistOrRemoved')}
         </p>
         <Link
           href="/"
           className="mt-6 text-blue-400 hover:underline flex items-center gap-2"
         >
           <ArrowLeft size={16} />
-          Voltar para a página inicial
+          {t('notes.backToHome')}
         </Link>
       </div>
     );
   }
 
-  const formattedDate = new Date(note.created_at).toLocaleDateString("pt-BR", {
-    day: "2-digit",
-    month: "long",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+  const formattedDate = new Date(note.created_at).toLocaleDateString(
+    i18n.language === 'en' ? 'en-US' : 'pt-BR', 
+    {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    }
+  );
 
   return (
     <ProtectedRoute>
-      <div className="min-h-screen bg-[var(--container)] flex justify-center ">
+        <Profile />
+      <div className="min-h-screen  flex justify-center ">
+        
         <div className="w-full max-w-7xl bg-[var(--background)] min-h-screen shadow-xl flex flex-col">
           {/* Barra de navegação superior */}
-          <div className="bg-[var(--container)] bg-opacity-10 px-4 py-2 text-[var(--foreground)] flex justify-between items-center border-b border-[var(--border-color)]">
+          <div className=" bg-opacity-10 px-4 py-2 text-[var(--foreground)] flex justify-between items-center ">
             <Link
               href="/"
               className="flex items-center gap-2 text-[var(--foreground)] hover:text-[var(--foreground-light)] transition-colors"
             >
               <ArrowLeft size={18} />
-              <span>Voltar para notas 🐈</span>
+              <span>{t('notes.backToNotes')} 🐈</span>
             </Link>
 
             <div className="flex items-center gap-2 pr-10">
@@ -381,7 +470,7 @@ export default function NotePage() {
                 <>
                   <button
                     className="rounded hover:bg-green-400 transition-colors px-2 py-1 flex items-center gap-1"
-                    title="Salvar alterações"
+                    title={t('editor.save')}
                     onClick={handleSave}
                     disabled={saving}
                   >
@@ -389,25 +478,25 @@ export default function NotePage() {
                       <div className="w-4 h-4 border-2 border-green-300 border-t-transparent rounded-full animate-spin"></div>
                     ) : (
                       <>
-                        <Save size={16} /> Salvar
+                        <Save size={16} /> {t('editor.save')}
                       </>
                     )}
                   </button>
                   <button
                     className="rounded hover:bg-red-400 transition-colors px-2 py-1 flex items-center gap-1"
-                    title="Cancelar edição"
+                    title={t('editor.cancel')}
                     onClick={cancelEdit}
                   >
-                    <X size={16} /> Cancelar
+                    <X size={16} /> {t('editor.cancel')}
                   </button>
                 </>
               ) : (
                 <button
                   className="rounded hover:bg-green-400 transition-colors px-2 py-1 flex items-center gap-1"
-                  title="Editar nota"
+                  title={t('editor.edit')}
                   onClick={() => setEditMode(true)}
                 >
-                  <Edit size={16} /> Editar
+                  <Edit size={16} /> {t('editor.edit')}
                 </button>
               )}
             </div>
@@ -428,7 +517,7 @@ export default function NotePage() {
                   type="text"
                   value={editTitle}
                   onChange={(e) => setEditTitle(e.target.value)}
-                  placeholder="Título da nota"
+                  placeholder={t('editor.noteTitle')}
                   className="w-full text-xl sm:text-2xl font-bold bg-transparent focus:outline-none text-[var(--foreground)]"
                 />
                 {showEmojiPicker && (
@@ -446,7 +535,7 @@ export default function NotePage() {
               </div>
             ) : (
               <h1 className="text-xl sm:text-2xl font-bold text-[var(--foreground)]">
-                {note.title || "Sem título"}
+                {note.title || t('sidebar.untitled')}
               </h1>
             )}
 
@@ -464,21 +553,21 @@ export default function NotePage() {
                   <button
                     className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors font-bold"
                     onClick={() => insertMarkdown("bold")}
-                    title="Negrito"
+                    title={t('editor.bold')}
                   >
                     B
                   </button>
                   <button
                     className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors italic"
                     onClick={() => insertMarkdown("italic")}
-                    title="Itálico"
+                    title={t('editor.italic')}
                   >
                     I
                   </button>
                   <button
                     className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors"
                     onClick={() => insertMarkdown("link")}
-                    title="Link"
+                    title={t('editor.link')}
                   >
                     🔗
                   </button>
@@ -488,14 +577,14 @@ export default function NotePage() {
                   <button
                     className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors"
                     onClick={() => insertMarkdown("heading1")}
-                    title="Título 1"
+                    title={t('editor.heading1')}
                   >
                     H1
                   </button>
                   <button
                     className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors"
                     onClick={() => insertMarkdown("heading2")}
-                    title="Título 2"
+                    title={t('editor.heading2')}
                   >
                     H2
                   </button>
@@ -505,7 +594,7 @@ export default function NotePage() {
                   <button
                     className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors"
                     onClick={() => insertMarkdown("code")}
-                    title="Código"
+                    title={t('editor.code')}
                   >
                     &lt;/&gt;
                   </button>
@@ -624,12 +713,12 @@ export default function NotePage() {
                           d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                         />
                       </svg>
-                      <span>Esta nota suporta formatação Markdown.</span>
+                      <span>{t('editor.markdownSupport')}</span>
                     </div>
                     <textarea
                       value={editContent}
                       onChange={(e) => setEditContent(e.target.value)}
-                      placeholder="Conteúdo da nota (suporta formatação Markdown)"
+                      placeholder={t('editor.noteContent')}
                       className="w-full h-full min-h-[300px] text-lg bg-transparent focus:outline-none resize-none text-[var(--foreground)] p-2"
                       style={{ fontSize: "18px", lineHeight: "1.7" }}
                     />
@@ -642,7 +731,7 @@ export default function NotePage() {
                       </ReactMarkdown>
                     ) : (
                       <p className="text-[var(--foreground)] opacity-60 italic">
-                        Nenhum conteúdo para visualizar...
+                        {t('editor.noPreviewContent')}
                       </p>
                     )}
                   </div>
@@ -674,15 +763,21 @@ export default function NotePage() {
               <button
                 onClick={handleExportTxt}
                 disabled={!note}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 transition-colors"
-                title="Exportar como TXT"
+                className="flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 transition-colors"
+                title={t('editor.exportAsTXT')}
               >
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                  <polyline points="7 10 12 15 17 10"></polyline>
-                  <line x1="12" y1="15" x2="12" y2="3"></line>
-                </svg>
-                <span>Exportar</span>
+                <FileText size={14} />
+                <span>TXT</span>
+              </button>
+              
+              <button
+                onClick={handleExportPdf}
+                disabled={!note}
+                className="flex items-center gap-2 px-3 py-2 rounded-lg bg-purple-500/10 text-purple-400 hover:bg-purple-500/20 transition-colors"
+                title={t('editor.exportAsPDF')}
+              >
+                <BookMarked size={14} />
+                <span>PDF</span>
               </button>
               
               <button
@@ -693,14 +788,14 @@ export default function NotePage() {
                     ? "bg-slate-700 text-slate-400 cursor-not-allowed"
                     : "bg-red-500/10 text-red-500 hover:bg-red-500/20"
                 }`}
-                title="Excluir nota"
+                title={t('editor.deleteNote')}
               >
                 {deleting ? (
                   <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                 ) : (
                   <>
                     <Trash2 size={14} />
-                    <span>Excluir</span>
+                    <span>{t('editor.delete')}</span>
                   </>
                 )}
               </button>

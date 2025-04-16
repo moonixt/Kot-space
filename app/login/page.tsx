@@ -1,12 +1,14 @@
 "use client";
 
-import { useState, Suspense } from "react";
+import { useState, Suspense, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { supabase } from "../../lib/supabase";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "next-i18next";
+import i18n from "../../i18n";
 
 // Create a separate client component for the part that uses useSearchParams
 function LoginForm() {
@@ -19,6 +21,21 @@ function LoginForm() {
   const message = searchParams?.get("message");
   const { signIn } = useAuth();
   const router = useRouter();
+  const { t } = useTranslation();
+  
+  // Initialize language detection based on browser language
+  useEffect(() => {
+    const browserLang = navigator.language;
+    // Check if the detected language is supported in our app
+    const supportedLanguages = Object.keys(i18n.options.resources || {});
+    
+    if (browserLang && supportedLanguages.includes(browserLang)) {
+      i18n.changeLanguage(browserLang);
+    } else if (browserLang && browserLang.startsWith('pt')) {
+      // Handle cases like pt-PT, pt, etc. falling back to pt-BR
+      i18n.changeLanguage('pt-BR');
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -84,19 +101,20 @@ function LoginForm() {
           {error}
         </div>
       )}
-      <div>
+      <div className="flex justify-center ">
         <Image
-          src="/crowlyH.png"
-          alt="Logo Fair-Note"
-          width={212}
-          height={212}
-          className="mx-auto mb-6 rounded-md"
+          src="/static/images/crowlyH.PNG"
+          alt={t('login.logoAlt')}
+          width={1000}
+          height={100}
+          className=" h-60 md:h-80 object-cover object-top"
+          priority
         />
       </div>
-      <div className="bg-[var(--background)] backdrop-blur-sm rounded-xl overflow-hidden border border-slate-700 shadow-xl">
+      <div className="bg-[var(--background)] backdrop-blur-sm  overflow-hidden  ">
         <div className="p-8">
           <h2 className="text-2xl font-bold text-[var(--foreground)] mb-6">
-            Entrar no Fair-note
+            {t('login.title')}
           </h2>
 
           {/* Botão de login com Google */}
@@ -132,13 +150,13 @@ function LoginForm() {
                 />
               </svg>
             )}
-            {googleLoading ? "Entrando..." : "Entrar com Google"}
+            {googleLoading ? t('login.loggingInWithGoogle') : t('login.signInWithGoogle')}
           </button>
 
           <div className="relative flex items-center my-6">
             <div className="flex-grow border-t border-slate-700"></div>
             <span className="flex-shrink mx-4 text-[var(--foreground)] text-sm">
-              ou
+              {t('login.or')}
             </span>
             <div className="flex-grow border-t border-slate-700"></div>
           </div>
@@ -149,7 +167,7 @@ function LoginForm() {
                 className="block text-[var(--foreground)] mb-2"
                 htmlFor="email"
               >
-                Email
+                {t('login.email')}
               </label>
               <input
                 id="email"
@@ -166,7 +184,7 @@ function LoginForm() {
                 className="block text-[var(--foreground)] mb-2"
                 htmlFor="password"
               >
-                Senha
+                {t('login.password')}
               </label>
               <input
                 id="password"
@@ -187,23 +205,23 @@ function LoginForm() {
                   : "bg-[var(--foreground)] "
               } text-[var(--background)] transition-colors`}
             >
-              {loading ? "Entrando..." : "Entrar com Email"}
+              {loading ? t('login.loggingIn') : t('login.signInWithEmail')}
             </button>
           </form>
 
           <div className="mt-6 text-center text-[var(--foreground)]">
-            Não tem uma conta?{" "}
+            {t('login.noAccount')}{" "}
             <Link href="/signup" className="text-blue-400 hover:underline">
-              Criar conta
+              {t('login.createAccount')}
             </Link>
           </div>
           <div className="mt-6 text-center text-[var(--foreground)]">
-            Esqueceu sua senha?{" "}
+            {t('login.forgotPassword')}{" "}
             <Link
               href="/reset-password"
               className="text-blue-400 hover:underline"
             >
-              Redefinir senha
+              {t('login.resetPassword')}
             </Link>
           </div>
         </div>
