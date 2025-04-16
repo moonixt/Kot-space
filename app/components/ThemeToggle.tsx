@@ -2,13 +2,13 @@
 // NEED REVIEW
 
 import { useTheme } from "../../context/ThemeContext";
-import { Sun, Monitor, Shell, Rabbit, Moon, Leaf } from "lucide-react";
+import { Sun, Monitor, Shell, Rabbit, Moon, Leaf, Heart, Droplet } from "lucide-react";
 
 export default function ThemeToggle() {
   const { theme, setTheme } = useTheme();
 
   return (
-    <div className="flex items-center space-x-2 p-2 rounded-lg bg-[var(--background)] border border-slate-500/30">
+    <div className="flex items-center   rounded-lg bg-[var(--background)] border border-slate-500/30">
       <button
         onClick={() => setTheme("light")}
         className={`p-2 rounded-md transition-colors ${
@@ -65,6 +65,30 @@ export default function ThemeToggle() {
         aria-label="Yellow mode"
       >
         <Rabbit size={18} />
+      </button>
+
+      <button
+        onClick={() => setTheme("red")}
+        className={`p-2 rounded-md transition-colors ${
+          theme === "red"
+            ? "bg-red-600 text-white"
+            : "hover:bg-[var(--card-border)] "
+        }`}
+        aria-label="Red mode"
+      >
+        <Heart size={18} />
+      </button>
+      
+      <button
+        onClick={() => setTheme("blue")}
+        className={`p-2 rounded-md transition-colors ${
+          theme === "blue"
+            ? "bg-blue-500 text-white"
+            : "hover:bg-[var(--card-border)] "
+        }`}
+        aria-label="Blue mode"
+      >
+        <Droplet size={18} />
       </button>
 
       <button

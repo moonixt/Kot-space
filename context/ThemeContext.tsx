@@ -2,12 +2,12 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 
-type Theme = "green" | "light" | "purple" | "yellow" | "dark" | "system";
+type Theme = "green" | "light" | "purple" | "yellow" | "dark" | "red" | "blue" | "system";
 
 interface ThemeContextType {
   theme: Theme;
   setTheme: (theme: Theme) => void;
-  resolvedTheme: "green" | "light" | "purple" | "yellow" | "dark";
+  resolvedTheme: "green" | "light" | "purple" | "yellow" | "dark" | "red" | "blue";
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -16,7 +16,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   // Inicializar com a preferência salva ou "system"
   const [theme, setTheme] = useState<Theme>("system");
   const [resolvedTheme, setResolvedTheme] = useState<
-    "green" | "light" | "purple" | "yellow" | "dark"
+    "green" | "light" | "purple" | "yellow" | "dark" | "red" | "blue"
   >("green");
 
   useEffect(() => {
@@ -48,6 +48,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         "purple",
         "yellow",
         "dark",
+        "red",
+        "blue",
       );
       document.documentElement.classList.add(systemTheme);
     } else {
@@ -60,6 +62,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         "purple",
         "yellow",
         "dark",
+        "red",
+        "blue",
       );
       document.documentElement.classList.add(theme);
     }
@@ -79,6 +83,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
           "purple",
           "yellow",
           "dark",
+          "red",
+          "blue",
         );
         document.documentElement.classList.add(newTheme);
       }

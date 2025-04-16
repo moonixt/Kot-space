@@ -14,14 +14,16 @@ import {
   LayoutList,
   SmilePlus,
   Image, // Adicione esta importação
-} from "lucide-react"; //import of some icons from Lucide-React library
+  } from "lucide-react"; //import of some icons from Lucide-React library
 import { useAuth } from "../../context/AuthContext"; //import of the auth context to manage the authentication of the user
 import ReactMarkdown from "react-markdown"; //Library to render markdown
 import remarkGfm from "remark-gfm"; //Plugin to support GFM (GitHub Flavored Markdown) in ReactMarkdown
 import EmojiPicker, { Theme } from "emoji-picker-react"; //LIbrary to enable support of emojis inside the text area
 import { EmojiClickData } from "emoji-picker-react"; //Type for the emoji click data
 import ClientLayout from "./ClientLayout";
-
+import Profile from "../profile/page";
+import { encrypt } from "./Encryption"; // Importar a função de criptografia
+import { useTranslation } from "react-i18next"; // Import the translation hook
 
 
 function Editor() {
@@ -37,6 +39,7 @@ function Editor() {
   const [imageUploadLoading, setImageUploadLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [tagSearchTerm, setTagSearchTerm] = useState("");
+  const { t } = useTranslation(); // Add the translation hook to access translations
 
   // Carregar dados do localStorage quando o componente montar
   useEffect(() => {
@@ -175,7 +178,7 @@ function Editor() {
         "fixed bottom-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-500 flex items-center gap-2";
       notification.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 101.414 1.414L10 11.414l1.293-1.293a1 1 00-1.414-1.414L11.414 10l1.293-1.293a1 1 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
-      </svg>Você precisa estar logado para salvar notas!`;
+      </svg>${t('editor.loginRequired')}`;
       document.body.appendChild(notification);
 
       setTimeout(() => {
@@ -187,6 +190,10 @@ function Editor() {
     }
 
     try {
+      // Criptografar o conteúdo da nota antes de salvar
+      const encryptedContent = encrypt(content);
+      const encryptedTitle = encrypt(title);
+      
       //Saving of the notes
       setSaving(true); //change the state to true
       const { error } = await supabase //call the supabase client
@@ -194,8 +201,8 @@ function Editor() {
         .insert([
           //insert the following values
           {
-            title, //Insert the title in the database
-            content, // insert the content in the database
+            title: encryptedTitle, // Salvar título criptografado
+            content: encryptedContent, // Salvar conteúdo criptografado
             user_id: user.id, // Add the user id in the note
             tags: selectedTags, // Add the selected tags in the dabase
           },
@@ -222,7 +229,7 @@ function Editor() {
         "fixed bottom-4 left-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-500 flex items-center gap-2";
       notification.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 00-1.414-1.414L9 10.586 7.707 9.293a1 1 00-1.414 1.414l2 2a1 1 001.414 0l4-4z" clip-rule="evenodd" />
-      </svg>Nota salva com sucesso!`;
+      </svg>${t('editor.noteSaved')}`;
       document.body.appendChild(notification);
 
       setTimeout(() => {
@@ -239,7 +246,7 @@ function Editor() {
         "fixed bottom-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-500 flex items-center gap-2";
       notification.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 101.414 1.414L10 11.414l1.293-1.293a1 1 00-1.414-1.414L11.414 10l1.293-1.293a1 1 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
-      </svg>Erro ao salvar nota. Tente novamente.`;
+      </svg>${t('editor.saveError')}`;
       document.body.appendChild(notification);
 
       setTimeout(() => {
@@ -273,7 +280,7 @@ function Editor() {
 
     // Verificar se o usuário está autenticado
     if (!user) {
-      alert("Você precisa estar logado para fazer upload de imagens!");
+      alert(t('editor.loginRequired'));
       return;
     }
 
@@ -304,7 +311,7 @@ function Editor() {
       setContent((currentContent) => currentContent + imageMarkdown);
     } catch (error) {
       console.error("Erro ao fazer upload da imagem:", error);
-      alert("Erro ao fazer upload da imagem. Tente novamente.");
+      alert(t('editor.imageUploadError'));
     } finally {
       setImageUploadLoading(false);
       if (fileInputRef.current) {
@@ -313,26 +320,33 @@ function Editor() {
     }
   };
 
+  // This function safely handles dynamic translation keys
+  const translateTag = (tagKey: string): string => {
+    // Using string interpolation with type assertion to satisfy TypeScript
+    return t(`tags.${tagKey}`, { defaultValue: tagKey });
+  };
+
   return (
     <div
       id="Editor"
-      className="w-full h-full flex flex-col bg-[var(--background)]"
+      className="w-full h-full flex flex-col bg-[var(--background)] scrollbar"
     >
+       <Profile />
       <div className="mx-auto w-full h-full flex flex-col flex-grow">
-        <div className="bg-[var(--background)] backdrop-blur-sm shadow-lg rounded-lg overflow-hidden flex flex-col flex-grow h-full border border-[var(--border-color)] transition-all duration-300">
+        <div className="bg-[var(--background)] backdrop-blur-sm shadow-lg rounded-lg overflow-hidden flex flex-col flex-grow h-full  border-[var(--border-color)] transition-all duration-300">
           {/* Title Section */}
           <div className="p-5 sm:p-6 border-b border-[var(--border-color)] relative">
             <div className="flex items-center gap-3">
-              <button
+                            <button
                 onClick={() => setShowEmojiPicker(!showEmojiPicker)}
                 className="p-2 text-[var(--foreground)] hover:bg-[var(--container)] rounded-full transition-all duration-200"
-                title="Adicionar emoji"
+                title={t('editor.addEmoji')}
               >
                 <SmilePlus size={22} />
               </button>
               <input
                 className="bg-transparent text-[var(--foreground)] focus:outline-none focus:ring-0 border-none w-full text-xl sm:text-2xl font-medium placeholder-opacity-60 placeholder-[var(--foreground)]"
-                placeholder="Tema da nota..."
+                placeholder={t('editor.titlePlaceholder')}
                 maxLength={40}
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
@@ -359,21 +373,21 @@ function Editor() {
                 <button
                   className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors font-bold"
                   onClick={() => insertMarkdown("bold")}
-                  title="Negrito (Ctrl+B)"
+                  title={t('editor.bold')}
                 >
                   B
                 </button>
                 <button
                   className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors italic"
                   onClick={() => insertMarkdown("italic")}
-                  title="Itálico (Ctrl+I)"
+                  title={t('editor.italic')}
                 >
                   I
                 </button>
                 <button
                   className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors"
                   onClick={() => insertMarkdown("link")}
-                  title="Link"
+                  title={t('editor.link')}
                 >
                   🔗
                 </button>
@@ -383,14 +397,14 @@ function Editor() {
                 <button
                   className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors"
                   onClick={() => insertMarkdown("heading1")}
-                  title="Título 1"
+                  title={t('editor.heading1')}
                 >
                   H1
                 </button>
                 <button
                   className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors"
                   onClick={() => insertMarkdown("heading2")}
-                  title="Título 2"
+                  title={t('editor.heading2')}
                 >
                   H2
                 </button>
@@ -400,7 +414,7 @@ function Editor() {
                 <button
                   className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors"
                   onClick={() => insertMarkdown("code")}
-                  title="Código"
+                  title={t('editor.code')}
                 >
                   &lt;/&gt;
                 </button>
@@ -414,7 +428,7 @@ function Editor() {
                       insertMarkdown("image");
                     }
                   }}
-                  title="Inserir Imagem"
+                  title={t('editor.insertImage')}
                 >
                   <Image size={16} />
                   {imageUploadLoading && (
@@ -438,7 +452,7 @@ function Editor() {
                     setShowEmojiPickerContent(!showEmojiPickerContent)
                   }
                   className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors"
-                  title="Adicionar emoji"
+                  title={t('editor.addEmoji')}
                 >
                   <SmilePlus size={16} />
                 </button>
@@ -467,7 +481,7 @@ function Editor() {
                 onClick={() => setIsPreviewMode(false)}
                 disabled={!isPreviewMode}
               >
-                <Edit size={16} /> Editar
+                <Edit size={16} /> {t('editor.edit')}
               </button>
               <button
                 className={`rounded-md px-3 py-1.5 transition-all duration-200 flex items-center gap-1.5 ${
@@ -478,7 +492,7 @@ function Editor() {
                 onClick={() => setIsPreviewMode(true)}
                 disabled={isPreviewMode}
               >
-                <Eye size={16} /> Visualizar
+                <Eye size={16} /> {t('editor.preview')}
               </button>
             </div>
           </div>
@@ -489,14 +503,14 @@ function Editor() {
               <button
                 className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors flex items-center justify-center"
                 onClick={() => insertMarkdown("orderedList")}
-                title="Lista Numerada"
+                title={t('editor.orderedList')}
               >
                 <ListOrdered size={18} />
               </button>
               <button
                 className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors flex items-center justify-center"
                 onClick={() => insertMarkdown("unorderedList")}
-                title="Lista com Marcadores"
+                title={t('editor.unorderedList')}
               >
                 <LayoutList size={18} />
               </button>
@@ -510,7 +524,7 @@ function Editor() {
                     insertMarkdown("image");
                   }
                 }}
-                title="Inserir Imagem"
+                title={t('editor.insertImage')}
               >
                 <Image size={18} />
                 {imageUploadLoading && (
@@ -528,7 +542,7 @@ function Editor() {
               <div className="h-full relative">
                 <textarea
                   className="p-5 sm:p-6 w-full bg-transparent text-[var(--foreground)] resize-none focus:outline-none min-h-[370px] h-full text-base sm:text-lg overflow-auto transition-all duration-300"
-                  placeholder="Escreva sua nota aqui..."
+                  placeholder={t('editor.contentPlaceholder')}
                   maxLength={15000}
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
@@ -547,7 +561,7 @@ function Editor() {
                   </ReactMarkdown>
                 ) : (
                   <p className="text-[var(--foreground)] opacity-60 italic">
-                    Nenhum conteúdo para visualizar...
+                    {t('editor.noPreviewContent')}
                   </p>
                 )}
               </div>
@@ -558,12 +572,12 @@ function Editor() {
           <div className="border-t border-[var(--border-color)] p-3 sm:p-4 bg-[var(--container)] bg-opacity-20">
             <div className="flex items-center gap-2">
               <span className="text-xs sm:text-sm text-[var(--foreground)] font-medium">
-                Tags:
+                {t('editor.tags')}
               </span>
               <div className="relative flex-grow">
                 <input
                   type="text"
-                  placeholder="Procurar tags..."
+                  placeholder={t('editor.searchTags')}
                   value={tagSearchTerm}
                   onChange={(e) => setTagSearchTerm(e.target.value)}
                   className="w-full px-3 py-2 text-xs sm:text-sm rounded-md bg-[var(--background)] text-[var(--foreground)] border border-[var(--border-color)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-color)] transition-all duration-200"
@@ -576,162 +590,162 @@ function Editor() {
           <div className="flex flex-wrap gap-1.5 sm:gap-2 p-3 sm:p-4 overflow-y-auto max-h-28 scrollbar bg-[var(--background)] border-t border-[var(--border-color)]">
             {[
               "agenda",
-              "amizade",
-              "análise",
-              "animação",
-              "aprendizado",
-              "arte",
-              "artigo",
-              "autoconhecimento",
-              "autocuidado",
-              "autoestima",
-              "autodisciplina",
-              "automatização",
-              "aventura",
-              "avaliação",
+              "friendship",
+              "analysis",
+              "animation",
+              "learning",
+              "art",
+              "article",
+              "selfKnowledge",
+              "selfCare",
+              "selfEsteem",
+              "selfDiscipline",
+              "automation",
+              "adventure",
+              "evaluation",
               "bug",
               "checklist",
-              "citação",
+              "quote",
               "cloud",
               "code",
-              "coleção",
-              "comunidade",
-              "conquista",
-              "contos",
-              "conversa",
-              "cultura",
-              "currículo",
-              "curso",
+              "collection",
+              "community",
+              "achievement",
+              "stories",
+              "conversation",
+              "culture",
+              "resume",
+              "course",
               "debate",
-              "desabafo",
+              "vent",
               "design",
-              "desenvolvimento",
-              "destino",
+              "development",
+              "destination",
               "dev",
-              "diário",
-              "dica",
-              "dicas de viagem",
-              "dieta",
-              "documentação",
-              "documentário",
-              "emoções",
-              "empreendedorismo",
-              "esboço",
-              "estudo",
-              "evento",
-              "evento cultural",
-              "exercício",
-              "experiência",
-              "família",
+              "diary",
+              "tip",
+              "travelTips",
+              "diet",
+              "documentation",
+              "documentary",
+              "emotions",
+              "entrepreneurship",
+              "draft",
+              "study",
+              "event",
+              "culturalEvent",
+              "exercise",
+              "experience",
+              "family",
               "feedback",
-              "filme",
-              "finanças",
+              "movie",
+              "finance",
               "fitness",
-              "foco",
-              "fotografia",
+              "focus",
+              "photography",
               "freelance",
-              "gestão",
-              "hábitos",
-              "hábitos saudáveis",
+              "management",
+              "habits",
+              "healthyHabits",
               "hardware",
-              "história",
+              "history",
               "hobby",
-              "ideia",
-              "importante",
-              "influência",
-              "inspiração",
-              "inspiração visual",
-              "inteligência artificial",
-              "investimentos",
-              "jogo",
-              "lembrete",
-              "liderança",
-              "listagem",
-              "listas",
-              "livro",
+              "idea",
+              "important",
+              "influence",
+              "inspiration",
+              "visualInspiration",
+              "artificialIntelligence",
+              "investments",
+              "game",
+              "reminder",
+              "leadership",
+              "listing",
+              "lists",
+              "book",
               "marketing",
-              "meditação",
-              "memórias",
-              "mentoria",
-              "meta",
-              "mochilão",
-              "motivação",
-              "música",
-              "natureza",
-              "negócio",
+              "meditation",
+              "memories",
+              "mentoring",
+              "goal",
+              "backpacking",
+              "motivation",
+              "music",
+              "nature",
+              "business",
               "networking",
-              "notas",
-              "nutrição",
-              "objetivo",
-              "opinião",
-              "organização",
-              "passeio",
-              "pesquisa",
-              "pessoal",
-              "planejamento",
+              "notes",
+              "nutrition",
+              "objective",
+              "opinion",
+              "organization",
+              "tour",
+              "research",
+              "personal",
+              "planning",
               "podcast",
-              "poesia",
-              "prioridade",
-              "programação",
-              "projeto",
-              "prototipo",
-              "receita",
-              "recomendações",
-              "referências",
-              "reflexão",
-              "relacionamentos",
-              "resumo",
-              "reunião",
-              "roteiro",
-              "rotina",
-              "salário",
-              "saúde",
-              "saúde mental",
-              "segurança",
-              "sentimentos",
-              "série",
-              "sistema",
+              "poetry",
+              "priority",
+              "programming",
+              "project",
+              "prototype",
+              "recipe",
+              "recommendations",
+              "references",
+              "reflection",
+              "relationships",
+              "summary",
+              "meeting",
+              "script",
+              "routine",
+              "salary",
+              "health",
+              "mentalHealth",
+              "security",
+              "feelings",
+              "series",
+              "system",
               "software",
-              "sono",
-              "tarefa",
-              "teatro",
-              "tendência",
-              "terapia",
-              "tese",
-              "testes",
-              "trabalho",
-              "trabalho acadêmico",
+              "sleep",
+              "task",
+              "theater",
+              "trend",
+              "therapy",
+              "thesis",
+              "tests",
+              "work",
+              "academicWork",
               "tutorial",
-              "vendas",
-              "viagem",
-              "voluntariado",
+              "sales",
+              "travel",
+              "volunteering",
             ]
               .filter(
-                (tag) =>
+                (tagKey) =>
                   tagSearchTerm === "" ||
-                  tag.toLowerCase().includes(tagSearchTerm.toLowerCase()),
+                  translateTag(tagKey).toLowerCase().includes(tagSearchTerm.toLowerCase()),
               )
-              .map((tag) => (
+              .map((tagKey) => (
                 <button
-                  key={tag}
-                  onClick={() => toggleTag(tag)}
+                  key={tagKey}
+                  onClick={() => toggleTag(translateTag(tagKey))}
                   className={`px-2.5 py-1 rounded-full text-xs font-medium transition-all duration-200 ${
-                    selectedTags.includes(tag)
+                    selectedTags.includes(translateTag(tagKey))
                       ? "bg-[var(--accent-color)] text-white shadow-sm"
                       : "bg-[var(--container)] text-[var(--foreground)] hover:bg-opacity-80"
                   }`}
                 >
-                  #{tag}
+                  #{translateTag(tagKey)}
                 </button>
               ))}
             {tagSearchTerm !== "" &&
               [
-                /* ...existing code... */
-              ].filter((tag: string) =>
-                tag.toLowerCase().includes(tagSearchTerm.toLowerCase()),
+                // List of tag keys
+              ].filter((tagKey) =>
+                translateTag(tagKey).toLowerCase().includes(tagSearchTerm.toLowerCase()),
               ).length === 0 && (
                 <div className="w-full text-center py-2 text-sm text-[var(--foreground)] italic opacity-70">
-                  Nenhuma tag encontrada para {tagSearchTerm}
+                  {t('editor.noTagsFound')} {tagSearchTerm}
                 </div>
               )}
           </div>
@@ -739,8 +753,7 @@ function Editor() {
           {/* Footer Section */}
           <div className="flex justify-between items-center p-4 sm:p-5 bg-[var(--container)] border-t border-[var(--border-color)]">
             <div className="text-xs sm:text-sm text-[var(--foreground)] opacity-70">
-              <span className="font-medium">{content.length}</span> / 15000
-              caracteres
+              <span className="font-medium">{content.length}</span> / 15000 {t('editor.characters')}
             </div>
 
             <button
@@ -755,12 +768,12 @@ function Editor() {
               {saving ? (
                 <>
                   <div className="w-4 h-4 border-2 border-[var(--foreground)] border-t-transparent rounded-full animate-spin"></div>
-                  <span>Salvando</span>
+                  <span>{t('editor.saving')}</span>
                 </>
               ) : (
                 <>
                   <Save size={18} />
-                  <span>Salvar nota</span>
+                  <span>{t('editor.save')}</span>
                 </>
               )}
             </button>

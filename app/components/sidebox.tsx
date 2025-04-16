@@ -13,10 +13,15 @@ import {
   X,
   BookOpen,
   BookOpenText,
-} from "lucide-react";
+  } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../../context/AuthContext";
 import ThemeToggle from "./ThemeToggle";
+import { useTranslation } from "next-i18next";
+import i18n from "../../i18n";
+import LanguageSwitcher from "../../components/LanguageSwitcher";
+import { decrypt } from "./Encryption"; // Importando função de descriptografia
+
 // import dynamic from 'next/dynamic';
 
 // Importação dinâmica do Clock com carregamento apenas do lado do cliente
@@ -40,7 +45,21 @@ function Sidebox() {
   const router = useRouter();
   const { user } = useAuth();
   const [, setError] = useState<string | null>(null);
+  const { t } = useTranslation();
   
+  // Initialize language detection based on browser language
+  useEffect(() => {
+    const browserLang = navigator.language;
+    // Check if the detected language is supported in our app
+    const supportedLanguages = Object.keys(i18n.options.resources || {});
+    
+    if (browserLang && supportedLanguages.includes(browserLang)) {
+      i18n.changeLanguage(browserLang);
+    } else if (browserLang && browserLang.startsWith('pt')) {
+      // Handle cases like pt-PT, pt, etc. falling back to pt-BR
+      i18n.changeLanguage('pt-BR');
+    }
+  }, []);
 
 
   const fetchNotes = async () => {
@@ -57,7 +76,14 @@ function Sidebox() {
         .eq("user_id", user.id)
         .order("created_at", { ascending: false });
 
-      setNotes(data || []);
+      // Descriptografia das notas antes de atualizar o estado
+      const decryptedNotes = (data || []).map(note => ({
+        ...note,
+        title: decrypt(note.title),
+        content: note.content ? decrypt(note.content) : undefined
+      }));
+
+      setNotes(decryptedNotes);
     } catch (error) {
       console.error("Erro ao buscar notas:", error);
     } finally {
@@ -88,13 +114,13 @@ function Sidebox() {
     const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
     if (diffDays === 0) {
-      return "Hoje";
+      return t('sidebar.dateFormat.today');
     } else if (diffDays === 1) {
-      return "Ontem";
+      return t('sidebar.dateFormat.yesterday');
     } else if (diffDays < 7) {
-      return `${diffDays} dias atrás`;
+      return t('sidebar.dateFormat.daysAgo', { count: diffDays });
     } else {
-      return date.toLocaleDateString("pt-BR", {
+      return date.toLocaleDateString(i18n.language === 'pt-BR' ? 'pt-BR' : 'en-US', {
         day: "2-digit",
         month: "2-digit",
         year: "2-digit",
@@ -112,7 +138,7 @@ function Sidebox() {
       <button
         onClick={toggleMobileSidebar}
         className="fixed top-4 right-4 z-50 p-2 rounded-full bg-[var(--container)] text-[var(--foreground)] shadow-lg md:hidden"
-        aria-label={isMobileOpen ? "Fechar menu" : "Abrir menu"}
+        aria-label={isMobileOpen ? t('sidebar.closeMenu') : t('sidebar.openMenu')}
       >
         {isMobileOpen ? <X size={20} /> : <Menu size={20} />}
       </button>
@@ -125,8 +151,8 @@ function Sidebox() {
         <div className="flex flex-col h-full">
           {/* Header */}
           <div className="p-4 border-b border-slate-700">
-            <div className="flex items-center justify-between ">
-              <h1 className="text-xl font-bold flex items-center gap-2">
+            <div className="flex items-center  ">
+              <h1 className="text-xl font-bold flex items-center">
                 <BookOpen size={20} className="text-[var(--foreground)]" />
                 {user ? (
                   <Link href={"/dashboard"}>
@@ -134,12 +160,8 @@ function Sidebox() {
                       className="text-[var(--foreground)] px-2 py-1 rounded-lg transition-colors duration-200 hover:bg-[var(--container)] hover:shadow-sm"
                       onClick={() => setIsMobileOpen(false)}
                     >
-                      My Workspace
-                      
+                      {t('sidebar.myWorkspace')}
                     </span>
-                    
-                    
-                    {/* {localStorage.getItem("theme") === "purple" ? "🐧" : "🐍"} */}
                   </Link>
                 ) : (
                   <span className="text-[var(--foreground)]">Fair-note</span>
@@ -147,9 +169,9 @@ function Sidebox() {
               </h1>
 
               <button
-                onClick={() => router.push("/")}
+                onClick={() => router.push("/editor")}
                 className="p-2 rounded-full hover:bg-[var(--container)] transition-colors"
-                title="Nova Nota"
+                title={t('sidebar.newNote')}
               >
                 <PlusCircle size={20} className="text-[var(--foreground)]" />
               </button>
@@ -161,7 +183,7 @@ function Sidebox() {
             <div className="relative ">
               <input
                 type="text"
-                placeholder="Buscar notas..."
+                placeholder={t('sidebar.searchNotes')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full p-2 pl-8 bg-[var(--container)] placeholder-[var(--foreground)] rounded-lg border border-slate-700 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
@@ -188,13 +210,13 @@ function Sidebox() {
                 >
                   <div className="p-3 rounded-lg hover:bg-[var(--container)] cursor-pointer transition-colors border border-transparent hover:border-slate-700">
                     <div className="flex items-start space-x-3">
-                      <BookOpenText
-                        size={16}
-                        className="mt-1 text-[var(--foreground)]"
-                      />
-                      <div className="flex-1 min-w-0">
+                                              <BookOpenText
+size={16}
+className="mt-1 text-[var(--foreground)]"
+/>
+                                            <div className="flex-1 min-w-0">
                         <h2 className="font-medium truncate">
-                          {note.title || "Sem título"}
+                          {note.title || t('sidebar.untitled')}
                         </h2>
                         {note.content && (
                           <p className="text-xs text-[var(--foreground)] mt-1 truncate">
@@ -214,24 +236,24 @@ function Sidebox() {
               <div className="text-center py-8 text-slate-500">
                 {searchTerm ? (
                   <div>
-                    <p>Nenhuma nota encontrada</p>
-                    <p className="text-xs mt-1">Tente com outros termos</p>
+                    <p>{t('sidebar.noNotesFound')}</p>
+                    <p className="text-xs mt-1">{t('sidebar.tryOtherTerms')}</p>
                   </div>
                 ) : (
                   <div>
                     {user ? (
                       <>
-                        <p>Nenhuma nota ainda</p>
-                        <p className="text-xs mt-1">Crie sua primeira nota!</p>
+                        <p>{t('sidebar.noNotesYet')}</p>
+                        <p className="text-xs mt-1">{t('sidebar.createYourFirst')}</p>
                         <button
                           onClick={() => router.push("/editor")}
                           className="text-blue-400 text-sm mt-2 hover:underline"
                         >
-                          Criar primeira nota
+                          {t('sidebar.createFirstNote')}
                         </button>
                       </>
                     ) : (
-                      <p>Faça login para criar notas.</p>
+                      <p>{t('sidebar.loginToCreateNotes')}</p>
                     )}
                   </div>
                 )}
@@ -243,7 +265,7 @@ function Sidebox() {
           <div className="p-4 border-t border-slate-700 text-xs text-[var(--foreground)]">
             <div className="flex justify-between items-center">
               <div>
-                Total: {notes.length} {notes.length === 1 ? "nota" : "notas"}
+                {t('sidebar.total')}: {notes.length} {notes.length === 1 ? t('sidebar.noteCountSingular') : t('sidebar.noteCountPlural')}
               </div>
               {user && (
                 <button
@@ -263,13 +285,13 @@ function Sidebox() {
                   }}
                   className="bg-red-500 text-white hover:bg-red-400 px-4 py-2 rounded"
                 >
-                  Logout
+                  {t('sidebar.logout')}
                 </button>
               )}
               <button
-                onClick={fetchNotes} // Agora fetchNotes está acessível
+                onClick={fetchNotes}
                 className="p-1 hover:text-slate-300 transition-colors"
-                title="Atualizar"
+                title={t('sidebar.refresh')}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -290,8 +312,11 @@ function Sidebox() {
               </button>
             </div>
           </div>
-          <div className="p-4 border-t border-slate-500/30">
-            <p className="text-sm text-[var(--foreground)] mb-3">Theme</p>
+          <div className=" border-t border-slate-500/30">
+            <div className="flex justify-between items-center mb-3">
+              <p className="text-sm text-[var(--foreground)]">{t('sidebar.theme')}</p>
+              <LanguageSwitcher />
+            </div>
             <ThemeToggle />
           </div>
           {user && (

@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, Check, Plus, X } from "lucide-react";
 import { supabase } from "../../lib/supabase";
 import { useAuth } from "../../context/AuthContext";
-
+import { useTranslation } from "react-i18next";
+import i18n from "@/i18n";
 // Opções de cores para os eventos
 const eventColors = [
     { name: "Indigo", value: "bg-indigo-500", text: "text-white" },
@@ -36,6 +37,7 @@ interface Event {
 }
 
 const CalendarView: React.FC = () => {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [events, setEvents] = useState<Event[]>([]);
@@ -259,6 +261,17 @@ const CalendarView: React.FC = () => {
     return getEventsForDay(day).length > 0;
   };
 
+  // Array of day names translated
+  const dayNames = [
+    t('calendar.sun'), 
+    t('calendar.mon'), 
+    t('calendar.tue'), 
+    t('calendar.wed'), 
+    t('calendar.thu'), 
+    t('calendar.fri'), 
+    t('calendar.sat')
+  ];
+
   return (
     <div className=" bg-[var(--background)] ">
       {/* Header with month and year navigation */}
@@ -279,7 +292,7 @@ const CalendarView: React.FC = () => {
         </div>
         
         <h2 className="font-semibold text-lg">
-          {selectedDate.toLocaleString("default", { month: "long" })} {year}
+          {selectedDate.toLocaleString(i18n.language, { month: "long" })} {year}
         </h2>
         
         <div className="flex space-x-2">
@@ -288,7 +301,7 @@ const CalendarView: React.FC = () => {
             className="flex items-center gap-1 text-sm px-3 py-1 border border-[var(--border-color)] rounded hover:bg-[var(--container)] transition-colors"
           >
             <CalendarIcon size={16} />
-            <span>Today</span>
+            <span>{t('calendar.today')}</span>
           </button>
           <button
             onClick={() => setHighlightToday(!highlightToday)}
@@ -298,14 +311,14 @@ const CalendarView: React.FC = () => {
                 : 'border-[var(--border-color)] hover:bg-[var(--container)]'
             }`}
           >
-            Highlight Today
+            {t('calendar.highlightToday')}
           </button>
         </div>
       </div>
 
       <div className="grid grid-cols-7 ">
         {/* Render day headers */}
-        {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
+        {dayNames.map((day) => (
           <div key={day} className="text-center font-bold text-[var(--foreground)] py-2">
             {day}
           </div>
@@ -352,7 +365,7 @@ const CalendarView: React.FC = () => {
                     ))}
                     {dayEvents.length > 3 && (
                       <div className="text-[9px] text-gray-500 px-1">
-                        +{dayEvents.length - 3} more
+                        {t('calendar.moreEvents', { count: dayEvents.length - 3 })}
                       </div>
                     )}
                   </div>
@@ -367,19 +380,19 @@ const CalendarView: React.FC = () => {
       {selectedDay && (
         <div className="p-4  bg-[var(--container)] bg-opacity-50 flex flex-col ">
           <h3 className="font-medium text-[var(--foreground)] text-center">
-            {selectedDate.toLocaleString("default", { month: "long" })} {selectedDay}, {year}
+            {selectedDate.toLocaleString(i18n.language, { month: "long" })} {selectedDay}, {year}
           </h3>
           
           <div className="flex flex-col md:flex-row ">
             {/* Add new event */}
             <div className="flex flex-col flex-1">
-              <h4 className="text-sm font-medium text-[var(--foreground)] mb-2">Add Event:</h4>
+              <h4 className="text-sm font-medium text-[var(--foreground)] mb-2">{t('calendar.addEvent')}</h4>
               <div className="flex flex-col gap-2">
                 <input
                   type="text"
                   value={newEvent}
                   onChange={(e) => setNewEvent(e.target.value)}
-                  placeholder="Event title"
+                  placeholder={t('calendar.eventTitle')}
                   className="w-full border border-[var(--border-color)] px-3 py-2 bg-transparent text-[var(--foreground)]"
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' && !e.shiftKey) {
@@ -393,7 +406,7 @@ const CalendarView: React.FC = () => {
                 <textarea
                   value={newDescription}
                   onChange={(e) => setNewDescription(e.target.value)}
-                  placeholder="Event description (optional)"
+                  placeholder={t('calendar.eventDescription')}
                   className="w-full border border-[var(--border-color)] px-3 py-2 bg-transparent text-[var(--foreground)] resize-none h-20"
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' && e.ctrlKey) {
@@ -432,7 +445,7 @@ const CalendarView: React.FC = () => {
 
             {/* Events list */}
             <div className="flex-1">
-              <h4 className="text-sm font-medium text-[var(--foreground)] mb-2">Events:</h4>
+              <h4 className="text-sm font-medium text-[var(--foreground)] mb-2">{t('calendar.events')}</h4>
               <div className="space-y-2 max-h-60 overflow-y-auto scrollbar-thin border border-[var(--border-color)] p-2 rounded">
                 {getEventsForDay(selectedDay).length > 0 ? (
                   getEventsForDay(selectedDay).map(event => (
@@ -468,7 +481,7 @@ const CalendarView: React.FC = () => {
                   ))
                 ) : (
                   <p className="text-sm text-[var(--foreground)] opacity-60 text-center py-2">
-                    No events for this day. Add one above.
+                    {t('calendar.noEvents')}
                   </p>
                 )}
               </div>

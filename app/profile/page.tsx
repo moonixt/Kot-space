@@ -5,19 +5,21 @@ import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
 import Image from "next/image";
 import { supabase } from "../../lib/supabase";
 import { useAuth } from "../../context/AuthContext";
+import Link from "next/link";
 
 const Profile = () => {
-  const [wallpaperUrl, setWallpaperUrl] = useState(
-    "/static/images/default.jpg",
-  );
-  const [avatar_url, setAvatarUrl] = useState("");
+  const [wallpaperUrl, setWallpaperUrl] = useState<string | null>(null);
+  const [wallpaperLoading, setWallpaperLoading] = useState(true);
+  const [avatar_url, setAvatarUrl] = useState<string | null>(null);
+  const [avatarLoading, setAvatarLoading] = useState(true);
   const [showWallpaperModal, setShowWallpaperModal] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const avatarFileInputRef = useRef<HTMLInputElement>(null);
   const { user } = useAuth();
-  const [bio, setBio] = useState("");
+  const [bio, setBio] = useState<string | null>(null);
+  const [bioLoading, setBioLoading] = useState(true);
 
   useEffect(() => {
     if (user) {
@@ -29,6 +31,7 @@ const Profile = () => {
 
   // Buscar wallpaper do usuário
   const getUserWallpaper = async () => {
+    setWallpaperLoading(true);
     try {
       const { data, error } = await supabase
         .from("profiles")
@@ -45,13 +48,20 @@ const Profile = () => {
           .getPublicUrl(data.wallpaper_url);
 
         setWallpaperUrl(urlData.publicUrl);
+      } else {
+        // If no wallpaper is set, use the default
+        setWallpaperUrl("/static/images/default.jpg");
       }
     } catch (error) {
       console.error("Erro ao buscar wallpaper:", error);
+      setWallpaperUrl("/static/images/default.jpg");
+    } finally {
+      setWallpaperLoading(false);
     }
   };
 
   const getUserPhoto = async () => {
+    setAvatarLoading(true);
     try {
       const { data, error } = await supabase
         .from("profiles")
@@ -66,13 +76,20 @@ const Profile = () => {
           .from("user-avatar")
           .getPublicUrl(data.avatar_url);
         setAvatarUrl(urlData.publicUrl);
+      } else {
+        // Default avatar if none is set
+        setAvatarUrl("/icons/cop-note.png");
       }
     } catch (error) {
       console.error("Erro ao buscar avatar:", error);
+      setAvatarUrl("/icons/cop-note.png");
+    } finally {
+      setAvatarLoading(false);
     }
   };
 
   const getUserBio = async () => {
+    setBioLoading(true);
     try {
       const { data, error } = await supabase
         .from("profiles")
@@ -84,9 +101,14 @@ const Profile = () => {
 
       if (data?.bio) {
         setBio(data.bio);
+      } else {
+        setBio('"You are what you think"');
       }
     } catch (error) {
       console.error("Error fetching bio:", error);
+      setBio('"You are what you think"');
+    } finally {
+      setBioLoading(false);
     }
   };
 
@@ -168,6 +190,13 @@ const deleteOldFile = async (bucket: string, filePath: string | null) => {
       alert("Only image files are allowed.");
       return;
     }
+    
+    // Check file size (limit to 5MB = 5 * 1024 * 1024 bytes)
+    const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB in bytes
+    if (file.size > MAX_FILE_SIZE) {
+      alert("Image size exceeds 5MB limit. Please choose a smaller image.");
+      return;
+    }
 
     try {
       setUploading(true);
@@ -227,6 +256,13 @@ const deleteOldFile = async (bucket: string, filePath: string | null) => {
 
     if (!isImageFile(file)) {
       alert("Only image files are allowed.");
+      return;
+    }
+
+    // Check file size (limit to 5MB = 5 * 1024 * 1024 bytes)
+    const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB in bytes
+    if (file.size > MAX_FILE_SIZE) {
+      alert("Image size exceeds 5MB limit. Please choose a smaller image.");
       return;
     }
 
@@ -291,18 +327,27 @@ const deleteOldFile = async (bucket: string, filePath: string | null) => {
     <div className="flex justify-center">
       <div className="bg-[var(--background)] text-[var(--background]">
         <div className="relative">
-          <Image
-            src={wallpaperUrl}
-            alt="Profile"
-            width={4000}
-            height={4000}
-            className="w-600 h-55 sm:h-130 md:h-70 2xl:h-150 object-cover"
-          />
+          {wallpaperLoading ? (
+            <div className="w-600 h-55 sm:h-130 md:h-70 2xl:h-150 bg-gray-200 animate-pulse"></div>
+          ) : (
+            <Link href="/dashboard">
+            <Image
+            
+              src={wallpaperUrl || "/static/images/default.jpg"}
+              alt="Profile"
+              width={4000}
+              height={4000}
+              className="w-600 h-55 sm:h-130 md:h-70 2xl:h-150 object-cover"
+              priority
+              unoptimized={wallpaperUrl?.endsWith('.gif')}
+            />
+            </Link>
+          )}
 
           {/* Botão de edição de wallpaper */}
           <button
             onClick={() => setShowWallpaperModal(true)}
-            className="absolute top-2 right-2 bg-[var(--background)] text-[var(--foreground)] p-2 rounded-full opacity-80 hover:opacity-100"
+            className="absolute top-2 left-2 bg-[var(--background)] text-[var(--foreground)] p-2 rounded-full opacity-80 hover:opacity-100"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -321,18 +366,22 @@ const deleteOldFile = async (bucket: string, filePath: string | null) => {
           </button>
         </div>
 
-        <div className="flex justify-center items-center gap-2 mt-[-50px] pb-2  relative  ">
+        <div className="flex justify-center items-center gap-2 mt-[-50px] pb-2 relative">
           <div className="relative">
-            <Avatar
-              onClick={() => avatarFileInputRef.current?.click()}
-              className="cursor-pointer hover:opacity-86 transition-opacity duration-700"
-            >
-              <AvatarImage
-                className="h-[80px] w-[80px] rounded-full object-cover border-2 border-[var(--foreground)]"
-                src={avatar_url}
-                alt="Profile avatar"
-              />
-            </Avatar>
+            {avatarLoading ? (
+              <div className="h-[80px] w-[80px] rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse"></div>
+            ) : (
+              <Avatar
+                onClick={() => avatarFileInputRef.current?.click()}
+                className="cursor-pointer hover:opacity-86 transition-opacity duration-700"
+              >
+                <AvatarImage
+                  className="h-[80px] w-[80px] rounded-full object-cover border-1 border-[var(--foreground)]"
+                  src={avatar_url || "/icons/cop-note.png"}
+                  alt="Profile avatar"
+                />
+              </Avatar>
+            )}
             {uploadingAvatar && (
               <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-full">
                 <div className="h-6 w-6 border-2 border-t-transparent border-white rounded-full animate-spin"></div>
@@ -340,7 +389,7 @@ const deleteOldFile = async (bucket: string, filePath: string | null) => {
             )}
             <button
               onClick={() => avatarFileInputRef.current?.click()}
-              className="absolute bottom-0 right-0 bg-[var(--background)] text-[var(--foreground)] p-1 rounded-full opacity-80 hover:opacity-100 border border-[var(--foreground)]"
+              className="absolute bottom-0 left-0 bg-[var(--background)] text-[var(--foreground)] p-1 rounded-full opacity-80 hover:opacity-100 border border-[var(--foreground)]"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -370,22 +419,26 @@ const deleteOldFile = async (bucket: string, filePath: string | null) => {
             />
           </div>
 
-          <h2
-            contentEditable
-            suppressContentEditableWarning
-            onBlur={(e) => {
-              const newBio = e.target.innerText;
-              if (newBio.length <= 50) {
-                updateBio(newBio);
-              } else {
-                alert("Bio must be 50 characters or less.");
-                e.target.innerText = bio; // Revert to the previous bio
-              }
-            }}
-            className="italic text-[var(--foreground)] bg-[var(--background)]"
-          >
-            {bio || '"You are what you think"'}
-          </h2>
+          {bioLoading ? (
+            <div className="italic text-[var(--foreground)] bg-[var(--container)] w-40 h-6 rounded animate-pulse"></div>
+          ) : (
+            <h2
+              contentEditable
+              suppressContentEditableWarning
+              onBlur={(e) => {
+                const newBio = e.target.innerText;
+                if (newBio.length <= 50) {
+                  updateBio(newBio);
+                } else {
+                  alert("Bio must be 50 characters or less.");
+                  e.target.innerText = bio || '"You are what you think"'; // Revert to the previous bio or use default
+                }
+              }}
+              className="italic text-[var(--foreground)] bg-[var(--container)]"
+            >
+              {bio || '"You are what you think"'}
+            </h2>
+          )}
         </div>
 
         {/* Modal de upload de wallpaper */}
