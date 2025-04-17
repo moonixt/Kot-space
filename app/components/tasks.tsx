@@ -27,7 +27,9 @@ const Tasks = () => {
   const [newTask, setNewTask] = useState("");
   const [newTaskDueDate, setNewTaskDueDate] = useState<Date | null>(null);
   const [newTaskDescription, setNewTaskDescription] = useState("");
-  const [newTaskPriority, setNewTaskPriority] = useState<"low" | "medium" | "high">("medium");
+  const [newTaskPriority, setNewTaskPriority] = useState<
+    "low" | "medium" | "high"
+  >("medium");
   const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
   const [editingTaskDate, setEditingTaskDate] = useState<Date | null>(null);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
@@ -97,7 +99,7 @@ const Tasks = () => {
 
   const toggleTaskCompletion = async (
     taskId: string,
-    currentStatus: boolean
+    currentStatus: boolean,
   ) => {
     try {
       const { error } = await supabase
@@ -310,7 +312,7 @@ const Tasks = () => {
                 <line x1="6" y1="6" x2="18" y2="18" />
               </svg>
             </button>
-            <h3 className="font-bold mb-2">{t("tasks.editTask","")}</h3>
+            <h3 className="font-bold mb-2">{t("tasks.editTask", "")}</h3>
             <input
               className="w-full border mb-2 p-2 rounded"
               value={editingTask.title}
@@ -328,7 +330,7 @@ const Tasks = () => {
                   description: e.target.value,
                 })
               }
-              placeholder={t("tasks.addDescription","")}
+              placeholder={t("tasks.addDescription", "")}
             />
             <select
               value={editingTask.priority || "medium"}
@@ -351,13 +353,13 @@ const Tasks = () => {
                 className="bg-blue-500 text-white px-4 py-2 rounded"
                 onClick={() => updateTask(editingTask)}
               >
-                {t("tasks.save","")}
+                {t("tasks.save", "")}
               </button>
               <button
                 className="bg-gray-300 text-black px-4 py-2 rounded"
                 onClick={() => setEditingTask(null)}
               >
-                {t("tasks.cancel","")}
+                {t("tasks.cancel", "")}
               </button>
             </div>
           </div>
@@ -374,12 +376,12 @@ const Tasks = () => {
                 task.is_completed
                   ? "border-green-500 opacity-60"
                   : task.due_date && isOverdue(task.due_date)
-                  ? "border-red-500"
-                  : task.priority === "high"
-                  ? "border-red-400"
-                  : task.priority === "low"
-                  ? "border-green-400"
-                  : "border-yellow-400"
+                    ? "border-red-500"
+                    : task.priority === "high"
+                      ? "border-red-400"
+                      : task.priority === "low"
+                        ? "border-green-400"
+                        : "border-yellow-400"
               }`}
             >
               <div className="flex items-start gap-2">
@@ -414,7 +416,9 @@ const Tasks = () => {
                 </button>
                 <div className="flex-grow">
                   <span
-                    className={task.is_completed ? "line-through opacity-70" : ""}
+                    className={
+                      task.is_completed ? "line-through opacity-70" : ""
+                    }
                   >
                     <span
                       className="font-semibold cursor-pointer hover:underline"
@@ -449,13 +453,13 @@ const Tasks = () => {
                           task.priority === "high"
                             ? "bg-red-200 text-red-800"
                             : task.priority === "low"
-                            ? "bg-green-200 text-green-800"
-                            : "bg-yellow-200 text-yellow-800"
+                              ? "bg-green-200 text-green-800"
+                              : "bg-yellow-200 text-yellow-800"
                         }`}
                       >
                         {
                           priorityOptions.find(
-                            (opt) => opt.value === task.priority
+                            (opt) => opt.value === task.priority,
                           )?.label
                         }
                       </span>
@@ -468,7 +472,7 @@ const Tasks = () => {
                       onClick={() => {
                         setEditingTaskId(task.id);
                         setEditingTaskDate(
-                          task.due_date ? new Date(task.due_date) : null
+                          task.due_date ? new Date(task.due_date) : null,
                         );
                       }}
                       className="p-1 text-[var(--foreground)] opacity-40 hover:opacity-100"
@@ -505,9 +509,7 @@ const Tasks = () => {
                       >
                         <DatePicker
                           selected={editingTaskDate}
-                          onChange={(date) =>
-                            updateTaskDueDate(task.id, date)
-                          }
+                          onChange={(date) => updateTaskDueDate(task.id, date)}
                           inline
                           className="bg-[var(--background)] text-[var(--foreground)]"
                         />

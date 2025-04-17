@@ -1,12 +1,12 @@
 "use client";
 import { useState, useEffect } from "react";
-import { 
-  PlusCircle, 
-  Search, 
-  Clock as ClockIcon, 
-  Menu, 
-  X, 
-  BookOpen, 
+import {
+  PlusCircle,
+  Search,
+  Clock as ClockIcon,
+  Menu,
+  X,
+  BookOpen,
   BookOpenText,
   ChevronDown,
   FolderPlus,
@@ -15,7 +15,7 @@ import {
   Plus,
   Folder,
   FolderOpen,
-  Inbox
+  Inbox,
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -67,18 +67,18 @@ export default function Sidebox() {
   const { user } = useAuth();
   const [, setError] = useState<string | null>(null);
   const { t } = useTranslation();
- 
+
   // Initialize language detection based on browser language
   useEffect(() => {
     const browserLang = navigator.language;
     // Check if the detected language is supported in our app
     const supportedLanguages = Object.keys(i18n.options.resources || {});
-    
+
     if (browserLang && supportedLanguages.includes(browserLang)) {
       i18n.changeLanguage(browserLang);
-    } else if (browserLang && browserLang.startsWith('pt')) {
+    } else if (browserLang && browserLang.startsWith("pt")) {
       // Handle cases like pt-PT, pt, etc. falling back to pt-BR
-      i18n.changeLanguage('pt-BR');
+      i18n.changeLanguage("pt-BR");
     }
   }, []);
 
@@ -97,10 +97,10 @@ export default function Sidebox() {
         .order("created_at", { ascending: false });
 
       // Descriptografia das notas antes de atualizar o estado
-      const decryptedNotes = (data || []).map(note => ({
+      const decryptedNotes = (data || []).map((note) => ({
         ...note,
         title: decrypt(note.title),
-        content: note.content ? decrypt(note.content) : undefined
+        content: note.content ? decrypt(note.content) : undefined,
       }));
 
       setNotes(decryptedNotes);
@@ -124,10 +124,12 @@ export default function Sidebox() {
         .eq("user_id", user.id)
         .order("name", { ascending: true });
 
-      setFolders((data || []).map(folder => ({
-        ...folder,
-        expanded: folder.id === selectedFolderId
-      })));
+      setFolders(
+        (data || []).map((folder) => ({
+          ...folder,
+          expanded: folder.id === selectedFolderId,
+        })),
+      );
     } catch (error) {
       console.error("Erro ao buscar pastas:", error);
     }
@@ -155,23 +157,25 @@ export default function Sidebox() {
     };
 
     // Registrar o listener
-    eventEmitter.on('noteSaved', handleNoteSaved);
-    
+    eventEmitter.on("noteSaved", handleNoteSaved);
+
     // Limpar o listener quando o componente for desmontado
     return () => {
-      eventEmitter.off('noteSaved', handleNoteSaved);
+      eventEmitter.off("noteSaved", handleNoteSaved);
     };
   }, [user]); // Re-registra o listener se o usuário mudar
 
-  const filteredNotes = notes.filter(note => {
+  const filteredNotes = notes.filter((note) => {
     // Filtrar por termo de busca
-    const matchesSearch = 
+    const matchesSearch =
       note.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       note.content?.toLowerCase().includes(searchTerm.toLowerCase());
-    
+
     // Filtrar por pasta selecionada
-    const matchesFolder = selectedFolderId ? note.folder_id === selectedFolderId : true;
-    
+    const matchesFolder = selectedFolderId
+      ? note.folder_id === selectedFolderId
+      : true;
+
     return matchesSearch && matchesFolder;
   });
 
@@ -188,17 +192,20 @@ export default function Sidebox() {
     const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
     if (diffDays === 0) {
-      return t('sidebar.dateFormat.today');
+      return t("sidebar.dateFormat.today");
     } else if (diffDays === 1) {
-      return t('sidebar.dateFormat.yesterday');
+      return t("sidebar.dateFormat.yesterday");
     } else if (diffDays < 7) {
-      return t('sidebar.dateFormat.daysAgo', { count: diffDays });
+      return t("sidebar.dateFormat.daysAgo", { count: diffDays });
     } else {
-      return date.toLocaleDateString(i18n.language === 'pt-BR' ? 'pt-BR' : 'en-US', {
-        day: "2-digit",
-        month: "2-digit",
-        year: "2-digit",
-      });
+      return date.toLocaleDateString(
+        i18n.language === "pt-BR" ? "pt-BR" : "en-US",
+        {
+          day: "2-digit",
+          month: "2-digit",
+          year: "2-digit",
+        },
+      );
     }
   }
 
@@ -207,39 +214,46 @@ export default function Sidebox() {
   };
 
   const toggleFolder = (folderId: string) => {
-    setFolders(folders.map(folder => 
-      folder.id === folderId ? { ...folder, expanded: !folder.expanded } : folder
-    ));
+    setFolders(
+      folders.map((folder) =>
+        folder.id === folderId
+          ? { ...folder, expanded: !folder.expanded }
+          : folder,
+      ),
+    );
   };
 
   const handleFolderSelect = (folderId: string | null) => {
     setSelectedFolderId(folderId);
     // Expande a pasta selecionada
     if (folderId) {
-      setFolders(folders.map(folder => 
-        folder.id === folderId ? { ...folder, expanded: true } : folder
-      ));
+      setFolders(
+        folders.map((folder) =>
+          folder.id === folderId ? { ...folder, expanded: true } : folder,
+        ),
+      );
     }
   };
 
   const createFolder = async () => {
     if (!newFolderName.trim() || !user) return;
-    
+
     try {
       // Set loading state to true when starting folder creation
       setIsFolderCreating(true);
-      
+
       const { data, error } = await supabase
         .from("folders")
-        .insert([
-          { name: newFolderName, user_id: user.id }
-        ])
+        .insert([{ name: newFolderName, user_id: user.id }])
         .select();
-      
+
       if (error) throw error;
-      
+
       if (data && data[0]) {
-        setFolders([...folders, { id: data[0].id, name: data[0].name, expanded: false }]);
+        setFolders([
+          ...folders,
+          { id: data[0].id, name: data[0].name, expanded: false },
+        ]);
         setNewFolderName("");
         setIsAddingFolder(false);
       }
@@ -254,7 +268,7 @@ export default function Sidebox() {
   const deleteFolder = async (folderId: string, e: React.MouseEvent) => {
     e.stopPropagation();
     if (!user) return;
-    
+
     try {
       // Primeiro, atualiza as notas para remover a referência à pasta
       await supabase
@@ -262,17 +276,17 @@ export default function Sidebox() {
         .update({ folder_id: null })
         .eq("folder_id", folderId)
         .eq("user_id", user.id);
-      
+
       // Então, remove a pasta
       const { error } = await supabase
         .from("folders")
         .delete()
         .eq("id", folderId)
         .eq("user_id", user.id);
-      
+
       if (error) throw error;
-      
-      setFolders(folders.filter(folder => folder.id !== folderId));
+
+      setFolders(folders.filter((folder) => folder.id !== folderId));
       if (selectedFolderId === folderId) {
         setSelectedFolderId(null);
       }
@@ -283,20 +297,22 @@ export default function Sidebox() {
 
   const moveNoteToFolder = async (noteId: string, folderId: string | null) => {
     if (!user) return;
-    
+
     try {
       const { error } = await supabase
         .from("notes")
         .update({ folder_id: folderId })
         .eq("id", noteId)
         .eq("user_id", user.id);
-      
+
       if (error) throw error;
-      
+
       // Atualiza o estado das notas localmente
-      setNotes(notes.map(note => 
-        note.id === noteId ? { ...note, folder_id: folderId } : note
-      ));
+      setNotes(
+        notes.map((note) =>
+          note.id === noteId ? { ...note, folder_id: folderId } : note,
+        ),
+      );
     } catch (error) {
       console.error("Erro ao mover nota:", error);
     }
@@ -308,7 +324,9 @@ export default function Sidebox() {
       <button
         onClick={toggleMobileSidebar}
         className="fixed top-4 right-4 z-50 p-2 rounded-full bg-[var(--container)] text-[var(--foreground)] shadow-lg md:hidden"
-        aria-label={isMobileOpen ? t('sidebar.closeMenu') : t('sidebar.openMenu')}
+        aria-label={
+          isMobileOpen ? t("sidebar.closeMenu") : t("sidebar.openMenu")
+        }
       >
         {isMobileOpen ? <X size={20} /> : <Menu size={20} />}
       </button>
@@ -330,7 +348,7 @@ export default function Sidebox() {
                       className="text-[var(--foreground)] px-2 py-1 rounded-lg transition-colors duration-200 hover:bg-[var(--container)] hover:shadow-sm"
                       onClick={() => setIsMobileOpen(false)}
                     >
-                      {t('sidebar.myWorkspace')}
+                      {t("sidebar.myWorkspace")}
                     </span>
                   </Link>
                 ) : (
@@ -342,18 +360,18 @@ export default function Sidebox() {
                 <button
                   onClick={() => router.push("/editor")}
                   className="p-2 rounded-full hover:bg-[var(--container)] transition-colors"
-                  title={t('sidebar.newNote')}
+                  title={t("sidebar.newNote")}
                 >
                   <PlusCircle size={20} className="text-[var(--foreground)]" />
                 </button>
               </div>
             </div>
-            
+
             {/* Search */}
             <div className="relative mt-3">
               <input
                 type="text"
-                placeholder={t('sidebar.searchNotes')}
+                placeholder={t("sidebar.searchNotes")}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full p-2 pl-8 bg-[var(--container)] placeholder-[var(--foreground)] rounded-lg border border-slate-700 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
@@ -367,35 +385,40 @@ export default function Sidebox() {
 
           {/* Navigation Tabs */}
           <div className="flex border-b border-slate-700">
-            <button 
+            <button
               onClick={() => setShowFoldersTab(false)}
-              className={`flex-1 py-3 px-2 text-center text-sm font-medium transition-colors ${!showFoldersTab ? 'border-b-2 border-blue-500 text-[var(--text-color)]' : 'text-[var(--foreground)]'}`}>
-              {t('sidebar.notes')}
-            </button>
-            <button 
-              onClick={() => setShowFoldersTab(true)}
-              className={`flex-1 py-3 px-2 text-center text-sm font-medium transition-colors ${showFoldersTab ? 'border-b-2 border-blue-500 text-[var(--text-color)]' : 'text-[var(--foreground)]'}`}
-              disabled={!user}
-              style={!user ? { opacity: 0.5, pointerEvents: 'none' } : {}}
+              className={`flex-1 py-3 px-2 text-center text-sm font-medium transition-colors ${!showFoldersTab ? "border-b-2 border-blue-500 text-[var(--text-color)]" : "text-[var(--foreground)]"}`}
             >
-              {t('sidebar.folders')}
+              {t("sidebar.notes")}
+            </button>
+            <button
+              onClick={() => setShowFoldersTab(true)}
+              className={`flex-1 py-3 px-2 text-center text-sm font-medium transition-colors ${showFoldersTab ? "border-b-2 border-blue-500 text-[var(--text-color)]" : "text-[var(--foreground)]"}`}
+              disabled={!user}
+              style={!user ? { opacity: 0.5, pointerEvents: "none" } : {}}
+            >
+              {t("sidebar.folders")}
             </button>
           </div>
 
           {/* Folders Section */}
-          <div className={`overflow-y-auto flex-1 ${showFoldersTab ? '' : 'hidden'} ${!user ? 'hidden' : ''}`}>
+          <div
+            className={`overflow-y-auto flex-1 ${showFoldersTab ? "" : "hidden"} ${!user ? "hidden" : ""}`}
+          >
             {/* Folders Header */}
             <div className="px-4 py-3 border-b border-slate-700/50 flex justify-between items-center bg-[var(--background-darker)]">
-              <h3 className="text-sm font-medium text-[var(--foreground)]">{t('sidebar.folders')}</h3>
+              <h3 className="text-sm font-medium text-[var(--foreground)]">
+                {t("sidebar.folders")}
+              </h3>
               <button
                 onClick={() => setIsAddingFolder(true)}
                 className="p-1 rounded-full hover:bg-[var(--container)] transition-colors"
-                title={t('sidebar.newFolder')}
+                title={t("sidebar.newFolder")}
               >
                 <FolderPlus size={16} className="text-[var(--foreground)]" />
               </button>
             </div>
-            
+
             {isAddingFolder && (
               <div className="p-2 bg-[var(--container)] bg-opacity-30">
                 <div className="flex">
@@ -410,12 +433,12 @@ export default function Sidebox() {
                         setNewFolderName(value);
                       }, 0);
                     }}
-                    placeholder={t('sidebar.folderName')}
+                    placeholder={t("sidebar.folderName")}
                     className="flex-1 p-2 text-sm bg-[var(--container)] border border-slate-700 rounded-l-md focus:outline-none"
                     autoFocus
                     onKeyDown={(e) => {
-                      if (e.key === 'Enter') createFolder();
-                      if (e.key === 'Escape') setIsAddingFolder(false);
+                      if (e.key === "Enter") createFolder();
+                      if (e.key === "Escape") setIsAddingFolder(false);
                     }}
                     disabled={isFolderCreating}
                   />
@@ -427,7 +450,7 @@ export default function Sidebox() {
                     {isFolderCreating ? (
                       <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                     ) : (
-                      t('sidebar.add')
+                      t("sidebar.add")
                     )}
                   </button>
                 </div>
@@ -436,7 +459,7 @@ export default function Sidebox() {
                   className="w-full mt-1 text-xs text-center py-1 text-[var(--foreground)] hover:underline"
                   disabled={isFolderCreating}
                 >
-                  {t('sidebar.cancel')}
+                  {t("sidebar.cancel")}
                 </button>
               </div>
             )}
@@ -445,14 +468,16 @@ export default function Sidebox() {
             <div className="px-2 py-1 space-y-1">
               {folders.length === 0 ? (
                 <div className="px-4 py-3 text-center text-sm text-[var(--foreground)] opacity-70">
-                  {t('sidebar.noFolders')}
+                  {t("sidebar.noFolders")}
                 </div>
               ) : (
                 folders.map((folder) => (
                   <div key={folder.id} className="rounded-md overflow-hidden">
                     <div
                       className={`p-2 hover:bg-[var(--container)] cursor-pointer transition-colors flex items-center justify-between ${
-                        selectedFolderId === folder.id ? "bg-[var(--container)] border-l-2 border-blue-500" : ""
+                        selectedFolderId === folder.id
+                          ? "bg-[var(--container)] border-l-2 border-blue-500"
+                          : ""
                       }`}
                       onClick={() => handleFolderSelect(folder.id)}
                     >
@@ -464,9 +489,9 @@ export default function Sidebox() {
                             <Folder size={16} className="text-yellow-400" />
                           )}
                         </div>
-                        <ChevronDown 
-                          size={14} 
-                          className={`mx-1 transition-transform ${folder.expanded ? 'rotate-0' : '-rotate-90'}`} 
+                        <ChevronDown
+                          size={14}
+                          className={`mx-1 transition-transform ${folder.expanded ? "rotate-0" : "-rotate-90"}`}
                           onClick={(e) => {
                             e.stopPropagation();
                             toggleFolder(folder.id);
@@ -481,36 +506,45 @@ export default function Sidebox() {
                             router.push(`/editor?folder=${folder.id}`);
                           }}
                           className="p-1 rounded hover:bg-[var(--container-darker)] transition-colors"
-                          title={t('sidebar.addToFolder')}
+                          title={t("sidebar.addToFolder")}
                         >
-                          <Plus size={14} className="text-[var(--foreground)]" />
+                          <Plus
+                            size={14}
+                            className="text-[var(--foreground)]"
+                          />
                         </button>
                         <button
                           onClick={(e) => deleteFolder(folder.id, e)}
                           className="p-1 rounded hover:bg-[var(--container-darker)] transition-colors"
-                          title={t('sidebar.deleteFolder')}
+                          title={t("sidebar.deleteFolder")}
                         >
-                          <Trash2 size={14} className="text-[var(--foreground)]" />
+                          <Trash2
+                            size={14}
+                            className="text-[var(--foreground)]"
+                          />
                         </button>
                       </div>
                     </div>
-                    
+
                     {folder.expanded && (
                       <div className="ml-7 space-y-0.5 mt-0.5 mb-2 bg-[var(--container)] bg-opacity-20 rounded-md py-1">
                         {notes
-                          .filter(note => note.folder_id === folder.id)
-                          .map(note => (
+                          .filter((note) => note.folder_id === folder.id)
+                          .map((note) => (
                             <Link
                               href={`/notes/${note.id}`}
                               key={note.id}
                               onClick={() => setIsMobileOpen(false)}
                             >
-                              <div 
-                                className="px-3 py-1.5 hover:bg-[var(--container)] cursor-pointer transition-colors text-sm flex items-center justify-between group rounded-md mx-1"
-                              >
+                              <div className="px-3 py-1.5 hover:bg-[var(--container)] cursor-pointer transition-colors text-sm flex items-center justify-between group rounded-md mx-1">
                                 <div className="flex items-center overflow-hidden">
-                                  <File size={13} className="mr-2 flex-shrink-0 text-[var(--foreground)]" />
-                                  <span className="truncate">{note.title || t('sidebar.untitled')}</span>
+                                  <File
+                                    size={13}
+                                    className="mr-2 flex-shrink-0 text-[var(--foreground)]"
+                                  />
+                                  <span className="truncate">
+                                    {note.title || t("sidebar.untitled")}
+                                  </span>
                                 </div>
                                 <button
                                   onClick={(e) => {
@@ -519,16 +553,20 @@ export default function Sidebox() {
                                     moveNoteToFolder(note.id, null);
                                   }}
                                   className="opacity-0 group-hover:opacity-100 p-1 rounded hover:bg-[var(--container-darker)] transition-colors"
-                                  title={t('sidebar.removeFromFolder')}
+                                  title={t("sidebar.removeFromFolder")}
                                 >
-                                  <X size={12} className="text-[var(--foreground)]" />
+                                  <X
+                                    size={12}
+                                    className="text-[var(--foreground)]"
+                                  />
                                 </button>
                               </div>
                             </Link>
-                        ))}
-                        {notes.filter(note => note.folder_id === folder.id).length === 0 && (
+                          ))}
+                        {notes.filter((note) => note.folder_id === folder.id)
+                          .length === 0 && (
                           <div className="py-2 text-xs text-center text-[var(--foreground)] opacity-70">
-                            {t('sidebar.emptyFolder')}
+                            {t("sidebar.emptyFolder")}
                           </div>
                         )}
                       </div>
@@ -537,29 +575,34 @@ export default function Sidebox() {
                 ))
               )}
             </div>
-            
+
             {/* Notas sem pasta para arrastar */}
             <div className="mt-4 px-4 py-3 border-t border-b border-slate-700/50 flex items-center bg-[var(--background-darker)]">
               <Inbox size={16} className="text-[var(--foreground)] mr-2" />
-              <h3 className="text-sm font-medium text-[var(--foreground)]">{t('sidebar.unfiled')}</h3>
+              <h3 className="text-sm font-medium text-[var(--foreground)]">
+                {t("sidebar.unfiled")}
+              </h3>
             </div>
-            
+
             <div className="px-2 py-2">
               {notes
-                .filter(note => note.folder_id === null)
+                .filter((note) => note.folder_id === null)
                 .map((note) => (
                   <div key={note.id} className="relative group">
                     <Link
                       href={`/notes/${note.id}`}
                       onClick={() => setIsMobileOpen(false)}
                     >
-                      <div 
-                        className="p-2 rounded-md hover:bg-[var(--container)] cursor-pointer transition-colors mb-1 flex items-start"
-                      >
+                      <div className="p-2 rounded-md hover:bg-[var(--container)] cursor-pointer transition-colors mb-1 flex items-start">
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center">
-                            <File size={14} className="mr-2 text-[var(--foreground)]" />
-                            <span className="text-sm truncate">{note.title || t('sidebar.untitled')}</span>
+                            <File
+                              size={14}
+                              className="mr-2 text-[var(--foreground)]"
+                            />
+                            <span className="text-sm truncate">
+                              {note.title || t("sidebar.untitled")}
+                            </span>
                           </div>
                           <div className="flex items-center text-xs text-[var(--foreground)] mt-1 ml-6 opacity-70">
                             <ClockIcon size={12} className="mr-1" />
@@ -570,17 +613,51 @@ export default function Sidebox() {
                         <div className="ml-2">
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="icon" className="opacity-60 group-hover:opacity-100">
-                                <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="opacity-60 group-hover:opacity-100"
+                              >
+                                <svg
+                                  width="18"
+                                  height="18"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth="2"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <circle cx="12" cy="12" r="1" />
+                                  <circle cx="19" cy="12" r="1" />
+                                  <circle cx="5" cy="12" r="1" />
+                                </svg>
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent className="w-56 ">
-                              <DropdownMenuLabel>{t('sidebar.moveToFolder')}</DropdownMenuLabel>
+                              <DropdownMenuLabel>
+                                {t("sidebar.moveToFolder")}
+                              </DropdownMenuLabel>
                               <DropdownMenuSeparator />
-                              <DropdownMenuRadioGroup value={note.folder_id || "none"} onValueChange={(folderId) => moveNoteToFolder(note.id, folderId === "none" ? null : folderId)}>
-                                <DropdownMenuRadioItem value="none">{t('sidebar.unfiled')}</DropdownMenuRadioItem>
-                                {folders.map(folder => (
-                                  <DropdownMenuRadioItem key={folder.id} value={folder.id}>{folder.name}</DropdownMenuRadioItem>
+                              <DropdownMenuRadioGroup
+                                value={note.folder_id || "none"}
+                                onValueChange={(folderId) =>
+                                  moveNoteToFolder(
+                                    note.id,
+                                    folderId === "none" ? null : folderId,
+                                  )
+                                }
+                              >
+                                <DropdownMenuRadioItem value="none">
+                                  {t("sidebar.unfiled")}
+                                </DropdownMenuRadioItem>
+                                {folders.map((folder) => (
+                                  <DropdownMenuRadioItem
+                                    key={folder.id}
+                                    value={folder.id}
+                                  >
+                                    {folder.name}
+                                  </DropdownMenuRadioItem>
                                 ))}
                               </DropdownMenuRadioGroup>
                             </DropdownMenuContent>
@@ -589,21 +666,22 @@ export default function Sidebox() {
                       </div>
                     </Link>
                   </div>
-                ))
-              }
-              {notes.filter(note => note.folder_id === null).length === 0 && (
+                ))}
+              {notes.filter((note) => note.folder_id === null).length === 0 && (
                 <div className="py-3 text-sm text-center text-[var(--foreground)] opacity-70">
-                  {t('sidebar.noUncategorizedNotes')}
+                  {t("sidebar.noUncategorizedNotes")}
                 </div>
               )}
             </div>
           </div>
 
           {/* Notes list - shown only in "Notes" tab view */}
-          <div className={`flex-1 overflow-y-auto px-2 py-2 space-y-1 ${showFoldersTab ? 'hidden' : ''}`}>
+          <div
+            className={`flex-1 overflow-y-auto px-2 py-2 space-y-1 ${showFoldersTab ? "hidden" : ""}`}
+          >
             {!user ? (
               <div className="text-center py-8 text-slate-500">
-                <p>{t('sidebar.loginToCreateNotes')}</p>
+                <p>{t("sidebar.loginToCreateNotes")}</p>
               </div>
             ) : loading ? (
               <div className="flex justify-center py-8">
@@ -616,9 +694,7 @@ export default function Sidebox() {
                     href={`/notes/${note.id}`}
                     onClick={() => setIsMobileOpen(false)}
                   >
-                    <div 
-                      className="p-3 rounded-lg hover:bg-[var(--container)] cursor-pointer transition-colors border border-transparent hover:border-slate-700"
-                    >
+                    <div className="p-3 rounded-lg hover:bg-[var(--container)] cursor-pointer transition-colors border border-transparent hover:border-slate-700">
                       <div className="flex items-start space-x-3">
                         <BookOpenText
                           size={16}
@@ -626,7 +702,7 @@ export default function Sidebox() {
                         />
                         <div className="flex-1 min-w-0">
                           <h2 className="font-medium truncate">
-                            {note.title || t('sidebar.untitled')}
+                            {note.title || t("sidebar.untitled")}
                           </h2>
                           {note.content && (
                             <p className="text-xs text-[var(--foreground)] mt-1 truncate">
@@ -638,16 +714,20 @@ export default function Sidebox() {
                             <span>{formatDate(note.created_at)}</span>
                             {note.folder_id && (
                               <div className="ml-2 flex items-center text-xs">
-                                <Folder size={12} className="mr-1 text-yellow-400" />
+                                <Folder
+                                  size={12}
+                                  className="mr-1 text-yellow-400"
+                                />
                                 <span className="truncate max-w-[80px]">
-                                  {folders.find(f => f.id === note.folder_id)?.name || ''}
+                                  {folders.find((f) => f.id === note.folder_id)
+                                    ?.name || ""}
                                 </span>
                               </div>
                             )}
                             {!note.folder_id && (
                               <div className="ml-2 flex items-center text-xs">
                                 <Inbox size={12} className="mr-1" />
-                                <span>{t('sidebar.unfiled')}</span>
+                                <span>{t("sidebar.unfiled")}</span>
                               </div>
                             )}
                           </div>
@@ -656,17 +736,51 @@ export default function Sidebox() {
                         <div className="ml-2">
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="icon" className="opacity-60 group-hover:opacity-100">
-                                <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="opacity-60 group-hover:opacity-100"
+                              >
+                                <svg
+                                  width="18"
+                                  height="18"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth="2"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <circle cx="12" cy="12" r="1" />
+                                  <circle cx="19" cy="12" r="1" />
+                                  <circle cx="5" cy="12" r="1" />
+                                </svg>
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent className="w-56 ">
-                              <DropdownMenuLabel>{t('sidebar.moveToFolder', )}</DropdownMenuLabel>
+                              <DropdownMenuLabel>
+                                {t("sidebar.moveToFolder")}
+                              </DropdownMenuLabel>
                               <DropdownMenuSeparator />
-                              <DropdownMenuRadioGroup value={note.folder_id || "none"} onValueChange={(folderId) => moveNoteToFolder(note.id, folderId === "none" ? null : folderId)}>
-                                <DropdownMenuRadioItem value="none">{t('sidebar.unfiled')}</DropdownMenuRadioItem>
-                                {folders.map(folder => (
-                                  <DropdownMenuRadioItem key={folder.id} value={folder.id}>{folder.name}</DropdownMenuRadioItem>
+                              <DropdownMenuRadioGroup
+                                value={note.folder_id || "none"}
+                                onValueChange={(folderId) =>
+                                  moveNoteToFolder(
+                                    note.id,
+                                    folderId === "none" ? null : folderId,
+                                  )
+                                }
+                              >
+                                <DropdownMenuRadioItem value="none">
+                                  {t("sidebar.unfiled")}
+                                </DropdownMenuRadioItem>
+                                {folders.map((folder) => (
+                                  <DropdownMenuRadioItem
+                                    key={folder.id}
+                                    value={folder.id}
+                                  >
+                                    {folder.name}
+                                  </DropdownMenuRadioItem>
                                 ))}
                               </DropdownMenuRadioGroup>
                             </DropdownMenuContent>
@@ -681,24 +795,26 @@ export default function Sidebox() {
               <div className="text-center py-8 text-slate-500">
                 {searchTerm ? (
                   <div>
-                    <p>{t('sidebar.noNotesFound')}</p>
-                    <p className="text-xs mt-1">{t('sidebar.tryOtherTerms')}</p>
+                    <p>{t("sidebar.noNotesFound")}</p>
+                    <p className="text-xs mt-1">{t("sidebar.tryOtherTerms")}</p>
                   </div>
                 ) : (
                   <div>
                     {user ? (
                       <>
-                        <p>{t('sidebar.noNotesYet')}</p>
-                        <p className="text-xs mt-1">{t('sidebar.createYourFirst')}</p>
+                        <p>{t("sidebar.noNotesYet")}</p>
+                        <p className="text-xs mt-1">
+                          {t("sidebar.createYourFirst")}
+                        </p>
                         <button
                           onClick={() => router.push("/editor")}
                           className="text-blue-400 text-sm mt-2 hover:underline"
                         >
-                          {t('sidebar.createFirstNote')}
+                          {t("sidebar.createFirstNote")}
                         </button>
                       </>
                     ) : (
-                      <p>{t('sidebar.loginToCreateNotes')}</p>
+                      <p>{t("sidebar.loginToCreateNotes")}</p>
                     )}
                   </div>
                 )}
@@ -710,7 +826,10 @@ export default function Sidebox() {
           <div className="p-4 border-t border-slate-700 text-xs text-[var(--foreground)]">
             <div className="flex justify-between items-center">
               <div>
-                {t('sidebar.total')}: {notes.length} {notes.length === 1 ? t('sidebar.noteCountSingular') : t('sidebar.noteCountPlural')}
+                {t("sidebar.total")}: {notes.length}{" "}
+                {notes.length === 1
+                  ? t("sidebar.noteCountSingular")
+                  : t("sidebar.noteCountPlural")}
               </div>
               {user && (
                 <button
@@ -730,13 +849,13 @@ export default function Sidebox() {
                   }}
                   className="bg-red-500 text-white hover:bg-red-400 px-4 py-2 rounded"
                 >
-                  {t('sidebar.logout')}
+                  {t("sidebar.logout")}
                 </button>
               )}
               <button
                 onClick={fetchNotes}
                 className="p-1 hover:text-slate-300 transition-colors"
-                title={t('sidebar.refresh')}
+                title={t("sidebar.refresh")}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -759,7 +878,9 @@ export default function Sidebox() {
           </div>
           <div className="border-t border-slate-500/30 p-4">
             <div className="flex justify-between items-center mb-3">
-              <p className="text-sm text-[var(--foreground)]">{t('sidebar.theme')}</p>
+              <p className="text-sm text-[var(--foreground)]">
+                {t("sidebar.theme")}
+              </p>
               <LanguageSwitcher />
             </div>
             <ThemeToggle />

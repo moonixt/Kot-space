@@ -1,30 +1,30 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Button } from './ui/button';
-import { Globe } from 'lucide-react';
+import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
+import { Button } from "./ui/button";
+import { Globe } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from './ui/dropdown-menu';
+} from "./ui/dropdown-menu";
 
 const languages = [
-  { code: 'en', name: 'English' },
-  { code: 'pt-BR', name: 'Português (BR)' }
+  { code: "en", name: "English" },
+  { code: "pt-BR", name: "Português (BR)" },
 ];
 
 export default function LanguageSwitcher() {
   const { i18n } = useTranslation();
   const [mounted, setMounted] = useState(false);
-  
+
   // Only render the switcher client-side
   useEffect(() => {
     setMounted(true);
   }, []);
-  
+
   if (!mounted) {
     return null;
   }
@@ -44,7 +44,7 @@ export default function LanguageSwitcher() {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         {languages.map((lang) => (
-          <DropdownMenuItem 
+          <DropdownMenuItem
             key={lang.code}
             onClick={() => changeLanguage(lang.code)}
             className={i18n.language === lang.code ? "font-bold" : ""}

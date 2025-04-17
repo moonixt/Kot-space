@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 // import i18n from '../i18n';
 
 interface LanguageLoaderProps {
@@ -17,36 +17,38 @@ export default function LanguageLoader({ children }: LanguageLoaderProps) {
     const initialize = async () => {
       try {
         // Try to get the language from localStorage
-        const storedLang = localStorage.getItem('i18nextLng');
-        
+        const storedLang = localStorage.getItem("i18nextLng");
+
         if (storedLang) {
           // If there's a stored language, set it
           await i18n.changeLanguage(storedLang);
         } else {
           // Otherwise, detect the browser language
           const browserLang = navigator.language;
-          
+
           // Check if it's a Portuguese variant
-          if (browserLang.startsWith('pt')) {
-            await i18n.changeLanguage('pt-BR');
+          if (browserLang.startsWith("pt")) {
+            await i18n.changeLanguage("pt-BR");
           } else {
             // For all other languages, use the browser language if supported, otherwise English
-            const supportedLanguages = Object.keys(i18n.options.resources || {});
+            const supportedLanguages = Object.keys(
+              i18n.options.resources || {},
+            );
             if (supportedLanguages.includes(browserLang)) {
               await i18n.changeLanguage(browserLang);
             } else {
-              await i18n.changeLanguage('en');
+              await i18n.changeLanguage("en");
             }
           }
-          
+
           // Save the chosen language to localStorage
-          localStorage.setItem('i18nextLng', i18n.language);
+          localStorage.setItem("i18nextLng", i18n.language);
         }
-        
+
         // Once language is loaded and set, mark as loaded
         setIsLoaded(true);
       } catch (error) {
-        console.error('Error initializing language:', error);
+        console.error("Error initializing language:", error);
         // In case of error, still mark as loaded to avoid blocking the UI
         setIsLoaded(true);
       }

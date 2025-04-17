@@ -1,6 +1,6 @@
 // Electron main process for Fair Note
-const { app, BrowserWindow } = require('electron');
-const path = require('path');
+const { app, BrowserWindow } = require("electron");
+const path = require("path");
 
 function createWindow() {
   // Cria a janela de splash
@@ -15,30 +15,33 @@ function createWindow() {
     skipTaskbar: true,
     show: true,
   });
-  splash.loadFile(path.join(__dirname, 'public', 'splash.html'));
+  splash.loadFile(path.join(__dirname, "public", "splash.html"));
 
   // Cria a janela principal, mas não mostra ainda
   const win = new BrowserWindow({
     width: 1200,
     height: 800,
     show: false, // Hide until ready
-    backgroundColor: '#000',
+    backgroundColor: "#000",
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
     },
-    icon: path.join(__dirname, 'public', 'icon-512x512.png'),
-    title: 'Fair Note',
+    icon: path.join(__dirname, "public", "icon-512x512.png"),
+    title: "Fair Note",
   });
 
-  const startUrl = process.env.ELECTRON_START_URL || 'http://localhost:3000';
-  win.loadURL(startUrl)
-    .catch((err) => {
-      win.loadURL('data:text/html,<h2>Failed to load app. Is the Next.js server running?</h2><pre>' + err + '</pre>');
-    });
+  const startUrl = process.env.ELECTRON_START_URL || "http://localhost:3000";
+  win.loadURL(startUrl).catch((err) => {
+    win.loadURL(
+      "data:text/html,<h2>Failed to load app. Is the Next.js server running?</h2><pre>" +
+        err +
+        "</pre>",
+    );
+  });
 
   // Quando a janela principal estiver pronta, fecha o splash e mostra o app
-  win.once('ready-to-show', () => {
+  win.once("ready-to-show", () => {
     setTimeout(() => {
       splash.destroy();
       win.show();
@@ -48,10 +51,10 @@ function createWindow() {
 
 app.whenReady().then(createWindow);
 
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') app.quit();
+app.on("window-all-closed", () => {
+  if (process.platform !== "darwin") app.quit();
 });
 
-app.on('activate', () => {
+app.on("activate", () => {
   if (BrowserWindow.getAllWindows().length === 0) createWindow();
 });

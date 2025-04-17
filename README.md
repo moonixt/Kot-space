@@ -11,15 +11,16 @@
   </p>
 
 [![pt-BR](https://img.shields.io/badge/lang-pt--BR-green.svg)](./docs/README.pt-BR.md)
-  [![PWA Ready](https://img.shields.io/badge/PWA-Ready-blue.svg)](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps)
-  [![Built with Next.js](https://img.shields.io/badge/Built%20with-Next.js-black)](https://nextjs.org)
-  [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-  [![TailwindCSS](https://img.shields.io/badge/Tailwind%20CSS-38B2AC?logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
-  [![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?logo=supabase&logoColor=white)](https://supabase.com)
-  [![Markdown](https://img.shields.io/badge/Markdown-000000?logo=markdown&logoColor=white)](https://www.markdownguide.org/)
-  [![Offline Support](https://img.shields.io/badge/Offline-Support-purple)](https://web.dev/offline-cookbook/)
-  [![License](https://img.shields.io/badge/License-Personal_Use_Only-red)](LICENSE)
-  [![Vercel](https://img.shields.io/badge/Vercel-000000?logo=vercel&logoColor=white)](https://vercel.com)
+[![PWA Ready](https://img.shields.io/badge/PWA-Ready-blue.svg)](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps)
+[![Built with Next.js](https://img.shields.io/badge/Built%20with-Next.js-black)](https://nextjs.org)
+[![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![TailwindCSS](https://img.shields.io/badge/Tailwind%20CSS-38B2AC?logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+[![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?logo=supabase&logoColor=white)](https://supabase.com)
+[![Markdown](https://img.shields.io/badge/Markdown-000000?logo=markdown&logoColor=white)](https://www.markdownguide.org/)
+[![Offline Support](https://img.shields.io/badge/Offline-Support-purple)](https://web.dev/offline-cookbook/)
+[![License](https://img.shields.io/badge/License-Personal_Use_Only-red)](LICENSE)
+[![Vercel](https://img.shields.io/badge/Vercel-000000?logo=vercel&logoColor=white)](https://vercel.com)
+
 </div>
 
 ## ✨ Features
@@ -33,7 +34,6 @@
 - **Responsive Design**: Works beautifully on desktop and mobile ✅
 - **Offline Capability**: Create and edit notes even without an internet connection (in progress ⚠️⚙️)
 - **Calendar Events**: Add, manage, and customize colorful events with descriptions ✅
-
 
 ## 🚀 Getting Started
 

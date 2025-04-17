@@ -15,18 +15,18 @@ export default function SignUpPage() {
   const [error, setError] = useState<string | null>(null);
   const { signUp } = useAuth();
   const { t } = useTranslation();
-  
+
   // Initialize language detection based on browser language
   useEffect(() => {
     const browserLang = navigator.language;
     // Check if the detected language is supported in our app
     const supportedLanguages = Object.keys(i18n.options.resources || {});
-    
+
     if (browserLang && supportedLanguages.includes(browserLang)) {
       i18n.changeLanguage(browserLang);
-    } else if (browserLang && browserLang.startsWith('pt')) {
+    } else if (browserLang && browserLang.startsWith("pt")) {
       // Handle cases like pt-PT, pt, etc. falling back to pt-BR
-      i18n.changeLanguage('pt-BR');
+      i18n.changeLanguage("pt-BR");
     }
   }, []);
 
@@ -35,7 +35,7 @@ export default function SignUpPage() {
     setError(null);
 
     if (password !== confirmPassword) {
-      setError(t('signup.errors.passwordsDontMatch'));
+      setError(t("signup.errors.passwordsDontMatch"));
       return;
     }
 
@@ -47,9 +47,9 @@ export default function SignUpPage() {
     } catch (error: unknown) {
       if (error instanceof Error) {
         console.error("Erro ao criar conta:", error);
-        setError(error.message || t('signup.errors.genericError'));
+        setError(error.message || t("signup.errors.genericError"));
       } else {
-        setError(t('signup.errors.unknownError'));
+        setError(t("signup.errors.unknownError"));
       }
     } finally {
       setLoading(false);
@@ -65,19 +65,19 @@ export default function SignUpPage() {
           </div>
         )}
         <div>
-        <Image
-          src="/static/images/crowlyH.PNG"
-          alt={t('login.logoAlt')}
-          width={1000}
-          height={100}
-          className=" h-60 md:h-80 object-cover object-top"
-          priority
-        />
+          <Image
+            src="/static/images/crowlyH.png"
+            alt={t("login.logoAlt")}
+            width={1000}
+            height={100}
+            className=" h-60 md:h-80 object-cover object-top"
+            priority
+          />
         </div>
         <div className="bg-[var(--background)] backdrop-blur-sm overflow-hidden ">
           <div className="p-8">
             <h2 className="text-2xl font-bold text-[var(--foreground)] mb-6">
-              {t('signup.title')}
+              {t("signup.title")}
             </h2>
 
             <form onSubmit={handleSubmit}>
@@ -86,7 +86,7 @@ export default function SignUpPage() {
                   className="block text-[var(--foreground)] mb-2"
                   htmlFor="email"
                 >
-                  {t('signup.email')}
+                  {t("signup.email")}
                 </label>
                 <input
                   id="email"
@@ -103,7 +103,7 @@ export default function SignUpPage() {
                   className="block text-[var(--foreground)] mb-2"
                   htmlFor="password"
                 >
-                  {t('signup.password')}
+                  {t("signup.password")}
                 </label>
                 <input
                   id="password"
@@ -120,7 +120,7 @@ export default function SignUpPage() {
                   className="block text-[var(--foreground)] mb-2"
                   htmlFor="confirmPassword"
                 >
-                  {t('signup.confirmPassword')}
+                  {t("signup.confirmPassword")}
                 </label>
                 <input
                   id="confirmPassword"
@@ -141,14 +141,16 @@ export default function SignUpPage() {
                     : "bg-[var(--foreground)] "
                 } text-[var(--background)] transition-colors`}
               >
-                {loading ? t('signup.creatingAccount') : t('signup.createAccount')}
+                {loading
+                  ? t("signup.creatingAccount")
+                  : t("signup.createAccount")}
               </button>
             </form>
 
             <div className="mt-6 text-center text-[var(--foreground)]">
-              {t('signup.alreadyHaveAccount')}{" "}
+              {t("signup.alreadyHaveAccount")}{" "}
               <Link href="/login" className="text-blue-400 hover:underline">
-                {t('signup.signIn')}
+                {t("signup.signIn")}
               </Link>
             </div>
           </div>

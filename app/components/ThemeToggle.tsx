@@ -2,7 +2,16 @@
 // NEED REVIEW
 
 import { useTheme } from "../../context/ThemeContext";
-import { Sun, Monitor, Shell, Rabbit, Moon, Leaf, Heart, Droplet } from "lucide-react";
+import {
+  Sun,
+  Monitor,
+  Shell,
+  Rabbit,
+  Moon,
+  Leaf,
+  Heart,
+  Droplet,
+} from "lucide-react";
 
 export default function ThemeToggle() {
   const { theme, setTheme } = useTheme();
@@ -78,7 +87,7 @@ export default function ThemeToggle() {
       >
         <Heart size={18} />
       </button>
-      
+
       <button
         onClick={() => setTheme("blue")}
         className={`p-2 rounded-md transition-colors ${

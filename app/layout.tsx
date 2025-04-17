@@ -52,8 +52,8 @@ export default async function RootLayout({
 }>) {
   // Get preferred language from cookie or default to browser language
   const cookieStore = await cookies();
-  const langCookie = cookieStore.get('NEXT_LOCALE');
-  const lang = langCookie?.value || 'en'; // Default to English if no cookie
+  const langCookie = cookieStore.get("NEXT_LOCALE");
+  const lang = langCookie?.value || "en"; // Default to English if no cookie
 
   return (
     <html lang={lang}>
@@ -80,11 +80,9 @@ export default async function RootLayout({
             <AuthProvider>
               <ThemeProvider>
                 <div className="flex flex-col md:flex-row min-h-screen  ">
-                
                   <div className="flex-1 md:mr-72 flex flex-col ">
-                  {/* <Profile /> */}
+                    {/* <Profile /> */}
                     {children}
-              
                   </div>
 
                   <Sidebox />

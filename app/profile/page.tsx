@@ -129,58 +129,62 @@ const Profile = () => {
     }
   };
 
- 
-
   const isImageFile = (file: File) => {
     const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
     return allowedTypes.includes(file.type);
   };
 
   // Função auxiliar para excluir arquivos antigos com tratamento de erros de permissão
-const deleteOldFile = async (bucket: string, filePath: string | null) => {
-  if (!filePath) return;
-  
-  try {
-    console.log(`Attempting to delete file ${filePath} from bucket ${bucket}`);
-    
-    // Verificar se o arquivo existe antes de tentar remover
-    const { data: existsData, error: existsError } = await supabase.storage
-      .from(bucket)
-      .list('', {
-        search: filePath
-      });
-      
-    if (existsError) {
-      console.error(`Error checking if file exists in ${bucket}:`, existsError);
-      return;
+  const deleteOldFile = async (bucket: string, filePath: string | null) => {
+    if (!filePath) return;
+
+    try {
+      console.log(
+        `Attempting to delete file ${filePath} from bucket ${bucket}`,
+      );
+
+      // Verificar se o arquivo existe antes de tentar remover
+      const { data: existsData, error: existsError } = await supabase.storage
+        .from(bucket)
+        .list("", {
+          search: filePath,
+        });
+
+      if (existsError) {
+        console.error(
+          `Error checking if file exists in ${bucket}:`,
+          existsError,
+        );
+        return;
+      }
+
+      // Se o arquivo não for encontrado, não precisamos deletar
+      const fileExists =
+        existsData && existsData.some((item) => item.name === filePath);
+      if (!fileExists) {
+        console.log(
+          `File ${filePath} not found in ${bucket}, skipping deletion`,
+        );
+        return;
+      }
+
+      // Tentar deletar o arquivo
+      const { error } = await supabase.storage.from(bucket).remove([filePath]);
+
+      if (error) {
+        console.error(`Error deleting old file from ${bucket}:`, error);
+
+        //   // Se for um erro de permissão, podemos registrar isso para análise posterior
+        //   if (error.message?.includes('permission') || error.statusText === 'Unauthorized') {
+        //     console.error(`Permission denied when trying to delete ${filePath} from ${bucket}`);
+        //   }
+      } else {
+        console.log(`Successfully deleted ${filePath} from ${bucket}`);
+      }
+    } catch (err) {
+      console.error(`Error in delete operation from ${bucket}:`, err);
     }
-    
-    // Se o arquivo não for encontrado, não precisamos deletar
-    const fileExists = existsData && existsData.some(item => item.name === filePath);
-    if (!fileExists) {
-      console.log(`File ${filePath} not found in ${bucket}, skipping deletion`);
-      return;
-    }
-    
-    // Tentar deletar o arquivo
-    const { error } = await supabase.storage
-      .from(bucket)
-      .remove([filePath]);
-      
-    if (error) {
-      console.error(`Error deleting old file from ${bucket}:`, error);
-      
-    //   // Se for um erro de permissão, podemos registrar isso para análise posterior
-    //   if (error.message?.includes('permission') || error.statusText === 'Unauthorized') {
-    //     console.error(`Permission denied when trying to delete ${filePath} from ${bucket}`);
-    //   }
-    } else {
-      console.log(`Successfully deleted ${filePath} from ${bucket}`);
-    }
-  } catch (err) {
-    console.error(`Error in delete operation from ${bucket}:`, err);
-  }
-};
+  };
 
   // Upload de wallpaper
   const uploadWallpaper = async (file: File) => {
@@ -190,7 +194,7 @@ const deleteOldFile = async (bucket: string, filePath: string | null) => {
       alert("Only image files are allowed.");
       return;
     }
-    
+
     // Check file size (limit to 5MB = 5 * 1024 * 1024 bytes)
     const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB in bytes
     if (file.size > MAX_FILE_SIZE) {
@@ -209,7 +213,7 @@ const deleteOldFile = async (bucket: string, filePath: string | null) => {
         .single();
 
       if (fetchError && fetchError.code !== "PGRST116") throw fetchError;
-      
+
       // Criar nome de arquivo único
       const fileExt = file.name.split(".").pop();
       const fileName = `${user.id}-${Date.now()}.${fileExt}`;
@@ -299,7 +303,10 @@ const deleteOldFile = async (bucket: string, filePath: string | null) => {
       if (updateError) throw updateError;
 
       // Excluir o arquivo antigo após o upload bem-sucedido
-      if (oldFileData?.avatar_url && !oldFileData.avatar_url.includes("cop-note.png")) {
+      if (
+        oldFileData?.avatar_url &&
+        !oldFileData.avatar_url.includes("cop-note.png")
+      ) {
         await deleteOldFile("user-avatar", oldFileData.avatar_url);
       }
 
@@ -331,16 +338,15 @@ const deleteOldFile = async (bucket: string, filePath: string | null) => {
             <div className="w-600 h-55 sm:h-130 md:h-70 2xl:h-150 bg-gray-200 animate-pulse"></div>
           ) : (
             <Link href="/dashboard">
-            <Image
-            
-              src={wallpaperUrl || "/static/images/default.jpg"}
-              alt="Profile"
-              width={4000}
-              height={4000}
-              className="w-600 h-55 sm:h-130 md:h-70 2xl:h-150 object-cover"
-              priority
-              unoptimized={wallpaperUrl?.endsWith('.gif')}
-            />
+              <Image
+                src={wallpaperUrl || "/static/images/default.jpg"}
+                alt="Profile"
+                width={4000}
+                height={4000}
+                className="w-600 h-55 sm:h-130 md:h-70 2xl:h-150 object-cover"
+                priority
+                unoptimized={wallpaperUrl?.endsWith(".gif")}
+              />
             </Link>
           )}
 

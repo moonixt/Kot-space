@@ -13,18 +13,18 @@ export default function ResetPasswordPage() {
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const { t } = useTranslation();
-  
+
   // Initialize language detection based on browser language
   useEffect(() => {
     const browserLang = navigator.language;
     // Check if the detected language is supported in our app
     const supportedLanguages = Object.keys(i18n.options.resources || {});
-    
+
     if (browserLang && supportedLanguages.includes(browserLang)) {
       i18n.changeLanguage(browserLang);
-    } else if (browserLang && browserLang.startsWith('pt')) {
+    } else if (browserLang && browserLang.startsWith("pt")) {
       // Handle cases like pt-PT, pt, etc. falling back to pt-BR
-      i18n.changeLanguage('pt-BR');
+      i18n.changeLanguage("pt-BR");
     }
   }, []);
 
@@ -43,12 +43,12 @@ export default function ResetPasswordPage() {
         throw error;
       }
 
-      setMessage(t('resetPassword.successMessage'));
+      setMessage(t("resetPassword.successMessage"));
     } catch (err) {
       if (err instanceof Error) {
-        setError(err.message || t('resetPassword.errors.genericError'));
+        setError(err.message || t("resetPassword.errors.genericError"));
       } else {
-        setError(t('resetPassword.errors.unknownError'));
+        setError(t("resetPassword.errors.unknownError"));
       }
     } finally {
       setLoading(false);
@@ -61,7 +61,7 @@ export default function ResetPasswordPage() {
         <div>
           <Image
             src="/crowlyH.png"
-            alt={t('resetPassword.logoAlt')}
+            alt={t("resetPassword.logoAlt")}
             width={212}
             height={212}
             className="mx-auto mb-6 rounded-md"
@@ -70,7 +70,7 @@ export default function ResetPasswordPage() {
         <div className="bg-[var(--background)] backdrop-blur-sm rounded-xl overflow-hidden border border-slate-700 shadow-xl">
           <div className="p-8">
             <h1 className="text-2xl font-bold mb-4 text-[var(--foreground)]">
-              {t('resetPassword.title')}
+              {t("resetPassword.title")}
             </h1>
 
             {message && (
@@ -90,7 +90,7 @@ export default function ResetPasswordPage() {
                 htmlFor="email"
                 className="block text-[var(--foreground)] mb-2"
               >
-                {t('resetPassword.email')}
+                {t("resetPassword.email")}
               </label>
               <input
                 id="email"
@@ -109,13 +109,15 @@ export default function ResetPasswordPage() {
                     : "bg-[var(--foreground)]"
                 } text-[var(--background)] transition-colors`}
               >
-                {loading ? t('resetPassword.sending') : t('resetPassword.sendResetEmail')}
+                {loading
+                  ? t("resetPassword.sending")
+                  : t("resetPassword.sendResetEmail")}
               </button>
             </form>
-            
+
             <div className="mt-6 text-center text-[var(--foreground)]">
               <Link href="/login" className="text-blue-400 hover:underline">
-                {t('resetPassword.backToLogin')}
+                {t("resetPassword.backToLogin")}
               </Link>
             </div>
           </div>

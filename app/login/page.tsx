@@ -22,18 +22,18 @@ function LoginForm() {
   const { signIn } = useAuth();
   const router = useRouter();
   const { t } = useTranslation();
-  
+
   // Initialize language detection based on browser language
   useEffect(() => {
     const browserLang = navigator.language;
     // Check if the detected language is supported in our app
     const supportedLanguages = Object.keys(i18n.options.resources || {});
-    
+
     if (browserLang && supportedLanguages.includes(browserLang)) {
       i18n.changeLanguage(browserLang);
-    } else if (browserLang && browserLang.startsWith('pt')) {
+    } else if (browserLang && browserLang.startsWith("pt")) {
       // Handle cases like pt-PT, pt, etc. falling back to pt-BR
-      i18n.changeLanguage('pt-BR');
+      i18n.changeLanguage("pt-BR");
     }
   }, []);
 
@@ -103,8 +103,8 @@ function LoginForm() {
       )}
       <div className="flex justify-center ">
         <Image
-          src="/static/images/crowlyH.PNG"
-          alt={t('login.logoAlt')}
+          src="/static/images/crowlyH.png"
+          alt={t("login.logoAlt")}
           width={1000}
           height={100}
           className=" h-60 md:h-80 object-cover object-top"
@@ -114,7 +114,7 @@ function LoginForm() {
       <div className="bg-[var(--background)] backdrop-blur-sm  overflow-hidden  ">
         <div className="p-8">
           <h2 className="text-2xl font-bold text-[var(--foreground)] mb-6">
-            {t('login.title')}
+            {t("login.title")}
           </h2>
 
           {/* Botão de login com Google */}
@@ -150,13 +150,15 @@ function LoginForm() {
                 />
               </svg>
             )}
-            {googleLoading ? t('login.loggingInWithGoogle') : t('login.signInWithGoogle')}
+            {googleLoading
+              ? t("login.loggingInWithGoogle")
+              : t("login.signInWithGoogle")}
           </button>
 
           <div className="relative flex items-center my-6">
             <div className="flex-grow border-t border-slate-700"></div>
             <span className="flex-shrink mx-4 text-[var(--foreground)] text-sm">
-              {t('login.or')}
+              {t("login.or")}
             </span>
             <div className="flex-grow border-t border-slate-700"></div>
           </div>
@@ -167,7 +169,7 @@ function LoginForm() {
                 className="block text-[var(--foreground)] mb-2"
                 htmlFor="email"
               >
-                {t('login.email')}
+                {t("login.email")}
               </label>
               <input
                 id="email"
@@ -184,7 +186,7 @@ function LoginForm() {
                 className="block text-[var(--foreground)] mb-2"
                 htmlFor="password"
               >
-                {t('login.password')}
+                {t("login.password")}
               </label>
               <input
                 id="password"
@@ -205,23 +207,23 @@ function LoginForm() {
                   : "bg-[var(--foreground)] "
               } text-[var(--background)] transition-colors`}
             >
-              {loading ? t('login.loggingIn') : t('login.signInWithEmail')}
+              {loading ? t("login.loggingIn") : t("login.signInWithEmail")}
             </button>
           </form>
 
           <div className="mt-6 text-center text-[var(--foreground)]">
-            {t('login.noAccount')}{" "}
+            {t("login.noAccount")}{" "}
             <Link href="/signup" className="text-blue-400 hover:underline">
-              {t('login.createAccount')}
+              {t("login.createAccount")}
             </Link>
           </div>
           <div className="mt-6 text-center text-[var(--foreground)]">
-            {t('login.forgotPassword')}{" "}
+            {t("login.forgotPassword")}{" "}
             <Link
               href="/reset-password"
               className="text-blue-400 hover:underline"
             >
-              {t('login.resetPassword')}
+              {t("login.resetPassword")}
             </Link>
           </div>
         </div>
