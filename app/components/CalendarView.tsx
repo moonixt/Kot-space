@@ -37,8 +37,18 @@ interface Event {
   description?: string; // Campo de descrição adicionado
 }
 
+
+
 // Modal for event details and editing
-const EventModal = ({ event, onClose, onSave, onDelete, colors }) => {
+interface EventModalProps {
+  event: Event;
+  onClose: () => void;
+  onSave: (updatedEvent: Event) => void;
+  onDelete: (eventId: string) => void;
+  colors: { name: string; value: string; text: string }[];
+}
+
+const EventModal: React.FC<EventModalProps> = ({ event, onClose, onSave, onDelete, colors }) => {
   const [title, setTitle] = useState(event?.title || "");
   const [description, setDescription] = useState(event?.description || "");
   const [color, setColor] = useState(event?.color || colors[0].value);
@@ -98,7 +108,7 @@ const CalendarView: React.FC = () => {
   const [highlightToday, setHighlightToday] = useState(true);
   const [, setLoading] = useState(false);
   const [selectedColor, setSelectedColor] = useState(eventColors[0].value);
-  const [modalEvent, setModalEvent] = useState(null);
+  const [modalEvent, setModalEvent] = useState<Event | null>(null);
 
   const year = selectedDate.getFullYear();
   const month = selectedDate.getMonth();
@@ -267,24 +277,24 @@ const CalendarView: React.FC = () => {
     }
   };
 
-  const handleEventSave = async (updatedEvent) => {
-    try {
-      const { error } = await supabase
-        .from("calendar_events")
-        .update({
-          title: updatedEvent.title,
-          description: updatedEvent.description,
-          color: updatedEvent.color
-        })
-        .eq("id", updatedEvent.id)
-        .eq("user_id", user?.id);
-      if (error) throw error;
-      setEvents(events.map(ev => ev.id === updatedEvent.id ? { ...ev, ...updatedEvent } : ev));
-      setModalEvent(null);
-    } catch (err) {
-      alert("Error updating event");
-    }
-  };
+  const handleEventSave = async (updatedEvent: Event) => {
+      try {
+        const { error } = await supabase
+          .from("calendar_events")
+          .update({
+            title: updatedEvent.title,
+            description: updatedEvent.description || "", // Ensure description is a string
+            color: updatedEvent.color
+          })
+          .eq("id", updatedEvent.id)
+          .eq("user_id", user?.id);
+        if (error) throw error;
+        setEvents(events.map(ev => ev.id === updatedEvent.id ? { ...ev, ...updatedEvent } : ev));
+        setModalEvent(null);
+      } catch (error) {
+        alert({error,"Error updating event":String});
+      }
+    };
 
   const getEventsForDay = (day: number) => {
     const formattedDate = formatDate(year, month + 1, day);

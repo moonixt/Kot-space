@@ -281,7 +281,7 @@ const Tasks = () => {
         <textarea
           value={newTaskDescription}
           onChange={(e) => setNewTaskDescription(e.target.value)}
-          placeholder={t("tasks.addDescription")}
+          placeholder={t("tasks.addDescription", "")}
           className="w-full mt-2 p-2 bg-[var(--container)] rounded border border-[var(--border-color)] text-sm"
           rows={2}
         />
@@ -310,7 +310,7 @@ const Tasks = () => {
                 <line x1="6" y1="6" x2="18" y2="18" />
               </svg>
             </button>
-            <h3 className="font-bold mb-2">{t("tasks.editTask")}</h3>
+            <h3 className="font-bold mb-2">{t("tasks.editTask","")}</h3>
             <input
               className="w-full border mb-2 p-2 rounded"
               value={editingTask.title}
@@ -328,7 +328,7 @@ const Tasks = () => {
                   description: e.target.value,
                 })
               }
-              placeholder={t("tasks.addDescription")}
+              placeholder={t("tasks.addDescription","")}
             />
             <select
               value={editingTask.priority || "medium"}
@@ -351,13 +351,13 @@ const Tasks = () => {
                 className="bg-blue-500 text-white px-4 py-2 rounded"
                 onClick={() => updateTask(editingTask)}
               >
-                {t("tasks.save")}
+                {t("tasks.save","")}
               </button>
               <button
                 className="bg-gray-300 text-black px-4 py-2 rounded"
                 onClick={() => setEditingTask(null)}
               >
-                {t("tasks.cancel")}
+                {t("tasks.cancel","")}
               </button>
             </div>
           </div>
