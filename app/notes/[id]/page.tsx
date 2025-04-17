@@ -1,102 +1,195 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
-import { supabase } from "../../../lib/supabase";
-import Link from "next/link";
+import { useCallback, useEffect, useState, useRef } from "react";
 import { useRouter, useParams } from "next/navigation";
-import {
-  ArrowLeft,
-  Trash2,
-  Calendar,
-  Edit,
-  Save,
-  X,
-  Image,
-  SmilePlus,
-  LayoutList,
-  ListOrdered,
-  Eye,
-  FileText,
-  BookMarked,
-  } from "lucide-react";
+import { supabase } from "../../../lib/supabase";
 import { useAuth } from "../../../context/AuthContext";
-import { ProtectedRoute } from "../../components/ProtectedRoute";
+import { Trash2, Save, ArrowLeft, Calendar, Edit, X, Image, SmilePlus, LayoutList, ListOrdered, Eye, FileText, BookMarked } from "lucide-react";
+import { encrypt, decrypt } from "../../components/Encryption";
+import { useTranslation } from 'next-i18next';
+import Link from 'next/link';
+import Profile from "../../profile/page";
+import EmojiPicker, { Theme, EmojiClickData } from "emoji-picker-react";
+import i18n from "../../../i18n";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import EmojiPicker, { Theme, EmojiClickData } from "emoji-picker-react";
-import Profile from "../../profile/page";
-import { decrypt, encrypt } from "../../components/Encryption"; // Importar funções de criptografia
 import jsPDF from 'jspdf';
-import { useTranslation } from "react-i18next"; // Import translation hook
+import { ProtectedRoute } from "../../components/ProtectedRoute";
+import eventEmitter from "../../../lib/eventEmitter";
 
 interface Note {
   id: string;
   title: string;
   content: string;
   created_at: string;
+  folder_id: string | null;
   tags: string;
 }
 
+
 export default function NotePage() {
-  const params = useParams();
   const [note, setNote] = useState<Note | null>(null);
   const [loading, setLoading] = useState(true);
-  const [deleting, setDeleting] = useState(false);
   const [saving, setSaving] = useState(false);
+  const { user } = useAuth();
+  const router = useRouter();
+  const params = useParams();
+  const { t } = useTranslation();
   const [editMode, setEditMode] = useState(false);
   const [editTitle, setEditTitle] = useState("");
   const [editContent, setEditContent] = useState("");
-  const router = useRouter();
-  const { user } = useAuth();
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [isPreviewMode, setIsPreviewMode] = useState(false);
   const [imageUploadLoading, setImageUploadLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [showEmojiPickerContent, setShowEmojiPickerContent] = useState(false);
-  const { t, i18n } = useTranslation(); // Initialize translation hook
+  const [deleting, setDeleting] = useState(false);
 
-  useEffect(() => {
-    async function fetchNote() {
-      try {
-        setLoading(true);
+  const noteId = typeof params.id === 'string' ? params.id : Array.isArray(params.id) ? params.id[0] : null;
 
-        if (!user) {
-          setNote(null);
-          return;
-        }
+  const fetchNote = useCallback(async () => {
+    if (!user || !noteId) return;
 
-        const { data, error } = await supabase
-          .from("notes")
-          .select("*")
-          .eq("id", params.id)
-          .eq("user_id", user.id) // Garantir que a nota pertence ao usuário
-          .single();
+    try {
+      const { data, error } = await supabase
+        .from("notes")
+        .select("*")
+        .eq("id", noteId)
+        .eq("user_id", user.id)
+        .single();
 
-        if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
-        // Descriptografar o conteúdo da nota antes de exibir
+      if (data) {
         const decryptedTitle = decrypt(data.title);
-        const decryptedContent = decrypt(data.content);
-        
-        const decryptedNote = {
+        const decryptedContent = data.content ? decrypt(data.content) : "";
+
+        setNote({
           ...data,
           title: decryptedTitle,
-          content: decryptedContent
-        };
-
-        setNote(decryptedNote);
-        setEditTitle(decryptedNote.title || "");
-        setEditContent(decryptedNote.content || "");
-      } catch (error) {
-        console.error("Erro ao buscar nota:", error);
-        setNote(null);
-      } finally {
-        setLoading(false);
+          content: decryptedContent,
+        });
+        setEditTitle(decryptedTitle);
+        setEditContent(decryptedContent);
       }
+    } catch (error) {
+      console.error("Error fetching note:", error);
+    } finally {
+      setLoading(false);
     }
+  }, [user, noteId]);
 
+
+  useEffect(() => {
     fetchNote();
-  }, [params.id, user]);
+  }, [fetchNote, ]);
+
+  const handleSave = async () => {
+    if (!user || !noteId) return;
+
+    setSaving(true);
+    try {
+      const encryptedTitle = encrypt(editTitle || "Untitled");
+      const encryptedContent = encrypt(editContent);
+
+      const { error } = await supabase
+        .from("notes")
+        .update({
+          title: encryptedTitle,
+          content: encryptedContent,
+        })
+        .eq("id", noteId)
+        .eq("user_id", user.id);
+
+      if (error) {
+        throw error;
+      }
+
+      // Update note state with the edited values
+      setNote(prev => {
+        if (!prev) return null;
+        return {
+          ...prev,
+          title: editTitle,
+          content: editContent
+        };
+      });
+
+      // Emit event to update sidebar
+      eventEmitter.emit('noteSaved');
+      
+      setEditMode(false);
+      showToast(t('editor.noteSaved'), "success");
+    } catch (error) {
+      console.error("Error saving note:", error);
+      showToast(t('editor.saveError'), "error");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!user || !noteId) return;
+
+    const confirmed = window.confirm(t('editor.confirmDelete'));
+    if (!confirmed) return;
+
+    setDeleting(true);
+    try {
+      const { error } = await supabase
+        .from("notes")
+        .delete()
+        .eq("id", noteId)
+        .eq("user_id", user.id);
+
+      if (error) {
+        throw error;
+      }
+      
+      // Emit event to update sidebar
+      eventEmitter.emit('noteSaved');
+      
+      showToast(t('editor.noteDeleted'), "success");
+      
+      // Give the toast some time to show before navigation
+      setTimeout(() => {
+        router.push("/dashboard");
+      }, 1000);
+    } catch (error) {
+      console.error("Error deleting note:", error);
+      showToast(t('editor.deleteError'), "error");
+      setDeleting(false);
+    }
+  };
+
+  // const handleFolderChange = async (folderId: string | null) => {
+  //   if (!user || !noteId) return;
+
+  //   try {
+  //     const { error } = await supabase
+  //       .from("notes")
+  //       .update({
+  //         folder_id: folderId
+  //       })
+  //       .eq("id", noteId)
+  //       .eq("user_id", user.id);
+
+  //     if (error) {
+  //       throw error;
+  //     }
+
+  //     setNote(prevNote => prevNote ? { ...prevNote, folder_id: folderId } : null);
+  //     // setShowFolderMenu(false);
+      
+  //     // Emit event to update sidebar
+  //     eventEmitter.emit('noteSaved');
+  //   } catch (error) {
+  //     console.error("Error updating folder:", error);
+  //   }
+  // };
+
 
   // Função para inserir formatação Markdown
   const insertMarkdown = (markdownSyntax: string) => {
@@ -218,66 +311,32 @@ export default function NotePage() {
     }
   };
 
-  async function handleDelete() {
-    const confirmDelete = confirm(t('editor.confirmDelete'));
-    if (!confirmDelete) return;
-
-    try {
-      setDeleting(true);
-      const { error } = await supabase
-        .from("notes")
-        .delete()
-        .eq("id", params.id)
-        .eq("user_id", user?.id);
-
-      if (error) throw error;
-
-      showToast(t('editor.noteDeleted'), "success");
-
-      router.replace("/"); // Resolved bug of page locking after redirect
-    } catch (error) {
-      console.error("Erro ao excluir nota:", error);
-      showToast(t('editor.deleteError'), "error");
-      setDeleting(false);
-    }
+  function cancelEdit() {
+    if (!note) return;
+    setEditTitle(note.title);
+    setEditContent(note.content);
+    setEditMode(false);
+    setIsPreviewMode(false);
   }
 
-  async function handleSave() {
-    if (!note || !user) return;
+  function showToast(message: string, type: "success" | "error") {
+    const toast = document.createElement("div");
+    toast.className = `fixed bottom-4 right-4 px-6 py-3 rounded-lg shadow-lg transform transition-all duration-500 flex items-center gap-2 ${
+      type === "success" ? "bg-green-500" : "bg-red-500"
+    } text-white z-50`;
 
-    try {
-      setSaving(true);
-      
-      // Criptografar o conteúdo antes de salvar
-      const encryptedTitle = encrypt(editTitle);
-      const encryptedContent = encrypt(editContent);
+    const icon =
+      type === "success"
+        ? '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 00-1.414 1.414l2 2a1 1 001.414 0l4-4z" clip-rule="evenodd" /></svg>'
+        : '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 101.414 1.414L10 11.414l1.293-1.293a1 1 00-1.414-1.414L11.414 10l1.293-1.293a1 1 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" /></svg>';
 
-      const { error } = await supabase
-        .from("notes")
-        .update({
-          title: encryptedTitle,
-          content: encryptedContent,
-        })
-        .eq("id", note.id)
-        .eq("user_id", user.id);
+    toast.innerHTML = icon + message;
+    document.body.appendChild(toast);
 
-      if (error) throw error;
-
-      // Atualizar o estado com os valores descriptografados (para visualização)
-      setNote({
-        ...note,
-        title: editTitle,
-        content: editContent,
-      });
-
-      setEditMode(false);
-      showToast("Nota atualizada com sucesso!", "success");
-    } catch (error) {
-      console.error("Erro ao salvar nota:", error);
-      showToast("Erro ao salvar a nota.", "error");
-    } finally {
-      setSaving(false);
-    }
+    setTimeout(() => {
+      toast.style.opacity = "0";
+      setTimeout(() => toast.remove(), 500);
+    }, 3000);
   }
 
   function handleExportTxt() {
@@ -369,32 +428,6 @@ export default function NotePage() {
     }
   }
 
-  function cancelEdit() {
-    setEditTitle(note?.title || "");
-    setEditContent(note?.content || "");
-    setEditMode(false);
-  }
-
-  function showToast(message: string, type: "success" | "error") {
-    const toast = document.createElement("div");
-    toast.className = `fixed bottom-4 right-4 px-6 py-3 rounded-lg shadow-lg transform transition-all duration-500 flex items-center gap-2 ${
-      type === "success" ? "bg-green-500" : "bg-red-500"
-    } text-white z-50`;
-
-    const icon =
-      type === "success"
-        ? '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 00-1.414 1.414l2 2a1 1 001.414 0l4-4z" clip-rule="evenodd" /></svg>'
-        : '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 101.414 1.414L10 11.414l1.293-1.293a1 1 001.414-1.414L11.414 10l1.293-1.293a1 1 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" /></svg>';
-
-    toast.innerHTML = icon + message;
-    document.body.appendChild(toast);
-
-    setTimeout(() => {
-      toast.style.opacity = "0";
-      setTimeout(() => toast.remove(), 500);
-    }, 3000);
-  }
-
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen text-[var(--foreground)]">
@@ -451,18 +484,30 @@ export default function NotePage() {
 
   return (
     <ProtectedRoute>
-        <Profile />
+       <div className="sticky top-0 bg-[var(--background)] bg-opacity-90 backdrop-blur-sm z-10 py-3 px-4 flex items-center">
+        <Link
+          href="/dashboard"
+          className="p-2 rounded-full hover:bg-[var(--container)] transition-colors mr-2"
+          title={t('notes.backToNotes')}
+        >
+          <ArrowLeft size={20} className="text-[var(--foreground)]" />
+        </Link>
+        <h1 className="text-xl font-semibold text-[var(--foreground)]">
+          {note.title}
+        </h1>
+      </div>
+<Profile />
       <div className="min-h-screen  flex justify-center ">
         
-        <div className="w-full max-w-7xl bg-[var(--background)] min-h-screen shadow-xl flex flex-col">
+        <div className="w-full max-w-7xl bg-[var(--background)] min-h-screen  flex flex-col">
           {/* Barra de navegação superior */}
-          <div className=" bg-opacity-10 px-4 py-2 text-[var(--foreground)] flex justify-between items-center ">
+          <div className="bg-opacity-10 px-4 py-2 text-[var(--foreground)] flex justify-between items-center">
             <Link
-              href="/"
+              href="/dashboard"
               className="flex items-center gap-2 text-[var(--foreground)] hover:text-[var(--foreground-light)] transition-colors"
             >
               <ArrowLeft size={18} />
-              <span>{t('notes.backToNotes')} 🐈</span>
+              <span>{t('notes.backToNotes')}</span>
             </Link>
 
             <div className="flex items-center gap-2 pr-10">
@@ -724,7 +769,7 @@ export default function NotePage() {
                     />
                   </div>
                 ) : (
-                  <div className="markdown-content p-5 w-full bg-transparent text-[var(--foreground)] min-h-[300px] h-full text-lg overflow-auto border border-[var(--border-color)] rounded-md">
+                  <div className="markdown-content p-5 w-full bg-transparent text-[var(--foreground)] min-h-[300px] h-full text-lg overflow-auto  rounded-md">
                     {editContent ? (
                       <ReactMarkdown remarkPlugins={[remarkGfm]}>
                         {editContent}
@@ -748,7 +793,7 @@ export default function NotePage() {
             )}
           </div>
 
-          <div className="border-t border-slate-700 p-6 flex justify-between items-center">
+          <div className=" p-6  items-center">
             <div className="text-sm text-[var(--foreground)]">
               ID: {note.id.slice(0, 8)}...
             </div>

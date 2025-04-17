@@ -94,6 +94,22 @@
       "theme": "Theme",
       "openMenu": "Open menu",
       "closeMenu": "Close menu",
+      "folders": "Folders",
+      "notes": "Notes",
+      "allNotes": "All Notes",
+      "folderName": "Folder name",
+      "unfiled": "Unfiled",
+      "add": "Add",
+      "cancel": "Cancel",
+      "newFolder": "New Folder",
+      "deleteFolder": "Delete folder",
+      "addToFolder": "Add to folder",
+      "removeFromFolder": "Remove from folder",
+      "emptyFolder": "Empty folder",
+      "noFolders": "No folders created",
+      "uncategorized": "Uncategorized",
+      "moveToFolder": "Move to folder",
+      "noUncategorizedNotes": "No uncategorized notes",
       "dateFormat": {
         "today": "Today",
         "yesterday": "Yesterday",
@@ -105,6 +121,7 @@
       "allRightsReserved": "All rights reserved."
     },
     "dashboard": {
+      "mainTitle":"Dashboard",
       "newDocument": "New document",
       "hideTasks": "Hide Tasks",
       "tasks": "Tasks",
@@ -187,7 +204,10 @@
       "exportSuccess": "Note exported successfully!",
       "exportError": "Error exporting note. Try again.",
       "markdownSupport": "Markdown formatting supported",
-      "deleteNote": "Delete Note"
+      "deleteNote": "Delete Note",
+      "selectFolder": "Select folder",
+      "newNote": "New Note",
+      "backToDashboard": "Back to dashboard"
     },
     "notes": {
       "backToHome": "Back to home",

@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, Check, Plus, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, Check, Plus, X, Edit2 } from "lucide-react";
 import { supabase } from "../../lib/supabase";
 import { useAuth } from "../../context/AuthContext";
 import { useTranslation } from "react-i18next";
 import i18n from "@/i18n";
+
 // Opções de cores para os eventos
 const eventColors = [
     { name: "Indigo", value: "bg-indigo-500", text: "text-white" },
@@ -36,6 +37,56 @@ interface Event {
   description?: string; // Campo de descrição adicionado
 }
 
+// Modal for event details and editing
+const EventModal = ({ event, onClose, onSave, onDelete, colors }) => {
+  const [title, setTitle] = useState(event?.title || "");
+  const [description, setDescription] = useState(event?.description || "");
+  const [color, setColor] = useState(event?.color || colors[0].value);
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+      <div className="bg-[var(--background)] p-6 rounded shadow-lg w-full max-w-md relative">
+        <button className="absolute top-2 right-2" onClick={onClose} aria-label="Close">
+          <X size={20} />
+        </button>
+        <h3 className="font-bold mb-2">Edit Event</h3>
+        <input
+          className="w-full border mb-2 p-2 rounded"
+          value={title}
+          onChange={e => setTitle(e.target.value)}
+          placeholder="Title"
+        />
+        <textarea
+          className="w-full border mb-2 p-2 rounded"
+          value={description}
+          onChange={e => setDescription(e.target.value)}
+          placeholder="Description"
+        />
+        <div className="flex gap-2 mb-2">
+          {colors.map(c => (
+            <button
+              key={c.value}
+              className={`w-6 h-6 rounded-full ${c.value} ${color === c.value ? 'ring-2 ring-blue-400' : ''}`}
+              onClick={() => setColor(c.value)}
+              aria-label={c.name}
+            />
+          ))}
+        </div>
+        <div className="flex gap-2">
+          <button
+            className="bg-blue-500 text-white px-4 py-2 rounded"
+            onClick={() => onSave({ ...event, title, description, color })}
+          >Save</button>
+          <button
+            className="bg-red-500 text-white px-4 py-2 rounded"
+            onClick={() => onDelete(event.id)}
+          >Delete</button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const CalendarView: React.FC = () => {
   const { t } = useTranslation();
   const { user } = useAuth();
@@ -47,6 +98,7 @@ const CalendarView: React.FC = () => {
   const [highlightToday, setHighlightToday] = useState(true);
   const [, setLoading] = useState(false);
   const [selectedColor, setSelectedColor] = useState(eventColors[0].value);
+  const [modalEvent, setModalEvent] = useState(null);
 
   const year = selectedDate.getFullYear();
   const month = selectedDate.getMonth();
@@ -89,24 +141,6 @@ const CalendarView: React.FC = () => {
       setLoading(false);
     }
   };
-
-  // Load events from localStorage on mount
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const savedEvents = localStorage.getItem('calendarEvents');
-      
-      if (savedEvents) {
-        setEvents(JSON.parse(savedEvents));
-      }
-    }
-  }, []);
-
-  // Save events to localStorage when they change
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('calendarEvents', JSON.stringify(events));
-    }
-  }, [events]);
 
   const handlePrevMonth = () => {
     setSelectedDate(new Date(year, month - 1, 1));
@@ -233,14 +267,24 @@ const CalendarView: React.FC = () => {
     }
   };
 
-  // Render days of the month
-  // Verificação anterior que pode estar causando problemas com datas passadas
-//   const isPastDate = (day: number) => {
-//     // const currentDate = new Date();
-//     // const selectedDateObj = new Date(year, month, day);
-//     // Retorna false para que não bloqueie datas passadas
-//     return false; 
-//   };
+  const handleEventSave = async (updatedEvent) => {
+    try {
+      const { error } = await supabase
+        .from("calendar_events")
+        .update({
+          title: updatedEvent.title,
+          description: updatedEvent.description,
+          color: updatedEvent.color
+        })
+        .eq("id", updatedEvent.id)
+        .eq("user_id", user?.id);
+      if (error) throw error;
+      setEvents(events.map(ev => ev.id === updatedEvent.id ? { ...ev, ...updatedEvent } : ev));
+      setModalEvent(null);
+    } catch (err) {
+      alert("Error updating event");
+    }
+  };
 
   const getEventsForDay = (day: number) => {
     const formattedDate = formatDate(year, month + 1, day);
@@ -333,17 +377,21 @@ const CalendarView: React.FC = () => {
         {Array.from({ length: days }).map((_, day) => {
           const dayNum = day + 1;
           const dayEvents = getEventsForDay(dayNum);
-        //   const isPast = isPastDate(dayNum);
+          const showEvents = dayEvents.slice(0, 2);
+          const extraCount = dayEvents.length - 2;
           
           return (
             <div
               key={dayNum}
-              className={`h-20   sm:h-30  flex flex-col border-t border-b border-[var(--foreground)]	
+              tabIndex={0}
+              aria-label={`Day ${dayNum}${isToday(dayNum) ? ', today' : ''}`}
+              className={`h-20 flex flex-col border-t border-b border-[var(--foreground)]	
                 ${selectedDay === dayNum ? 'ring-2 ring-blue-400' : ''}
                 ${(isToday(dayNum) && highlightToday) ? ' dark:bg-opacity-20' : 'bg-[var(--container)] bg-opacity-50'}
                 ${hasEvents(dayNum) ? 'border-blue-200 dark:border-blue-800' : 'border-[var(--border-color)]'}
                 hover:shadow-md transition cursor-pointer`}
               onClick={() => setSelectedDay(dayNum)}
+              onKeyDown={e => { if (e.key === 'Enter') setSelectedDay(dayNum); }}
             >
               <div className={`text-left font-medium rounded-full w-7 h-7 flex items-center justify-center
                 ${(isToday(dayNum) && highlightToday) ? 'bg-red-600 text-white' : 'text-[var(--foreground)]'}`}>
@@ -351,24 +399,21 @@ const CalendarView: React.FC = () => {
               </div>
               
               <div className="flex-1 overflow-y-auto scrollbar-thin mt-1">
-                {dayEvents.length > 0 && (
-                  <div className="space-y-0.5 text-xs">
-                    {dayEvents.map(event => (
-                      <div 
-                        key={event.id} 
-                        className={`px-1 py-0.5 rounded flex items-center text-2xs
-                          ${event.completed ? 'line-through opacity-50' : ''}
-                          ${event.color || 'bg-blue-400 text-white'}`}
-                      >
-                        <span className="truncate flex-1 sm:text-[11px] text-[5px] text-white">{event.title}</span>
-                      </div>
-                    ))}
-                    {dayEvents.length > 3 && (
-                      <div className="text-[9px] text-gray-500 px-1">
-                        {t('calendar.moreEvents', { count: dayEvents.length - 3 })}
-                      </div>
-                    )}
-                  </div>
+                {showEvents.map(event => (
+                  <button
+                    key={event.id}
+                    className={`w-full text-left px-1 py-0.5 rounded flex items-center text-2xs
+                      ${event.completed ? 'line-through opacity-50' : ''}
+                      ${event.color || 'bg-blue-400 text-white'}`}
+                    onClick={e => { e.stopPropagation(); setModalEvent(event); }}
+                    aria-label={`Event: ${event.title}`}
+                  >
+                    <span className="truncate flex-1 sm:text-[11px] text-[5px] text-white">{event.title}</span>
+                    <Edit2 size={12} className="ml-1" />
+                  </button>
+                ))}
+                {extraCount > 0 && (
+                  <div className="text-[9px] text-gray-500 px-1">+{extraCount} more</div>
                 )}
               </div>
             </div>
@@ -488,6 +533,15 @@ const CalendarView: React.FC = () => {
             </div>
           </div>
         </div>
+      )}
+      {modalEvent && (
+        <EventModal
+          event={modalEvent}
+          onClose={() => setModalEvent(null)}
+          onSave={handleEventSave}
+          onDelete={deleteEvent}
+          colors={eventColors}
+        />
       )}
     </div>
   );

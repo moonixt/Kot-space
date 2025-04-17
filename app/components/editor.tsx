@@ -6,6 +6,7 @@
 // import * as XLSX from "xlsx";
 import { useState, useRef, useEffect } from "react"; //import Usestate, the hook to managge state in react
 import { supabase } from "../../lib/supabase"; //import the supabase client to connect to the database
+import eventEmitter from "../../lib/eventEmitter"; // Import do event emitter
 import {
   Save,
   Eye,
@@ -13,7 +14,9 @@ import {
   ListOrdered,
   LayoutList,
   SmilePlus,
-  Image, // Adicione esta importação
+  Image,
+  FolderIcon,
+  ChevronDown, // Add import for dropdown icon
   } from "lucide-react"; //import of some icons from Lucide-React library
 import { useAuth } from "../../context/AuthContext"; //import of the auth context to manage the authentication of the user
 import ReactMarkdown from "react-markdown"; //Library to render markdown
@@ -40,6 +43,11 @@ function Editor() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [tagSearchTerm, setTagSearchTerm] = useState("");
   const { t } = useTranslation(); // Add the translation hook to access translations
+  
+  // Add state for folders and folder selection
+  const [folders, setFolders] = useState<Array<{id: string, name: string}>>([]);
+  const [selectedFolder, setSelectedFolder] = useState<{id: string, name: string} | null>(null);
+  const [showFolderDropdown, setShowFolderDropdown] = useState(false);
 
   // Carregar dados do localStorage quando o componente montar
   useEffect(() => {
@@ -52,15 +60,37 @@ function Editor() {
       if (savedTitle) setTitle(savedTitle);
       if (savedContent) setContent(savedContent);
       if (savedTags) setSelectedTags(JSON.parse(savedTags));
+      
+      // Add this to load the folder if it was saved
+      const savedFolder = localStorage.getItem("fair-note-folder");
+      if (savedFolder) {
+        try {
+          setSelectedFolder(JSON.parse(savedFolder));
+        } catch (e) {
+          console.error("Error parsing saved folder", e);
+        }
+      }
     }
-  }, []);
+    
+    // Fetch folders when component mounts
+    if (user) {
+      fetchFolders();
+    }
+  }, [user]);
 
   // Salvar dados no localStorage quando mudarem
   useEffect(() => {
     localStorage.setItem("fair-note-title", title);
     localStorage.setItem("fair-note-content", content);
     localStorage.setItem("fair-note-tags", JSON.stringify(selectedTags));
-  }, [title, content, selectedTags]);
+    
+    // Add this to save the selected folder
+    if (selectedFolder) {
+      localStorage.setItem("fair-note-folder", JSON.stringify(selectedFolder));
+    } else {
+      localStorage.removeItem("fair-note-folder");
+    }
+  }, [title, content, selectedTags, selectedFolder]);
 
   const toggleTag = (tag: string) => {
     //function to togle in the tags, if the tag is already selected, it will be removed, otherwise it will be added to the selected tags
@@ -205,6 +235,7 @@ function Editor() {
             content: encryptedContent, // Salvar conteúdo criptografado
             user_id: user.id, // Add the user id in the note
             tags: selectedTags, // Add the selected tags in the dabase
+            folder_id: selectedFolder ? selectedFolder.id : null, // Add the folder id if selected
           },
         ])
         .select(); //return and apply the values in the database
@@ -215,13 +246,22 @@ function Editor() {
       setTitle(""); // the title notes will be empty
       setContent(""); // the content of the notes will be empty
       setSelectedTags([]); // Clean the selected tags
+      setSelectedFolder(null); // Clear selected folder
 
       // Limpar localStorage após salvar com sucesso
       if (!error) {
         localStorage.removeItem("fair-note-title");
         localStorage.removeItem("fair-note-content");
         localStorage.removeItem("fair-note-tags");
+        localStorage.removeItem("fair-note-folder");
       }
+      
+      // Auto fetch notes and folders after saving
+      fetchNotes();
+      fetchFolders();
+
+      // Emit event to notify other components
+      eventEmitter.emit("noteSaved");
 
       // Notification toast for the success
       const notification = document.createElement("div");
@@ -326,6 +366,85 @@ function Editor() {
     return t(`tags.${tagKey}`, { defaultValue: tagKey });
   };
 
+  // Add fetchFolders function to get user's folders
+  const fetchFolders = async () => {
+    if (!user) return;
+    
+    try {
+      const { data, error } = await supabase
+        .from("folders")
+        .select("id, name")
+        .eq("user_id", user.id)
+        .order("name", { ascending: true });
+      
+      if (error) throw error;
+      
+      if (data) {
+        setFolders(data);
+      }
+    } catch (error) {
+      console.error("Error fetching folders:", error);
+    }
+  };
+
+  // Function to handle folder creation
+  const createNewFolder = async () => {
+    // Prompt user for folder name
+    const folderName = prompt(t('editor.enterFolderName', { defaultValue: 'Enter folder name' }));
+    
+    // Check if folder name is valid
+    if (!folderName || !folderName.trim()) return;
+    
+    if (!user) {
+      alert(t('editor.loginRequired'));
+      return;
+    }
+    
+    try {
+      const { data, error } = await supabase
+        .from("folders")
+        .insert([
+          { name: folderName.trim(), user_id: user.id }
+        ])
+        .select();
+      
+      if (error) throw error;
+      
+      if (data && data[0]) {
+        const newFolder = { id: data[0].id, name: data[0].name };
+        setFolders([...folders, newFolder]);
+        setSelectedFolder(newFolder);
+        setShowFolderDropdown(false);
+      }
+    } catch (error) {
+      console.error("Error creating folder:", error);
+      alert(t('editor.folderCreateError',{ defaultValue: '' }));
+    }
+  };
+
+  // Add fetchNotes function to get the latest notes
+  const fetchNotes = async () => {
+    if (!user) return;
+    
+    try {
+      // We don't need to update local state since this is just to update the sidebar
+      // This function is called after saving a note to refresh the sidebar
+      const { error } = await supabase
+        .from("notes")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false });
+      
+      if (error) throw error;
+      
+      // The sidebar component will automatically fetch notes via its own hooks
+      // This is just to trigger any event listeners that might be monitoring for changes
+      
+    } catch (error) {
+      console.error("Erro ao buscar notas:", error);
+    }
+  };
+
   return (
     <div
       id="Editor"
@@ -363,6 +482,66 @@ function Editor() {
                   />
                 </div>
               )}
+              
+              {/* Add folder selection dropdown */}
+              <div className="relative">
+                <button
+                  onClick={() => setShowFolderDropdown(!showFolderDropdown)}
+                  className="flex items-center gap-1 px-3 py-1.5 rounded-md bg-[var(--container)] hover:bg-opacity-80 text-[var(--foreground)] text-sm transition-colors"
+                  title={t('editor.selectFolder')}
+                >
+                  <FolderIcon size={16} />
+                  <span className="max-w-[100px] truncate">
+                    {selectedFolder ? selectedFolder.name : t('editor.noFolder', { defaultValue: '' })}
+                  </span>
+                  <ChevronDown size={14} />
+                </button>
+                
+                {showFolderDropdown && (
+                  <div className="absolute right-0 mt-1 w-48 rounded-md bg-[var(--background)] border border-[var(--border-color)] shadow-lg z-50">
+                    <div className="py-1 max-h-60 overflow-y-auto scrollbar">
+                      <button
+                        onClick={() => {
+                          setSelectedFolder(null);
+                          setShowFolderDropdown(false);
+                        }}
+                        className={`flex items-center w-full text-left px-3 py-2 text-sm ${
+                          !selectedFolder ? "bg-[var(--accent-color)] text-white" : "hover:bg-[var(--container)] text-[var(--foreground)]"
+                        }`}
+                      >
+                        {t('editor.noFolder', { defaultValue: '' })}
+                      </button>
+                      
+                      {folders.map(folder => (
+                        <button
+                          key={folder.id}
+                          onClick={() => {
+                            setSelectedFolder(folder);
+                            setShowFolderDropdown(false);
+                          }}
+                          className={`flex items-center w-full text-left px-3 py-2 text-sm ${
+                            selectedFolder?.id === folder.id ? "bg-[var(--accent-color)] text-white" : "hover:bg-[var(--container)] text-[var(--foreground)]"
+                          }`}
+                        >
+                          {folder.name}
+                        </button>
+                      ))}
+                      
+                      <div className="border-t border-[var(--border-color)] my-1"></div>
+                      
+                      <button
+                        onClick={() => {
+                          createNewFolder();
+                          setShowFolderDropdown(false);
+                        }}
+                        className="flex items-center w-full text-left px-3 py-2 text-sm text-[var(--accent-color)] hover:bg-[var(--container)]"
+                      >
+                        + {t('editor.createFolder', { defaultValue: '' })}
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
@@ -537,7 +716,7 @@ function Editor() {
           </div>
 
           {/* Content Area */}
-          <div className="flex-grow overflow-auto scrollbar bg-[var(--background)] relative">
+          <div className=" scrollbar bg-[var(--background)] relative">
             {!isPreviewMode ? (
               <div className="h-full relative">
                 <textarea

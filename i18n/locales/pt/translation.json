@@ -94,10 +94,28 @@
       "theme": "Tema",
       "openMenu": "Abrir menu",
       "closeMenu": "Fechar menu",
+      "folders": "Pastas",
+      "notes": "Notas",
+      "allNotes": "Todas as Notas",
+      "folderName": "Nome da pasta",
+      "unfiled": "Sem pasta",
+      "add": "Adicionar",
+      "cancel": "Cancelar",
+      "newFolder": "Nova Pasta",
+      "deleteFolder": "Excluir pasta",
+      "addToFolder": "Adicionar à pasta",
+      "removeFromFolder": "Remover da pasta",
+      "emptyFolder": "Pasta vazia",
+      "noFolders": "Nenhuma pasta criada",
+      "uncategorized": "Sem categoria",
+      "noUncategorizedNotes": "Nenhuma nota sem categoria",
+      "moveToFolder": "Mover para pasta",
+
       "dateFormat": {
         "today": "Hoje",
         "yesterday": "Ontem",
         "daysAgo": "{{count}} dias atrás"
+        
       }
     },
     "footer": {
@@ -105,6 +123,7 @@
       "allRightsReserved": "Todos os direitos reservados."
     },
     "dashboard": {
+      "mainTitle":"Dashboard",
       "newDocument": "Novo documento",
       "hideTasks": "Esconder Tarefas",
       "tasks": "Tarefas",
@@ -150,6 +169,7 @@
       "noEvents": "Nenhum evento para este dia. Adicione um acima."
     },
     "editor": {
+      "newNote":"Nova Nota",
       "titlePlaceholder": "Tema da anotação...",
       "contentPlaceholder": "Escreva sua anotação aqui...",
       "noteTitle": "Título da nota",
@@ -187,7 +207,11 @@
       "exportSuccess": "Nota exportada com sucesso!",
       "exportError": "Erro ao exportar nota. Tente novamente.",
       "markdownSupport": "Formatação Markdown suportada",
-      "deleteNote": "Excluir Nota"
+      "deleteNote": "Excluir Nota",
+      "noFolder":"Sem pasta",
+      "createFolder":"Criar pasta",
+      "selectFolder": "Selecionar pasta"
+
     },
     "notes": {
       "backToHome": "Voltar para a página inicial",

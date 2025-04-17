@@ -99,6 +99,7 @@ export default function DashboardPage() {
 
   return (
     <ProtectedRoute>
+        
       <div className="  smooth overflow-y-auto max-h-screen scrollbar">
         <div className="">
             <Profile />

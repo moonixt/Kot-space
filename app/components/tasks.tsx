@@ -11,15 +11,26 @@ interface Task {
   is_completed: boolean;
   created_at: string;
   due_date?: string | null;
+  priority?: "low" | "medium" | "high";
+  description?: string;
 }
+
+const priorityOptions = [
+  { value: "low", label: "Low Priority", color: "bg-green-200" },
+  { value: "medium", label: "Medium Priority", color: "bg-yellow-200" },
+  { value: "high", label: "High Priority", color: "bg-red-200" },
+];
 
 const Tasks = () => {
   const { t } = useTranslation();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [newTask, setNewTask] = useState("");
   const [newTaskDueDate, setNewTaskDueDate] = useState<Date | null>(null);
+  const [newTaskDescription, setNewTaskDescription] = useState("");
+  const [newTaskPriority, setNewTaskPriority] = useState<"low" | "medium" | "high">("medium");
   const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
   const [editingTaskDate, setEditingTaskDate] = useState<Date | null>(null);
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
   const datePickerRef = useRef<HTMLDivElement>(null);
   const { user } = useAuth();
 
@@ -69,11 +80,15 @@ const Tasks = () => {
         title: newTask,
         is_completed: false,
         due_date: newTaskDueDate ? newTaskDueDate.toISOString() : null,
+        priority: newTaskPriority,
+        description: newTaskDescription.trim() || null,
       });
 
       if (error) throw error;
       setNewTask("");
       setNewTaskDueDate(null);
+      setNewTaskPriority("medium");
+      setNewTaskDescription("");
       fetchTasks();
     } catch (error) {
       console.error("Error adding task:", error);
@@ -82,7 +97,7 @@ const Tasks = () => {
 
   const toggleTaskCompletion = async (
     taskId: string,
-    currentStatus: boolean,
+    currentStatus: boolean
   ) => {
     try {
       const { error } = await supabase
@@ -124,6 +139,25 @@ const Tasks = () => {
     }
   };
 
+  const updateTask = async (task: Task) => {
+    try {
+      const { error } = await supabase
+        .from("tasks")
+        .update({
+          title: task.title,
+          due_date: task.due_date,
+          priority: task.priority,
+          description: task.description,
+        })
+        .eq("id", task.id);
+      if (error) throw error;
+      setEditingTask(null);
+      fetchTasks();
+    } catch (error) {
+      console.error("Error updating task:", error);
+    }
+  };
+
   // Format date for display
   const formatDate = (dateString: string) => {
     if (!dateString) return "";
@@ -143,7 +177,7 @@ const Tasks = () => {
 
   return (
     <div className="mb-8">
-    
+      {/* Add Task Form */}
       <form onSubmit={addTask} className="mb-4">
         <div className="flex flex-col sm:flex-row gap-2">
           <div className="flex-grow flex gap-2">
@@ -152,7 +186,7 @@ const Tasks = () => {
               <button
                 type="button"
                 className="h-full px-3 bg-[var(--container)]  flex items-center justify-center"
-                title={t('tasks.setDueDate')}
+                title={t("tasks.setDueDate")}
                 onClick={() => setEditingTaskId("new")}
               >
                 <svg
@@ -200,14 +234,14 @@ const Tasks = () => {
                         onClick={() => setNewTaskDueDate(null)}
                         className="text-xs px-3 py-1.5 hover:bg-[var(--container)] rounded"
                       >
-                        {t('tasks.clear')}
+                        {t("tasks.clear")}
                       </button>
                       <button
                         type="button"
                         onClick={() => setEditingTaskId(null)}
                         className="text-xs px-3 py-1.5 bg-[var(--foreground)] text-[var(--background)] rounded"
                       >
-                        {t('tasks.done')}
+                        {t("tasks.done")}
                       </button>
                     </div>
                   </div>
@@ -220,31 +254,132 @@ const Tasks = () => {
               value={newTask}
               maxLength={32}
               onChange={(e) => setNewTask(e.target.value)}
-              placeholder={t('tasks.addNew')}
+              placeholder={t("tasks.addNew")}
               className="flex-grow  p-2 bg-[var(--container)]  focus:outline-none focus:ring-1 focus:ring-[var(--foreground)]"
             />
           </div>
-
+          <select
+            value={newTaskPriority}
+            onChange={(e) =>
+              setNewTaskPriority(e.target.value as "low" | "medium" | "high")
+            }
+            className="px-2 py-1 rounded border border-[var(--border-color)] bg-[var(--container)] text-xs"
+          >
+            {priorityOptions.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
           <button
             type="submit"
             className="px-4 py-2 bg-[var(--foreground)] text-[var(--background)] hover:bg-opacity-80 transition-colors"
           >
-            {t('tasks.add')}
+            {t("tasks.add")}
           </button>
         </div>
+        <textarea
+          value={newTaskDescription}
+          onChange={(e) => setNewTaskDescription(e.target.value)}
+          placeholder={t("tasks.addDescription")}
+          className="w-full mt-2 p-2 bg-[var(--container)] rounded border border-[var(--border-color)] text-sm"
+          rows={2}
+        />
       </form>
 
+      {/* Edit Task Modal */}
+      {editingTask && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+          <div className="bg-[var(--background)] p-6 rounded shadow-lg w-full max-w-md relative">
+            <button
+              className="absolute top-2 right-2"
+              onClick={() => setEditingTask(null)}
+              aria-label="Close"
+            >
+              <svg
+                width="20"
+                height="20"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                viewBox="0 0 24 24"
+              >
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+            <h3 className="font-bold mb-2">{t("tasks.editTask")}</h3>
+            <input
+              className="w-full border mb-2 p-2 rounded"
+              value={editingTask.title}
+              onChange={(e) =>
+                setEditingTask({ ...editingTask, title: e.target.value })
+              }
+              placeholder={t("tasks.addNew")}
+            />
+            <textarea
+              className="w-full border mb-2 p-2 rounded"
+              value={editingTask.description || ""}
+              onChange={(e) =>
+                setEditingTask({
+                  ...editingTask,
+                  description: e.target.value,
+                })
+              }
+              placeholder={t("tasks.addDescription")}
+            />
+            <select
+              value={editingTask.priority || "medium"}
+              onChange={(e) =>
+                setEditingTask({
+                  ...editingTask,
+                  priority: e.target.value as "low" | "medium" | "high",
+                })
+              }
+              className="w-full mb-2 p-2 rounded border border-[var(--border-color)]"
+            >
+              {priorityOptions.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+            <div className="flex gap-2">
+              <button
+                className="bg-blue-500 text-white px-4 py-2 rounded"
+                onClick={() => updateTask(editingTask)}
+              >
+                {t("tasks.save")}
+              </button>
+              <button
+                className="bg-gray-300 text-black px-4 py-2 rounded"
+                onClick={() => setEditingTask(null)}
+              >
+                {t("tasks.cancel")}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Task List */}
       {tasks.length > 0 ? (
         <div className="grid grid-cols-2 sm:grid-cols-2 gap-3">
           {tasks.map((task) => (
             <div
               key={task.id}
-              className={`p-3 bg-[var(--container)] hover:bg-opacity-60 transition-all border-l-2 ${
+              className={`p-3 bg-[var(--container)] hover:bg-opacity-60 transition-all border-l-4 ${
                 task.is_completed
                   ? "border-green-500 opacity-60"
                   : task.due_date && isOverdue(task.due_date)
-                    ? "border-red-500"
-                    : "border-[var(--foreground)]"
+                  ? "border-red-500"
+                  : task.priority === "high"
+                  ? "border-red-400"
+                  : task.priority === "low"
+                  ? "border-green-400"
+                  : "border-yellow-400"
               }`}
             >
               <div className="flex items-start gap-2">
@@ -277,19 +412,26 @@ const Tasks = () => {
                     )}
                   </div>
                 </button>
-
                 <div className="flex-grow">
                   <span
-                    className={
-                      task.is_completed ? "line-through opacity-70" : ""
-                    }
+                    className={task.is_completed ? "line-through opacity-70" : ""}
                   >
-                    <span className="">{task.title}</span>
+                    <span
+                      className="font-semibold cursor-pointer hover:underline"
+                      onClick={() => setEditingTask(task)}
+                    >
+                      {task.title}
+                    </span>
                   </span>
-
+                  {task.description && (
+                    <div className="text-xs mt-1 text-[var(--foreground)] opacity-80">
+                      {task.description}
+                    </div>
+                  )}
                   <div className="flex flex-wrap gap-x-3 text-xs text-[var(--foreground)] opacity-50 mt-1">
-                    <span>{t('tasks.created')}: {formatDate(task.created_at)}</span>
-
+                    <span>
+                      {t("tasks.created")}: {formatDate(task.created_at)}
+                    </span>
                     {task.due_date && (
                       <span
                         className={
@@ -298,24 +440,39 @@ const Tasks = () => {
                             : ""
                         }
                       >
-                        {t('tasks.due')}: {formatDate(task.due_date)}
+                        {t("tasks.due")}: {formatDate(task.due_date)}
+                      </span>
+                    )}
+                    {task.priority && (
+                      <span
+                        className={`ml-2 px-2 py-0.5 rounded text-xs ${
+                          task.priority === "high"
+                            ? "bg-red-200 text-red-800"
+                            : task.priority === "low"
+                            ? "bg-green-200 text-green-800"
+                            : "bg-yellow-200 text-yellow-800"
+                        }`}
+                      >
+                        {
+                          priorityOptions.find(
+                            (opt) => opt.value === task.priority
+                          )?.label
+                        }
                       </span>
                     )}
                   </div>
                 </div>
-
                 <div className="flex gap-1">
-                  {/* Calendar button for existing task */}
                   <div className="relative">
                     <button
                       onClick={() => {
                         setEditingTaskId(task.id);
                         setEditingTaskDate(
-                          task.due_date ? new Date(task.due_date) : null,
+                          task.due_date ? new Date(task.due_date) : null
                         );
                       }}
                       className="p-1 text-[var(--foreground)] opacity-40 hover:opacity-100"
-                      title={t('tasks.setDueDate')}
+                      title={t("tasks.setDueDate")}
                     >
                       <svg
                         width="16"
@@ -341,7 +498,6 @@ const Tasks = () => {
                       </svg>
                     </button>
 
-                    {/* DatePicker for existing task */}
                     {editingTaskId === task.id && (
                       <div
                         ref={datePickerRef}
@@ -349,7 +505,9 @@ const Tasks = () => {
                       >
                         <DatePicker
                           selected={editingTaskDate}
-                          onChange={(date) => updateTaskDueDate(task.id, date)}
+                          onChange={(date) =>
+                            updateTaskDueDate(task.id, date)
+                          }
                           inline
                           className="bg-[var(--background)] text-[var(--foreground)]"
                         />
@@ -358,7 +516,7 @@ const Tasks = () => {
                           onClick={() => updateTaskDueDate(task.id, null)}
                           className="w-full text-xs text-left px-2 py-1 mt-1 hover:bg-[var(--container)]"
                         >
-                          {t('tasks.clear')}
+                          {t("tasks.clear")}
                         </button>
                       </div>
                     )}
@@ -367,7 +525,7 @@ const Tasks = () => {
                   <button
                     onClick={() => deleteTask(task.id)}
                     className="p-1 text-red-500 hover:text-red-700"
-                    title={t('tasks.deleteTask')}
+                    title={t("tasks.deleteTask")}
                   >
                     <svg
                       width="16"
@@ -391,9 +549,7 @@ const Tasks = () => {
         </div>
       ) : (
         <div className="p-4 border border-dashed border-[var(--border-color)] text-center">
-          <p className="text-sm opacity-70">
-            {t('tasks.noTasksYet')}
-          </p>
+          <p className="text-sm opacity-70">{t("tasks.noTasksYet")}</p>
         </div>
       )}
     </div>
