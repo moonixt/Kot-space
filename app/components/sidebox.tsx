@@ -341,7 +341,7 @@ export default function Sidebox() {
                 {user ? (
                   <Link href={"/dashboard"}>
                     <span
-                      className="text-[var(--foreground)] px-2 py-1 rounded-lg transition-colors duration-200 hover:bg-[var(--container)] hover:shadow-sm"
+                      className="text-[var(--foreground)] px-2 py-1 rounded-lg transition-colors duration-200 hover:bg-[var(--container)] hover:shadow-sm font-medium"
                       onClick={() => setIsMobileOpen(false)}
                     >
                       {t("sidebar.myWorkspace")}
