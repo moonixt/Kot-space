@@ -21,6 +21,8 @@ function createWindow() {
   const win = new BrowserWindow({
     width: 1200,
     height: 800,
+    minWidth: 436,
+    minHeight: 780,
     show: false, // Hide until ready
     backgroundColor: "#000",
     webPreferences: {
@@ -38,6 +40,11 @@ function createWindow() {
         err +
         "</pre>",
     );
+  });
+
+  const userLocale = app.getLocale(); // e.g., 'ja'
+  win.webContents.on('did-finish-load', () => {
+    win.webContents.send('set-locale', userLocale);
   });
 
   // Quando a janela principal estiver pronta, fecha o splash e mostra o app

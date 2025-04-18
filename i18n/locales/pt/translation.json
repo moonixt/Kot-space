@@ -24,10 +24,12 @@
     "creatingAccount": "Criando Conta...",
     "alreadyHaveAccount": "Já tem uma conta?",
     "signIn": "Entrar",
+    "agreeToTerms": "Eu concordo com os Termos de Uso",
     "errors": {
       "passwordsDontMatch": "As senhas não coincidem.",
       "genericError": "Falha ao criar conta. Por favor, tente novamente.",
-      "unknownError": "Ocorreu um erro desconhecido."
+      "unknownError": "Ocorreu um erro desconhecido.",
+      "mustAgreeToTerms": "Você deve concordar com os Termos de Uso e Política de Privacidade para criar uma conta."
     }
   },
   "pricing": {
@@ -209,6 +211,8 @@
     "deleteNote": "Excluir Nota",
     "noFolder": "Sem pasta",
     "createFolder": "Criar pasta",
+    "enterFolderName": "Digite o nome da pasta",
+    "folderCreateError": "Erro ao criar pasta. Por favor, tente novamente.",
     "selectFolder": "Selecionar pasta"
   },
   "notes": {

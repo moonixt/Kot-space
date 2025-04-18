@@ -58,11 +58,11 @@ export default function Sidebox() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [isMobileOpen, setIsMobileOpen] = useState(false);
-  const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null);
   const [newFolderName, setNewFolderName] = useState("");
   const [isAddingFolder, setIsAddingFolder] = useState(false);
   const [isFolderCreating, setIsFolderCreating] = useState(false);
   const [showFoldersTab, setShowFoldersTab] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const router = useRouter();
   const { user } = useAuth();
   const [, setError] = useState<string | null>(null);
@@ -70,15 +70,32 @@ export default function Sidebox() {
 
   // Initialize language detection based on browser language
   useEffect(() => {
+    // Try to get language from localStorage first
+    let savedLang = null;
+    if (typeof window !== "undefined") {
+      savedLang = localStorage.getItem("i18nextLng");
+    }
     const browserLang = navigator.language;
-    // Check if the detected language is supported in our app
     const supportedLanguages = Object.keys(i18n.options.resources || {});
 
-    if (browserLang && supportedLanguages.includes(browserLang)) {
-      i18n.changeLanguage(browserLang);
+    let langToSet = "en";
+    if (savedLang && supportedLanguages.includes(savedLang)) {
+      langToSet = savedLang;
+    } else if (browserLang && supportedLanguages.includes(browserLang)) {
+      langToSet = browserLang;
     } else if (browserLang && browserLang.startsWith("pt")) {
-      // Handle cases like pt-PT, pt, etc. falling back to pt-BR
-      i18n.changeLanguage("pt-BR");
+      langToSet = "pt-BR";
+    } else if (browserLang && browserLang.startsWith("ja")) {
+      langToSet = "ja";
+    } else if (browserLang && browserLang.startsWith("de")) {
+      langToSet = "de";
+    } else if (browserLang && browserLang.startsWith("es")) {
+      langToSet = "es";
+    }
+
+    i18n.changeLanguage(langToSet);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("i18nextLng", langToSet);
     }
   }, []);
 
@@ -127,7 +144,7 @@ export default function Sidebox() {
       setFolders(
         (data || []).map((folder) => ({
           ...folder,
-          expanded: folder.id === selectedFolderId,
+          expanded: false,
         })),
       );
     } catch (error) {
@@ -167,16 +184,10 @@ export default function Sidebox() {
 
   const filteredNotes = notes.filter((note) => {
     // Filtrar por termo de busca
-    const matchesSearch =
+    return (
       note.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      note.content?.toLowerCase().includes(searchTerm.toLowerCase());
-
-    // Filtrar por pasta selecionada
-    const matchesFolder = selectedFolderId
-      ? note.folder_id === selectedFolderId
-      : true;
-
-    return matchesSearch && matchesFolder;
+      note.content?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
   });
 
   function getExcerpt(content: string | undefined, maxLength = 60) {
@@ -221,18 +232,6 @@ export default function Sidebox() {
           : folder,
       ),
     );
-  };
-
-  const handleFolderSelect = (folderId: string | null) => {
-    setSelectedFolderId(folderId);
-    // Expande a pasta selecionada
-    if (folderId) {
-      setFolders(
-        folders.map((folder) =>
-          folder.id === folderId ? { ...folder, expanded: true } : folder,
-        ),
-      );
-    }
   };
 
   const createFolder = async () => {
@@ -287,9 +286,6 @@ export default function Sidebox() {
       if (error) throw error;
 
       setFolders(folders.filter((folder) => folder.id !== folderId));
-      if (selectedFolderId === folderId) {
-        setSelectedFolderId(null);
-      }
     } catch (error) {
       console.error("Erro ao excluir pasta:", error);
     }
@@ -474,12 +470,8 @@ export default function Sidebox() {
                 folders.map((folder) => (
                   <div key={folder.id} className="rounded-md overflow-hidden">
                     <div
-                      className={`p-2 hover:bg-[var(--container)] cursor-pointer transition-colors flex items-center justify-between ${
-                        selectedFolderId === folder.id
-                          ? "bg-[var(--container)] border-l-2 border-blue-500"
-                          : ""
-                      }`}
-                      onClick={() => handleFolderSelect(folder.id)}
+                      className={`p-2 hover:bg-[var(--container)] cursor-pointer transition-colors flex items-center justify-between`}
+                      onClick={() => toggleFolder(folder.id)}
                     >
                       <div className="flex items-center flex-1 min-w-0">
                         <div className="p-1">
@@ -610,7 +602,7 @@ export default function Sidebox() {
                           </div>
                         </div>
                         {/* Dropdown menu trigger for moving to folder */}
-                        <div className="ml-2">
+                        <div className="ml-2 text-[var(--foreground)] ">
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                               <Button
@@ -733,7 +725,7 @@ export default function Sidebox() {
                           </div>
                         </div>
                         {/* Dropdown menu trigger */}
-                        <div className="ml-2">
+                        <div className="ml-2 text-[var(--foreground)]">
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                               <Button
@@ -834,22 +826,29 @@ export default function Sidebox() {
               {user && (
                 <button
                   onClick={async () => {
+                    setError(null);
+                    setIsLoggingOut(true);
                     try {
-                      const { error } = await supabase.auth.signOut();
-                      if (error) {
-                        setError(error.message);
-                      } else {
-                        router.push("/login");
-                      }
-                    } catch (err: unknown) {
+                      await supabase.auth.signOut();
+                    } catch (err) {
                       if (err instanceof Error) {
                         setError(err.message);
                       }
+                    } finally {
+                      // Always redirect to login, even if error
+                      // Optionally clear local/session storage for extra safety
+                      if (typeof window !== "undefined") {
+                        window.localStorage.clear();
+                        window.sessionStorage.clear();
+                      }
+                      router.push("/login");
+                      setIsLoggingOut(false);
                     }
                   }}
-                  className="bg-red-500 text-white hover:bg-red-400 px-4 py-2 rounded"
+                  className="bg-red-500 text-white hover:bg-red-400 px-4 py-2 rounded disabled:opacity-60"
+                  disabled={isLoggingOut}
                 >
-                  {t("sidebar.logout")}
+                  {isLoggingOut ? "Logging out..." : t("sidebar.logout")}
                 </button>
               )}
               <button
@@ -876,7 +875,7 @@ export default function Sidebox() {
               </button>
             </div>
           </div>
-          <div className="border-t border-slate-500/30 p-4">
+          <div className="border-t border-slate-500/30 p-2 ">
             <div className="flex justify-between items-center mb-3">
               <p className="text-sm text-[var(--foreground)]">
                 {t("sidebar.theme")}

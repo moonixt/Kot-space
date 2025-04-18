@@ -1,10 +1,19 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 
 export default function PrivacyPolicy() {
   return (
     <div className="min-h-screen bg-[var(--background)] p-4 md:p-8 lg:p-12">
+        <div className="pb-10 flex justify-between items-center">
+        <Link
+          href="/"
+          className="text-[var(--foreground)] text-sm font-semibold"
+        >
+          Back to login
+        </Link>
+        </div>
       <div className="max-w-4xl mx-auto prose prose-invert">
         <h1 className="text-3xl font-bold text-[var(--foreground)] mb-6">
           Política de Privacidade do Fair-note

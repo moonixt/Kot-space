@@ -6,11 +6,31 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
-    "start": "next start",
+    "start": "electron-forge start",
     "lint": "next lint",
     "format": "prettier --write .",
     "electron:dev": "concurrently \"npm run dev\" \"wait-on http://localhost:3000 && electron .\"",
-    "electron:prod": "npm run build && set ELECTRON_START_URL=file://%cd%/.next/production.html&& npx electron ."
+    "electron:prod": "npm run build && set ELECTRON_START_URL=file://%cd%/.next/production.html&& npx electron .",
+    "electron:build": "npm run build && electron-builder",
+    "package": "electron-forge package",
+    "make": "electron-forge make"
+  },
+  "build": {
+    "appId": "com.fairnote.app",
+    "productName": "Fair Note",
+    "files": [
+      "main.js",
+      "app/",
+      "public/",
+      ".next/",
+      "package.json"
+    ],
+    "directories": {
+      "buildResources": "public"
+    },
+    "win": {
+      "target": "nsis"
+    }
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.4",
@@ -23,6 +43,7 @@
     "@types/react-datepicker": "^6.2.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "electron-squirrel-startup": "^1.0.1",
     "emoji-picker-react": "^4.12.2",
     "i18next": "^24.2.3",
     "i18next-browser-languagedetector": "^8.0.4",
@@ -47,6 +68,14 @@
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
+    "@electron-forge/cli": "^7.8.0",
+    "@electron-forge/maker-deb": "^7.8.0",
+    "@electron-forge/maker-rpm": "^7.8.0",
+    "@electron-forge/maker-squirrel": "^7.8.0",
+    "@electron-forge/maker-zip": "^7.8.0",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.8.0",
+    "@electron-forge/plugin-fuses": "^7.8.0",
+    "@electron/fuses": "^1.8.0",
     "@supabase/mcp-server-supabase": "^0.3.5",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",

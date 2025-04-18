@@ -11,6 +11,9 @@
   </p>
 
 [![pt-BR](https://img.shields.io/badge/lang-pt--BR-green.svg)](./docs/README.pt-BR.md)
+[![en](https://img.shields.io/badge/lang-en-blue.svg)](./README.md)
+[![ja](https://img.shields.io/badge/lang-ja-red.svg)](./docs/README.ja.md)
+[![es](https://img.shields.io/badge/lang-es-yellow.svg)](./docs/README.es.md)
 [![PWA Ready](https://img.shields.io/badge/PWA-Ready-blue.svg)](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps)
 [![Built with Next.js](https://img.shields.io/badge/Built%20with-Next.js-black)](https://nextjs.org)
 [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)

@@ -29,7 +29,18 @@ export default function LanguageLoader({ children }: LanguageLoaderProps) {
           // Check if it's a Portuguese variant
           if (browserLang.startsWith("pt")) {
             await i18n.changeLanguage("pt-BR");
-          } else {
+          } 
+          // Check if it's a Japanese variant
+          else if (browserLang.startsWith("ja")) {
+            await i18n.changeLanguage("ja");
+          }
+          else if (browserLang.startsWith("de")) {
+            await i18n.changeLanguage("de");
+          }
+          else if (browserLang.startsWith("es")) {
+            await i18n.changeLanguage("es");
+          }
+          else {
             // For all other languages, use the browser language if supported, otherwise English
             const supportedLanguages = Object.keys(
               i18n.options.resources || {},

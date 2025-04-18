@@ -1,0 +1,169 @@
+{
+  "pricing": {
+    "title": "Acceso PRO ilimitado",
+    "subtitle": "Desbloquea todo el potencial de Fair-note con nuestro plan premium",
+    "plan": {
+      "name": "Plan PRO",
+      "mostPopular": "Más popular",
+      "price": "19.99",
+      "period": "mes",
+      "perPeriod": "/mes",
+      "included": "Incluye:",
+      "features": {
+        "storage": "Almacenamiento ilimitado de notas",
+        "sync": "Sincronización en todos los dispositivos",
+        "markdown": "Soporte para formato Markdown",
+        "dashboard": "Vista avanzada del panel",
+        "themes": "Temas personalizables",
+        "export": "Exportación sin conexión"
+      }
+    },
+    "orderSummary": {
+      "title": "Resumen del pedido",
+      "securePayment": "Pago seguro",
+      "planLabel": "Plan",
+      "taxes": "Impuestos",
+      "included": "Incluido",
+      "total": "Total",
+      "checkout": "Proceder al pago"
+    },
+    "alerts": {
+      "loginRequired": "Debes iniciar sesión para suscribirte."
+    }
+  },
+  "login": {
+    "title": "Iniciar sesión en Fair-note",
+    "logoAlt": "Logo de Fair-note",
+    "signInWithGoogle": "Iniciar sesión con Google",
+    "loggingInWithGoogle": "Iniciando sesión...",
+    "or": "o",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "signInWithEmail": "Iniciar sesión con correo",
+    "loggingIn": "Iniciando sesión...",
+    "noAccount": "¿No tienes una cuenta?",
+    "createAccount": "Crear una cuenta",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "resetPassword": "Restablecer contraseña"
+  },
+  "signup": {
+    "title": "Crear cuenta de Fair-note",
+    "logoAlt": "Logo de Fair-note",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "confirmPassword": "Confirmar contraseña",
+    "createAccount": "Crear cuenta",
+    "creatingAccount": "Creando cuenta...",
+    "alreadyHaveAccount": "¿Ya tienes una cuenta?",
+    "signIn": "Iniciar sesión",
+    "errors": {
+      "passwordsDontMatch": "Las contraseñas no coinciden.",
+      "genericError": "No se pudo crear la cuenta. Inténtalo de nuevo.",
+      "unknownError": "Ocurrió un error desconocido."
+    }
+  },
+  "resetPassword": {
+    "title": "Restablecer contraseña",
+    "logoAlt": "Logo de Fair-note",
+    "email": "Correo electrónico",
+    "sending": "Enviando...",
+    "sendResetEmail": "Enviar correo de restablecimiento",
+    "successMessage": "Se ha enviado el correo de restablecimiento de contraseña.",
+    "backToLogin": "Volver al inicio de sesión",
+    "errors": {
+      "genericError": "Error al solicitar el restablecimiento de contraseña.",
+      "unknownError": "Error desconocido."
+    }
+  },
+  "sidebar": {
+    "myWorkspace": "Mi espacio de trabajo",
+    "newNote": "Nueva nota",
+    "searchNotes": "Buscar notas...",
+    "untitled": "Sin título",
+    "noNotesFound": "No se encontraron notas",
+    "tryOtherTerms": "Intenta con otros términos",
+    "noNotesYet": "Aún no hay notas",
+    "createYourFirst": "¡Crea tu primera nota!",
+    "createFirstNote": "Crear primera nota",
+    "loginToCreateNotes": "Inicia sesión para crear notas.",
+    "total": "Total",
+    "noteCountSingular": "nota",
+    "noteCountPlural": "notas",
+    "logout": "Cerrar sesión",
+    "refresh": "Actualizar",
+    "theme": "Tema",
+    "openMenu": "Abrir menú",
+    "closeMenu": "Cerrar menú",
+    "folders": "Carpetas",
+    "notes": "Notas",
+    "allNotes": "Todas las notas",
+    "folderName": "Nombre de la carpeta",
+    "unfiled": "Sin carpeta",
+    "add": "Agregar",
+    "cancel": "Cancelar",
+    "newFolder": "Nueva carpeta",
+    "deleteFolder": "Eliminar carpeta",
+    "addToFolder": "Agregar a carpeta",
+    "removeFromFolder": "Quitar de carpeta",
+    "emptyFolder": "Carpeta vacía",
+    "noFolders": "No se han creado carpetas",
+    "uncategorized": "Sin categoría",
+    "noUncategorizedNotes": "No hay notas sin categoría",
+    "moveToFolder": "Mover a carpeta",
+    "dateFormat": {
+      "today": "Hoy",
+      "yesterday": "Ayer",
+      "daysAgo": "hace {{count}} días"
+    }
+  },
+  "footer": {
+    "privacyPolicy": "Política de privacidad",
+    "allRightsReserved": "Todos los derechos reservados."
+  },
+  "dashboard": {
+    "mainTitle": "Panel",
+    "newDocument": "Nuevo documento",
+    "hideTasks": "Ocultar tareas",
+    "tasks": "Tareas",
+    "hideCalendar": "Ocultar calendario",
+    "calendar": "Calendario",
+    "loading": "Cargando...",
+    "emptyState": {
+      "title": "No se encontraron documentos",
+      "description": "Aún no has creado ningún documento. ¡Comienza ahora!",
+      "createFirstNote": "Crear primera nota"
+    },
+    "note": {
+      "untitled": "Sin título",
+      "noContent": "Sin contenido"
+    }
+  },
+  "tasks": {
+    "addNew": "Agregar nueva tarea",
+    "add": "Agregar",
+    "clear": "Limpiar",
+    "done": "Hecho",
+    "setDueDate": "Establecer fecha límite",
+    "deleteTask": "Eliminar tarea",
+    "noTasksYet": "Aún no hay tareas. ¡Agrega tu primera tarea!",
+    "created": "Creada",
+    "due": "Vence"
+  },
+  "calendar": {
+    "today": "Hoy",
+    "highlightToday": "Resaltar hoy",
+    "sun": "Dom",
+    "mon": "Lun",
+    "tue": "Mar",
+    "wed": "Mié",
+    "thu": "Jue",
+    "fri": "Vie",
+    "sat": "Sáb",
+    "moreEvents": "+ {count} más",
+    "addEvent": "Agregar evento:",
+    "eventTitle": "Título del evento",
+    "eventDescription": "Descripción del evento (opcional)",
+    "events": "Eventos:",
+    "noEvents": "No hay eventos para este día. Agrega uno arriba."
+  }
+}

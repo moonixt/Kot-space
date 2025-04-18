@@ -103,11 +103,11 @@ function LoginForm() {
       )}
       <div className="flex justify-center ">
         <Image
-          src="/static/images/crowlyH.png"
+          src="/static/images/default7.jpg"
           alt={t("login.logoAlt")}
           width={1000}
           height={100}
-          className=" h-60 md:h-80 object-cover object-top"
+          className=" h-60 md:h-80 object-cover object-bottom"
           priority
         />
       </div>

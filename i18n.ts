@@ -5,6 +5,9 @@ import LanguageDetector from "i18next-browser-languagedetector";
 // Import translations
 import enTranslation from "./i18n/locales/en/translation.json";
 import ptBrTranslation from "./i18n/locales/pt/translation.json";
+import jaTranslation from "./i18n/locales/ja/translation.json";
+import deTranslation from "./i18n/locales/de/translation.json";
+import esTranslation from "./i18n/locales/es/translation.json";
 
 // Define resource type for TypeScript
 declare module "i18next" {
@@ -20,12 +23,11 @@ const runsOnServerSide = typeof window === "undefined";
 
 // Pre-load all language resources to avoid resource loading delays
 const resources = {
-  en: {
-    translation: enTranslation,
-  },
-  "pt-BR": {
-    translation: ptBrTranslation,
-  },
+  en: { translation: enTranslation },
+  "pt-BR": { translation: ptBrTranslation },
+  ja: { translation: jaTranslation },
+  de: { translation: deTranslation },
+  es: { translation: esTranslation },
 };
 
 // Configure language detection with higher priority for localStorage

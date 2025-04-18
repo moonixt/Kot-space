@@ -14,6 +14,9 @@ import {
 const languages = [
   { code: "en", name: "English" },
   { code: "pt-BR", name: "Português (BR)" },
+  { code: "ja", name: "日本語" },
+  { code: "de", name: "Deutsch" },
+  { code: "es", name: "Español" },
 ];
 
 export default function LanguageSwitcher() {

@@ -75,6 +75,7 @@ html {
   scroll-behavior: smooth;
   /* Personalizar a curva e a duração da animação de rolagem */
   scroll-timeline: 800ms cubic-bezier(0.22, 1, 0.36, 1);
+ 
 }
 
 /* Classe para aplicar rolamento suave em elementos específicos */
@@ -100,6 +101,7 @@ html {
   .smooth-scroll,
   .scroll-container {
     scroll-behavior: auto;
+    
   }
 }
 
@@ -243,15 +245,19 @@ html {
   --input-bg: rgba(15, 23, 42, 0.8);
 }
 
+
 /* Global styles */
 body {
-  font-family: var(--body-font);
+  font-family: Georgia, 'Times New Roman', Times, serif;
   line-height: 1.7;
   font-size: 16px;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+ 
+  
 }
+
 
 .ghub {
   background-color: #010409;

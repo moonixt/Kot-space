@@ -56,10 +56,12 @@
     "creatingAccount": "Creating Account...",
     "alreadyHaveAccount": "Already have an account?",
     "signIn": "Sign in",
+    "agreeToTerms": "I agree to the Terms of Use",
     "errors": {
       "passwordsDontMatch": "Passwords don't match.",
       "genericError": "Failed to create account. Please try again.",
-      "unknownError": "An unknown error occurred."
+      "unknownError": "An unknown error occurred.",
+      "mustAgreeToTerms": "You must agree to the Terms of Use and Privacy Policy to create an account."
     }
   },
   "resetPassword": {
@@ -206,6 +208,10 @@
     "markdownSupport": "Markdown formatting supported",
     "deleteNote": "Delete Note",
     "selectFolder": "Select folder",
+    "noFolder": "No folder",
+    "createFolder": "Create folder",
+    "enterFolderName": "Enter folder name",
+    "folderCreateError": "Error creating folder. Please try again.",
     "newNote": "New Note",
     "backToDashboard": "Back to dashboard"
   },

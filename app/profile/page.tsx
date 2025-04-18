@@ -50,11 +50,11 @@ const Profile = () => {
         setWallpaperUrl(urlData.publicUrl);
       } else {
         // If no wallpaper is set, use the default
-        setWallpaperUrl("/static/images/default.jpg");
+        setWallpaperUrl("/static/images/default5.jpg");
       }
     } catch (error) {
       console.error("Erro ao buscar wallpaper:", error);
-      setWallpaperUrl("/static/images/default.jpg");
+      setWallpaperUrl("/static/images/default5.jpg");
     } finally {
       setWallpaperLoading(false);
     }
@@ -78,11 +78,11 @@ const Profile = () => {
         setAvatarUrl(urlData.publicUrl);
       } else {
         // Default avatar if none is set
-        setAvatarUrl("/icons/cop-note.png");
+        setAvatarUrl("/static/images/profilepic.jpg");
       }
     } catch (error) {
       console.error("Erro ao buscar avatar:", error);
-      setAvatarUrl("/icons/cop-note.png");
+      setAvatarUrl("/staticimages/profilepic.jpg");
     } finally {
       setAvatarLoading(false);
     }
@@ -195,10 +195,10 @@ const Profile = () => {
       return;
     }
 
-    // Check file size (limit to 5MB = 5 * 1024 * 1024 bytes)
-    const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB in bytes
+    // Check file size (limit to 10MB = 10 * 1024 * 1024 bytes)
+    const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB in bytes
     if (file.size > MAX_FILE_SIZE) {
-      alert("Image size exceeds 5MB limit. Please choose a smaller image.");
+      alert("Image size exceeds 10MB limit. Please choose a smaller image.");
       return;
     }
 
@@ -339,7 +339,7 @@ const Profile = () => {
           ) : (
             <Link href="/dashboard">
               <Image
-                src={wallpaperUrl || "/static/images/default.jpg"}
+                src={wallpaperUrl || "/static/images/default3.jpg"}
                 alt="Profile"
                 width={4000}
                 height={4000}
@@ -383,7 +383,7 @@ const Profile = () => {
               >
                 <AvatarImage
                   className="h-[80px] w-[80px] rounded-full object-cover border-1 border-[var(--foreground)]"
-                  src={avatar_url || "/icons/cop-note.png"}
+                  src={avatar_url || ""}
                   alt="Profile avatar"
                 />
               </Avatar>

@@ -23,7 +23,7 @@ import ReactMarkdown from "react-markdown"; //Library to render markdown
 import remarkGfm from "remark-gfm"; //Plugin to support GFM (GitHub Flavored Markdown) in ReactMarkdown
 import EmojiPicker, { Theme } from "emoji-picker-react"; //LIbrary to enable support of emojis inside the text area
 import { EmojiClickData } from "emoji-picker-react"; //Type for the emoji click data
-import ClientLayout from "./ClientLayout";
+// import ClientLayout from "./ClientLayout";
 import Profile from "../profile/page";
 import { encrypt } from "./Encryption"; // Importar a função de criptografia
 import { useTranslation } from "react-i18next"; // Import the translation hook
@@ -52,6 +52,31 @@ function Editor() {
     name: string;
   } | null>(null);
   const [showFolderDropdown, setShowFolderDropdown] = useState(false);
+
+  // Create a ref for the folder dropdown
+  const folderDropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        folderDropdownRef.current &&
+        !folderDropdownRef.current.contains(event.target as Node)
+      ) {
+        setShowFolderDropdown(false);
+      }
+    }
+
+    // Add event listener when dropdown is open
+    if (showFolderDropdown) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    // Clean up
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showFolderDropdown]);
 
   // Carregar dados do localStorage quando o componente montar
   useEffect(() => {
@@ -392,39 +417,39 @@ function Editor() {
   };
 
   // Function to handle folder creation
-  const createNewFolder = async () => {
-    // Prompt user for folder name
-    const folderName = prompt(
-      t("editor.enterFolderName", { defaultValue: "Enter folder name" }),
-    );
+  // const createNewFolder = async () => {
+  //   // Prompt user for folder name
+  //   const folderName = prompt(
+  //     t("editor.enterFolderName", { defaultValue: "Enter folder name" }),
+  //   );
 
-    // Check if folder name is valid
-    if (!folderName || !folderName.trim()) return;
+  //   // Check if folder name is valid
+  //   if (!folderName || !folderName.trim()) return;
 
-    if (!user) {
-      alert(t("editor.loginRequired"));
-      return;
-    }
+  //   if (!user) {
+  //     alert(t("editor.loginRequired"));
+  //     return;
+  //   }
 
-    try {
-      const { data, error } = await supabase
-        .from("folders")
-        .insert([{ name: folderName.trim(), user_id: user.id }])
-        .select();
+  //   try {
+  //     const { data, error } = await supabase
+  //       .from("folders")
+  //       .insert([{ name: folderName.trim(), user_id: user.id }])
+  //       .select();
 
-      if (error) throw error;
+  //     if (error) throw error;
 
-      if (data && data[0]) {
-        const newFolder = { id: data[0].id, name: data[0].name };
-        setFolders([...folders, newFolder]);
-        setSelectedFolder(newFolder);
-        setShowFolderDropdown(false);
-      }
-    } catch (error) {
-      console.error("Error creating folder:", error);
-      alert(t("editor.folderCreateError", { defaultValue: "" }));
-    }
-  };
+  //     if (data && data[0]) {
+  //       const newFolder = { id: data[0].id, name: data[0].name };
+  //       setFolders([...folders, newFolder]);
+  //       setSelectedFolder(newFolder);
+  //       setShowFolderDropdown(false);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error creating folder:", error);
+  //     alert(t("editor.folderCreateError", { defaultValue: "" }));
+  //   }
+  // };
 
   // Add fetchNotes function to get the latest notes
   const fetchNotes = async () => {
@@ -487,7 +512,7 @@ function Editor() {
               )}
 
               {/* Add folder selection dropdown */}
-              <div className="relative">
+              <div className="relative" ref={folderDropdownRef}>
                 <button
                   onClick={() => setShowFolderDropdown(!showFolderDropdown)}
                   className="flex items-center gap-1 px-3 py-1.5 rounded-md bg-[var(--container)] hover:bg-opacity-80 text-[var(--foreground)] text-sm transition-colors"
@@ -536,16 +561,16 @@ function Editor() {
                         </button>
                       ))}
 
-                      <div className="border-t border-[var(--border-color)] my-1"></div>
+                      <div className="my-1"></div>
 
                       <button
                         onClick={() => {
-                          createNewFolder();
+                          // createNewFolder();
                           setShowFolderDropdown(false);
                         }}
-                        className="flex items-center w-full text-left px-3 py-2 text-sm text-[var(--accent-color)] hover:bg-[var(--container)]"
+                        className="flex text-sm text-[var(--accent-color)] hover:bg-[var(--container)]"
                       >
-                        + {t("editor.createFolder", { defaultValue: "" })}
+                        {/* + {t("editor.createFolder", { defaultValue: "" })} */}
                       </button>
                     </div>
                   </div>
@@ -737,9 +762,9 @@ function Editor() {
                   style={{ fontSize: "18px", lineHeight: "1.7" }}
                   onDragOver={(e) => e.preventDefault()}
                 />
-                <div className="absolute bottom-4 right-4">
+                {/* <div className="absolute bottom-4 right-4">
                   <ClientLayout />
-                </div>
+                </div> */}
               </div>
             ) : (
               <div className="markdown-content p-5 sm:p-6 w-full bg-transparent text-[var(--foreground)] min-h-[370px] h-full text-base sm:text-lg overflow-auto">

@@ -4,13 +4,14 @@ import { useState, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
 import Link from "next/link";
 import Image from "next/image";
-import { useTranslation } from "react-i18next";
+import { useTranslation, Trans } from "react-i18next";
 import i18n from "../../i18n";
 
 export default function SignUpPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { signUp } = useAuth();
@@ -36,6 +37,11 @@ export default function SignUpPage() {
 
     if (password !== confirmPassword) {
       setError(t("signup.errors.passwordsDontMatch"));
+      return;
+    }
+
+    if (!agreedToTerms) {
+      setError(t("signup.errors.mustAgreeToTerms"));
       return;
     }
 
@@ -66,7 +72,7 @@ export default function SignUpPage() {
         )}
         <div>
           <Image
-            src="/static/images/crowlyH.png"
+            src="/static/images/default8.jpg"
             alt={t("login.logoAlt")}
             width={1000}
             height={100}
@@ -132,11 +138,27 @@ export default function SignUpPage() {
                 />
               </div>
 
+              <div className="mb-6 flex items-center">
+                <input
+                  id="terms"
+                  type="checkbox"
+                  checked={agreedToTerms}
+                  onChange={(e) => setAgreedToTerms(e.target.checked)}
+                  required
+                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded mr-2 bg-[var(--container)]"
+                />
+                <label htmlFor="terms" className="text-sm text-[var(--foreground)] ">
+                  <Trans i18nKey="signup.agreeToTerms">
+                  </Trans>
+                 <Link href="/privacy" className="text-blue-400 hover:underline pl-2">Terms of Usege</Link>
+                </label>
+              </div>
+
               <button
                 type="submit"
-                disabled={loading}
+                disabled={loading || !agreedToTerms}
                 className={`w-full py-3 rounded-lg font-medium ${
-                  loading
+                  loading || !agreedToTerms
                     ? "bg-blue-600/50 cursor-not-allowed"
                     : "bg-[var(--foreground)] "
                 } text-[var(--background)] transition-colors`}
