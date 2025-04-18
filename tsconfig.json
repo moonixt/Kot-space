@@ -29,6 +29,6 @@
     ".next/types/**/*.ts",
     "middleware.ts.bak",
     "app/components/BuyButtonComponent.jsx"
-  ],
+, "main.js"  ],
   "exclude": ["node_modules"]
 }

@@ -15,7 +15,7 @@ export default function DeleteAccountPage() {
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const router = useRouter();
   const { user, signOut } = useAuth();
-//   const { t } = useTranslation();
+  //   const { t } = useTranslation();
 
   // Texto que o usuário deve digitar para confirmar exclusão
   const confirmationText = "EXCLUIR MINHA CONTA";
@@ -31,7 +31,9 @@ export default function DeleteAccountPage() {
     }
 
     if (!password) {
-      setError("Por favor, digite sua senha atual para confirmar sua identidade.");
+      setError(
+        "Por favor, digite sua senha atual para confirmar sua identidade.",
+      );
       return;
     }
 
@@ -45,13 +47,19 @@ export default function DeleteAccountPage() {
       });
 
       if (authError) {
-        throw new Error("Senha incorreta. Por favor, verifique e tente novamente.");
+        throw new Error(
+          "Senha incorreta. Por favor, verifique e tente novamente.",
+        );
       }
 
       // Se chegou aqui, a senha está correta, mostrar diálogo de confirmação
       setShowConfirmDialog(true);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Ocorreu um erro ao verificar sua senha.");
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Ocorreu um erro ao verificar sua senha.",
+      );
     } finally {
       setIsLoading(false);
     }
@@ -75,13 +83,13 @@ export default function DeleteAccountPage() {
       // 1. Excluir dados do usuário das tabelas relacionadas
       // Notas
       await supabase.from("notes").delete().eq("user_id", user.id);
-      
+
       // Eventos de calendário
       await supabase.from("calendar_events").delete().eq("user_id", user.id);
-      
+
       // Metadados do usuário
       await supabase.from("user_metadata").delete().eq("id", user.id);
-      
+
       // Perfil
       const { data: profileData } = await supabase
         .from("profiles")
@@ -92,17 +100,23 @@ export default function DeleteAccountPage() {
       // 2. Excluir arquivos do Storage
       if (profileData) {
         if (profileData.avatar_url) {
-          await supabase.storage.from("user-avatar").remove([profileData.avatar_url]);
+          await supabase.storage
+            .from("user-avatar")
+            .remove([profileData.avatar_url]);
         }
         if (profileData.wallpaper_url) {
-          await supabase.storage.from("user-wallpaper").remove([profileData.wallpaper_url]);
+          await supabase.storage
+            .from("user-wallpaper")
+            .remove([profileData.wallpaper_url]);
         }
       }
 
       await supabase.from("profiles").delete().eq("id", user.id);
 
       // 3. Excluir a conta do usuário no Auth
-      const { error: deleteError } = await supabase.auth.admin.deleteUser(user.id);
+      const { error: deleteError } = await supabase.auth.admin.deleteUser(
+        user.id,
+      );
 
       if (deleteError) throw deleteError;
 
@@ -111,7 +125,11 @@ export default function DeleteAccountPage() {
       router.push("/?message=Sua conta foi excluída com sucesso");
     } catch (err) {
       console.error("Erro ao excluir conta:", err);
-      setError(err instanceof Error ? err.message : "Ocorreu um erro ao excluir sua conta.");
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Ocorreu um erro ao excluir sua conta.",
+      );
       setIsLoading(false);
     }
   };
@@ -121,7 +139,9 @@ export default function DeleteAccountPage() {
       <div className="w-full max-w-md">
         <div className="bg-[var(--container)] rounded-xl overflow-hidden border border-[var(--border-color)] shadow-lg">
           <div className="p-8">
-            <h1 className="text-2xl font-bold text-red-500 mb-6">Excluir Conta</h1>
+            <h1 className="text-2xl font-bold text-red-500 mb-6">
+              Excluir Conta
+            </h1>
 
             {error && (
               <div className="mb-6 p-4 bg-red-500/20 border border-red-500/30 rounded-lg text-red-400">
@@ -143,12 +163,19 @@ export default function DeleteAccountPage() {
                     <li>Dados do perfil</li>
                   </ul>
                   <p className="text-[var(--foreground)] mb-6">
-                    Esta ação <span className="font-bold text-red-500">não pode ser desfeita</span>.
+                    Esta ação{" "}
+                    <span className="font-bold text-red-500">
+                      não pode ser desfeita
+                    </span>
+                    .
                   </p>
                 </div>
 
                 <div>
-                  <label htmlFor="password" className="block text-[var(--foreground)] mb-2">
+                  <label
+                    htmlFor="password"
+                    className="block text-[var(--foreground)] mb-2"
+                  >
                     Digite sua senha atual para confirmar:
                   </label>
                   <input
@@ -184,8 +211,12 @@ export default function DeleteAccountPage() {
                   Esta é uma ação permanente e irreversível!
                 </p>
                 <p className="text-[var(--foreground)] mb-4">
-                  Para confirmar que deseja excluir permanentemente sua conta e todos os seus dados,
-                  digite <span className="font-mono font-bold">{confirmationText}</span> abaixo:
+                  Para confirmar que deseja excluir permanentemente sua conta e
+                  todos os seus dados, digite{" "}
+                  <span className="font-mono font-bold">
+                    {confirmationText}
+                  </span>{" "}
+                  abaixo:
                 </p>
 
                 <input

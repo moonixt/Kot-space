@@ -2,12 +2,27 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 
-type Theme = "green" | "light" | "purple" | "yellow" | "dark" | "red" | "blue" | "system";
+type Theme =
+  | "green"
+  | "light"
+  | "purple"
+  | "yellow"
+  | "dark"
+  | "red"
+  | "blue"
+  | "system";
 
 interface ThemeContextType {
   theme: Theme;
   setTheme: (theme: Theme) => void;
-  resolvedTheme: "green" | "light" | "purple" | "yellow" | "dark" | "red" | "blue";
+  resolvedTheme:
+    | "green"
+    | "light"
+    | "purple"
+    | "yellow"
+    | "dark"
+    | "red"
+    | "blue";
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);

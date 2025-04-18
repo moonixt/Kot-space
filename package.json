@@ -2,12 +2,35 @@
   "name": "nextjs",
   "version": "0.1.0",
   "private": true,
+  "main": "main.js",
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
-    "start": "next start",
+    "start": "electron-forge start",
     "lint": "next lint",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "electron:dev": "concurrently \"npm run dev\" \"wait-on http://localhost:3000 && electron .\"",
+    "electron:prod": "npm run build && set ELECTRON_START_URL=file://%cd%/.next/production.html&& npx electron .",
+    "electron:build": "npm run build && electron-builder",
+    "package": "electron-forge package",
+    "make": "electron-forge make"
+  },
+  "build": {
+    "appId": "com.fairnote.app",
+    "productName": "Fair Note",
+    "files": [
+      "main.js",
+      "app/",
+      "public/",
+      ".next/",
+      "package.json"
+    ],
+    "directories": {
+      "buildResources": "public"
+    },
+    "win": {
+      "target": "nsis"
+    }
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.4",
@@ -20,6 +43,7 @@
     "@types/react-datepicker": "^6.2.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "electron-squirrel-startup": "^1.0.1",
     "emoji-picker-react": "^4.12.2",
     "i18next": "^24.2.3",
     "i18next-browser-languagedetector": "^8.0.4",
@@ -40,9 +64,18 @@
     "remark-gfm": "^4.0.1",
     "stripe": "^18.0.0",
     "tailwind-merge": "^3.2.0",
+    "tw-animate-css": "^1.2.5",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
+    "@electron-forge/cli": "^7.8.0",
+    "@electron-forge/maker-deb": "^7.8.0",
+    "@electron-forge/maker-rpm": "^7.8.0",
+    "@electron-forge/maker-squirrel": "^7.8.0",
+    "@electron-forge/maker-zip": "^7.8.0",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.8.0",
+    "@electron-forge/plugin-fuses": "^7.8.0",
+    "@electron/fuses": "^1.8.0",
     "@supabase/mcp-server-supabase": "^0.3.5",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
@@ -50,10 +83,13 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@types/react-syntax-highlighter": "^15.5.13",
+    "concurrently": "^9.1.2",
     "crypto-js": "^4.2.0",
+    "electron": "^35.1.5",
     "eslint": "9.23.0",
     "eslint-config-next": "15.2.4",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "wait-on": "^8.0.3"
   }
 }

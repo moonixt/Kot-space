@@ -1,13 +1,16 @@
-import i18n from 'i18next';
-import { initReactI18next } from 'react-i18next';
-import LanguageDetector from 'i18next-browser-languagedetector';
+import i18n from "i18next";
+import { initReactI18next } from "react-i18next";
+import LanguageDetector from "i18next-browser-languagedetector";
 
 // Import translations
-import enTranslation from './i18n/locales/en/translation.json';
-import ptBrTranslation from './i18n/locales/pt/translation.json';
+import enTranslation from "./i18n/locales/en/translation.json";
+import ptBrTranslation from "./i18n/locales/pt/translation.json";
+import jaTranslation from "./i18n/locales/ja/translation.json";
+import deTranslation from "./i18n/locales/de/translation.json";
+import esTranslation from "./i18n/locales/es/translation.json";
 
 // Define resource type for TypeScript
-declare module 'i18next' {
+declare module "i18next" {
   interface CustomTypeOptions {
     resources: {
       translation: typeof enTranslation;
@@ -16,23 +19,22 @@ declare module 'i18next' {
 }
 
 // For Next.js 13+ SSR compatibility
-const runsOnServerSide = typeof window === 'undefined';
+const runsOnServerSide = typeof window === "undefined";
 
 // Pre-load all language resources to avoid resource loading delays
 const resources = {
-  en: {
-    translation: enTranslation
-  },
-  'pt-BR': {
-    translation: ptBrTranslation
-  }
+  en: { translation: enTranslation },
+  "pt-BR": { translation: ptBrTranslation },
+  ja: { translation: jaTranslation },
+  de: { translation: deTranslation },
+  es: { translation: esTranslation },
 };
 
 // Configure language detection with higher priority for localStorage
 const languageDetectorOptions = {
-  order: ['localStorage', 'navigator'],
-  lookupLocalStorage: 'i18nextLng',
-  caches: ['localStorage'],
+  order: ["localStorage", "navigator"],
+  lookupLocalStorage: "i18nextLng",
+  caches: ["localStorage"],
 };
 
 i18n
@@ -43,21 +45,21 @@ i18n
   // Initialize i18next
   .init({
     resources,
-    fallbackLng: 'en',
-    debug: process.env.NODE_ENV !== 'production',
-    
+    fallbackLng: "en",
+    debug: process.env.NODE_ENV !== "production",
+
     // Disable suspense mode for SSR to prevent hydration issues
     react: {
       useSuspense: !runsOnServerSide,
       // This improves the first render by avoiding waiting for translation loads
-      transEmptyNodeValue: '',
+      transEmptyNodeValue: "",
       // This prevents failed lookups from being sent to the backend
-      transKeepBasicHtmlNodesFor: ['br', 'strong', 'i', 'p', 'span'],
+      transKeepBasicHtmlNodesFor: ["br", "strong", "i", "p", "span"],
     },
 
     interpolation: {
       escapeValue: false, // Not needed for React as it escapes by default
-    }
+    },
   });
 
 export default i18n;

@@ -1,0 +1,169 @@
+{
+  "pricing": {
+    "title": "Unbegrenzter PRO-Zugang",
+    "subtitle": "Schalten Sie das volle Potenzial von Fair-note mit unserem Premium-Plan frei",
+    "plan": {
+      "name": "PRO-Plan",
+      "mostPopular": "Am beliebtesten",
+      "price": "19.99",
+      "period": "Monat",
+      "perPeriod": "/Monat",
+      "included": "Enthalten:",
+      "features": {
+        "storage": "Unbegrenzter Notizspeicher",
+        "sync": "Synchronisierung auf allen Geräten",
+        "markdown": "Markdown-Formatierung unterstützt",
+        "dashboard": "Erweiterte Dashboard-Ansicht",
+        "themes": "Anpassbare Designs",
+        "export": "Offline-Export"
+      }
+    },
+    "orderSummary": {
+      "title": "Bestellübersicht",
+      "securePayment": "Sichere Zahlung",
+      "planLabel": "Plan",
+      "taxes": "Steuern",
+      "included": "Inbegriffen",
+      "total": "Gesamt",
+      "checkout": "Zur Zahlung"
+    },
+    "alerts": {
+      "loginRequired": "Sie müssen angemeldet sein, um ein Abonnement abzuschließen."
+    }
+  },
+  "login": {
+    "title": "Bei Fair-note anmelden",
+    "logoAlt": "Fair-note Logo",
+    "signInWithGoogle": "Mit Google anmelden",
+    "loggingInWithGoogle": "Anmeldung...",
+    "or": "oder",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "signInWithEmail": "Mit E-Mail anmelden",
+    "loggingIn": "Anmeldung...",
+    "noAccount": "Noch kein Konto?",
+    "createAccount": "Konto erstellen",
+    "forgotPassword": "Passwort vergessen?",
+    "resetPassword": "Passwort zurücksetzen"
+  },
+  "signup": {
+    "title": "Fair-note-Konto erstellen",
+    "logoAlt": "Fair-note Logo",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "confirmPassword": "Passwort bestätigen",
+    "createAccount": "Konto erstellen",
+    "creatingAccount": "Konto wird erstellt...",
+    "alreadyHaveAccount": "Bereits ein Konto?",
+    "signIn": "Anmelden",
+    "errors": {
+      "passwordsDontMatch": "Passwörter stimmen nicht überein.",
+      "genericError": "Kontoerstellung fehlgeschlagen. Bitte versuchen Sie es erneut.",
+      "unknownError": "Ein unbekannter Fehler ist aufgetreten."
+    }
+  },
+  "resetPassword": {
+    "title": "Passwort zurücksetzen",
+    "logoAlt": "Fair-note Logo",
+    "email": "E-Mail",
+    "sending": "Senden...",
+    "sendResetEmail": "Reset-E-Mail senden",
+    "successMessage": "Passwort-Reset-E-Mail wurde gesendet.",
+    "backToLogin": "Zurück zum Login",
+    "errors": {
+      "genericError": "Fehler bei der Passwortzurücksetzung.",
+      "unknownError": "Unbekannter Fehler."
+    }
+  },
+  "sidebar": {
+    "myWorkspace": "Mein Arbeitsbereich",
+    "newNote": "Neue Notiz",
+    "searchNotes": "Notizen suchen...",
+    "untitled": "Ohne Titel",
+    "noNotesFound": "Keine Notizen gefunden",
+    "tryOtherTerms": "Versuchen Sie es mit anderen Begriffen",
+    "noNotesYet": "Noch keine Notizen",
+    "createYourFirst": "Erstellen Sie Ihre erste Notiz!",
+    "createFirstNote": "Erste Notiz erstellen",
+    "loginToCreateNotes": "Melden Sie sich an, um Notizen zu erstellen.",
+    "total": "Gesamt",
+    "noteCountSingular": "Notiz",
+    "noteCountPlural": "Notizen",
+    "logout": "Abmelden",
+    "refresh": "Aktualisieren",
+    "theme": "Thema",
+    "openMenu": "Menü öffnen",
+    "closeMenu": "Menü schließen",
+    "folders": "Ordner",
+    "notes": "Notizen",
+    "allNotes": "Alle Notizen",
+    "folderName": "Ordnername",
+    "unfiled": "Nicht zugeordnet",
+    "add": "Hinzufügen",
+    "cancel": "Abbrechen",
+    "newFolder": "Neuer Ordner",
+    "deleteFolder": "Ordner löschen",
+    "addToFolder": "Zum Ordner hinzufügen",
+    "removeFromFolder": "Aus Ordner entfernen",
+    "emptyFolder": "Leerer Ordner",
+    "noFolders": "Keine Ordner erstellt",
+    "uncategorized": "Nicht kategorisiert",
+    "noUncategorizedNotes": "Keine nicht kategorisierten Notizen",
+    "moveToFolder": "In Ordner verschieben",
+    "dateFormat": {
+      "today": "Heute",
+      "yesterday": "Gestern",
+      "daysAgo": "vor {{count}} Tagen"
+    }
+  },
+  "footer": {
+    "privacyPolicy": "Datenschutzrichtlinie",
+    "allRightsReserved": "Alle Rechte vorbehalten."
+  },
+  "dashboard": {
+    "mainTitle": "Dashboard",
+    "newDocument": "Neues Dokument",
+    "hideTasks": "Aufgaben ausblenden",
+    "tasks": "Aufgaben",
+    "hideCalendar": "Kalender ausblenden",
+    "calendar": "Kalender",
+    "loading": "Lädt...",
+    "emptyState": {
+      "title": "Keine Dokumente gefunden",
+      "description": "Sie haben noch keine Dokumente erstellt. Legen Sie jetzt los!",
+      "createFirstNote": "Erste Notiz erstellen"
+    },
+    "note": {
+      "untitled": "Ohne Titel",
+      "noContent": "Kein Inhalt"
+    }
+  },
+  "tasks": {
+    "addNew": "Neue Aufgabe hinzufügen",
+    "add": "Hinzufügen",
+    "clear": "Löschen",
+    "done": "Erledigt",
+    "setDueDate": "Fälligkeitsdatum setzen",
+    "deleteTask": "Aufgabe löschen",
+    "noTasksYet": "Noch keine Aufgaben. Fügen Sie Ihre erste Aufgabe hinzu!",
+    "created": "Erstellt",
+    "due": "Fällig"
+  },
+  "calendar": {
+    "today": "Heute",
+    "highlightToday": "Heute hervorheben",
+    "sun": "So",
+    "mon": "Mo",
+    "tue": "Di",
+    "wed": "Mi",
+    "thu": "Do",
+    "fri": "Fr",
+    "sat": "Sa",
+    "moreEvents": "+ {count} mehr",
+    "addEvent": "Ereignis hinzufügen:",
+    "eventTitle": "Ereignistitel",
+    "eventDescription": "Ereignisbeschreibung (optional)",
+    "events": "Ereignisse:",
+    "noEvents": "Keine Ereignisse für diesen Tag. Fügen Sie oben eines hinzu."
+  }
+}

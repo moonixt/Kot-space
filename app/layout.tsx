@@ -52,15 +52,15 @@ export default async function RootLayout({
 }>) {
   // Get preferred language from cookie or default to browser language
   const cookieStore = await cookies();
-  const langCookie = cookieStore.get('NEXT_LOCALE');
-  const lang = langCookie?.value || 'en'; // Default to English if no cookie
+  const langCookie = cookieStore.get("NEXT_LOCALE");
+  const lang = langCookie?.value || "en"; // Default to English if no cookie
 
   return (
     <html lang={lang}>
       <head>
         <meta
           name="viewport"
-          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, height=device-height"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, height=device-height "
           charSet="UTF-8"
         />
         <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
@@ -68,7 +68,8 @@ export default async function RootLayout({
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[var(--background)] text-[var(--foreground)] `}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[var(--background)] text-[var(--foreground)] no-scrollbar circularcursor
+  `}
       >
         <Script
           src="https://pay.google.com/gp/p/js/pay.js"
@@ -79,12 +80,10 @@ export default async function RootLayout({
           <LanguageLoader>
             <AuthProvider>
               <ThemeProvider>
-                <div className="flex flex-col md:flex-row min-h-screen">
-                
-                  <div className="flex-1 md:mr-72 flex flex-col">
-                  {/* <Profile /> */}
+                <div className="flex flex-col md:flex-row min-h-screen  ">
+                  <div className="flex-1 md:mr-72 flex flex-col ">
+                    {/* <Profile /> */}
                     {children}
-              
                   </div>
 
                   <Sidebox />

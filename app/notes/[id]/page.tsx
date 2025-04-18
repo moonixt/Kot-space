@@ -1,15 +1,15 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
-import { supabase } from "../../../lib/supabase";
-import Link from "next/link";
+import { useCallback, useEffect, useState, useRef } from "react";
 import { useRouter, useParams } from "next/navigation";
+import { supabase } from "../../../lib/supabase";
+import { useAuth } from "../../../context/AuthContext";
 import {
-  ArrowLeft,
   Trash2,
+  Save,
+  ArrowLeft,
   Calendar,
   Edit,
-  Save,
   X,
   Image,
   SmilePlus,
@@ -18,85 +18,194 @@ import {
   Eye,
   FileText,
   BookMarked,
-  } from "lucide-react";
-import { useAuth } from "../../../context/AuthContext";
-import { ProtectedRoute } from "../../components/ProtectedRoute";
+} from "lucide-react";
+import { encrypt, decrypt } from "../../components/Encryption";
+import { useTranslation } from "next-i18next";
+import Link from "next/link";
+import Profile from "../../profile/page";
+import EmojiPicker, { Theme, EmojiClickData } from "emoji-picker-react";
+import i18n from "../../../i18n";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import EmojiPicker, { Theme, EmojiClickData } from "emoji-picker-react";
-import Profile from "../../profile/page";
-import { decrypt, encrypt } from "../../components/Encryption"; // Importar funções de criptografia
-import jsPDF from 'jspdf';
-import { useTranslation } from "react-i18next"; // Import translation hook
+import jsPDF from "jspdf";
+import { ProtectedRoute } from "../../components/ProtectedRoute";
+import eventEmitter from "../../../lib/eventEmitter";
 
 interface Note {
   id: string;
   title: string;
   content: string;
   created_at: string;
+  folder_id: string | null;
   tags: string;
 }
 
 export default function NotePage() {
-  const params = useParams();
   const [note, setNote] = useState<Note | null>(null);
   const [loading, setLoading] = useState(true);
-  const [deleting, setDeleting] = useState(false);
   const [saving, setSaving] = useState(false);
+  const { user } = useAuth();
+  const router = useRouter();
+  const params = useParams();
+  const { t } = useTranslation();
   const [editMode, setEditMode] = useState(false);
   const [editTitle, setEditTitle] = useState("");
   const [editContent, setEditContent] = useState("");
-  const router = useRouter();
-  const { user } = useAuth();
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [isPreviewMode, setIsPreviewMode] = useState(false);
   const [imageUploadLoading, setImageUploadLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [showEmojiPickerContent, setShowEmojiPickerContent] = useState(false);
-  const { t, i18n } = useTranslation(); // Initialize translation hook
+  const [deleting, setDeleting] = useState(false);
 
-  useEffect(() => {
-    async function fetchNote() {
-      try {
-        setLoading(true);
+  const noteId =
+    typeof params.id === "string"
+      ? params.id
+      : Array.isArray(params.id)
+        ? params.id[0]
+        : null;
 
-        if (!user) {
-          setNote(null);
-          return;
-        }
+  const fetchNote = useCallback(async () => {
+    if (!user || !noteId) return;
 
-        const { data, error } = await supabase
-          .from("notes")
-          .select("*")
-          .eq("id", params.id)
-          .eq("user_id", user.id) // Garantir que a nota pertence ao usuário
-          .single();
+    try {
+      const { data, error } = await supabase
+        .from("notes")
+        .select("*")
+        .eq("id", noteId)
+        .eq("user_id", user.id)
+        .single();
 
-        if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
-        // Descriptografar o conteúdo da nota antes de exibir
+      if (data) {
         const decryptedTitle = decrypt(data.title);
-        const decryptedContent = decrypt(data.content);
-        
-        const decryptedNote = {
+        const decryptedContent = data.content ? decrypt(data.content) : "";
+
+        setNote({
           ...data,
           title: decryptedTitle,
-          content: decryptedContent
-        };
-
-        setNote(decryptedNote);
-        setEditTitle(decryptedNote.title || "");
-        setEditContent(decryptedNote.content || "");
-      } catch (error) {
-        console.error("Erro ao buscar nota:", error);
-        setNote(null);
-      } finally {
-        setLoading(false);
+          content: decryptedContent,
+        });
+        setEditTitle(decryptedTitle);
+        setEditContent(decryptedContent);
       }
+    } catch (error) {
+      console.error("Error fetching note:", error);
+    } finally {
+      setLoading(false);
     }
+  }, [user, noteId]);
 
+  useEffect(() => {
     fetchNote();
-  }, [params.id, user]);
+  }, [fetchNote]);
+
+  const handleSave = async () => {
+    if (!user || !noteId) return;
+
+    setSaving(true);
+    try {
+      const encryptedTitle = encrypt(editTitle || "Untitled");
+      const encryptedContent = encrypt(editContent);
+
+      const { error } = await supabase
+        .from("notes")
+        .update({
+          title: encryptedTitle,
+          content: encryptedContent,
+        })
+        .eq("id", noteId)
+        .eq("user_id", user.id);
+
+      if (error) {
+        throw error;
+      }
+
+      // Update note state with the edited values
+      setNote((prev) => {
+        if (!prev) return null;
+        return {
+          ...prev,
+          title: editTitle,
+          content: editContent,
+        };
+      });
+
+      // Emit event to update sidebar
+      eventEmitter.emit("noteSaved");
+
+      setEditMode(false);
+      showToast(t("editor.noteSaved"), "success");
+    } catch (error) {
+      console.error("Error saving note:", error);
+      showToast(t("editor.saveError"), "error");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!user || !noteId) return;
+
+    const confirmed = window.confirm(t("editor.confirmDelete"));
+    if (!confirmed) return;
+
+    setDeleting(true);
+    try {
+      const { error } = await supabase
+        .from("notes")
+        .delete()
+        .eq("id", noteId)
+        .eq("user_id", user.id);
+
+      if (error) {
+        throw error;
+      }
+
+      // Emit event to update sidebar
+      eventEmitter.emit("noteSaved");
+
+      showToast(t("editor.noteDeleted"), "success");
+
+      // Give the toast some time to show before navigation
+      setTimeout(() => {
+        router.push("/dashboard");
+      }, 1000);
+    } catch (error) {
+      console.error("Error deleting note:", error);
+      showToast(t("editor.deleteError"), "error");
+      setDeleting(false);
+    }
+  };
+
+  // const handleFolderChange = async (folderId: string | null) => {
+  //   if (!user || !noteId) return;
+
+  //   try {
+  //     const { error } = await supabase
+  //       .from("notes")
+  //       .update({
+  //         folder_id: folderId
+  //       })
+  //       .eq("id", noteId)
+  //       .eq("user_id", user.id);
+
+  //     if (error) {
+  //       throw error;
+  //     }
+
+  //     setNote(prevNote => prevNote ? { ...prevNote, folder_id: folderId } : null);
+  //     // setShowFolderMenu(false);
+
+  //     // Emit event to update sidebar
+  //     eventEmitter.emit('noteSaved');
+  //   } catch (error) {
+  //     console.error("Error updating folder:", error);
+  //   }
+  // };
 
   // Função para inserir formatação Markdown
   const insertMarkdown = (markdownSyntax: string) => {
@@ -218,161 +327,12 @@ export default function NotePage() {
     }
   };
 
-  async function handleDelete() {
-    const confirmDelete = confirm(t('editor.confirmDelete'));
-    if (!confirmDelete) return;
-
-    try {
-      setDeleting(true);
-      const { error } = await supabase
-        .from("notes")
-        .delete()
-        .eq("id", params.id)
-        .eq("user_id", user?.id);
-
-      if (error) throw error;
-
-      showToast(t('editor.noteDeleted'), "success");
-
-      router.replace("/"); // Resolved bug of page locking after redirect
-    } catch (error) {
-      console.error("Erro ao excluir nota:", error);
-      showToast(t('editor.deleteError'), "error");
-      setDeleting(false);
-    }
-  }
-
-  async function handleSave() {
-    if (!note || !user) return;
-
-    try {
-      setSaving(true);
-      
-      // Criptografar o conteúdo antes de salvar
-      const encryptedTitle = encrypt(editTitle);
-      const encryptedContent = encrypt(editContent);
-
-      const { error } = await supabase
-        .from("notes")
-        .update({
-          title: encryptedTitle,
-          content: encryptedContent,
-        })
-        .eq("id", note.id)
-        .eq("user_id", user.id);
-
-      if (error) throw error;
-
-      // Atualizar o estado com os valores descriptografados (para visualização)
-      setNote({
-        ...note,
-        title: editTitle,
-        content: editContent,
-      });
-
-      setEditMode(false);
-      showToast("Nota atualizada com sucesso!", "success");
-    } catch (error) {
-      console.error("Erro ao salvar nota:", error);
-      showToast("Erro ao salvar a nota.", "error");
-    } finally {
-      setSaving(false);
-    }
-  }
-
-  function handleExportTxt() {
-    if (!note) return;
-    
-    try {
-      // Create content with title and note content
-      const fileName = `${note.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.txt`;
-      const fileContent = `${note.title}\n\n${note.content}`;
-      
-      // Create a blob with the text content
-      const blob = new Blob([fileContent], { type: 'text/plain;charset=utf-8' });
-      
-      // Create an anchor element and trigger download
-      const href = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = href;
-      link.download = fileName;
-      document.body.appendChild(link);
-      link.click();
-      
-      // Clean up
-      document.body.removeChild(link);
-      URL.revokeObjectURL(href);
-      
-      showToast(t('editor.exportSuccess'), "success");
-    } catch (error) {
-      console.error("Erro ao exportar nota:", error);
-      showToast(t('editor.exportError'), "error");
-    }
-  }
-
-  function handleExportPdf() {
-    if (!note) return;
-    
-    try {
-      // Create a new PDF document with orientation 'portrait' (default) and unit 'mm'
-      const pdf = new jsPDF({
-        orientation: "portrait",
-        unit: "mm",
-      });
-      
-      // Add title with larger font size
-      pdf.setFontSize(18);
-      pdf.setFont("helvetica", "bold");
-      pdf.text(note.title || "Sem título", 20, 20);
-      
-      // Add content with normal font size
-      pdf.setFontSize(12);
-      pdf.setFont("helvetica", "normal");
-      
-      // Get the current position after the title
-      let yPosition = 30;
-      
-      // Split content into lines that fit on the page
-      // PDF page width is ~180-190 in jsPDF's internal units at default settings
-      const content = note.content || "";
-      const splitContent = pdf.splitTextToSize(content, 170);
-      
-      // Calculate the height of each line (approximate)
-      const lineHeight = 7;
-      
-      // Get page height (in the internal units)
-      const pageHeight = pdf.internal.pageSize.height - 20; // margin bottom
-      
-      // Add content line by line, adding new pages when needed
-      for (let i = 0; i < splitContent.length; i++) {
-        // Check if we need a new page
-        if (yPosition + lineHeight > pageHeight) {
-          pdf.addPage();
-          yPosition = 20; // Reset position for the new page
-        }
-        
-        // Add the line to the PDF
-        pdf.text(splitContent[i], 20, yPosition);
-        yPosition += lineHeight;
-      }
-      
-      // Generate filename from the note title
-      const fileName = `${note.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.pdf`;
-      
-      // Save PDF
-      pdf.save(fileName);
-      
-      showToast(t('editor.exportSuccess'), "success");
-    } catch (error) {
-      console.error("Erro ao exportar PDF:", error);
-      showToast(t('editor.exportError'), "error");
-    }
-  }
-
   function cancelEdit() {
-    setEditTitle(note?.title || "");
-    setEditContent(note?.content || "");
+    if (!note) return;
+    setEditTitle(note.title);
+    setEditContent(note.content);
     setEditMode(false);
+    setIsPreviewMode(false);
   }
 
   function showToast(message: string, type: "success" | "error") {
@@ -384,7 +344,7 @@ export default function NotePage() {
     const icon =
       type === "success"
         ? '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 00-1.414 1.414l2 2a1 1 001.414 0l4-4z" clip-rule="evenodd" /></svg>'
-        : '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 101.414 1.414L10 11.414l1.293-1.293a1 1 001.414-1.414L11.414 10l1.293-1.293a1 1 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" /></svg>';
+        : '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 101.414 1.414L10 11.414l1.293-1.293a1 1 00-1.414-1.414L11.414 10l1.293-1.293a1 1 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" /></svg>';
 
     toast.innerHTML = icon + message;
     document.body.appendChild(toast);
@@ -393,6 +353,97 @@ export default function NotePage() {
       toast.style.opacity = "0";
       setTimeout(() => toast.remove(), 500);
     }, 3000);
+  }
+
+  function handleExportTxt() {
+    if (!note) return;
+
+    try {
+      // Create content with title and note content
+      const fileName = `${note.title.replace(/[^a-z0-9]/gi, "_").toLowerCase()}.txt`;
+      const fileContent = `${note.title}\n\n${note.content}`;
+
+      // Create a blob with the text content
+      const blob = new Blob([fileContent], {
+        type: "text/plain;charset=utf-8",
+      });
+
+      // Create an anchor element and trigger download
+      const href = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = href;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+
+      // Clean up
+      document.body.removeChild(link);
+      URL.revokeObjectURL(href);
+
+      showToast(t("editor.exportSuccess"), "success");
+    } catch (error) {
+      console.error("Erro ao exportar nota:", error);
+      showToast(t("editor.exportError"), "error");
+    }
+  }
+
+  function handleExportPdf() {
+    if (!note) return;
+
+    try {
+      // Create a new PDF document with orientation 'portrait' (default) and unit 'mm'
+      const pdf = new jsPDF({
+        orientation: "portrait",
+        unit: "mm",
+      });
+
+      // Add title with larger font size
+      pdf.setFontSize(18);
+      pdf.setFont("helvetica", "bold");
+      pdf.text(note.title || "Sem título", 20, 20);
+
+      // Add content with normal font size
+      pdf.setFontSize(12);
+      pdf.setFont("helvetica", "normal");
+
+      // Get the current position after the title
+      let yPosition = 30;
+
+      // Split content into lines that fit on the page
+      // PDF page width is ~180-190 in jsPDF's internal units at default settings
+      const content = note.content || "";
+      const splitContent = pdf.splitTextToSize(content, 170);
+
+      // Calculate the height of each line (approximate)
+      const lineHeight = 7;
+
+      // Get page height (in the internal units)
+      const pageHeight = pdf.internal.pageSize.height - 20; // margin bottom
+
+      // Add content line by line, adding new pages when needed
+      for (let i = 0; i < splitContent.length; i++) {
+        // Check if we need a new page
+        if (yPosition + lineHeight > pageHeight) {
+          pdf.addPage();
+          yPosition = 20; // Reset position for the new page
+        }
+
+        // Add the line to the PDF
+        pdf.text(splitContent[i], 20, yPosition);
+        yPosition += lineHeight;
+      }
+
+      // Generate filename from the note title
+      const fileName = `${note.title.replace(/[^a-z0-9]/gi, "_").toLowerCase()}.pdf`;
+
+      // Save PDF
+      pdf.save(fileName);
+
+      showToast(t("editor.exportSuccess"), "success");
+    } catch (error) {
+      console.error("Erro ao exportar PDF:", error);
+      showToast(t("editor.exportError"), "error");
+    }
   }
 
   if (loading) {
@@ -406,7 +457,6 @@ export default function NotePage() {
   if (!note) {
     return (
       <div className="flex flex-col justify-center items-center h-screen bg-gradient-to-br from-slate-950 to-slate-900 text-[var(--foreground)]">
-      
         <svg
           xmlns="http://www.w3.org/2000/svg"
           className="h-16 w-16 text-slate-600 mb-4"
@@ -422,47 +472,58 @@ export default function NotePage() {
           />
         </svg>
         <h3 className="text-2xl font-bold text-slate-400">
-          {t('notes.noteNotFound')}
+          {t("notes.noteNotFound")}
         </h3>
         <p className="text-slate-500 mt-2">
-          {t('notes.noteNotExistOrRemoved')}
+          {t("notes.noteNotExistOrRemoved")}
         </p>
         <Link
           href="/"
           className="mt-6 text-blue-400 hover:underline flex items-center gap-2"
         >
           <ArrowLeft size={16} />
-          {t('notes.backToHome')}
+          {t("notes.backToHome")}
         </Link>
       </div>
     );
   }
 
   const formattedDate = new Date(note.created_at).toLocaleDateString(
-    i18n.language === 'en' ? 'en-US' : 'pt-BR', 
+    i18n.language === "en" ? "en-US" : "pt-BR",
     {
       day: "2-digit",
       month: "long",
       year: "numeric",
       hour: "2-digit",
       minute: "2-digit",
-    }
+    },
   );
 
   return (
     <ProtectedRoute>
-        <Profile />
+      <div className="sticky top-0 bg-[var(--background)] bg-opacity-90 backdrop-blur-sm z-10 py-3 px-4 flex items-center">
+        <Link
+          href="/dashboard"
+          className="p-2 rounded-full hover:bg-[var(--container)] transition-colors mr-2"
+          title={t("notes.backToNotes")}
+        >
+          <ArrowLeft size={20} className="text-[var(--foreground)]" />
+        </Link>
+        <h1 className="text-xl font-semibold text-[var(--foreground)]">
+          {note.title}
+        </h1>
+      </div>
+      <Profile />
       <div className="min-h-screen  flex justify-center ">
-        
-        <div className="w-full max-w-7xl bg-[var(--background)] min-h-screen shadow-xl flex flex-col">
+        <div className="w-full max-w-7xl bg-[var(--background)] min-h-screen  flex flex-col">
           {/* Barra de navegação superior */}
-          <div className=" bg-opacity-10 px-4 py-2 text-[var(--foreground)] flex justify-between items-center ">
+          <div className="bg-opacity-10 px-4 py-2 text-[var(--foreground)] flex justify-between items-center">
             <Link
-              href="/"
+              href="/dashboard"
               className="flex items-center gap-2 text-[var(--foreground)] hover:text-[var(--foreground-light)] transition-colors"
             >
               <ArrowLeft size={18} />
-              <span>{t('notes.backToNotes')} 🐈</span>
+              <span>{t("notes.backToNotes")}</span>
             </Link>
 
             <div className="flex items-center gap-2 pr-10">
@@ -470,7 +531,7 @@ export default function NotePage() {
                 <>
                   <button
                     className="rounded hover:bg-green-400 transition-colors px-2 py-1 flex items-center gap-1"
-                    title={t('editor.save')}
+                    title={t("editor.save")}
                     onClick={handleSave}
                     disabled={saving}
                   >
@@ -478,25 +539,25 @@ export default function NotePage() {
                       <div className="w-4 h-4 border-2 border-green-300 border-t-transparent rounded-full animate-spin"></div>
                     ) : (
                       <>
-                        <Save size={16} /> {t('editor.save')}
+                        <Save size={16} /> {t("editor.save")}
                       </>
                     )}
                   </button>
                   <button
                     className="rounded hover:bg-red-400 transition-colors px-2 py-1 flex items-center gap-1"
-                    title={t('editor.cancel')}
+                    title={t("editor.cancel")}
                     onClick={cancelEdit}
                   >
-                    <X size={16} /> {t('editor.cancel')}
+                    <X size={16} /> {t("editor.cancel")}
                   </button>
                 </>
               ) : (
                 <button
                   className="rounded hover:bg-green-400 transition-colors px-2 py-1 flex items-center gap-1"
-                  title={t('editor.edit')}
+                  title={t("editor.edit")}
                   onClick={() => setEditMode(true)}
                 >
-                  <Edit size={16} /> {t('editor.edit')}
+                  <Edit size={16} /> {t("editor.edit")}
                 </button>
               )}
             </div>
@@ -517,7 +578,7 @@ export default function NotePage() {
                   type="text"
                   value={editTitle}
                   onChange={(e) => setEditTitle(e.target.value)}
-                  placeholder={t('editor.noteTitle')}
+                  placeholder={t("editor.noteTitle")}
                   className="w-full text-xl sm:text-2xl font-bold bg-transparent focus:outline-none text-[var(--foreground)]"
                 />
                 {showEmojiPicker && (
@@ -535,7 +596,7 @@ export default function NotePage() {
               </div>
             ) : (
               <h1 className="text-xl sm:text-2xl font-bold text-[var(--foreground)]">
-                {note.title || t('sidebar.untitled')}
+                {note.title || t("sidebar.untitled")}
               </h1>
             )}
 
@@ -553,21 +614,21 @@ export default function NotePage() {
                   <button
                     className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors font-bold"
                     onClick={() => insertMarkdown("bold")}
-                    title={t('editor.bold')}
+                    title={t("editor.bold")}
                   >
                     B
                   </button>
                   <button
                     className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors italic"
                     onClick={() => insertMarkdown("italic")}
-                    title={t('editor.italic')}
+                    title={t("editor.italic")}
                   >
                     I
                   </button>
                   <button
                     className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors"
                     onClick={() => insertMarkdown("link")}
-                    title={t('editor.link')}
+                    title={t("editor.link")}
                   >
                     🔗
                   </button>
@@ -577,14 +638,14 @@ export default function NotePage() {
                   <button
                     className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors"
                     onClick={() => insertMarkdown("heading1")}
-                    title={t('editor.heading1')}
+                    title={t("editor.heading1")}
                   >
                     H1
                   </button>
                   <button
                     className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors"
                     onClick={() => insertMarkdown("heading2")}
-                    title={t('editor.heading2')}
+                    title={t("editor.heading2")}
                   >
                     H2
                   </button>
@@ -594,7 +655,7 @@ export default function NotePage() {
                   <button
                     className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors"
                     onClick={() => insertMarkdown("code")}
-                    title={t('editor.code')}
+                    title={t("editor.code")}
                   >
                     &lt;/&gt;
                   </button>
@@ -713,25 +774,25 @@ export default function NotePage() {
                           d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                         />
                       </svg>
-                      <span>{t('editor.markdownSupport')}</span>
+                      <span>{t("editor.markdownSupport")}</span>
                     </div>
                     <textarea
                       value={editContent}
                       onChange={(e) => setEditContent(e.target.value)}
-                      placeholder={t('editor.noteContent')}
+                      placeholder={t("editor.noteContent")}
                       className="w-full h-full min-h-[300px] text-lg bg-transparent focus:outline-none resize-none text-[var(--foreground)] p-2"
                       style={{ fontSize: "18px", lineHeight: "1.7" }}
                     />
                   </div>
                 ) : (
-                  <div className="markdown-content p-5 w-full bg-transparent text-[var(--foreground)] min-h-[300px] h-full text-lg overflow-auto border border-[var(--border-color)] rounded-md">
+                  <div className="markdown-content p-5 w-full bg-transparent text-[var(--foreground)] min-h-[300px] h-full text-lg overflow-auto  rounded-md">
                     {editContent ? (
                       <ReactMarkdown remarkPlugins={[remarkGfm]}>
                         {editContent}
                       </ReactMarkdown>
                     ) : (
                       <p className="text-[var(--foreground)] opacity-60 italic">
-                        {t('editor.noPreviewContent')}
+                        {t("editor.noPreviewContent")}
                       </p>
                     )}
                   </div>
@@ -748,7 +809,7 @@ export default function NotePage() {
             )}
           </div>
 
-          <div className="border-t border-slate-700 p-6 flex justify-between items-center">
+          <div className=" p-6  items-center">
             <div className="text-sm text-[var(--foreground)]">
               ID: {note.id.slice(0, 8)}...
             </div>
@@ -758,28 +819,28 @@ export default function NotePage() {
                 ? note.tags.replace(/[\[\]"]/g, "").replace(/,/g, " #")
                 : ""}
             </div>
-            
+
             <div className="flex gap-2">
               <button
                 onClick={handleExportTxt}
                 disabled={!note}
                 className="flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 transition-colors"
-                title={t('editor.exportAsTXT')}
+                title={t("editor.exportAsTXT")}
               >
                 <FileText size={14} />
                 <span>TXT</span>
               </button>
-              
+
               <button
                 onClick={handleExportPdf}
                 disabled={!note}
                 className="flex items-center gap-2 px-3 py-2 rounded-lg bg-purple-500/10 text-purple-400 hover:bg-purple-500/20 transition-colors"
-                title={t('editor.exportAsPDF')}
+                title={t("editor.exportAsPDF")}
               >
                 <BookMarked size={14} />
                 <span>PDF</span>
               </button>
-              
+
               <button
                 onClick={handleDelete}
                 disabled={deleting || editMode}
@@ -788,14 +849,14 @@ export default function NotePage() {
                     ? "bg-slate-700 text-slate-400 cursor-not-allowed"
                     : "bg-red-500/10 text-red-500 hover:bg-red-500/20"
                 }`}
-                title={t('editor.deleteNote')}
+                title={t("editor.deleteNote")}
               >
                 {deleting ? (
                   <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                 ) : (
                   <>
                     <Trash2 size={14} />
-                    <span>{t('editor.delete')}</span>
+                    <span>{t("editor.delete")}</span>
                   </>
                 )}
               </button>

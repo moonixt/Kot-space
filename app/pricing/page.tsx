@@ -1,6 +1,5 @@
 "use client";
 
-
 import React, { useEffect } from "react";
 import { CreditCard } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
@@ -15,27 +14,27 @@ export default function PricingPage() {
     const browserLang = navigator.language;
     // Check if the detected language is supported in our app
     const supportedLanguages = Object.keys(i18n.options.resources || {});
-    
+
     if (browserLang && supportedLanguages.includes(browserLang)) {
       i18n.changeLanguage(browserLang);
-    } else if (browserLang && browserLang.startsWith('pt')) {
+    } else if (browserLang && browserLang.startsWith("pt")) {
       // Handle cases like pt-PT, pt, etc. falling back to pt-BR
-      i18n.changeLanguage('pt-BR');
+      i18n.changeLanguage("pt-BR");
     }
   }, []);
   // Get features from translation
   const features = [
-    t('pricing.plan.features.storage'),
-    t('pricing.plan.features.sync'),
-    t('pricing.plan.features.markdown'),
-    t('pricing.plan.features.dashboard'),
-    t('pricing.plan.features.themes'),
-    t('pricing.plan.features.export')
+    t("pricing.plan.features.storage"),
+    t("pricing.plan.features.sync"),
+    t("pricing.plan.features.markdown"),
+    t("pricing.plan.features.dashboard"),
+    t("pricing.plan.features.themes"),
+    t("pricing.plan.features.export"),
   ];
   // Function to redirect to Stripe checkout with user ID
   const handleCheckout = () => {
     if (!user) {
-      alert(t('pricing.alerts.loginRequired'));
+      alert(t("pricing.alerts.loginRequired"));
       return;
     }
     // Create URL with query parameters
@@ -51,38 +50,37 @@ export default function PricingPage() {
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-extrabold text-[var(--foreground)] mb-4">
-            {t('pricing.title')}
+            {t("pricing.title")}
           </h1>
           <p className="text-xl text-[var(--foreground)] max-w-2xl mx-auto">
-            {t('pricing.subtitle')}
+            {t("pricing.subtitle")}
           </p>
-          <div className="flex items-center justify-center mt-8 space-x-4">
-          </div>
+          <div className="flex items-center justify-center mt-8 space-x-4"></div>
         </div>
         <div className="bg-[var(--container)] rounded-2xl shadow-lg overflow-hidden mb-8">
           <div className="bg-[var(--container)] px-6 py-4">
             <div className="flex justify-between items-center">
               <h2 className="text-2xl font-bold text-[var(--foregorund)]">
-                {t('pricing.plan.name')}
+                {t("pricing.plan.name")}
               </h2>
               <div className="bg-red-500 text-white px-3 py-1 text-sm font-medium rounded-full">
-                {t('pricing.plan.mostPopular')}
+                {t("pricing.plan.mostPopular")}
               </div>
             </div>
           </div>
           <div className="p-8">
             <div className="mb-8 flex items-baseline">
               <span className="text-5xl font-extrabold text-[var(--foreground)]">
-                R$ {t('pricing.plan.price')}
+                R$ {t("pricing.plan.price")}
               </span>
 
               <span className="ml-1 text-xl font-medium text-[var(--foreground)]">
-                {t('pricing.plan.perPeriod')}
+                {t("pricing.plan.perPeriod")}
               </span>
             </div>
             <div className="mb-6">
               <h3 className="text-lg font-medium text-[var(--foreground)] mb-4">
-                {t('pricing.plan.included')}
+                {t("pricing.plan.included")}
               </h3>
               <ul className="space-y-3">
                 {features.map((feature, index) => (
@@ -114,7 +112,7 @@ export default function PricingPage() {
           <div className="p-8">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-xl font-bold text-[var(--foreground)]">
-                {t('pricing.orderSummary.title')}
+                {t("pricing.orderSummary.title")}
               </h3>
               <div className="flex items-center text-green-600">
                 <svg
@@ -139,29 +137,34 @@ export default function PricingPage() {
                   ></rect>
                   <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                 </svg>
-                <span className="text-sm font-medium">{t('pricing.orderSummary.securePayment')}</span>
+                <span className="text-sm font-medium">
+                  {t("pricing.orderSummary.securePayment")}
+                </span>
               </div>
             </div>
             <div className="flex justify-between py-4 border-t border-[var(--border-color)]">
               <span className="text-[var(--foreground)]">
-                {t('pricing.orderSummary.planLabel')} {t('pricing.plan.name')}
+                {t("pricing.orderSummary.planLabel")} {t("pricing.plan.name")}
               </span>
               <span className="font-medium text-[var(--foreground)]">
-                R$ {t('pricing.plan.price')}
+                R$ {t("pricing.plan.price")}
               </span>
             </div>
             <div className="flex justify-between py-4 border-t border-b border-[var(--border-color)]">
-              <span className="text-[var(--foreground)]">{t('pricing.orderSummary.taxes')}</span>
+              <span className="text-[var(--foreground)]">
+                {t("pricing.orderSummary.taxes")}
+              </span>
               <span className="font-medium text-[var(--foreground)]">
-                {t('pricing.orderSummary.included')}
+                {t("pricing.orderSummary.included")}
               </span>
             </div>
             <div className="flex justify-between py-4 mt-2">
               <span className="text-lg font-bold text-[var(--foreground)]">
-                {t('pricing.orderSummary.total')}
+                {t("pricing.orderSummary.total")}
               </span>
               <span className="text-lg font-bold text-[var(--foreground)]">
-                R$ {t('pricing.plan.price')}{t('pricing.plan.perPeriod')}
+                R$ {t("pricing.plan.price")}
+                {t("pricing.plan.perPeriod")}
               </span>
             </div>
             <div className="mt-8">
@@ -170,7 +173,7 @@ export default function PricingPage() {
                 className="w-full bg-[var(--foreground)] hover:bg-[var(--hover-color)] text-[var(--background)] py-4 px-6 rounded-xl font-semibold flex items-center justify-center transition-all duration-200"
               >
                 <CreditCard className="mr-2 h-5 w-5" />
-                <span>{t('pricing.orderSummary.checkout')}</span>
+                <span>{t("pricing.orderSummary.checkout")}</span>
               </button>
               <p className="text-center text-[var(--muted)] mt-4 text-sm">
                 Cancele a qualquer momento. Sem compromisso.
@@ -183,7 +186,8 @@ export default function PricingPage() {
             Oferta especial por tempo limitado! Economize 33%
           </h4>
           <p className="text-[var(--muted)] text-center mt-2">
-            Organize, planeje e realize mais com recursos avançados de calendário e gerenciamento de tarefas
+            Organize, planeje e realize mais com recursos avançados de
+            calendário e gerenciamento de tarefas
           </p>
         </div>
       </div>

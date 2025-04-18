@@ -6,6 +6,7 @@
 // import * as XLSX from "xlsx";
 import { useState, useRef, useEffect } from "react"; //import Usestate, the hook to managge state in react
 import { supabase } from "../../lib/supabase"; //import the supabase client to connect to the database
+import eventEmitter from "../../lib/eventEmitter"; // Import do event emitter
 import {
   Save,
   Eye,
@@ -13,18 +14,19 @@ import {
   ListOrdered,
   LayoutList,
   SmilePlus,
-  Image, // Adicione esta importação
-  } from "lucide-react"; //import of some icons from Lucide-React library
+  Image,
+  FolderIcon,
+  ChevronDown, // Add import for dropdown icon
+} from "lucide-react"; //import of some icons from Lucide-React library
 import { useAuth } from "../../context/AuthContext"; //import of the auth context to manage the authentication of the user
 import ReactMarkdown from "react-markdown"; //Library to render markdown
 import remarkGfm from "remark-gfm"; //Plugin to support GFM (GitHub Flavored Markdown) in ReactMarkdown
 import EmojiPicker, { Theme } from "emoji-picker-react"; //LIbrary to enable support of emojis inside the text area
 import { EmojiClickData } from "emoji-picker-react"; //Type for the emoji click data
-import ClientLayout from "./ClientLayout";
+// import ClientLayout from "./ClientLayout";
 import Profile from "../profile/page";
 import { encrypt } from "./Encryption"; // Importar a função de criptografia
 import { useTranslation } from "react-i18next"; // Import the translation hook
-
 
 function Editor() {
   //main function for the editor component
@@ -41,6 +43,41 @@ function Editor() {
   const [tagSearchTerm, setTagSearchTerm] = useState("");
   const { t } = useTranslation(); // Add the translation hook to access translations
 
+  // Add state for folders and folder selection
+  const [folders, setFolders] = useState<Array<{ id: string; name: string }>>(
+    [],
+  );
+  const [selectedFolder, setSelectedFolder] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
+  const [showFolderDropdown, setShowFolderDropdown] = useState(false);
+
+  // Create a ref for the folder dropdown
+  const folderDropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        folderDropdownRef.current &&
+        !folderDropdownRef.current.contains(event.target as Node)
+      ) {
+        setShowFolderDropdown(false);
+      }
+    }
+
+    // Add event listener when dropdown is open
+    if (showFolderDropdown) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    // Clean up
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showFolderDropdown]);
+
   // Carregar dados do localStorage quando o componente montar
   useEffect(() => {
     // Verificar se estamos no navegador (não em SSR)
@@ -52,15 +89,37 @@ function Editor() {
       if (savedTitle) setTitle(savedTitle);
       if (savedContent) setContent(savedContent);
       if (savedTags) setSelectedTags(JSON.parse(savedTags));
+
+      // Add this to load the folder if it was saved
+      const savedFolder = localStorage.getItem("fair-note-folder");
+      if (savedFolder) {
+        try {
+          setSelectedFolder(JSON.parse(savedFolder));
+        } catch (e) {
+          console.error("Error parsing saved folder", e);
+        }
+      }
     }
-  }, []);
+
+    // Fetch folders when component mounts
+    if (user) {
+      fetchFolders();
+    }
+  }, [user]);
 
   // Salvar dados no localStorage quando mudarem
   useEffect(() => {
     localStorage.setItem("fair-note-title", title);
     localStorage.setItem("fair-note-content", content);
     localStorage.setItem("fair-note-tags", JSON.stringify(selectedTags));
-  }, [title, content, selectedTags]);
+
+    // Add this to save the selected folder
+    if (selectedFolder) {
+      localStorage.setItem("fair-note-folder", JSON.stringify(selectedFolder));
+    } else {
+      localStorage.removeItem("fair-note-folder");
+    }
+  }, [title, content, selectedTags, selectedFolder]);
 
   const toggleTag = (tag: string) => {
     //function to togle in the tags, if the tag is already selected, it will be removed, otherwise it will be added to the selected tags
@@ -178,7 +237,7 @@ function Editor() {
         "fixed bottom-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-500 flex items-center gap-2";
       notification.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 101.414 1.414L10 11.414l1.293-1.293a1 1 00-1.414-1.414L11.414 10l1.293-1.293a1 1 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
-      </svg>${t('editor.loginRequired')}`;
+      </svg>${t("editor.loginRequired")}`;
       document.body.appendChild(notification);
 
       setTimeout(() => {
@@ -193,7 +252,7 @@ function Editor() {
       // Criptografar o conteúdo da nota antes de salvar
       const encryptedContent = encrypt(content);
       const encryptedTitle = encrypt(title);
-      
+
       //Saving of the notes
       setSaving(true); //change the state to true
       const { error } = await supabase //call the supabase client
@@ -205,6 +264,7 @@ function Editor() {
             content: encryptedContent, // Salvar conteúdo criptografado
             user_id: user.id, // Add the user id in the note
             tags: selectedTags, // Add the selected tags in the dabase
+            folder_id: selectedFolder ? selectedFolder.id : null, // Add the folder id if selected
           },
         ])
         .select(); //return and apply the values in the database
@@ -215,13 +275,22 @@ function Editor() {
       setTitle(""); // the title notes will be empty
       setContent(""); // the content of the notes will be empty
       setSelectedTags([]); // Clean the selected tags
+      setSelectedFolder(null); // Clear selected folder
 
       // Limpar localStorage após salvar com sucesso
       if (!error) {
         localStorage.removeItem("fair-note-title");
         localStorage.removeItem("fair-note-content");
         localStorage.removeItem("fair-note-tags");
+        localStorage.removeItem("fair-note-folder");
       }
+
+      // Auto fetch notes and folders after saving
+      fetchNotes();
+      fetchFolders();
+
+      // Emit event to notify other components
+      eventEmitter.emit("noteSaved");
 
       // Notification toast for the success
       const notification = document.createElement("div");
@@ -229,7 +298,7 @@ function Editor() {
         "fixed bottom-4 left-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-500 flex items-center gap-2";
       notification.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 00-1.414-1.414L9 10.586 7.707 9.293a1 1 00-1.414 1.414l2 2a1 1 001.414 0l4-4z" clip-rule="evenodd" />
-      </svg>${t('editor.noteSaved')}`;
+      </svg>${t("editor.noteSaved")}`;
       document.body.appendChild(notification);
 
       setTimeout(() => {
@@ -246,7 +315,7 @@ function Editor() {
         "fixed bottom-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-500 flex items-center gap-2";
       notification.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 101.414 1.414L10 11.414l1.293-1.293a1 1 00-1.414-1.414L11.414 10l1.293-1.293a1 1 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
-      </svg>${t('editor.saveError')}`;
+      </svg>${t("editor.saveError")}`;
       document.body.appendChild(notification);
 
       setTimeout(() => {
@@ -280,7 +349,7 @@ function Editor() {
 
     // Verificar se o usuário está autenticado
     if (!user) {
-      alert(t('editor.loginRequired'));
+      alert(t("editor.loginRequired"));
       return;
     }
 
@@ -311,7 +380,7 @@ function Editor() {
       setContent((currentContent) => currentContent + imageMarkdown);
     } catch (error) {
       console.error("Erro ao fazer upload da imagem:", error);
-      alert(t('editor.imageUploadError'));
+      alert(t("editor.imageUploadError"));
     } finally {
       setImageUploadLoading(false);
       if (fileInputRef.current) {
@@ -326,27 +395,105 @@ function Editor() {
     return t(`tags.${tagKey}`, { defaultValue: tagKey });
   };
 
+  // Add fetchFolders function to get user's folders
+  const fetchFolders = async () => {
+    if (!user) return;
+
+    try {
+      const { data, error } = await supabase
+        .from("folders")
+        .select("id, name")
+        .eq("user_id", user.id)
+        .order("name", { ascending: true });
+
+      if (error) throw error;
+
+      if (data) {
+        setFolders(data);
+      }
+    } catch (error) {
+      console.error("Error fetching folders:", error);
+    }
+  };
+
+  // Function to handle folder creation
+  // const createNewFolder = async () => {
+  //   // Prompt user for folder name
+  //   const folderName = prompt(
+  //     t("editor.enterFolderName", { defaultValue: "Enter folder name" }),
+  //   );
+
+  //   // Check if folder name is valid
+  //   if (!folderName || !folderName.trim()) return;
+
+  //   if (!user) {
+  //     alert(t("editor.loginRequired"));
+  //     return;
+  //   }
+
+  //   try {
+  //     const { data, error } = await supabase
+  //       .from("folders")
+  //       .insert([{ name: folderName.trim(), user_id: user.id }])
+  //       .select();
+
+  //     if (error) throw error;
+
+  //     if (data && data[0]) {
+  //       const newFolder = { id: data[0].id, name: data[0].name };
+  //       setFolders([...folders, newFolder]);
+  //       setSelectedFolder(newFolder);
+  //       setShowFolderDropdown(false);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error creating folder:", error);
+  //     alert(t("editor.folderCreateError", { defaultValue: "" }));
+  //   }
+  // };
+
+  // Add fetchNotes function to get the latest notes
+  const fetchNotes = async () => {
+    if (!user) return;
+
+    try {
+      // We don't need to update local state since this is just to update the sidebar
+      // This function is called after saving a note to refresh the sidebar
+      const { error } = await supabase
+        .from("notes")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+
+      // The sidebar component will automatically fetch notes via its own hooks
+      // This is just to trigger any event listeners that might be monitoring for changes
+    } catch (error) {
+      console.error("Erro ao buscar notas:", error);
+    }
+  };
+
   return (
     <div
       id="Editor"
       className="w-full h-full flex flex-col bg-[var(--background)] scrollbar"
     >
-       <Profile />
+      <Profile />
       <div className="mx-auto w-full h-full flex flex-col flex-grow">
         <div className="bg-[var(--background)] backdrop-blur-sm shadow-lg rounded-lg overflow-hidden flex flex-col flex-grow h-full  border-[var(--border-color)] transition-all duration-300">
           {/* Title Section */}
           <div className="p-5 sm:p-6 border-b border-[var(--border-color)] relative">
             <div className="flex items-center gap-3">
-                            <button
+              <button
                 onClick={() => setShowEmojiPicker(!showEmojiPicker)}
                 className="p-2 text-[var(--foreground)] hover:bg-[var(--container)] rounded-full transition-all duration-200"
-                title={t('editor.addEmoji')}
+                title={t("editor.addEmoji")}
               >
                 <SmilePlus size={22} />
               </button>
               <input
                 className="bg-transparent text-[var(--foreground)] focus:outline-none focus:ring-0 border-none w-full text-xl sm:text-2xl font-medium placeholder-opacity-60 placeholder-[var(--foreground)]"
-                placeholder={t('editor.titlePlaceholder')}
+                placeholder={t("editor.titlePlaceholder")}
                 maxLength={40}
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
@@ -363,6 +510,72 @@ function Editor() {
                   />
                 </div>
               )}
+
+              {/* Add folder selection dropdown */}
+              <div className="relative" ref={folderDropdownRef}>
+                <button
+                  onClick={() => setShowFolderDropdown(!showFolderDropdown)}
+                  className="flex items-center gap-1 px-3 py-1.5 rounded-md bg-[var(--container)] hover:bg-opacity-80 text-[var(--foreground)] text-sm transition-colors"
+                  title={t("editor.selectFolder")}
+                >
+                  <FolderIcon size={16} />
+                  <span className="max-w-[100px] truncate">
+                    {selectedFolder
+                      ? selectedFolder.name
+                      : t("editor.noFolder", { defaultValue: "" })}
+                  </span>
+                  <ChevronDown size={14} />
+                </button>
+
+                {showFolderDropdown && (
+                  <div className="absolute right-0 mt-1 w-48 rounded-md bg-[var(--background)] border border-[var(--border-color)] shadow-lg z-50">
+                    <div className="py-1 max-h-60 overflow-y-auto scrollbar">
+                      <button
+                        onClick={() => {
+                          setSelectedFolder(null);
+                          setShowFolderDropdown(false);
+                        }}
+                        className={`flex items-center w-full text-left px-3 py-2 text-sm ${
+                          !selectedFolder
+                            ? "bg-[var(--accent-color)] text-white"
+                            : "hover:bg-[var(--container)] text-[var(--foreground)]"
+                        }`}
+                      >
+                        {t("editor.noFolder", { defaultValue: "" })}
+                      </button>
+
+                      {folders.map((folder) => (
+                        <button
+                          key={folder.id}
+                          onClick={() => {
+                            setSelectedFolder(folder);
+                            setShowFolderDropdown(false);
+                          }}
+                          className={`flex items-center w-full text-left px-3 py-2 text-sm ${
+                            selectedFolder?.id === folder.id
+                              ? "bg-[var(--accent-color)] text-white"
+                              : "hover:bg-[var(--container)] text-[var(--foreground)]"
+                          }`}
+                        >
+                          {folder.name}
+                        </button>
+                      ))}
+
+                      <div className="my-1"></div>
+
+                      <button
+                        onClick={() => {
+                          // createNewFolder();
+                          setShowFolderDropdown(false);
+                        }}
+                        className="flex text-sm text-[var(--accent-color)] hover:bg-[var(--container)]"
+                      >
+                        {/* + {t("editor.createFolder", { defaultValue: "" })} */}
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
@@ -373,21 +586,21 @@ function Editor() {
                 <button
                   className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors font-bold"
                   onClick={() => insertMarkdown("bold")}
-                  title={t('editor.bold')}
+                  title={t("editor.bold")}
                 >
                   B
                 </button>
                 <button
                   className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors italic"
                   onClick={() => insertMarkdown("italic")}
-                  title={t('editor.italic')}
+                  title={t("editor.italic")}
                 >
                   I
                 </button>
                 <button
                   className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors"
                   onClick={() => insertMarkdown("link")}
-                  title={t('editor.link')}
+                  title={t("editor.link")}
                 >
                   🔗
                 </button>
@@ -397,14 +610,14 @@ function Editor() {
                 <button
                   className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors"
                   onClick={() => insertMarkdown("heading1")}
-                  title={t('editor.heading1')}
+                  title={t("editor.heading1")}
                 >
                   H1
                 </button>
                 <button
                   className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors"
                   onClick={() => insertMarkdown("heading2")}
-                  title={t('editor.heading2')}
+                  title={t("editor.heading2")}
                 >
                   H2
                 </button>
@@ -414,7 +627,7 @@ function Editor() {
                 <button
                   className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors"
                   onClick={() => insertMarkdown("code")}
-                  title={t('editor.code')}
+                  title={t("editor.code")}
                 >
                   &lt;/&gt;
                 </button>
@@ -428,7 +641,7 @@ function Editor() {
                       insertMarkdown("image");
                     }
                   }}
-                  title={t('editor.insertImage')}
+                  title={t("editor.insertImage")}
                 >
                   <Image size={16} />
                   {imageUploadLoading && (
@@ -452,7 +665,7 @@ function Editor() {
                     setShowEmojiPickerContent(!showEmojiPickerContent)
                   }
                   className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors"
-                  title={t('editor.addEmoji')}
+                  title={t("editor.addEmoji")}
                 >
                   <SmilePlus size={16} />
                 </button>
@@ -481,7 +694,7 @@ function Editor() {
                 onClick={() => setIsPreviewMode(false)}
                 disabled={!isPreviewMode}
               >
-                <Edit size={16} /> {t('editor.edit')}
+                <Edit size={16} /> {t("editor.edit")}
               </button>
               <button
                 className={`rounded-md px-3 py-1.5 transition-all duration-200 flex items-center gap-1.5 ${
@@ -492,7 +705,7 @@ function Editor() {
                 onClick={() => setIsPreviewMode(true)}
                 disabled={isPreviewMode}
               >
-                <Eye size={16} /> {t('editor.preview')}
+                <Eye size={16} /> {t("editor.preview")}
               </button>
             </div>
           </div>
@@ -503,14 +716,14 @@ function Editor() {
               <button
                 className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors flex items-center justify-center"
                 onClick={() => insertMarkdown("orderedList")}
-                title={t('editor.orderedList')}
+                title={t("editor.orderedList")}
               >
                 <ListOrdered size={18} />
               </button>
               <button
                 className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors flex items-center justify-center"
                 onClick={() => insertMarkdown("unorderedList")}
-                title={t('editor.unorderedList')}
+                title={t("editor.unorderedList")}
               >
                 <LayoutList size={18} />
               </button>
@@ -524,7 +737,7 @@ function Editor() {
                     insertMarkdown("image");
                   }
                 }}
-                title={t('editor.insertImage')}
+                title={t("editor.insertImage")}
               >
                 <Image size={18} />
                 {imageUploadLoading && (
@@ -537,21 +750,21 @@ function Editor() {
           </div>
 
           {/* Content Area */}
-          <div className="flex-grow overflow-auto scrollbar bg-[var(--background)] relative">
+          <div className=" scrollbar bg-[var(--background)] relative">
             {!isPreviewMode ? (
               <div className="h-full relative">
                 <textarea
                   className="p-5 sm:p-6 w-full bg-transparent text-[var(--foreground)] resize-none focus:outline-none min-h-[370px] h-full text-base sm:text-lg overflow-auto transition-all duration-300"
-                  placeholder={t('editor.contentPlaceholder')}
+                  placeholder={t("editor.contentPlaceholder")}
                   maxLength={15000}
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
                   style={{ fontSize: "18px", lineHeight: "1.7" }}
                   onDragOver={(e) => e.preventDefault()}
                 />
-                <div className="absolute bottom-4 right-4">
+                {/* <div className="absolute bottom-4 right-4">
                   <ClientLayout />
-                </div>
+                </div> */}
               </div>
             ) : (
               <div className="markdown-content p-5 sm:p-6 w-full bg-transparent text-[var(--foreground)] min-h-[370px] h-full text-base sm:text-lg overflow-auto">
@@ -561,7 +774,7 @@ function Editor() {
                   </ReactMarkdown>
                 ) : (
                   <p className="text-[var(--foreground)] opacity-60 italic">
-                    {t('editor.noPreviewContent')}
+                    {t("editor.noPreviewContent")}
                   </p>
                 )}
               </div>
@@ -572,12 +785,12 @@ function Editor() {
           <div className="border-t border-[var(--border-color)] p-3 sm:p-4 bg-[var(--container)] bg-opacity-20">
             <div className="flex items-center gap-2">
               <span className="text-xs sm:text-sm text-[var(--foreground)] font-medium">
-                {t('editor.tags')}
+                {t("editor.tags")}
               </span>
               <div className="relative flex-grow">
                 <input
                   type="text"
-                  placeholder={t('editor.searchTags')}
+                  placeholder={t("editor.searchTags")}
                   value={tagSearchTerm}
                   onChange={(e) => setTagSearchTerm(e.target.value)}
                   className="w-full px-3 py-2 text-xs sm:text-sm rounded-md bg-[var(--background)] text-[var(--foreground)] border border-[var(--border-color)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-color)] transition-all duration-200"
@@ -723,7 +936,9 @@ function Editor() {
               .filter(
                 (tagKey) =>
                   tagSearchTerm === "" ||
-                  translateTag(tagKey).toLowerCase().includes(tagSearchTerm.toLowerCase()),
+                  translateTag(tagKey)
+                    .toLowerCase()
+                    .includes(tagSearchTerm.toLowerCase()),
               )
               .map((tagKey) => (
                 <button
@@ -742,10 +957,12 @@ function Editor() {
               [
                 // List of tag keys
               ].filter((tagKey) =>
-                translateTag(tagKey).toLowerCase().includes(tagSearchTerm.toLowerCase()),
+                translateTag(tagKey)
+                  .toLowerCase()
+                  .includes(tagSearchTerm.toLowerCase()),
               ).length === 0 && (
                 <div className="w-full text-center py-2 text-sm text-[var(--foreground)] italic opacity-70">
-                  {t('editor.noTagsFound')} {tagSearchTerm}
+                  {t("editor.noTagsFound")} {tagSearchTerm}
                 </div>
               )}
           </div>
@@ -753,7 +970,8 @@ function Editor() {
           {/* Footer Section */}
           <div className="flex justify-between items-center p-4 sm:p-5 bg-[var(--container)] border-t border-[var(--border-color)]">
             <div className="text-xs sm:text-sm text-[var(--foreground)] opacity-70">
-              <span className="font-medium">{content.length}</span> / 15000 {t('editor.characters')}
+              <span className="font-medium">{content.length}</span> / 15000{" "}
+              {t("editor.characters")}
             </div>
 
             <button
@@ -768,12 +986,12 @@ function Editor() {
               {saving ? (
                 <>
                   <div className="w-4 h-4 border-2 border-[var(--foreground)] border-t-transparent rounded-full animate-spin"></div>
-                  <span>{t('editor.saving')}</span>
+                  <span>{t("editor.saving")}</span>
                 </>
               ) : (
                 <>
                   <Save size={18} />
-                  <span>{t('editor.save')}</span>
+                  <span>{t("editor.save")}</span>
                 </>
               )}
             </button>
