@@ -72,11 +72,11 @@ export default function SignUpPage() {
         )}
         <div>
           <Image
-            src="/static/images/default8.jpg"
+            src="/static/images/art.jpg"
             alt={t("login.logoAlt")}
             width={1000}
             height={100}
-            className=" h-60 md:h-80 object-cover object-top"
+            className=" h-60 md:h-80 object-cover object-center"
             priority
           />
         </div>
