@@ -68,7 +68,7 @@ export default async function RootLayout({
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta property="og:title" content="Fair-note" />
         <meta property="og:description" content="Capture inspiration, craft ideas, and let your notes shine" />
-        <meta property="og:image" content="/static/images/default4.jpg" />
+        <meta property="og:image" content="static/images/default4.jpg" />
         <meta property="og:type" content="website" />
         {/* <meta property="og:url" content="https://yourdomain.com" /> */}
         <meta name="twitter:card" content="summary_large_image" />
