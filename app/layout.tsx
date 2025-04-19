@@ -86,16 +86,18 @@ export default async function RootLayout({
         <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta property="title" content="Fair-note" />
+        <meta property="description" content="Capture inspiration, craft ideas, and let your notes shine." />
         <meta property="og:title" content="Fair-note" />
         <meta property="og:description" content="Capture inspiration, craft ideas, and let your notes shine." />
-        <meta property="og:image" content="https://fair-note.vercel.app/static/images/profilepic.jpg" />
+        <meta property="og:image" content="https://fair-note.vercel.app/static/images/opengraph.jpg" />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://fair-note.vercel.app/" />
         <meta property="og:site_name" content="Fair-note" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Fair-note" />
         <meta name="twitter:description" content="Capture inspiration, craft ideas, and let your notes shine" />
-        <meta name="twitter:image" content="https://fair-note.vercel.app/static/images/profilepic.jpg" />
+        <meta name="twitter:image" content="https://fair-note.vercel.app/static/images/opengraph.jpg" />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[var(--background)] text-[var(--foreground)] no-scrollbar circularcursor
