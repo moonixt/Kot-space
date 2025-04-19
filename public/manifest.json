@@ -24,9 +24,9 @@
       "type": "image/png"
     },
     {
-      "src": "/icons/icon-144x144.jpg",
+      "src": "/icons/icon-144x144.png",
       "sizes": "144x144",
-      "type": "image/jpg"
+      "type": "image/png"
     },
     {
       "src": "/icons/icon-152x152.png",
@@ -44,9 +44,9 @@
       "type": "image/png"
     },
     {
-      "src": "/icons/icon-512x512.jpg",
+      "src": "/icons/icon-512x512.png",
       "sizes": "512x512",
-      "type": "image/jpg"
+      "type": "image/png"
     },
     {
       "src": "/icons/maskable-icon.png",
