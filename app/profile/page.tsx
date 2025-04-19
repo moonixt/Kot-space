@@ -50,11 +50,11 @@ const Profile = () => {
         setWallpaperUrl(urlData.publicUrl);
       } else {
         // If no wallpaper is set, use the default
-        setWallpaperUrl("/static/images/default5.jpg");
+        setWallpaperUrl("/static/images/art.jpg");
       }
     } catch (error) {
       console.error("Erro ao buscar wallpaper:", error);
-      setWallpaperUrl("/static/images/default5.jpg");
+      setWallpaperUrl("/static/images/art.jpg");
     } finally {
       setWallpaperLoading(false);
     }
