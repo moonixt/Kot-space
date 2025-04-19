@@ -23,7 +23,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Fair-note",
-  description: "Your notes, your way.",
+  description: "Capture inspiration, craft ideas, and let your notes shine.",
   icons: {
     icon: "/favicon.ico",
     shortcut: "/favicon.ico",
@@ -34,6 +34,26 @@ export const metadata: Metadata = {
     capable: true,
     statusBarStyle: "default",
     title: "Fair-note",
+  },
+  openGraph: {
+    title: "Fair-note",
+    description: "Capture inspiration, craft ideas, and let your notes shine.",
+    images: [
+      {
+        url: "https://fair-note.vercel.app/static/images/profilepic.jpg",
+      },
+    ],
+    type: "website",
+    url: "https://fair-note.vercel.app/",
+    siteName: "Fair-note",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Fair-note",
+    description: "Capture inspiration, craft ideas, and let your notes shine",
+    images: [
+      "https://fair-note.vercel.app/static/images/profilepic.jpg",
+    ],
   },
 };
 
