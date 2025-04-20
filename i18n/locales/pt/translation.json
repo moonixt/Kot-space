@@ -78,7 +78,7 @@
     }
   },
   "sidebar": {
-    "myWorkspace": "Espaço de Trabalho",
+    "myWorkspace": "Meu Espaço",
     "newNote": "Nova Nota",
     "searchNotes": "Buscar notas...",
     "untitled": "Sem título",
@@ -116,7 +116,7 @@
     "dateFormat": {
       "today": "Hoje",
       "yesterday": "Ontem",
-      "daysAgo": "{{count}} dias atrás"
+      "daysAgo": "{{count}} dias"
     }
   },
   "footer": {

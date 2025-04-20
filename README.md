@@ -2,7 +2,9 @@
 
 <div align="center">
   
-![FAIR-NOTE (2)](https://github.com/user-attachments/assets/5a4968a9-c026-409e-bf90-f995aa56474b)
+![metalic 512](https://github.com/user-attachments/assets/08bcbfc9-c4a3-4d01-a82f-48dc685fa334)
+
+
 
   <h1 align="center">Fair-note</h1>
 
