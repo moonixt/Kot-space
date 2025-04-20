@@ -50,11 +50,11 @@ const Profile = () => {
         setWallpaperUrl(urlData.publicUrl);
       } else {
         // If no wallpaper is set, use the default
-        setWallpaperUrl("/static/images/art.jpg");
+        setWallpaperUrl("/static/images/dan2.jpg");
       }
     } catch (error) {
       console.error("Erro ao buscar wallpaper:", error);
-      setWallpaperUrl("/static/images/art.jpg");
+      setWallpaperUrl("/static/images/dan2.jpg");
     } finally {
       setWallpaperLoading(false);
     }
@@ -339,11 +339,11 @@ const Profile = () => {
           ) : (
             <Link href="/dashboard">
               <Image
-                src={wallpaperUrl || "/static/images/default3.jpg"}
+                src={wallpaperUrl || "/static/images/dan2.jpg"}
                 alt="Profile"
                 width={4000}
                 height={4000}
-                className="w-600 h-55 sm:h-130 md:h-70 2xl:h-150 object-cover"
+                className="w-600 h-55 sm:h-130 md:h-70 2xl:h-150 object-cover object-center"
                 priority
                 unoptimized={wallpaperUrl?.endsWith(".gif")}
               />
