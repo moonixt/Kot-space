@@ -2,7 +2,10 @@
 
 <div align="center">
   
-![metalic 512](https://github.com/user-attachments/assets/08bcbfc9-c4a3-4d01-a82f-48dc685fa334)
+![rose512](https://github.com/user-attachments/assets/a4ae6f8d-3f99-4bd1-aa8a-684e39e19153)
+
+
+
 
 
 
