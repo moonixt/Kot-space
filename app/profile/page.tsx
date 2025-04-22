@@ -78,11 +78,11 @@ const Profile = () => {
         setAvatarUrl(urlData.publicUrl);
       } else {
         // Default avatar if none is set
-        setAvatarUrl("/static/images/profilepic.jpg");
+        setAvatarUrl("/static/images/profilepic.png");
       }
     } catch (error) {
       console.error("Erro ao buscar avatar:", error);
-      setAvatarUrl("/staticimages/profilepic.jpg");
+      setAvatarUrl("/staticimages/profilepic.png");
     } finally {
       setAvatarLoading(false);
     }

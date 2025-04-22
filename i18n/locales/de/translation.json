@@ -1,7 +1,7 @@
 {
   "pricing": {
     "title": "Unbegrenzter PRO-Zugang",
-    "subtitle": "Schalten Sie das volle Potenzial von Fair-note mit unserem Premium-Plan frei",
+    "subtitle": "Schalten Sie das volle Potenzial von Кот-note mit unserem Premium-Plan frei",
     "plan": {
       "name": "PRO-Plan",
       "mostPopular": "Am beliebtesten",
@@ -32,8 +32,8 @@
     }
   },
   "login": {
-    "title": "Bei Fair-note anmelden",
-    "logoAlt": "Fair-note Logo",
+    "title": "Bei Кот-note anmelden",
+    "logoAlt": "Кот-note Logo",
     "signInWithGoogle": "Mit Google anmelden",
     "loggingInWithGoogle": "Anmeldung...",
     "or": "oder",
@@ -47,8 +47,8 @@
     "resetPassword": "Passwort zurücksetzen"
   },
   "signup": {
-    "title": "Fair-note-Konto erstellen",
-    "logoAlt": "Fair-note Logo",
+    "title": "Кот-note-Konto erstellen",
+    "logoAlt": "Кот-note Logo",
     "email": "E-Mail",
     "password": "Passwort",
     "confirmPassword": "Passwort bestätigen",
@@ -64,7 +64,7 @@
   },
   "resetPassword": {
     "title": "Passwort zurücksetzen",
-    "logoAlt": "Fair-note Logo",
+    "logoAlt": "Кот-note Logo",
     "email": "E-Mail",
     "sending": "Senden...",
     "sendResetEmail": "Reset-E-Mail senden",

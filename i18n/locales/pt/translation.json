@@ -1,7 +1,7 @@
 {
   "login": {
-    "title": "Entrar no Fair-note",
-    "logoAlt": "Logo Fair-note",
+    "title": "Entrar no Кот-note",
+    "logoAlt": "Logo Кот-note",
     "signInWithGoogle": "Entrar com Google",
     "loggingInWithGoogle": "Entrando...",
     "or": "ou",
@@ -15,8 +15,8 @@
     "resetPassword": "Redefinir Senha"
   },
   "signup": {
-    "title": "Criar sua Conta Fair-note",
-    "logoAlt": "Logo Fair-note",
+    "title": "Criar sua Conta Кот-note",
+    "logoAlt": "Logo Кот-note",
     "email": "E-mail",
     "password": "Senha",
     "confirmPassword": "Confirmar Senha",
@@ -34,7 +34,7 @@
   },
   "pricing": {
     "title": "Acesso ilimitado PRO",
-    "subtitle": "Desbloqueie todo o potencial do Fair-note com nosso plano premium",
+    "subtitle": "Desbloqueie todo o potencial do Кот-note com nosso plano premium",
     "plan": {
       "name": "Plano PRO",
       "mostPopular": "Mais Popular",
@@ -66,7 +66,7 @@
   },
   "resetPassword": {
     "title": "Redefinir Senha",
-    "logoAlt": "Logo Fair-note",
+    "logoAlt": "Logo Кот-note",
     "email": "E-mail",
     "sending": "Enviando...",
     "sendResetEmail": "Enviar E-mail de Redefinição",

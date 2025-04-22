@@ -348,7 +348,7 @@ export default function Sidebox() {
                     </span>
                   </Link>
                 ) : (
-                  <span className="text-[var(--foreground)]">Fair-note</span>
+                  <span className="text-[var(--foreground)] pl-2">Кот-note</span>
                 )}
               </h1>
 

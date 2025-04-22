@@ -26,7 +26,7 @@ export default function DashboardPage() {
   const [showTasks, setShowTasks] = useState(() => {
     if (typeof window !== "undefined") {
       const savedShowTasks = localStorage.getItem("showTasks");
-      return savedShowTasks === null ? true : savedShowTasks === "true";
+      return savedShowTasks === null ? false : savedShowTasks === "true";
     }
     return true;
   });
@@ -34,7 +34,7 @@ export default function DashboardPage() {
   const [showCalendar, setShowCalendar] = useState(() => {
     if (typeof window !== "undefined") {
       const savedShowCalendar = localStorage.getItem("showCalendar");
-      return savedShowCalendar === null ? true : savedShowCalendar === "true";
+      return savedShowCalendar === null ? false : savedShowCalendar === "true";
     }
     return true;
   });
