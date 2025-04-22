@@ -72,7 +72,7 @@ export default function SignUpPage() {
         )}
         <div>
           <Image
-            src="/static/images/default7.jpg"
+            src="/static/images/sg.jpg"
             alt={t("login.logoAlt")}
             width={1000}
             height={100}

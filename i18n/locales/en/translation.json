@@ -1,7 +1,7 @@
 {
   "pricing": {
     "title": "Unlimited PRO Access",
-    "subtitle": "Unlock Fair-note's full potential with our premium plan",
+    "subtitle": "Unlock Кот-note's full potential with our premium plan",
     "plan": {
       "name": "PRO Plan",
       "mostPopular": "Most Popular",
@@ -32,8 +32,8 @@
     }
   },
   "login": {
-    "title": "Sign In to Fair-note",
-    "logoAlt": "Logo Fair-note",
+    "title": "Sign In to Кот-note",
+    "logoAlt": "Logo Кот-note",
     "signInWithGoogle": "Sign in with Google",
     "loggingInWithGoogle": "Signing in...",
     "or": "or",
@@ -47,8 +47,8 @@
     "resetPassword": "Reset Password"
   },
   "signup": {
-    "title": "Create your Fair-note Account",
-    "logoAlt": "Logo Fair-note",
+    "title": "Create your Кот-note Account",
+    "logoAlt": "Logo Кот-note",
     "email": "Email",
     "password": "Password",
     "confirmPassword": "Confirm Password",
@@ -66,7 +66,7 @@
   },
   "resetPassword": {
     "title": "Reset Password",
-    "logoAlt": "Logo Fair-note",
+    "logoAlt": "Logo Кот-note",
     "email": "Email",
     "sending": "Sending...",
     "sendResetEmail": "Send Reset Email",

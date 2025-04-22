@@ -60,14 +60,15 @@ export default function ResetPasswordPage() {
       <div className="w-full max-w-md">
         <div>
           <Image
-            src="/crowlyH.png"
+            src="/static/images/dan2.jpg"
             alt={t("resetPassword.logoAlt")}
-            width={212}
-            height={212}
-            className="mx-auto mb-6 rounded-md"
+            width={1000}
+            height={100}
+            className="h-60 md:h-80 object-cover object-center"
+            priority
           />
         </div>
-        <div className="bg-[var(--background)] backdrop-blur-sm rounded-xl overflow-hidden border border-slate-700 shadow-xl">
+        <div className="bg-[var(--background)] backdrop-blur-sm rounded-xl overflow-hidden ">
           <div className="p-8">
             <h1 className="text-2xl font-bold mb-4 text-[var(--foreground)]">
               {t("resetPassword.title")}

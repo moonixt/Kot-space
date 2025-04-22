@@ -1,7 +1,7 @@
 {
   "pricing": {
     "title": "無制限のPROアクセス",
-    "subtitle": "プレミアムプランでFair-noteの全機能を解放しましょう",
+    "subtitle": "プレミアムプランでКот-noteの全機能を解放しましょう",
     "plan": {
       "name": "PROプラン",
       "mostPopular": "最も人気",
@@ -32,8 +32,8 @@
     }
   },
   "login": {
-    "title": "Fair-noteにサインイン",
-    "logoAlt": "Fair-noteロゴ",
+    "title": "Кот-noteにサインイン",
+    "logoAlt": "Кот-noteロゴ",
     "signInWithGoogle": "Googleでサインイン",
     "loggingInWithGoogle": "サインイン中...",
     "or": "または",
@@ -47,8 +47,8 @@
     "resetPassword": "パスワードをリセット"
   },
   "signup": {
-    "title": "Fair-noteアカウントを作成",
-    "logoAlt": "Fair-noteロゴ",
+    "title": "Кот-noteアカウントを作成",
+    "logoAlt": "Кот-noteロゴ",
     "email": "メールアドレス",
     "password": "パスワード",
     "confirmPassword": "パスワード確認",
@@ -64,7 +64,7 @@
   },
   "resetPassword": {
     "title": "パスワードをリセット",
-    "logoAlt": "Fair-noteロゴ",
+    "logoAlt": "Кот-noteロゴ",
     "email": "メールアドレス",
     "sending": "送信中...",
     "sendResetEmail": "リセットメールを送信",
