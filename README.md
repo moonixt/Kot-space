@@ -2,17 +2,17 @@
 
 <div align="center">
   
-![rose512](https://github.com/user-attachments/assets/a4ae6f8d-3f99-4bd1-aa8a-684e39e19153)
+![kotnote512](https://github.com/user-attachments/assets/0d3853e3-f34d-4c57-a388-2ed2677c5939)
 
 
 
 
 
 
-  <h1 align="center">Fair-note</h1>
+  <h1 align="center">Кот-note</h1>
 
   <p align="center">
-    <strong>Fair Note is a sleek, modern Progressive Web App that puts your note-taking experience first. With its intuitive interface, powerful organization features, and cross-device compatibility, it gives you complete control over your digital thoughts while respecting your privacy. Capture, organize, and access your ideas anywhere—elegantly and efficiently.</strong>
+      <strong>Кот-note is an elegant, modern Progressive Web App designed to elevate your note-taking experience. Combining powerful organization with minimalist design, it provides a seamless way to capture, develop, and organize your thoughts across all devices. With features like intuitive markdown support, tag-based organization, and encrypted storage, Кот-note gives you complete control over your digital notes while maintaining exceptional privacy. Transform how you document your ideas—elegantly, efficiently, securely.</strong>
   </p>
 
 [![pt-BR](https://img.shields.io/badge/lang-pt--BR-green.svg)](./docs/README.pt-BR.md)
