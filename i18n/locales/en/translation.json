@@ -132,6 +132,10 @@
     "tables": "Tables",
     "hideTables": "Hide Tables",
     "loading": "Loading...",
+    "toggleComponents": "Show/Hide view",
+    "components": "Show/Hide view",
+
+    
     "emptyState": {
       "title": "No documents found",
       "description": "You haven't created any documents yet. Get started now!",

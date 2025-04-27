@@ -115,7 +115,7 @@ export default function DashboardPage() {
           <Profile />
         </div>
         <div className="p-4">
-          <div className="grid">
+          <div className="grid ">
             {/* New document button */}
             <button
               className="px-5 justify-center my-4 py-2 bg-[var(--text-color)] text-[var(--background)] hover:bg-opacity-60 transition-all hover:shadow-md transition-colors flex items-center gap-2"
