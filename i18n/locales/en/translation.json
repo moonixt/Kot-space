@@ -129,6 +129,8 @@
     "tasks": "Tasks",
     "hideCalendar": "Hide Calendar",
     "calendar": "Calendar",
+    "tables": "Tables",
+    "hideTables": "Hide Tables",
     "loading": "Loading...",
     "emptyState": {
       "title": "No documents found",

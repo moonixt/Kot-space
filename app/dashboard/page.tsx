@@ -11,6 +11,7 @@ import Tasks from "../components/tasks";
 import CalendarView from "../components/CalendarView";
 import { decrypt } from "../components/Encryption";
 import { useTranslation } from "react-i18next";
+import Tables from "../components/tables";
 
 interface Note {
   id: string;
@@ -35,6 +36,15 @@ export default function DashboardPage() {
     if (typeof window !== "undefined") {
       const savedShowCalendar = localStorage.getItem("showCalendar");
       return savedShowCalendar === null ? false : savedShowCalendar === "true";
+    }
+    return true;
+  });
+
+
+  const [showTables, setShowTables] = useState(() => {
+    if (typeof window !== "undefined") {
+      const savedShowTables = localStorage.getItem("showTables");
+      return savedShowTables === null ? false : savedShowTables === "true";
     }
     return true;
   });
@@ -68,11 +78,11 @@ export default function DashboardPage() {
     if (typeof window !== "undefined") {
       const savedShowTasks = localStorage.getItem("showTasks");
       const savedShowCalendar = localStorage.getItem("showCalendar");
+      const savedShowTables = localStorage.getItem("showTables");
 
       setShowTasks(savedShowTasks === null ? true : savedShowTasks === "true");
-      setShowCalendar(
-        savedShowCalendar === null ? true : savedShowCalendar === "true",
-      );
+      setShowCalendar(savedShowCalendar === null ? true : savedShowCalendar === "true",);
+      setShowTables(savedShowTables === null ? true : savedShowTables === "true",);
     }
   }, []);
 
@@ -81,8 +91,9 @@ export default function DashboardPage() {
     if (typeof window !== "undefined") {
       localStorage.setItem("showTasks", showTasks.toString());
       localStorage.setItem("showCalendar", showCalendar.toString());
+      localStorage.setItem("showTables", showTables.toString());
     }
-  }, [showTasks, showCalendar]);
+  }, [showTasks, showCalendar, showTables]);
 
   useEffect(() => {
     fetchNotes();
@@ -97,6 +108,10 @@ export default function DashboardPage() {
 
   const toggleCalendar = () => {
     setShowCalendar(!showCalendar);
+  };
+
+  const toggleTables = () => {
+    setShowTables(!showTables);
   };
 
   return (
@@ -210,9 +225,51 @@ export default function DashboardPage() {
                   </>
                 )}
               </button>
-            </div>
+        
 
-            {/* Tasks component with conditional rendering and animation */}
+          
+          <div id="Tables">
+
+          <button
+                onClick={toggleTables}
+                className="flex items-center gap-1 text-sm px-3 py-1  rounded hover:bg-[var(--container)] transition-colors"
+              >
+                {showTables ? (
+                  <>
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M18 15l-6-6-6 6" />
+                    </svg>
+                    <span>{t("dashboard.hideTables")}</span>
+                  </>
+                ) : (
+                  <>
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M6 9l6 6 6-6" />
+                    </svg>
+                    <span>{t("dashboard.tables")}</span>
+                  </>
+                )}
+              </button>
+              </div>
+               {/* Tasks component with conditional rendering and animation */}
             <div
               className={`transition-all duration-600 ease-in-out overflow-hidden ${
                 showTasks
@@ -241,7 +298,24 @@ export default function DashboardPage() {
               )}
             </div>
           </div>
-
+            {/* Table component rendering here */}
+          <div
+              className={`transition-all  duration-600 ease-in-out overflow-hidden mt-4 ${
+                showTables
+                  ? "max-h-[1000px] opacity-100"
+                  : "max-h-0 opacity-0 mb-0"
+              }`}
+            >
+              {showTables && (
+                <div>
+                  <h2 className="text-xl font-semibold ">
+                    {t("dashboard.tables")}
+                  </h2>
+                  <Tables />
+                </div>
+              )}
+            </div>
+        </div>
           {loading ? (
             <p>{t("dashboard.loading")}</p>
           ) : (
@@ -286,7 +360,7 @@ export default function DashboardPage() {
               ))}
             </div>
           )}
-
+        
           {!loading && notes.length === 0 && (
             <div className="flex flex-col items-center justify-center p-10 border border-dashed border-[var(--foreground)] bg-opacity-10 mt-4">
               <svg
@@ -333,6 +407,7 @@ export default function DashboardPage() {
             </div>
           )}
         </div>
+       
       </div>
     </ProtectedRoute>
   );
