@@ -12,6 +12,14 @@ import CalendarView from "../components/CalendarView";
 import { decrypt } from "../components/Encryption";
 import { useTranslation } from "react-i18next";
 import Tables from "../components/tables";
+import { 
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuCheckboxItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator
+} from "../../components/ui/dropdown-menu";
 
 interface Note {
   id: string;
@@ -39,7 +47,6 @@ export default function DashboardPage() {
     }
     return true;
   });
-
 
   const [showTables, setShowTables] = useState(() => {
     if (typeof window !== "undefined") {
@@ -81,8 +88,8 @@ export default function DashboardPage() {
       const savedShowTables = localStorage.getItem("showTables");
 
       setShowTasks(savedShowTasks === null ? true : savedShowTasks === "true");
-      setShowCalendar(savedShowCalendar === null ? true : savedShowCalendar === "true",);
-      setShowTables(savedShowTables === null ? true : savedShowTables === "true",);
+      setShowCalendar(savedShowCalendar === null ? true : savedShowCalendar === "true");
+      setShowTables(savedShowTables === null ? true : savedShowTables === "true");
     }
   }, []);
 
@@ -101,30 +108,17 @@ export default function DashboardPage() {
 
   const router = useRouter();
 
-  // Toggle functions that update state
-  const toggleTasks = () => {
-    setShowTasks(!showTasks);
-  };
-
-  const toggleCalendar = () => {
-    setShowCalendar(!showCalendar);
-  };
-
-  const toggleTables = () => {
-    setShowTables(!showTables);
-  };
-
   return (
     <ProtectedRoute>
-      <div className="  smooth overflow-y-auto max-h-screen scrollbar">
-        <div className="">
+      <div className="smooth overflow-y-auto max-h-screen scrollbar">
+        <div>
           <Profile />
         </div>
         <div className="p-4">
           <div className="grid">
             {/* New document button */}
             <button
-              className="px-5 justify-center my-4 py-2 bg-[var(--text-color)] text-[var(--background)] hover:bg-opacity-60 transition-all  hover:shadow-md transition-colors flex items-center gap-2"
+              className="px-5 justify-center my-4 py-2 bg-[var(--text-color)] text-[var(--background)] hover:bg-opacity-60 transition-all hover:shadow-md transition-colors flex items-center gap-2"
               onClick={() => router.push("/editor")}
             >
               <span>{t("dashboard.newDocument")}</span>
@@ -142,134 +136,54 @@ export default function DashboardPage() {
                 <line x1="5" y1="12" x2="19" y2="12"></line>
               </svg>
             </button>
-            {/* <h1 className="text-2xl font-bold mb-4">All your work </h1> */}
+            
+            {/* Toggle components dropdown */}
+            <div className="mb-4">
+              <DropdownMenu>
+                <DropdownMenuTrigger className="flex items-center gap-2 px-4 py-2 border border-[var(--text-color)] rounded hover:bg-[var(--container)] transition-colors">
+                  <span>{t("dashboard.toggleComponents")}</span>
+                  <svg
+                    width="16" 
+                    height="16" 
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M6 9l6 6 6-6" />
+                  </svg>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="bg-[var(--background)] border border-[var(--text-color)]">
+                  <DropdownMenuLabel className="text-[var(--text-color)]">{t("dashboard.components")}</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuCheckboxItem 
+                    checked={showTasks}
+                    onCheckedChange={setShowTasks}
+                    className="text-[var(--text-color)]"
+                  >
+                    {t("dashboard.tasks")}
+                  </DropdownMenuCheckboxItem>
+                  <DropdownMenuCheckboxItem 
+                    checked={showCalendar}
+                    onCheckedChange={setShowCalendar}
+                    className="text-[var(--text-color)]"
+                  >
+                    {t("dashboard.calendar")}
+                  </DropdownMenuCheckboxItem>
+                  <DropdownMenuCheckboxItem 
+                    checked={showTables}
+                    onCheckedChange={setShowTables}
+                    className="text-[var(--text-color)]"
+                  >
+                    {t("dashboard.tables")}
+                  </DropdownMenuCheckboxItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
 
-            {/* Toggle buttons container */}
-            <div className="flex space-x-4 ">
-              {/* Toggle tasks button */}
-              <button
-                onClick={toggleTasks}
-                className="flex items-center gap-1 text-sm px-3 py-1  rounded hover:bg-[var(--container)] transition-colors"
-              >
-                {showTasks ? (
-                  <>
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M18 15l-6-6-6 6" />
-                    </svg>
-                    <span>{t("dashboard.hideTasks")}</span>
-                  </>
-                ) : (
-                  <>
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M6 9l6 6 6-6" />
-                    </svg>
-                    <span>{t("dashboard.tasks")}</span>
-                  </>
-                )}
-              </button>
-
-              {/* Calendar toggle button */}
-              <button
-                onClick={toggleCalendar}
-                className="flex items-center gap-1 text-sm px-3 py-1  rounded hover:bg-[var(--container)] transition-colors"
-              >
-                {showCalendar ? (
-                  <>
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M18 15l-6-6-6 6" />
-                    </svg>
-                    <span>{t("dashboard.hideCalendar")}</span>
-                  </>
-                ) : (
-                  <>
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M6 9l6 6 6-6" />
-                    </svg>
-                    <span>{t("dashboard.calendar")}</span>
-                  </>
-                )}
-              </button>
-        
-
-          
-          <div id="Tables">
-
-          <button
-                onClick={toggleTables}
-                className="flex items-center gap-1 text-sm px-3 py-1  rounded hover:bg-[var(--container)] transition-colors"
-              >
-                {showTables ? (
-                  <>
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M18 15l-6-6-6 6" />
-                    </svg>
-                    <span>{t("dashboard.hideTables")}</span>
-                  </>
-                ) : (
-                  <>
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M6 9l6 6 6-6" />
-                    </svg>
-                    <span>{t("dashboard.tables")}</span>
-                  </>
-                )}
-              </button>
-              </div>
-               {/* Tasks component with conditional rendering and animation */}
+            {/* Tasks component with conditional rendering and animation */}
             <div
               className={`transition-all duration-600 ease-in-out overflow-hidden ${
                 showTasks
@@ -298,24 +212,25 @@ export default function DashboardPage() {
               )}
             </div>
           </div>
-            {/* Table component rendering here */}
+          
+          {/* Tables component with conditional rendering */}
           <div
-              className={`transition-all  duration-600 ease-in-out overflow-hidden mt-4 ${
-                showTables
-                  ? "max-h-[1000px] opacity-100"
-                  : "max-h-0 opacity-0 mb-0"
-              }`}
-            >
-              {showTables && (
-                <div>
-                  <h2 className="text-xl font-semibold ">
-                    {t("dashboard.tables")}
-                  </h2>
-                  <Tables />
-                </div>
-              )}
-            </div>
-        </div>
+            className={`transition-all duration-600 ease-in-out overflow-hidden mt-4 ${
+              showTables
+                ? "max-h-[1000px] opacity-100"
+                : "max-h-0 opacity-0 mb-0"
+            }`}
+          >
+            {showTables && (
+              <div>
+                <h2 className="text-xl font-semibold ">
+                  {t("dashboard.tables")}
+                </h2>
+                <Tables />
+              </div>
+            )}
+          </div>
+
           {loading ? (
             <p>{t("dashboard.loading")}</p>
           ) : (
@@ -326,7 +241,7 @@ export default function DashboardPage() {
                   key={note.id}
                   className="block h-full"
                 >
-                  <div className="h-full p-5 border-t-2  border-[var(--text-color)] bg-[var(--container)] bg-opacity-40 hover:bg-opacity-60 transition-all hover:translate-x-1 hover:shadow-md">
+                  <div className="h-full p-5 border-t-2 border-[var(--text-color)] bg-[var(--container)] bg-opacity-40 hover:bg-opacity-60 transition-all hover:translate-x-1 hover:shadow-md">
                     <h2 className="text-lg font-semibold mb-3 line-clamp-1">
                       {note.title
                         ? decrypt(note.title)
@@ -360,7 +275,7 @@ export default function DashboardPage() {
               ))}
             </div>
           )}
-        
+
           {!loading && notes.length === 0 && (
             <div className="flex flex-col items-center justify-center p-10 border border-dashed border-[var(--foreground)] bg-opacity-10 mt-4">
               <svg
@@ -407,7 +322,6 @@ export default function DashboardPage() {
             </div>
           )}
         </div>
-       
       </div>
     </ProtectedRoute>
   );
