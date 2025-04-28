@@ -1,9 +1,9 @@
 "use client"
 
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
-import { cn } from "@/lib/utils";
+
 
 // Tipos de dados para a tabela
 export type CellType = "text" | "number" | "select";
@@ -460,7 +460,7 @@ export default function DataTable({ tableName = "" }: { tableName?: string }) {
     setLoading(true);
     try {
       // First, check if table definition exists, create if not
-      const { data: tableDefinition, error: tableDefError } = await supabase.rpc(
+      const { data: tableDefinition } = await supabase.rpc(
         'get_table_columns',
         { p_table_name: tableName, p_user_id: (await supabase.auth.getUser()).data.user?.id }
       );
@@ -791,10 +791,10 @@ export default function DataTable({ tableName = "" }: { tableName?: string }) {
           .eq("id", row.id);
       }
       
-      setData(prev => ({
+      setData({
         columns: newColumns,
         rows: updatedRows
-      }));
+      });
       
       toast.success("Nova coluna adicionada");
     } catch (error) {
@@ -834,7 +834,7 @@ export default function DataTable({ tableName = "" }: { tableName?: string }) {
           .eq("id", row.id);
       }
       
-      setData(prev => ({
+      setData( ({
         columns: newColumns,
         rows: updatedRows
       }));
@@ -874,7 +874,7 @@ export default function DataTable({ tableName = "" }: { tableName?: string }) {
           .eq("id", row.id);
       }
       
-      setData(prev => ({
+      setData( ({
         columns: newColumns,
         rows: updatedRows
       }));

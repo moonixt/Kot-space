@@ -5,7 +5,6 @@ import Sidebox from "./components/sidebox";
 import { AuthProvider } from "../context/AuthContext";
 import { ThemeProvider } from "../context/ThemeContext";
 import ServiceWorkerRegistration from "./components/ServiceWorkerRegistration";
-import Script from "next/script";
 import TranslationProvider from "../components/TranslationProvider";
 import LanguageLoader from "../components/LanguageLoader";
 import { cookies } from "next/headers";

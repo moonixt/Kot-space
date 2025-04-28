@@ -156,7 +156,25 @@
     "deleteTask": "Delete task",
     "noTasksYet": "No tasks yet. Add your first task!",
     "created": "Created",
-    "due": "Due"
+    "due": "Due",
+    "cancel": "Cancel",
+    "newTask": "New Task",
+    "myTasks": "My Tasks",
+    "whatNeedsToBeDone": "What needs to be done?",
+    "addNotes": "Add notes",
+    "dueDate": "Due date",
+    "editTask": "Edit task",
+    "createFirstTask": "Create first task",
+    "taskTitle": "Task title",
+    "createFirst" : "Create first task",
+    "title": "Title",
+    "description": "Description",
+    "priority": "Priority",
+    "highPriority": "High",
+    "mediumPriority": "Medium",
+    "lowPriority": "Low",
+    "saveChanges": "Save changes"
+
   },
   "calendar": {
     "today": "Today",

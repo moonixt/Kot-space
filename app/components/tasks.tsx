@@ -30,10 +30,12 @@ const Tasks = () => {
   const [newTaskPriority, setNewTaskPriority] = useState<
     "low" | "medium" | "high"
   >("medium");
+  const [isAddingTask, setIsAddingTask] = useState(false);
   const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
   const [editingTaskDate, setEditingTaskDate] = useState<Date | null>(null);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const datePickerRef = useRef<HTMLDivElement>(null);
+  const newTaskInputRef = useRef<HTMLInputElement>(null);
   const { user } = useAuth();
 
   useEffect(() => {
@@ -72,8 +74,7 @@ const Tasks = () => {
     }
   };
 
-  const addTask = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const addTask = async () => {
     if (!newTask.trim()) return;
 
     try {
@@ -91,6 +92,7 @@ const Tasks = () => {
       setNewTaskDueDate(null);
       setNewTaskPriority("medium");
       setNewTaskDescription("");
+      setIsAddingTask(false);
       fetchTasks();
     } catch (error) {
       console.error("Error adding task:", error);
@@ -177,226 +179,221 @@ const Tasks = () => {
     return dueDate < today;
   };
 
+  // Handle key press in the add task input
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      addTask();
+    }
+  };
+
   return (
     <div className="mb-8">
-      {/* Add Task Form */}
-      <form onSubmit={addTask} className="mb-4">
-        <div className="flex flex-col sm:flex-row gap-2">
-          <div className="flex-grow flex gap-2">
-            {/* Calendar button moved before input */}
-            <div className="relative">
-              <button
-                type="button"
-                className="h-full px-3 bg-[var(--container)]  flex items-center justify-center"
-                title={t("tasks.setDueDate")}
-                onClick={() => setEditingTaskId("new")}
-              >
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                  <line x1="16" y1="2" x2="16" y2="6"></line>
-                  <line x1="8" y1="2" x2="8" y2="6"></line>
-                  <line x1="3" y1="10" x2="21" y2="10"></line>
-                </svg>
-                {newTaskDueDate && (
-                  <span className="ml-2 text-xs">
-                    {newTaskDueDate.toLocaleDateString()}
-                  </span>
-                )}
-              </button>
+      {/* Stylish Tasks Header with Add Button */}
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-lg font-medium text-[var(--foreground)]">{t('tasks.myTasks')} </h2>
+        <button
+          onClick={() => {
+            setIsAddingTask(!isAddingTask);
+            setTimeout(() => newTaskInputRef.current?.focus(), 100);
+          }}
+          className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-[var(--foreground)] text-[var(--background)] hover:opacity-90 transition-all text-sm"
+        >
+          {isAddingTask ? (
+            <>{t('tasks.cancel')}</>
+          ) : (
+            <>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              <span>{t('tasks.newTask')}</span>
+            </>
+          )}
+        </button>
+      </div>
 
-              {/* Date picker modal appears below the button */}
-              {editingTaskId === "new" && (
-                <div
-                  ref={datePickerRef}
-                  className="fixed inset-0 z-20 flex items-center justify-center"
-                >
-                  <div
-                    className="absolute inset-0 bg-black bg-opacity-25"
-                    onClick={() => setEditingTaskId(null)}
-                  ></div>
-                  <div className="relative z-30 bg-[var(--background)]  rounded shadow-lg p-4">
-                    <DatePicker
-                      selected={newTaskDueDate}
-                      onChange={(date) => setNewTaskDueDate(date)}
-                      inline
-                      className="bg-[var(--background)] text-[var(--foreground)]"
-                    />
-                    <div className="flex justify-between mt-3">
-                      <button
-                        type="button"
-                        onClick={() => setNewTaskDueDate(null)}
-                        className="text-xs px-3 py-1.5 hover:bg-[var(--container)] rounded"
-                      >
-                        {t("tasks.clear")}
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setEditingTaskId(null)}
-                        className="text-xs px-3 py-1.5 bg-[var(--foreground)] text-[var(--background)] rounded"
-                      >
-                        {t("tasks.done")}
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              )}
+      {/* New Task Input - Appears only when adding */}
+      {isAddingTask && (
+        <div className="mb-5 bg-[var(--container)] rounded-md overflow-hidden shadow-sm transition-all">
+          <div className="p-3">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-5 h-5 border border-[var(--foreground)] rounded flex-shrink-0"></div>
+              <input
+                ref={newTaskInputRef}
+                type="text"
+                value={newTask}
+                maxLength={32}
+                onChange={(e) => setNewTask(e.target.value)}
+                onKeyDown={handleKeyPress}
+                placeholder={t("tasks.whatNeedsToBeDone")}
+                className="flex-grow bg-transparent p-1 focus:outline-none text-[var(--foreground)] font-medium"
+              />
             </div>
 
-            <input
-              type="text"
-              value={newTask}
-              maxLength={32}
-              onChange={(e) => setNewTask(e.target.value)}
-              placeholder={t("tasks.addNew")}
-              className="flex-grow  p-2 bg-[var(--container)]  focus:outline-none focus:ring-1 focus:ring-[var(--foreground)]"
-            />
-          </div>
-          <select
-            value={newTaskPriority}
-            onChange={(e) =>
-              setNewTaskPriority(e.target.value as "low" | "medium" | "high")
-            }
-            className="px-2 py-1 rounded border border-[var(--border-color)] bg-[var(--container)] text-xs"
-          >
-            {priorityOptions.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
-          <button
-            type="submit"
-            className="px-4 py-2 bg-[var(--foreground)] text-[var(--background)] hover:bg-opacity-80 transition-colors"
-          >
-            {t("tasks.add")}
-          </button>
-        </div>
-        <textarea
-          value={newTaskDescription}
-          onChange={(e) => setNewTaskDescription(e.target.value)}
-          placeholder={t("tasks.addDescription", "")}
-          className="w-full mt-2 p-2 bg-[var(--container)] rounded border border-[var(--border-color)] text-sm"
-          rows={2}
-        />
-      </form>
+            <div className="ml-8 flex flex-col gap-3">
+              <textarea
+                value={newTaskDescription}
+                onChange={(e) => setNewTaskDescription(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && e.ctrlKey) {
+                    addTask();
+                  }
+                }}
+                placeholder={t("tasks.addNotes")}
+                className="w-full p-2 bg-[var(--background)]/30 rounded text-sm resize-none focus:outline-none"
+                rows={2}
+              />
 
-      {/* Edit Task Modal */}
-      {editingTask && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-          <div className="bg-[var(--background)] p-6 rounded shadow-lg w-full max-w-md relative">
-            <button
-              className="absolute top-2 right-2"
-              onClick={() => setEditingTask(null)}
-              aria-label="Close"
-            >
-              <svg
-                width="20"
-                height="20"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                viewBox="0 0 24 24"
-              >
-                <line x1="18" y1="6" x2="6" y2="18" />
-                <line x1="6" y1="6" x2="18" y2="18" />
-              </svg>
-            </button>
-            <h3 className="font-bold mb-2">{t("tasks.editTask", "")}</h3>
-            <input
-              className="w-full border mb-2 p-2 rounded"
-              value={editingTask.title}
-              onChange={(e) =>
-                setEditingTask({ ...editingTask, title: e.target.value })
-              }
-              placeholder={t("tasks.addNew")}
+              <div className="flex flex-wrap items-center gap-3">
+                <div className="flex items-center gap-1 text-sm">
+                  <button
+                    type="button"
+                    className="p-1.5 hover:bg-[var(--background)]/50 rounded-md flex items-center gap-1.5"
+                    onClick={() => setEditingTaskId("new")}
+                  >
+                    <svg
+                      width="14"
+                      height="14"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                      <line x1="16" y1="2" x2="16" y2="6"></line>
+                      <line x1="8" y1="2" x2="8" y2="6"></line>
+                      <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                    {newTaskDueDate ? (
+                      <span>{newTaskDueDate.toLocaleDateString()}</span>
+                    ) : (
+                      <span>{t("tasks.dueDate")}</span>
+                    )}
+                  </button>
+
+                  <div className="relative">
+                    <button 
+                      type="button"
+                      className={`p-1.5 hover:bg-[var(--background)]/50 rounded-md flex items-center gap-1.5 ${
+                        newTaskPriority === 'high' ? 'text-red-500' : 
+                        newTaskPriority === 'medium' ? 'text-yellow-500' : 
+                        'text-green-500'
+                      }`}
+                    >
+                      <svg
+                        width="14"
+                        height="14"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="m19 7-7 7-7-7"></path>
+                      </svg>
+                      <select
+                        value={newTaskPriority}
+                        onChange={(e) => setNewTaskPriority(e.target.value as "low" | "medium" | "high")}
+                        className="appearance-none bg-transparent border-none focus:outline-none p-0"
+                      >
+                        {priorityOptions.map((opt) => (
+                          <option key={opt.value} value={opt.value}>
+                            {opt.label}
+                          </option>
+                        ))}
+                      </select>
+                    </button>
+                  </div>
+                </div>
+
+                <div className="ml-auto">
+                  <button
+                    type="button"
+                    onClick={addTask}
+                    disabled={!newTask.trim()}
+                    className={`px-3 py-1.5 rounded-md ${
+                      newTask.trim() 
+                        ? 'bg-[var(--foreground)] text-[var(--background)]' 
+                        : 'bg-[var(--background)]/30 text-[var(--foreground)]/50'
+                    } text-sm font-medium transition-colors`}
+                  >
+                    {t("tasks.add")}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Date picker modal */}
+      {editingTaskId === "new" && (
+        <div
+          ref={datePickerRef}
+          className="fixed inset-0 z-20 flex items-center justify-center"
+        >
+          <div
+            className="absolute inset-0 bg-black bg-opacity-25"
+            onClick={() => setEditingTaskId(null)}
+          ></div>
+          <div className="relative z-30 bg-[var(--background)] rounded-lg shadow-lg p-4">
+            <DatePicker
+              selected={newTaskDueDate}
+              onChange={(date) => setNewTaskDueDate(date)}
+              inline
+              className="bg-[var(--background)] text-[var(--foreground)]"
             />
-            <textarea
-              className="w-full border mb-2 p-2 rounded"
-              value={editingTask.description || ""}
-              onChange={(e) =>
-                setEditingTask({
-                  ...editingTask,
-                  description: e.target.value,
-                })
-              }
-              placeholder={t("tasks.addDescription", "")}
-            />
-            <select
-              value={editingTask.priority || "medium"}
-              onChange={(e) =>
-                setEditingTask({
-                  ...editingTask,
-                  priority: e.target.value as "low" | "medium" | "high",
-                })
-              }
-              className="w-full mb-2 p-2 rounded border border-[var(--border-color)]"
-            >
-              {priorityOptions.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
-            <div className="flex gap-2">
+            <div className="flex justify-between mt-3">
               <button
-                className="bg-blue-500 text-white px-4 py-2 rounded"
-                onClick={() => updateTask(editingTask)}
+                type="button"
+                onClick={() => setNewTaskDueDate(null)}
+                className="text-xs px-3 py-1.5 hover:bg-[var(--container)] rounded"
               >
-                {t("tasks.save", "")}
+                {t("tasks.clear")}
               </button>
               <button
-                className="bg-gray-300 text-black px-4 py-2 rounded"
-                onClick={() => setEditingTask(null)}
+                type="button"
+                onClick={() => setEditingTaskId(null)}
+                className="text-xs px-3 py-1.5 bg-[var(--foreground)] text-[var(--background)] rounded"
               >
-                {t("tasks.cancel", "")}
+                {t("tasks.done")}
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Task List */}
+      {/* Task List - Stylish version */}
       {tasks.length > 0 ? (
-        <div className="grid grid-cols-2 sm:grid-cols-2 gap-3">
+        <div className="space-y-2">
           {tasks.map((task) => (
             <div
               key={task.id}
-              className={`p-3 bg-[var(--container)] hover:bg-opacity-60 transition-all border-l-4 ${
+              className={`p-3 bg-[var(--container)] hover:bg-opacity-90 transition-all rounded-md ${
                 task.is_completed
-                  ? "border-green-500 opacity-60"
-                  : task.due_date && isOverdue(task.due_date)
-                    ? "border-red-500"
-                    : task.priority === "high"
-                      ? "border-red-400"
-                      : task.priority === "low"
-                        ? "border-green-400"
-                        : "border-yellow-400"
+                  ? "opacity-60"
+                  : ""
               }`}
             >
               <div className="flex items-start gap-2">
                 <button
-                  onClick={() =>
-                    toggleTaskCompletion(task.id, task.is_completed)
-                  }
+                  onClick={() => toggleTaskCompletion(task.id, task.is_completed)}
                   className="flex-shrink-0 mt-1"
                 >
                   <div
-                    className={`w-5 h-5 border ${
+                    className={`w-5 h-5 ${
                       task.is_completed
-                        ? "bg-green-500 border-green-500"
-                        : "border-[var(--foreground)]"
-                    } rounded flex items-center justify-center`}
+                        ? "bg-[var(--foreground)] border-[var(--foreground)]"
+                        : task.priority === "high"
+                          ? "border-red-400"
+                          : task.priority === "low"
+                            ? "border-green-400"
+                            : "border-yellow-400"
+                    } border rounded-full flex items-center justify-center transition-colors`}
                   >
                     {task.is_completed && (
                       <svg
@@ -404,7 +401,7 @@ const Tasks = () => {
                         height="12"
                         viewBox="0 0 24 24"
                         fill="none"
-                        stroke="currentColor"
+                        stroke="var(--background)"
                         strokeWidth="3"
                         strokeLinecap="round"
                         strokeLinejoin="round"
@@ -421,52 +418,60 @@ const Tasks = () => {
                     }
                   >
                     <span
-                      className="font-semibold cursor-pointer hover:underline"
+                      className="font-medium cursor-pointer hover:underline"
                       onClick={() => setEditingTask(task)}
                     >
                       {task.title}
                     </span>
                   </span>
                   {task.description && (
-                    <div className="text-xs mt-1 text-[var(--foreground)] opacity-80">
+                    <div className="text-xs mt-1.5 text-[var(--foreground)] opacity-80">
                       {task.description}
                     </div>
                   )}
-                  <div className="flex flex-wrap gap-x-3 text-xs text-[var(--foreground)] opacity-50 mt-1">
-                    <span>
-                      {t("tasks.created")}: {formatDate(task.created_at)}
-                    </span>
+                  <div className="flex flex-wrap items-center gap-2 text-xs text-[var(--foreground)] opacity-60 mt-2">
                     {task.due_date && (
                       <span
-                        className={
+                        className={`flex items-center gap-1 ${
                           isOverdue(task.due_date) && !task.is_completed
                             ? "text-red-500 opacity-100"
                             : ""
-                        }
+                        }`}
                       >
-                        {t("tasks.due")}: {formatDate(task.due_date)}
+                        <svg
+                          width="12"
+                          height="12"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                          <line x1="16" y1="2" x2="16" y2="6"></line>
+                          <line x1="8" y1="2" x2="8" y2="6"></line>
+                          <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                        {formatDate(task.due_date)}
                       </span>
                     )}
                     {task.priority && (
                       <span
-                        className={`ml-2 px-2 py-0.5 rounded text-xs ${
+                        className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs ${
                           task.priority === "high"
-                            ? "bg-red-200 text-red-800"
+                            ? "bg-red-100 text-red-700"
                             : task.priority === "low"
-                              ? "bg-green-200 text-green-800"
-                              : "bg-yellow-200 text-yellow-800"
+                              ? "bg-green-100 text-green-700"
+                              : "bg-yellow-100 text-yellow-700"
                         }`}
                       >
-                        {
-                          priorityOptions.find(
-                            (opt) => opt.value === task.priority,
-                          )?.label
-                        }
+                        {task.priority === "high" ? "High" : task.priority === "low" ? "Low" : "Medium"}
                       </span>
                     )}
                   </div>
                 </div>
-                <div className="flex gap-1">
+                <div className="flex gap-1.5">
                   <div className="relative">
                     <button
                       onClick={() => {
@@ -475,7 +480,7 @@ const Tasks = () => {
                           task.due_date ? new Date(task.due_date) : null,
                         );
                       }}
-                      className="p-1 text-[var(--foreground)] opacity-40 hover:opacity-100"
+                      className="p-1.5 text-[var(--foreground)] opacity-40 hover:opacity-100 hover:bg-[var(--background)]/30 rounded"
                       title={t("tasks.setDueDate")}
                     >
                       <svg
@@ -505,28 +510,63 @@ const Tasks = () => {
                     {editingTaskId === task.id && (
                       <div
                         ref={datePickerRef}
-                        className="absolute z-10 top-full right-0 mt-1 bg-[var(--background)]  rounded shadow-lg p-2"
+                        className="fixed inset-0 z-20 flex items-center justify-center"
                       >
-                        <DatePicker
-                          selected={editingTaskDate}
-                          onChange={(date) => updateTaskDueDate(task.id, date)}
-                          inline
-                          className="bg-[var(--background)] text-[var(--foreground)]"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => updateTaskDueDate(task.id, null)}
-                          className="w-full text-xs text-left px-2 py-1 mt-1 hover:bg-[var(--container)]"
-                        >
-                          {t("tasks.clear")}
-                        </button>
+                        <div
+                          className="absolute inset-0 bg-black bg-opacity-25"
+                          onClick={() => setEditingTaskId(null)}
+                        ></div>
+                        <div className="relative z-30 bg-[var(--background)] rounded-lg shadow-lg p-4">
+                          <DatePicker
+                            selected={editingTaskDate}
+                            onChange={(date) => updateTaskDueDate(task.id, date)}
+                            inline
+                            className="bg-[var(--background)] text-[var(--foreground)]"
+                          />
+                          <div className="flex justify-between mt-3">
+                            <button
+                              type="button"
+                              onClick={() => updateTaskDueDate(task.id, null)}
+                              className="text-xs px-3 py-1.5 hover:bg-[var(--container)] rounded"
+                            >
+                              {t("tasks.clear")}
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setEditingTaskId(null)}
+                              className="text-xs px-3 py-1.5 bg-[var(--foreground)] text-[var(--background)] rounded"
+                            >
+                              {t("tasks.done")}
+                            </button>
+                          </div>
+                        </div>
                       </div>
                     )}
                   </div>
 
                   <button
+                    onClick={() => setEditingTask(task)}
+                    className="p-1.5 text-[var(--foreground)] opacity-40 hover:opacity-100 hover:bg-[var(--background)]/30 rounded"
+                    title={t("tasks.editTask")}
+                  >
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none" 
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M12 20h9"></path>
+                      <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                    </svg>
+                  </button>
+
+                  <button
                     onClick={() => deleteTask(task.id)}
-                    className="p-1 text-red-500 hover:text-red-700"
+                    className="p-1.5 text-[var(--foreground)] opacity-40 hover:opacity-100 hover:bg-red-500/20 hover:text-red-500 rounded"
                     title={t("tasks.deleteTask")}
                   >
                     <svg
@@ -550,8 +590,157 @@ const Tasks = () => {
           ))}
         </div>
       ) : (
-        <div className="p-4 border border-dashed border-[var(--border-color)] text-center">
-          <p className="text-sm opacity-70">{t("tasks.noTasksYet")}</p>
+        <div className="p-6 border border-dashed border-[var(--border-color)] text-center rounded-lg">
+          <div className="flex flex-col items-center">
+            <svg 
+              width="32" 
+              height="32" 
+              viewBox="0 0 24 24" 
+              fill="none" 
+              stroke="currentColor" 
+              strokeWidth="1" 
+              strokeLinecap="round" 
+              strokeLinejoin="round" 
+              className="mb-3 opacity-40"
+            >
+              <path d="M12 22a10 10 0 1 1 0-20 10 10 0 0 1 0 20z"></path>
+              <path d="M15 9a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"></path>
+              <path d="M12 13.5v3.5"></path>
+            </svg>
+            <p className="text-sm opacity-70 mb-2">{t("tasks.noTasksYet")}</p>
+            <button 
+              onClick={() => {
+                setIsAddingTask(true);
+                setTimeout(() => newTaskInputRef.current?.focus(), 100);
+              }}
+              className="text-xs px-3 py-1 bg-[var(--foreground)] text-[var(--background)] rounded-md hover:opacity-90"
+            >
+              {t("tasks.createFirst")}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Task Modal - Styled version */}
+      {editingTask && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 backdrop-blur-sm">
+          <div className="bg-[var(--background)] p-6 rounded-lg shadow-xl w-full max-w-md relative">
+            <button
+              className="absolute top-3 right-3 p-2 hover:bg-[var(--container)] rounded-full transition-colors"
+              onClick={() => setEditingTask(null)}
+              aria-label="Close"
+            >
+              <svg
+                width="16"
+                height="16"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                viewBox="0 0 24 24"
+              >
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+
+            <h3 className="font-semibold text-lg mb-4">{t("tasks.editTask")}</h3>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block text-xs mb-1 opacity-70">{t("tasks.title")}</label>
+                <input
+                  className="w-full bg-[var(--container)] p-2.5 rounded-md"
+                  value={editingTask.title}
+                  onChange={(e) =>
+                    setEditingTask({ ...editingTask, title: e.target.value })
+                  }
+                  placeholder={t("tasks.taskTitle")}
+                />
+              </div>
+              
+              <div>
+                <label className="block text-xs mb-1 opacity-70">{t("tasks.description")}</label>
+                <textarea
+                  className="w-full bg-[var(--container)] p-2.5 rounded-md min-h-[80px]"
+                  value={editingTask.description || ""}
+                  onChange={(e) =>
+                    setEditingTask({
+                      ...editingTask,
+                      description: e.target.value,
+                    })
+                  }
+                  placeholder={t("tasks.addNotes")}
+                />
+              </div>
+              
+              <div>
+                <label className="block text-xs mb-1 opacity-70">{t("tasks.priority")}</label>
+                <div className="flex gap-3">
+                  {["high", "medium", "low"].map((priority) => (
+                    <label 
+                      key={priority}
+                      className={`flex items-center gap-2 p-2.5 bg-[var(--container)] rounded-md flex-1 cursor-pointer border ${
+                        editingTask.priority === priority 
+                          ? priority === "high" 
+                            ? "border-red-400" 
+                            : priority === "medium"
+                              ? "border-yellow-400"
+                              : "border-green-400"
+                          : "border-transparent"
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="priority"
+                        checked={editingTask.priority === priority}
+                        onChange={() => 
+                          setEditingTask({
+                            ...editingTask, 
+                            priority: priority as "low" | "medium" | "high"
+                          })
+                        }
+                        className="sr-only"
+                      />
+                      <span 
+                        className={`w-3 h-3 rounded-full ${
+                          priority === "high" 
+                            ? "bg-red-500" 
+                            : priority === "medium" 
+                              ? "bg-yellow-500" 
+                              : "bg-green-500"
+                        }`}
+                      ></span>
+                      <span className="text-sm">
+                        {priority === "high" 
+                          ? t("tasks.highPriority") 
+                          : priority === "medium" 
+                            ? t("tasks.mediumPriority")
+                            : t("tasks.lowPriority")
+                        }
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-2 mt-6">
+              <button
+                className="px-4 py-2 bg-[var(--container)] hover:bg-[var(--container-darker)] rounded-md text-sm"
+                onClick={() => setEditingTask(null)}
+              >
+                {t("tasks.cancel")}
+              </button>
+              <button
+                className="px-4 py-2 bg-[var(--foreground)] text-[var(--background)] rounded-md text-sm font-medium"
+                onClick={() => updateTask(editingTask)}
+              >
+                {t("tasks.saveChanges")}
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

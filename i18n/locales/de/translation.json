@@ -127,7 +127,12 @@
     "tasks": "Aufgaben",
     "hideCalendar": "Kalender ausblenden",
     "calendar": "Kalender",
-    "loading": "Lädt...",
+    "tables": "Tabellen",
+    "hideTables": "Tabellen ausblenden",
+    "openTablesPage": "Tabellen öffnen",
+    "toggleComponents": "Ansicht ein-/ausblenden",
+    "components": "Ansicht ein-/ausblenden",
+    "loading": "Wird geladen...",
     "emptyState": {
       "title": "Keine Dokumente gefunden",
       "description": "Sie haben noch keine Dokumente erstellt. Legen Sie jetzt los!",
@@ -142,12 +147,32 @@
     "addNew": "Neue Aufgabe hinzufügen",
     "add": "Hinzufügen",
     "clear": "Löschen",
-    "done": "Erledigt",
-    "setDueDate": "Fälligkeitsdatum setzen",
+    "done": "Fertig",
+    "setDueDate": "Fälligkeitsdatum festlegen",
     "deleteTask": "Aufgabe löschen",
-    "noTasksYet": "Noch keine Aufgaben. Fügen Sie Ihre erste Aufgabe hinzu!",
+    "noTasksYet": "Noch keine Aufgaben. Füge deine erste Aufgabe hinzu!",
     "created": "Erstellt",
-    "due": "Fällig"
+    "due": "Fällig",
+    "myTasks": "Meine Aufgaben",
+    "newTask": "Neue Aufgabe",
+    "whatNeedsToBeDone": "Was muss erledigt werden?",
+    "addNotes": "Notizen hinzufügen...",
+    "dueDate": "Fälligkeitsdatum",
+    "editTask": "Aufgabe bearbeiten",
+    "saveChanges": "Änderungen speichern",
+    "title": "Titel",
+    "description": "Beschreibung",
+    "priority": "Priorität",
+    "highPriority": "Hohe Priorität",
+    "mediumPriority": "Mittlere Priorität",
+    "lowPriority": "Niedrige Priorität",
+    "taskTitle": "Aufgabentitel",
+    "createFirst": "Erste Aufgabe erstellen",
+    "cancel": "Abbrechen"
+  },
+  "tables": {
+    "title": "Tabellen",
+    "back": "Zurück zum Dashboard"
   },
   "calendar": {
     "today": "Heute",
@@ -165,5 +190,8 @@
     "eventDescription": "Ereignisbeschreibung (optional)",
     "events": "Ereignisse:",
     "noEvents": "Keine Ereignisse für diesen Tag. Fügen Sie oben eines hinzu."
+  },
+  "editor": {
+    "backToDashboard": "Zurück zum Dashboard"
   }
 }

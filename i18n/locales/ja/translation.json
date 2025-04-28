@@ -122,11 +122,16 @@
   },
   "dashboard": {
     "mainTitle": "ダッシュボード",
-    "newDocument": "新しいドキュメント",
-    "hideTasks": "タスクを非表示",
+    "newDocument": "新規ドキュメント",
+    "hideTasks": "タスクを隠す",
     "tasks": "タスク",
-    "hideCalendar": "カレンダーを非表示",
+    "hideCalendar": "カレンダーを隠す",
     "calendar": "カレンダー",
+    "tables": "テーブル",
+    "hideTables": "テーブルを隠す",
+    "openTablesPage": "テーブルを開く",
+    "toggleComponents": "表示/非表示を切り替え",
+    "components": "表示/非表示を切り替え",
     "loading": "読み込み中...",
     "emptyState": {
       "title": "ドキュメントが見つかりません",
@@ -144,10 +149,26 @@
     "clear": "クリア",
     "done": "完了",
     "setDueDate": "期日を設定",
-    "deleteTask": "タスクを削除",
-    "noTasksYet": "まだタスクがありません。最初のタスクを追加しましょう！",
+    "deleteTask": "タスク削除",
+    "noTasksYet": "タスクはまだありません。最初のタスクを追加しましょう！",
     "created": "作成日",
-    "due": "期日"
+    "due": "期日",
+    "myTasks": "マイタスク",
+    "newTask": "新規タスク",
+    "whatNeedsToBeDone": "何をする必要がありますか？",
+    "addNotes": "メモを追加...",
+    "dueDate": "期限",
+    "editTask": "タスクを編集",
+    "saveChanges": "変更を保存",
+    "title": "タイトル",
+    "description": "説明",
+    "priority": "優先度",
+    "highPriority": "高優先度",
+    "mediumPriority": "中優先度",
+    "lowPriority": "低優先度",
+    "taskTitle": "タスクのタイトル",
+    "createFirst": "最初のタスクを作成",
+    "cancel": "キャンセル"
   },
   "calendar": {
     "today": "今日",
@@ -165,6 +186,10 @@
     "eventDescription": "イベント説明（任意）",
     "events": "イベント:",
     "noEvents": "この日のイベントはありません。上で追加してください。"
+  },
+  "tables": {
+    "title": "テーブル",
+    "back": "ダッシュボードに戻る"
   },
   "editor": {
     "titlePlaceholder": "ノートのトピック...",
