@@ -5,7 +5,10 @@ import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
 import Image from "next/image";
 import { supabase } from "../../lib/supabase";
 import { useAuth } from "../../context/AuthContext";
+import Clock from "../components/clock";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { decrypt } from "../components/Encryption";
 
 const Profile = () => {
   const [wallpaperUrl, setWallpaperUrl] = useState<string | null>(null);
@@ -20,12 +23,20 @@ const Profile = () => {
   const { user } = useAuth();
   const [bio, setBio] = useState<string | null>(null);
   const [bioLoading, setBioLoading] = useState(true);
+  const [notes, setNotes] = useState<number | null>(null);
+  const router = useRouter();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [showSearchResults, setShowSearchResults] = useState(false);
+  const searchResultsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (user) {
       getUserWallpaper();
       getUserPhoto();
       getUserBio();
+      getUserNotes();
     }
   }, [user]);
 
@@ -109,6 +120,22 @@ const Profile = () => {
       setBio('"You are what you think"');
     } finally {
       setBioLoading(false);
+    }
+  };
+
+  const getUserNotes = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("notes")
+        .select("*", { count: "exact" })
+        .eq("user_id", user?.id);
+
+      if (error) throw error;
+
+      setNotes(data.length);
+    } catch (error) {
+      console.error("Error fetching notes:", error);
+      setNotes(0);
     }
   };
 
@@ -324,6 +351,96 @@ const Profile = () => {
     }
   };
 
+  // Função para buscar notas similar à do sidebar
+  const searchNotes = async (term: string) => {
+    if (!user || term.trim().length < 1) {
+      setSearchResults([]);
+      return;
+    }
+
+    setIsSearching(true);
+    try {
+      const { data, error } = await supabase
+        .from("notes")
+        .select("id, title, content, created_at")
+        .eq("user_id", user.id)
+        .or(`title.ilike.%${term}%,content.ilike.%${term}%`)
+        .order("created_at", { ascending: false })
+        .limit(5);
+
+      if (error) throw error;
+
+      // Descriptografar as notas
+      const decryptedNotes = (data || []).map((note) => ({
+        ...note,
+        title: decrypt(note.title),
+        content: note.content ? decrypt(note.content) : undefined,
+      }));
+
+      setSearchResults(decryptedNotes);
+      setShowSearchResults(true);
+    } catch (error) {
+      console.error("Erro ao buscar notas:", error);
+      setSearchResults([]);
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  // Debounce para busca
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (searchTerm) {
+        searchNotes(searchTerm);
+      } else {
+        setSearchResults([]);
+        setShowSearchResults(false);
+      }
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
+
+  // Fechar dropdown ao clicar fora
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        searchResultsRef.current &&
+        !searchResultsRef.current.contains(event.target as Node)
+      ) {
+        setShowSearchResults(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  // Função auxiliar para exibir excertos de conteúdo
+  const getExcerpt = (content: string | undefined, maxLength = 60) => {
+    if (!content) return "";
+    if (content.length <= maxLength) return content;
+    return content.substring(0, maxLength) + "...";
+  };
+
+  // Formatar data similar ao sidebar
+  function formatDate(dateString: string) {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffTime = Math.abs(now.getTime() - date.getTime());
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+    if (diffDays === 0) {
+      return "Hoje";
+    } else if (diffDays === 1) {
+      return "Ontem";
+    } else if (diffDays < 7) {
+      return `${diffDays} dias atrás`;
+    } else {
+      return date.toLocaleDateString();
+    }
+  }
+
   // Handler para seleção de arquivo
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return;
@@ -331,7 +448,7 @@ const Profile = () => {
   };
 
   return (
-    <div className="flex justify-center">
+    <div className="flex justify-center ">
       <div className="bg-[var(--background)] text-[var(--background]">
         <div className="relative">
           {wallpaperLoading ? (
@@ -343,17 +460,169 @@ const Profile = () => {
                 alt="Profile"
                 width={4000}
                 height={4000}
-                className="w-600 h-55 sm:h-130 md:h-70 2xl:h-150 object-cover object-center"
+                className="w-640 h-80 sm:h-130 md:h-70 2xl:h-150 object-cover object-center"
                 priority
                 unoptimized={wallpaperUrl?.endsWith(".gif")}
               />
             </Link>
           )}
 
-          {/* Botão de edição de wallpaper */}
+          <div className="absolute top-0 ">
+            <div id="clock" className="bg-black/80 backdrop-blur-sm">
+              <Clock />
+            </div>
+          </div>
+
+          {/* Informações do usuário e data */}
+          <div className="absolute bottom-5 right-2 sm:right-auto sm:left-2 flex flex-col gap-1">
+            <div className="bg-black/70 backdrop-blur-sm text-white text-sm px-3 py-1.5 rounded-md shadow-sm">
+              {new Date().toLocaleDateString(undefined, {
+                weekday: "short",
+                day: "numeric",
+                month: "short",
+                year: "numeric",
+              })}
+            </div>
+
+            {user && (
+              <div className="bg-black/70 backdrop-blur-sm text-white text-sm px-3 py-1.5 rounded-md shadow-sm flex items-center gap-2">
+                <span>{user?.email?.split("@")[0] || "Guest"}</span>
+                <span className="h-4 w-px bg-[var(--foreground)]/30"></span>
+                <span className="flex items-center gap-1">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                  </svg>
+                  {notes || 0}
+                </span>
+              </div>
+            )}
+          </div>
+
+          {/* Pesquisa rápida */}
+          <div
+            className="absolute top-24 left-1/2 transform -translate-x-1/2 z-5 "
+            ref={searchResultsRef}
+          >
+            <div className="flex items-center bg-black/70 backdrop-blur-sm rounded-md shadow-sm p-1">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="ml-2 text-white"
+              >
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              <input
+                type="text"
+                placeholder="Pesquisar notas..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="bg-transparent text-white px-2 py-1.5 w-48 focus:outline-none text-sm"
+                onFocus={() => {
+                  if (searchTerm && searchResults.length > 0)
+                    setShowSearchResults(true);
+                }}
+              />
+              {isSearching && (
+                <div className="mr-2">
+                  <div className="w-3 h-3 border-2 border-t-transparent border-white rounded-full animate-spin"></div>
+                </div>
+              )}
+            </div>
+
+            {/* Dropdown de resultados com z-index alto */}
+            {showSearchResults && (
+              <div className="absolute left-0 right-0 mt-1 bg-black/50 backdrop-blur-sm rounded-md shadow-xl max-h-[300px] overflow-y-auto  border border-white/10">
+                {searchResults.length > 0 ? (
+                  searchResults.map((note) => (
+                    <button
+                      key={note.id}
+                      onClick={() => {
+                        setShowSearchResults(false);
+                        setSearchTerm("");
+                        router.push(`/notes/${note.id}`);
+                      }}
+                      className="flex flex-col w-full text-left p-3 hover:bg-white/10 transition-colors border-b border-white/10 last:border-0"
+                    >
+                      <div className="flex items-center gap-2">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="14"
+                          height="14"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          className="text-white"
+                        >
+                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                          <polyline points="14 2 14 8 20 8"></polyline>
+                        </svg>
+                        <p className="text-white text-sm font-medium truncate flex-1">
+                          {note.title || "Sem título"}
+                        </p>
+                      </div>
+
+                      {note.content && (
+                        <p className="text-white/70 text-xs mt-1 line-clamp-2 pl-6">
+                          {getExcerpt(note.content, 80)}
+                        </p>
+                      )}
+
+                      <div className="flex items-center text-white/60 text-xs mt-1.5 pl-6">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="12"
+                          height="12"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          className="mr-1"
+                        >
+                          <circle cx="12" cy="12" r="10"></circle>
+                          <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        {formatDate(note.created_at)}
+                      </div>
+                    </button>
+                  ))
+                ) : (
+                  <div className="p-4 text-center text-white/70 text-sm">
+                    {searchTerm.length > 0
+                      ? "Nenhuma nota encontrada"
+                      : "Digite para pesquisar"}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
           <button
             onClick={() => setShowWallpaperModal(true)}
-            className="absolute top-2 left-2 bg-[var(--background)] text-[var(--foreground)] p-2 rounded-full opacity-80 hover:opacity-100"
+            className="absolute top-2 left-2 bg-[var(--background)] text-[var(--foreground)] p-2 rounded-full opacity-80 hover:opacity-100 shadow-sm"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -382,7 +651,7 @@ const Profile = () => {
                 className="cursor-pointer hover:opacity-86 transition-opacity duration-700"
               >
                 <AvatarImage
-                  className="h-[80px] w-[80px] rounded-full object-cover border-1 border-[var(--foreground)]"
+                  className="h-[110px] w-[110px] rounded-full object-cover object-top border-1 border-black"
                   src={avatar_url || ""}
                   alt="Profile avatar"
                 />

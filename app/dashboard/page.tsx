@@ -11,6 +11,15 @@ import Tasks from "../components/tasks";
 import CalendarView from "../components/CalendarView";
 import { decrypt } from "../components/Encryption";
 import { useTranslation } from "react-i18next";
+import Tables from "../components/tables";
+import { 
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuCheckboxItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator
+} from "../../components/ui/dropdown-menu";
 
 interface Note {
   id: string;
@@ -35,6 +44,14 @@ export default function DashboardPage() {
     if (typeof window !== "undefined") {
       const savedShowCalendar = localStorage.getItem("showCalendar");
       return savedShowCalendar === null ? false : savedShowCalendar === "true";
+    }
+    return true;
+  });
+
+  const [showTables, setShowTables] = useState(() => {
+    if (typeof window !== "undefined") {
+      const savedShowTables = localStorage.getItem("showTables");
+      return savedShowTables === null ? false : savedShowTables === "true";
     }
     return true;
   });
@@ -68,11 +85,11 @@ export default function DashboardPage() {
     if (typeof window !== "undefined") {
       const savedShowTasks = localStorage.getItem("showTasks");
       const savedShowCalendar = localStorage.getItem("showCalendar");
+      const savedShowTables = localStorage.getItem("showTables");
 
       setShowTasks(savedShowTasks === null ? true : savedShowTasks === "true");
-      setShowCalendar(
-        savedShowCalendar === null ? true : savedShowCalendar === "true",
-      );
+      setShowCalendar(savedShowCalendar === null ? true : savedShowCalendar === "true");
+      setShowTables(savedShowTables === null ? true : savedShowTables === "true");
     }
   }, []);
 
@@ -81,8 +98,9 @@ export default function DashboardPage() {
     if (typeof window !== "undefined") {
       localStorage.setItem("showTasks", showTasks.toString());
       localStorage.setItem("showCalendar", showCalendar.toString());
+      localStorage.setItem("showTables", showTables.toString());
     }
-  }, [showTasks, showCalendar]);
+  }, [showTasks, showCalendar, showTables]);
 
   useEffect(() => {
     fetchNotes();
@@ -90,26 +108,17 @@ export default function DashboardPage() {
 
   const router = useRouter();
 
-  // Toggle functions that update state
-  const toggleTasks = () => {
-    setShowTasks(!showTasks);
-  };
-
-  const toggleCalendar = () => {
-    setShowCalendar(!showCalendar);
-  };
-
   return (
     <ProtectedRoute>
-      <div className="  smooth overflow-y-auto max-h-screen scrollbar">
-        <div className="">
+      <div className="smooth overflow-y-auto max-h-screen scrollbar">
+        <div>
           <Profile />
         </div>
-        <div className="p-4">
-          <div className="grid">
+        <div className="p-4  max-w-7xl mx-auto ">
+          <div className="flex-1  gap-4">
             {/* New document button */}
             <button
-              className="px-5 justify-center my-4 py-2 bg-[var(--text-color)] text-[var(--background)] hover:bg-opacity-60 transition-all  hover:shadow-md transition-colors flex items-center gap-2"
+              className="px-2 justify-center my-2 py-2 bg-[var(--text-color)] text-[var(--background)] hover:bg-opacity-60 transition-all hover:shadow-md transition-colors flex items-center gap-2"
               onClick={() => router.push("/editor")}
             >
               <span>{t("dashboard.newDocument")}</span>
@@ -127,89 +136,51 @@ export default function DashboardPage() {
                 <line x1="5" y1="12" x2="19" y2="12"></line>
               </svg>
             </button>
-            {/* <h1 className="text-2xl font-bold mb-4">All your work </h1> */}
-
-            {/* Toggle buttons container */}
-            <div className="flex space-x-4 ">
-              {/* Toggle tasks button */}
-              <button
-                onClick={toggleTasks}
-                className="flex items-center gap-1 text-sm px-3 py-1  rounded hover:bg-[var(--container)] transition-colors"
-              >
-                {showTasks ? (
-                  <>
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M18 15l-6-6-6 6" />
-                    </svg>
-                    <span>{t("dashboard.hideTasks")}</span>
-                  </>
-                ) : (
-                  <>
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M6 9l6 6 6-6" />
-                    </svg>
-                    <span>{t("dashboard.tasks")}</span>
-                  </>
-                )}
-              </button>
-
-              {/* Calendar toggle button */}
-              <button
-                onClick={toggleCalendar}
-                className="flex items-center gap-1 text-sm px-3 py-1  rounded hover:bg-[var(--container)] transition-colors"
-              >
-                {showCalendar ? (
-                  <>
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M18 15l-6-6-6 6" />
-                    </svg>
-                    <span>{t("dashboard.hideCalendar")}</span>
-                  </>
-                ) : (
-                  <>
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M6 9l6 6 6-6" />
-                    </svg>
-                    <span>{t("dashboard.calendar")}</span>
-                  </>
-                )}
-              </button>
+            
+            {/* Toggle components dropdown */}
+            <div className="mb-4 ">
+              <DropdownMenu>
+                <DropdownMenuTrigger className="flex items-center gap-2 px-4 py-2 border border-[var(--text-color)] rounded hover:bg-[var(--container)] transition-colors">
+                  <span>{t("dashboard.toggleComponents")}</span>
+                  <svg
+                    width="16" 
+                    height="16" 
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M6 9l6 6 6-6" />
+                  </svg>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="bg-[var(--background)] border border-[var(--text-color)]">
+                  <DropdownMenuLabel className="text-[var(--text-color)]">{t("dashboard.components")}</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuCheckboxItem 
+                    checked={showTasks}
+                    onCheckedChange={setShowTasks}
+                    className="text-[var(--text-color)]"
+                  >
+                    {t("dashboard.tasks")}
+                  </DropdownMenuCheckboxItem>
+                  <DropdownMenuCheckboxItem 
+                    checked={showCalendar}
+                    onCheckedChange={setShowCalendar}
+                    className="text-[var(--text-color)]"
+                  >
+                    {t("dashboard.calendar")}
+                  </DropdownMenuCheckboxItem>
+                  <DropdownMenuCheckboxItem 
+                    checked={showTables}
+                    onCheckedChange={setShowTables}
+                    className="text-[var(--text-color)]"
+                  >
+                    {t("dashboard.tables")}
+                  </DropdownMenuCheckboxItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
 
             {/* Tasks component with conditional rendering and animation */}
@@ -241,6 +212,21 @@ export default function DashboardPage() {
               )}
             </div>
           </div>
+          
+          {/* Tables component with conditional rendering */}
+          <div
+            className={`transition-all duration-600 ease-in-out mt-4 ${
+              showTables
+                ? "opacity-100 "
+                : "max-h-0 opacity-0 mb-0"
+            }`}
+          >
+            {showTables && (
+              <div className="w-[380px] sm:w-auto "> 
+                <Tables />
+              </div>
+            )}
+          </div>
 
           {loading ? (
             <p>{t("dashboard.loading")}</p>
@@ -252,7 +238,7 @@ export default function DashboardPage() {
                   key={note.id}
                   className="block h-full"
                 >
-                  <div className="h-full p-5 border-t-2  border-[var(--text-color)] bg-[var(--container)] bg-opacity-40 hover:bg-opacity-60 transition-all hover:translate-x-1 hover:shadow-md">
+                  <div className="h-full p-5 border-t-2 border-[var(--text-color)] bg-[var(--container)] bg-opacity-40 hover:bg-opacity-60 transition-all hover:translate-x-1 hover:shadow-md">
                     <h2 className="text-lg font-semibold mb-3 line-clamp-1">
                       {note.title
                         ? decrypt(note.title)

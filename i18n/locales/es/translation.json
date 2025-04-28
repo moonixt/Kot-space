@@ -121,12 +121,17 @@
     "allRightsReserved": "Todos los derechos reservados."
   },
   "dashboard": {
-    "mainTitle": "Panel",
+    "mainTitle": "Dashboard",
     "newDocument": "Nuevo documento",
-    "hideTasks": "Ocultar tareas",
+    "hideTasks": "Ocultar Tareas",
     "tasks": "Tareas",
-    "hideCalendar": "Ocultar calendario",
+    "hideCalendar": "Ocultar Calendario",
     "calendar": "Calendario",
+    "tables": "Tablas",
+    "hideTables": "Ocultar Tablas",
+    "openTablesPage": "Abrir Tablas",
+    "toggleComponents": "Mostrar/Ocultar vista",
+    "components": "Mostrar/Ocultar vista",
     "loading": "Cargando...",
     "emptyState": {
       "title": "No se encontraron documentos",
@@ -139,15 +144,35 @@
     }
   },
   "tasks": {
-    "addNew": "Agregar nueva tarea",
+    "addNew": "Agregar una nueva tarea",
     "add": "Agregar",
-    "clear": "Limpiar",
-    "done": "Hecho",
+    "clear": "Borrar",
+    "done": "Completar",
     "setDueDate": "Establecer fecha límite",
     "deleteTask": "Eliminar tarea",
-    "noTasksYet": "Aún no hay tareas. ¡Agrega tu primera tarea!",
+    "noTasksYet": "No hay tareas todavía. ¡Agrega tu primera tarea!",
     "created": "Creada",
-    "due": "Vence"
+    "due": "Vencimiento",
+    "myTasks": "Mis Tareas",
+    "newTask": "Nueva Tarea",
+    "whatNeedsToBeDone": "¿Qué hay que hacer?",
+    "addNotes": "Agregar notas...",
+    "dueDate": "Fecha límite",
+    "editTask": "Editar tarea",
+    "saveChanges": "Guardar cambios",
+    "title": "Título",
+    "description": "Descripción",
+    "priority": "Prioridad",
+    "highPriority": "Prioridad Alta",
+    "mediumPriority": "Prioridad Media",
+    "lowPriority": "Prioridad Baja",
+    "taskTitle": "Título de la tarea",
+    "createFirst": "Crear primera tarea",
+    "cancel": "Cancelar"
+  },
+  "tables": {
+    "title": "Tablas",
+    "back": "Volver al Dashboard"
   },
   "calendar": {
     "today": "Hoy",
@@ -165,5 +190,8 @@
     "eventDescription": "Descripción del evento (opcional)",
     "events": "Eventos:",
     "noEvents": "No hay eventos para este día. Agrega uno arriba."
+  },
+  "editor": {
+    "backToDashboard": "Volver al dashboard"
   }
 }

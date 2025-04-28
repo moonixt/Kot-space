@@ -476,11 +476,11 @@ function Editor() {
   return (
     <div
       id="Editor"
-      className="w-full h-full flex flex-col bg-[var(--background)] scrollbar"
+      className="w-full  h-full flex flex-col bg-[var(--background)] scrollbar"
     >
       <Profile />
-      <div className="mx-auto w-full h-full flex flex-col flex-grow">
-        <div className="bg-[var(--background)] backdrop-blur-sm shadow-lg rounded-lg overflow-hidden flex flex-col flex-grow h-full  border-[var(--border-color)] transition-all duration-300">
+      <div className="mx-auto max-w-7xl w-full h-full flex flex-col flex-grow">
+        <div className="bg-[var(--background)]   overflow-hidden flex flex-col flex-grow h-full  border-[var(--border-color)] transition-all duration-300">
           {/* Title Section */}
           <div className="p-5 sm:p-6 border-b border-[var(--border-color)] relative">
             <div className="flex items-center gap-3">
