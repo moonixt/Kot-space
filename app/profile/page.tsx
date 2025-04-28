@@ -61,11 +61,11 @@ const Profile = () => {
         setWallpaperUrl(urlData.publicUrl);
       } else {
         // If no wallpaper is set, use the default
-        setWallpaperUrl("/static/images/dan2.jpg");
+        setWallpaperUrl("/static/images/susan.jpg");
       }
     } catch (error) {
       console.error("Erro ao buscar wallpaper:", error);
-      setWallpaperUrl("/static/images/dan2.jpg");
+      setWallpaperUrl("/static/images/susan.jpg");
     } finally {
       setWallpaperLoading(false);
     }
@@ -89,11 +89,11 @@ const Profile = () => {
         setAvatarUrl(urlData.publicUrl);
       } else {
         // Default avatar if none is set
-        setAvatarUrl("/static/images/profilepic.png");
+        setAvatarUrl("/static/images/profilepic2.png");
       }
     } catch (error) {
       console.error("Erro ao buscar avatar:", error);
-      setAvatarUrl("/staticimages/profilepic.png");
+      setAvatarUrl("/staticimages/profilepic2.png");
     } finally {
       setAvatarLoading(false);
     }
@@ -456,7 +456,7 @@ const Profile = () => {
           ) : (
             <Link href="/dashboard">
               <Image
-                src={wallpaperUrl || "/static/images/dan2.jpg"}
+                src={wallpaperUrl || "/static/images/susan.jpg"}
                 alt="Profile"
                 width={4000}
                 height={4000}
