@@ -131,6 +131,7 @@
     "calendar": "Calendar",
     "tables": "Tables",
     "hideTables": "Hide Tables",
+    "openTablesPage": "Open Tables",
     "loading": "Loading...",
     "toggleComponents": "Show/Hide view",
     "components": "Show/Hide view",
@@ -226,6 +227,10 @@
     "backToNotes": "Back to notes",
     "noteNotFound": "Note not found",
     "noteNotExistOrRemoved": "This note doesn't exist or has been removed."
+  },
+  "tables": {
+    "title": "Tables",
+    "back": "Back to Dashboard"
   },
   "tags": {
     "agenda": "agenda",

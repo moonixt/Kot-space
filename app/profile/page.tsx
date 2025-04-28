@@ -5,6 +5,7 @@ import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
 import Image from "next/image";
 import { supabase } from "../../lib/supabase";
 import { useAuth } from "../../context/AuthContext";
+import Clock from "../components/clock";
 import Link from "next/link";
 
 const Profile = () => {
@@ -20,12 +21,14 @@ const Profile = () => {
   const { user } = useAuth();
   const [bio, setBio] = useState<string | null>(null);
   const [bioLoading, setBioLoading] = useState(true);
+  const [notes, setNotes] = useState<number | null>(null);
 
   useEffect(() => {
     if (user) {
       getUserWallpaper();
       getUserPhoto();
       getUserBio();
+      getUserNotes();
     }
   }, [user]);
 
@@ -109,6 +112,22 @@ const Profile = () => {
       setBio('"You are what you think"');
     } finally {
       setBioLoading(false);
+    }
+  };
+
+  const getUserNotes = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("notes")
+        .select("*", { count: "exact" })
+        .eq("user_id", user?.id);
+
+      if (error) throw error;
+
+      setNotes(data.length);
+    } catch (error) {
+      console.error("Error fetching notes:", error);
+      setNotes(0);
     }
   };
 
@@ -343,17 +362,43 @@ const Profile = () => {
                 alt="Profile"
                 width={4000}
                 height={4000}
-                className="w-600 h-55 sm:h-130 md:h-70 2xl:h-150 object-cover object-center"
+                className="w-640 h-55 sm:h-130 md:h-70 2xl:h-150 object-cover object-center"
                 priority
                 unoptimized={wallpaperUrl?.endsWith(".gif")}
               />
             </Link>
           )}
+          
+          <div className="absolute top-0 ">
+            <div id="clock" className="bg-black/80 backdrop-blur-sm">
+              <Clock />
+            </div>
+          </div>
 
-          {/* Botão de edição de wallpaper */}
+          {/* Informações do usuário e data */}
+            <div className="absolute bottom-5 right-2 sm:right-auto sm:left-2 flex flex-col gap-1">
+            <div className="bg-black/70 backdrop-blur-sm text-[var(--foreground)] text-sm px-3 py-1.5 rounded-md shadow-sm">
+              {new Date().toLocaleDateString(undefined, { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })}
+            </div>
+            
+            {user && (
+              <div className="bg-black/70 backdrop-blur-sm text-[var(--foreground)] text-sm px-3 py-1.5 rounded-md shadow-sm flex items-center gap-2">
+                <span>{user?.email?.split('@')[0] || "Guest"}</span>
+                <span className="h-4 w-px bg-[var(--foreground)]/30"></span>
+                <span className="flex items-center gap-1">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                  </svg>
+                  {notes || 0}
+                </span>
+              </div>
+            )}
+          </div>
+
           <button
             onClick={() => setShowWallpaperModal(true)}
-            className="absolute top-2 left-2 bg-[var(--background)] text-[var(--foreground)] p-2 rounded-full opacity-80 hover:opacity-100"
+            className="absolute top-2 left-2 bg-[var(--background)] text-[var(--foreground)] p-2 rounded-full opacity-80 hover:opacity-100 shadow-sm"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -382,7 +427,7 @@ const Profile = () => {
                 className="cursor-pointer hover:opacity-86 transition-opacity duration-700"
               >
                 <AvatarImage
-                  className="h-[80px] w-[80px] rounded-full object-cover border-1 border-[var(--foreground)]"
+                  className="h-[110px] w-[110px] rounded-full object-cover object-top border-1 border-black"
                   src={avatar_url || ""}
                   alt="Profile avatar"
                 />
@@ -424,7 +469,7 @@ const Profile = () => {
               ref={avatarFileInputRef}
             />
           </div>
-
+            
           {bioLoading ? (
             <div className="italic text-[var(--foreground)] bg-[var(--container)] w-40 h-6 rounded animate-pulse"></div>
           ) : (

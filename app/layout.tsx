@@ -105,22 +105,19 @@ export default async function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[var(--background)] text-[var(--foreground)] no-scrollbar circularcursor
   `}
       >
-        <Script
-          src="https://pay.google.com/gp/p/js/pay.js"
-          strategy="afterInteractive" // Carrega o script após a interação inicial
-        />
+    
         <ServiceWorkerRegistration />
         <TranslationProvider locale={lang}>
           <LanguageLoader>
             <AuthProvider>
               <ThemeProvider>
                 <div className="flex flex-col md:flex-row min-h-screen  ">
-                  <div className="flex-1 md:mr-72 flex flex-col ">
+                  <div className="flex-1  flex flex-col ">
                     {/* <Profile /> */}
                     {children}
                   </div>
 
-                  <Sidebox />
+                  <Sidebox /> 
                 </div>
               </ThemeProvider>
             </AuthProvider>

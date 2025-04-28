@@ -768,3 +768,15 @@ button:focus {
     @apply bg-background text-foreground;
   }
 }
+
+.clock-container{
+  width: 100vw;
+ 
+}
+.clock{
+  color: white;
+  font-size: 2rem;
+  font-family: Georgia, 'Times New Roman', Times, serif;
+  text-align: center;
+  text-shadow: 3px 3px 5px hsla(0, 0%, 0%, 0.75);
+}

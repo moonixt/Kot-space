@@ -114,8 +114,8 @@ export default function DashboardPage() {
         <div>
           <Profile />
         </div>
-        <div className="p-4">
-          <div className="grid ">
+        <div className="p-4  max-w-7xl mx-auto ">
+          <div className="grid  ">
             {/* New document button */}
             <button
               className="px-5 justify-center my-4 py-2 bg-[var(--text-color)] text-[var(--background)] hover:bg-opacity-60 transition-all hover:shadow-md transition-colors flex items-center gap-2"
@@ -138,7 +138,7 @@ export default function DashboardPage() {
             </button>
             
             {/* Toggle components dropdown */}
-            <div className="mb-4">
+            <div className="mb-4 ">
               <DropdownMenu>
                 <DropdownMenuTrigger className="flex items-center gap-2 px-4 py-2 border border-[var(--text-color)] rounded hover:bg-[var(--container)] transition-colors">
                   <span>{t("dashboard.toggleComponents")}</span>
@@ -215,17 +215,14 @@ export default function DashboardPage() {
           
           {/* Tables component with conditional rendering */}
           <div
-            className={`transition-all duration-600 ease-in-out overflow-hidden mt-4 ${
+            className={`transition-all duration-600 ease-in-out mt-4 ${
               showTables
-                ? "max-h-[1000px] opacity-100"
+                ? "opacity-100 "
                 : "max-h-0 opacity-0 mb-0"
             }`}
           >
             {showTables && (
-              <div>
-                <h2 className="text-xl font-semibold ">
-                  {t("dashboard.tables")}
-                </h2>
+              <div className="w-[380px] sm:w-auto "> 
                 <Tables />
               </div>
             )}

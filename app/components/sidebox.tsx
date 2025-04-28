@@ -315,11 +315,11 @@ export default function Sidebox() {
   };
 
   return (
-    <div className="w-full md:w-72 bg-[var(--background)] border-t md:border-l border-[var(--border-color)] md:h-screen md:fixed md:right-0 md:top-0 overflow-y-auto scrollbar">
+    <div className="border-t md:border-l z-50 border-[var(--border-color)] md:h-screen md:fixed md:right-0 md:top-0 overflow-y-auto scrollbar">
       {/* Mobile toggle button */}
       <button
         onClick={toggleMobileSidebar}
-        className="fixed top-4 right-4 z-50 p-2 rounded-full bg-[var(--container)] text-[var(--foreground)] shadow-lg md:hidden"
+        className="fixed top-4 right-4 z-50 p-2 rounded-full bg-[var(--container)] text-[var(--foreground)] shadow-lg"
         aria-label={
           isMobileOpen ? t("sidebar.closeMenu") : t("sidebar.openMenu")
         }
@@ -330,7 +330,7 @@ export default function Sidebox() {
       {/* Sidebar */}
       <aside
         className={`fixed inset-y-0 right-0 w-72 bg-[var(--background)] text-[var(--text-color)] shadow-xl transition-transform duration-300 ease-in-out z-40 
-        ${isMobileOpen ? "translate-x-0" : "translate-x-full md:translate-x-0"}`}
+        ${isMobileOpen ? "translate-x-0" : "translate-x-full"}`}
       >
         <div className="flex flex-col h-full">
           {/* Header */}
