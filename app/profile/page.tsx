@@ -709,7 +709,7 @@ const Profile = () => {
                   e.target.innerText = bio || '"You are what you think"'; // Revert to the previous bio or use default
                 }
               }}
-              className="italic text-[var(--foreground)] bg-[var(--container)]"
+              className="italic text-[var(--foreground)] bg-[var(--container)]/30 backdrop-blur-sm"
             >
               {bio || '"You are what you think"'}
             </h2>

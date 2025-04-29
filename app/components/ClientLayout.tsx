@@ -1,11 +1,13 @@
-// NEED REVIEW
-
 "use client";
+
+import React from "react";
+import { MusicPlayerProvider } from "../../context/MusicPlayerContext";
+import MusicPlayer from "./music";
 import Image from "next/image";
 import { useState, useRef, useEffect } from "react";
 import IA from "./ChatAssistent";
 
-export default function ClientLayout() {
+export default function ClientLayout({ children }: { children: React.ReactNode }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
 
@@ -33,8 +35,13 @@ export default function ClientLayout() {
   }, [isModalOpen]);
 
   return (
-    <>
-      <div id="Chatbot">
+    <MusicPlayerProvider>
+      {children}
+      {/* Fixed position music player that persists across all pages */}
+      <div className="fixed bottom-4 right-4 z-50">
+        <MusicPlayer />
+      </div>
+      {/* <div id="Chatbot">
         <button
           onClick={toggleModal}
           className=""
@@ -49,7 +56,6 @@ export default function ClientLayout() {
           />
         </button>
 
-        {/* Always render the IA component but hide it when modal is closed */}
         <div
           className={`fixed inset-0 z-50 ${isModalOpen ? "block" : "hidden"}`}
           role="dialog"
@@ -57,7 +63,6 @@ export default function ClientLayout() {
           aria-hidden={!isModalOpen}
           aria-labelledby="chat-modal-title"
         >
-          {/* Backdrop */}
           <button
             className="fixed inset-0 bg-black"
             style={{ opacity: 0.5 }}
@@ -65,7 +70,6 @@ export default function ClientLayout() {
             aria-label="Close chat assistant"
           />
 
-          {/* Modal content */}
           <div
             ref={modalRef}
             className="fixed right-5 bottom-20 flex h-[70vh] max-h-[600px] min-h-[400px] w-96 flex-col overflow-hidden rounded-lg bg-slate-900 shadow-xl"
@@ -86,7 +90,7 @@ export default function ClientLayout() {
             </button>
           </div>
         </div>
-      </div>
-    </>
+      </div> */}
+    </MusicPlayerProvider>
   );
 }

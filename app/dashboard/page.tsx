@@ -118,7 +118,7 @@ export default function DashboardPage() {
           <div className="flex-1  gap-4">
             {/* New document button */}
             <button
-              className="px-2 justify-center my-2 py-2 bg-[var(--text-color)] text-[var(--background)] hover:bg-opacity-60 transition-all hover:shadow-md transition-colors flex items-center gap-2"
+              className="px-2 justify-center my-2 py-2 bg-[var(--container)]  text-[var(--foreground)] hover:bg-opacity-60 transition-all hover:shadow-md transition-colors flex items-center gap-2"
               onClick={() => router.push("/editor")}
             >
               <span>{t("dashboard.newDocument")}</span>
@@ -227,18 +227,22 @@ export default function DashboardPage() {
               </div>
             )}
           </div>
-
+            <div>
+              <h1 className="text-xl font-semibold mt-4 mb-2">
+                {t("dashboard.documents")}
+              </h1>
+            </div>
           {loading ? (
             <p>{t("dashboard.loading")}</p>
           ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 pt-5">
+            <div className="grid border-t border-[var(--foreground)] grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 pt-5">
               {notes.map((note) => (
                 <Link
                   href={`/notes/${note.id}`}
                   key={note.id}
                   className="block h-full"
                 >
-                  <div className="h-full p-5 border-t-2 border-[var(--text-color)] bg-[var(--container)] bg-opacity-40 hover:bg-opacity-60 transition-all hover:translate-x-1 hover:shadow-md">
+                  <div className="h-full p-5 border-b border-[var(--text-color)] bg-[var(--container)] hover:bg-opacity-60 transition-all hover:translate-x-1 hover:shadow-md">
                     <h2 className="text-lg font-semibold mb-3 line-clamp-1">
                       {note.title
                         ? decrypt(note.title)

@@ -8,6 +8,7 @@ import ServiceWorkerRegistration from "./components/ServiceWorkerRegistration";
 import TranslationProvider from "../components/TranslationProvider";
 import LanguageLoader from "../components/LanguageLoader";
 import { cookies } from "next/headers";
+import ClientLayout from "./components/ClientLayout";
 // import Profile from "./profile/page";
 
 const geistSans = Geist({
@@ -110,14 +111,16 @@ export default async function RootLayout({
           <LanguageLoader>
             <AuthProvider>
               <ThemeProvider>
-                <div className="flex flex-col md:flex-row min-h-screen  ">
-                  <div className="flex-1  flex flex-col ">
-                    {/* <Profile /> */}
-                    {children}
-                  </div>
+                <ClientLayout>
+                  <div className="flex flex-col md:flex-row min-h-screen  ">
+                    <div className="flex-1  flex flex-col ">
+                      {/* <Profile /> */}
+                      {children}
+                    </div>
 
-                  <Sidebox /> 
-                </div>
+                    <Sidebox /> 
+                  </div>
+                </ClientLayout>
               </ThemeProvider>
             </AuthProvider>
           </LanguageLoader>
