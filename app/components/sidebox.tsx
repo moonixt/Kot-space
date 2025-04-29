@@ -16,6 +16,7 @@ import {
   Folder,
   FolderOpen,
   Inbox,
+  Book,
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -348,11 +349,22 @@ export default function Sidebox() {
                     </span>
                   </Link>
                 ) : (
-                  <span className="text-[var(--foreground)] pl-2">Кот-note</span>
+                  <span className="text-[var(--foreground)] pl-2">
+                    Кот-note
+                  </span>
                 )}
               </h1>
 
-              <div className="flex items-center">
+              <div className="flex items-center space-x-2">
+                <Link href="/reader">
+                  <div
+                    className="p-2 rounded-full hover:bg-[var(--container)] transition-colors"
+                    title="Ebook Reader"
+                    onClick={() => setIsMobileOpen(false)}
+                  >
+                    <Book size={20} className="text-[var(--foreground)]" />
+                  </div>
+                </Link>
                 <button
                   onClick={() => router.push("/editor")}
                   className="p-2 rounded-full hover:bg-[var(--container)] transition-colors"

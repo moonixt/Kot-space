@@ -43,8 +43,8 @@ function createWindow() {
   });
 
   const userLocale = app.getLocale(); // e.g., 'ja'
-  win.webContents.on('did-finish-load', () => {
-    win.webContents.send('set-locale', userLocale);
+  win.webContents.on("did-finish-load", () => {
+    win.webContents.send("set-locale", userLocale);
   });
 
   // Quando a janela principal estiver pronta, fecha o splash e mostra o app

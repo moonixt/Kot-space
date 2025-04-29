@@ -12,13 +12,13 @@ import CalendarView from "../components/CalendarView";
 import { decrypt } from "../components/Encryption";
 import { useTranslation } from "react-i18next";
 import Tables from "../components/tables";
-import { 
+import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuCheckboxItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator
+  DropdownMenuSeparator,
 } from "../../components/ui/dropdown-menu";
 
 interface Note {
@@ -88,8 +88,12 @@ export default function DashboardPage() {
       const savedShowTables = localStorage.getItem("showTables");
 
       setShowTasks(savedShowTasks === null ? true : savedShowTasks === "true");
-      setShowCalendar(savedShowCalendar === null ? true : savedShowCalendar === "true");
-      setShowTables(savedShowTables === null ? true : savedShowTables === "true");
+      setShowCalendar(
+        savedShowCalendar === null ? true : savedShowCalendar === "true",
+      );
+      setShowTables(
+        savedShowTables === null ? true : savedShowTables === "true",
+      );
     }
   }, []);
 
@@ -118,7 +122,7 @@ export default function DashboardPage() {
           <div className="flex-1  gap-4">
             {/* New document button */}
             <button
-              className="px-2 justify-center my-2 py-2 bg-[var(--text-color)] text-[var(--background)] hover:bg-opacity-60 transition-all hover:shadow-md transition-colors flex items-center gap-2"
+              className="px-2 justify-center my-2 py-2 bg-[var(--theme)]  text-[var(--foreground)] hover:bg-opacity-60 transition-all hover:shadow-md transition-colors flex items-center gap-2"
               onClick={() => router.push("/editor")}
             >
               <span>{t("dashboard.newDocument")}</span>
@@ -136,15 +140,15 @@ export default function DashboardPage() {
                 <line x1="5" y1="12" x2="19" y2="12"></line>
               </svg>
             </button>
-            
+
             {/* Toggle components dropdown */}
             <div className="mb-4 ">
               <DropdownMenu>
-                <DropdownMenuTrigger className="flex items-center gap-2 px-4 py-2 border border-[var(--text-color)] rounded hover:bg-[var(--container)] transition-colors">
+                <DropdownMenuTrigger className="flex items-center gap-2 px-1 py-2  bg-[var(--theme)]/30 backdrop-blur-sm hover:bg-[var(--container)] transition-colors">
                   <span>{t("dashboard.toggleComponents")}</span>
                   <svg
-                    width="16" 
-                    height="16" 
+                    width="16"
+                    height="16"
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
@@ -156,23 +160,25 @@ export default function DashboardPage() {
                   </svg>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="bg-[var(--background)] border border-[var(--text-color)]">
-                  <DropdownMenuLabel className="text-[var(--text-color)]">{t("dashboard.components")}</DropdownMenuLabel>
+                  <DropdownMenuLabel className="text-[var(--text-color)]">
+                    {t("dashboard.components")}
+                  </DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuCheckboxItem 
+                  <DropdownMenuCheckboxItem
                     checked={showTasks}
                     onCheckedChange={setShowTasks}
                     className="text-[var(--text-color)]"
                   >
                     {t("dashboard.tasks")}
                   </DropdownMenuCheckboxItem>
-                  <DropdownMenuCheckboxItem 
+                  <DropdownMenuCheckboxItem
                     checked={showCalendar}
                     onCheckedChange={setShowCalendar}
                     className="text-[var(--text-color)]"
                   >
                     {t("dashboard.calendar")}
                   </DropdownMenuCheckboxItem>
-                  <DropdownMenuCheckboxItem 
+                  <DropdownMenuCheckboxItem
                     checked={showTables}
                     onCheckedChange={setShowTables}
                     className="text-[var(--text-color)]"
@@ -212,33 +218,35 @@ export default function DashboardPage() {
               )}
             </div>
           </div>
-          
+
           {/* Tables component with conditional rendering */}
           <div
             className={`transition-all duration-600 ease-in-out mt-4 ${
-              showTables
-                ? "opacity-100 "
-                : "max-h-0 opacity-0 mb-0"
+              showTables ? "opacity-100 " : "max-h-0 opacity-0 mb-0"
             }`}
           >
             {showTables && (
-              <div className="w-[380px] sm:w-auto "> 
+              <div className="w-[380px] sm:w-auto ">
                 <Tables />
               </div>
             )}
           </div>
-
+          <div>
+            <h1 className="text-xl font-semibold mt-4 mb-2">
+              {t("dashboard.documents")}
+            </h1>
+          </div>
           {loading ? (
             <p>{t("dashboard.loading")}</p>
           ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 pt-5">
+            <div className="grid border-t border-[var(--foreground)] grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 pt-5">
               {notes.map((note) => (
                 <Link
                   href={`/notes/${note.id}`}
                   key={note.id}
                   className="block h-full"
                 >
-                  <div className="h-full p-5 border-t-2 border-[var(--text-color)] bg-[var(--container)] bg-opacity-40 hover:bg-opacity-60 transition-all hover:translate-x-1 hover:shadow-md">
+                  <div className="h-full p-5 bg-[var(--container)]/30 backdrop-blur-sm hover:bg-opacity-60 transition-all hover:translate-x-1 hover:shadow-md">
                     <h2 className="text-lg font-semibold mb-3 line-clamp-1">
                       {note.title
                         ? decrypt(note.title)
@@ -316,6 +324,27 @@ export default function DashboardPage() {
                   <line x1="5" y1="12" x2="19" y2="12"></line>
                 </svg>
               </button>
+
+              {/* Ebook Reader Button */}
+              <Link
+                href="/reader"
+                className="mt-4 px-4 py-2 bg-[var(--accent-color)] text-white hover:bg-opacity-80 transition-colors flex items-center gap-2 rounded-md"
+              >
+                <span>Open Ebook Reader</span>
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                  <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1-3-3h7z"></path>
+                </svg>
+              </Link>
             </div>
           )}
         </div>

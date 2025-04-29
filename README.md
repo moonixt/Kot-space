@@ -4,11 +4,6 @@
   
 ![kotnote512](https://github.com/user-attachments/assets/0d3853e3-f34d-4c57-a388-2ed2677c5939)
 
-
-
-
-
-
   <h1 align="center">Кот-note</h1>
 
   <p align="center">

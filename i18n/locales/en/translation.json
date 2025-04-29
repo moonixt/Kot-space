@@ -135,8 +135,8 @@
     "loading": "Loading...",
     "toggleComponents": "Show/Hide view",
     "components": "Show/Hide view",
+    "documents": "Documents",
 
-    
     "emptyState": {
       "title": "No documents found",
       "description": "You haven't created any documents yet. Get started now!",
@@ -166,7 +166,7 @@
     "editTask": "Edit task",
     "createFirstTask": "Create first task",
     "taskTitle": "Task title",
-    "createFirst" : "Create first task",
+    "createFirst": "Create first task",
     "title": "Title",
     "description": "Description",
     "priority": "Priority",
@@ -174,7 +174,6 @@
     "mediumPriority": "Medium",
     "lowPriority": "Low",
     "saveChanges": "Save changes"
-
   },
   "calendar": {
     "today": "Today",

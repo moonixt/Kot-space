@@ -7,6 +7,7 @@
   --button-bg1: #010409;
   --button-bg2: #0000008d;
   --text-color: #0d1117;
+  --theme: #f6f8fa;
   --button-bg: #f8f8f845;
   --hover-color: oklch(80.9% 0.105 251.813);
   --container: #f6f8fa;
@@ -75,7 +76,6 @@ html {
   scroll-behavior: smooth;
   /* Personalizar a curva e a duração da animação de rolagem */
   scroll-timeline: 800ms cubic-bezier(0.22, 1, 0.36, 1);
- 
 }
 
 /* Classe para aplicar rolamento suave em elementos específicos */
@@ -101,7 +101,6 @@ html {
   .smooth-scroll,
   .scroll-container {
     scroll-behavior: auto;
-    
   }
 }
 
@@ -118,6 +117,7 @@ html {
   --background: #0d1117;
   --foreground: #ffffff;
   --text-color: #ffffff;
+  --theme: #010409;
   --button-bg: #f5f5f5;
   --button-bg1: #ffffff;
   --button-bg2: #f8f8f845;
@@ -141,6 +141,7 @@ html {
   --button-bg1: oklch(72.3% 0.219 149.579);
   --button-bg2: #f8f8f845;
   --text-color: oklch(0.871 0.15 154.449);
+  --theme: oklch(0.871 0.15 154.449);
   --button-bg: oklch(72.3% 0.219 149.579);
   --hover-color: oklch(79.2% 0.209 151.711);
   --container: #010409;
@@ -160,6 +161,7 @@ html {
 .purple {
   --background: #0d1117;
   --foreground: #ffffff;
+  --theme: #a78bfa;
   --button-bg1: #8b5cf6;
   --button-bg2: #f8f8f845;
   --text-color: #a78bfa;
@@ -185,6 +187,7 @@ html {
   --button-bg1: oklch(90.5% 0.182 98.111);
   --button-bg2: #f8f8f845;
   --text-color: oklch(90.5% 0.182 98.111);
+  --theme: oklch(90.5% 0.182 98.111);
   --button-bg: oklch(90.5% 0.182 98.111);
   --hover-color: oklch(85.2% 0.199 91.936);
   --container: #010409;
@@ -207,6 +210,7 @@ html {
   --button-bg1: #3b82f6;
   --button-bg2: #f8f8f845;
   --text-color: #60a5fa;
+  --theme: #60a5fa;
   --button-bg: #3b82f6;
   --hover-color: #93c5fd;
   --container: #010409;
@@ -230,6 +234,7 @@ html {
   --button-bg2: #f8f8f845;
   --text-color: #ee396f;
   --button-bg: #e11d48;
+  --theme: #ee396f;
   --hover-color: #fb7185;
   --container: #010409;
   --accent-color: #f43f5e;
@@ -245,19 +250,15 @@ html {
   --input-bg: rgba(15, 23, 42, 0.8);
 }
 
-
 /* Global styles */
 body {
-  font-family: Georgia, 'Times New Roman', Times, serif;
+  font-family: Georgia, "Times New Roman", Times, serif;
   line-height: 1.7;
   font-size: 16px;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
- 
-  
 }
-
 
 .ghub {
   background-color: #010409;
@@ -769,14 +770,13 @@ button:focus {
   }
 }
 
-.clock-container{
+.clock-container {
   width: 100vw;
- 
 }
-.clock{
+.clock {
   color: white;
   font-size: 2rem;
-  font-family: Georgia, 'Times New Roman', Times, serif;
+  font-family: Georgia, "Times New Roman", Times, serif;
   text-align: center;
   text-shadow: 3px 3px 5px hsla(0, 0%, 0%, 0.75);
 }
