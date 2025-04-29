@@ -51,9 +51,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Fair-note",
     description: "Capture inspiration, craft ideas, and let your notes shine",
-    images: [
-      "https://fair-note.vercel.app/static/images/profilepic.jpg",
-    ],
+    images: ["https://fair-note.vercel.app/static/images/profilepic.jpg"],
   },
 };
 
@@ -89,23 +87,37 @@ export default async function RootLayout({
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta property="title" content="Fair-note" />
-        <meta property="description" content="Capture inspiration, craft ideas, and let your notes shine." />
+        <meta
+          property="description"
+          content="Capture inspiration, craft ideas, and let your notes shine."
+        />
         <meta property="og:title" content="Fair-note" />
-        <meta property="og:description" content="Capture inspiration, craft ideas, and let your notes shine." />
-        <meta property="og:image" content="https://fair-note.vercel.app/static/images/logo.png" />
+        <meta
+          property="og:description"
+          content="Capture inspiration, craft ideas, and let your notes shine."
+        />
+        <meta
+          property="og:image"
+          content="https://fair-note.vercel.app/static/images/logo.png"
+        />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://fair-note.vercel.app/" />
         <meta property="og:site_name" content="Fair-note" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Fair-note" />
-        <meta name="twitter:description" content="Capture inspiration, craft ideas, and let your notes shine" />
-        <meta name="twitter:image" content="https://fair-note.vercel.app/static/images/logo.png" />
+        <meta
+          name="twitter:description"
+          content="Capture inspiration, craft ideas, and let your notes shine"
+        />
+        <meta
+          name="twitter:image"
+          content="https://fair-note.vercel.app/static/images/logo.png"
+        />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[var(--background)] text-[var(--foreground)] no-scrollbar circularcursor
   `}
       >
-    
         <ServiceWorkerRegistration />
         <TranslationProvider locale={lang}>
           <LanguageLoader>
@@ -118,7 +130,7 @@ export default async function RootLayout({
                       {children}
                     </div>
 
-                    <Sidebox /> 
+                    <Sidebox />
                   </div>
                 </ClientLayout>
               </ThemeProvider>

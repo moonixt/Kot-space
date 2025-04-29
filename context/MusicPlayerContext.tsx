@@ -1,23 +1,55 @@
 "use client";
 
-import React, { createContext, useState, useRef, useEffect, useContext } from "react";
+import React, {
+  createContext,
+  useState,
+  useRef,
+  useEffect,
+  useContext,
+} from "react";
 
 type MusicPlayerContextType = {
   audioFile: File | null;
+  audioFiles: File[];
   audioUrl: string | null;
+  currentTrackIndex: number;
   setAudioFile: (file: File | null) => void;
+  setAudioFiles: (files: FileList) => void;
   isPlaying: boolean;
   togglePlay: () => void;
-  audioRef: React.RefObject<HTMLAudioElement>;
+  skipToNext: () => void;
+  skipToPrevious: () => void;
+  audioRef: React.RefObject<HTMLAudioElement | null>;
 };
 
-const MusicPlayerContext = createContext<MusicPlayerContextType | undefined>(undefined);
+const MusicPlayerContext = createContext<MusicPlayerContextType | undefined>(
+  undefined,
+);
 
-export function MusicPlayerProvider({ children }: { children: React.ReactNode }) {
+export function MusicPlayerProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const [audioFile, setAudioFile] = useState<File | null>(null);
+  const [audioFiles, setAudioFilesState] = useState<File[]>([]);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
   const audioRef = useRef<HTMLAudioElement>(null);
+
+  // Set audio files from file input
+  const setAudioFiles = (files: FileList) => {
+    const fileArray = Array.from(files).filter((file) =>
+      file.type.startsWith("audio/"),
+    );
+    if (fileArray.length > 0) {
+      console.log(`Loaded ${fileArray.length} audio files`);
+      setAudioFilesState(fileArray);
+      setAudioFile(fileArray[0]); // Set the first file as current
+      setCurrentTrackIndex(0);
+    }
+  };
 
   // Create object URL when file changes
   useEffect(() => {
@@ -33,9 +65,9 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
   // Handle play state changes
   useEffect(() => {
     if (!audioRef.current) return;
-    
+
     if (isPlaying) {
-      audioRef.current.play().catch(error => {
+      audioRef.current.play().catch((error) => {
         console.error("Error playing audio:", error);
         setIsPlaying(false);
       });
@@ -44,24 +76,87 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
     }
   }, [isPlaying]);
 
-  // Reset play state when audio ends
+  // Auto-play next track when current track ends
   const handleEnded = () => {
-    setIsPlaying(false);
+    if (audioFiles.length > 1) {
+      skipToNext();
+    } else {
+      setIsPlaying(false);
+    }
   };
 
   const togglePlay = () => {
-    setIsPlaying(prev => !prev);
+    setIsPlaying((prev) => !prev);
+  };
+
+  const skipToNext = () => {
+    if (audioFiles.length <= 1) return;
+
+    const nextIndex = (currentTrackIndex + 1) % audioFiles.length;
+    console.log(
+      `Skipping to next track: ${nextIndex + 1}/${audioFiles.length}`,
+    );
+    setCurrentTrackIndex(nextIndex);
+    setAudioFile(audioFiles[nextIndex]);
+
+    // Auto-play when skipping tracks
+    if (isPlaying) {
+      // We need to wait for the new audio source to be set
+      setTimeout(() => {
+        if (audioRef.current) {
+          audioRef.current.play().catch((error) => {
+            console.error("Error playing next track:", error);
+            setIsPlaying(false);
+          });
+        }
+      }, 100);
+    }
+  };
+
+  const skipToPrevious = () => {
+    if (audioFiles.length <= 1) return;
+
+    // If we're more than 3 seconds into the track, restart the current track
+    if (audioRef.current && audioRef.current.currentTime > 3) {
+      audioRef.current.currentTime = 0;
+      return;
+    }
+
+    const prevIndex =
+      (currentTrackIndex - 1 + audioFiles.length) % audioFiles.length;
+    console.log(
+      `Skipping to previous track: ${prevIndex + 1}/${audioFiles.length}`,
+    );
+    setCurrentTrackIndex(prevIndex);
+    setAudioFile(audioFiles[prevIndex]);
+
+    // Auto-play when skipping tracks
+    if (isPlaying) {
+      setTimeout(() => {
+        if (audioRef.current) {
+          audioRef.current.play().catch((error) => {
+            console.error("Error playing previous track:", error);
+            setIsPlaying(false);
+          });
+        }
+      }, 100);
+    }
   };
 
   return (
     <MusicPlayerContext.Provider
       value={{
         audioFile,
+        audioFiles,
         audioUrl,
+        currentTrackIndex,
         setAudioFile,
+        setAudioFiles,
         isPlaying,
         togglePlay,
-        audioRef
+        skipToNext,
+        skipToPrevious,
+        audioRef,
       }}
     >
       {children}
@@ -72,8 +167,6 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
           src={audioUrl}
           onEnded={handleEnded}
           // Controls moved to the music.tsx component
-          // Loop attribute is optional - remove if you don't want looping
-          // loop
         />
       )}
     </MusicPlayerContext.Provider>

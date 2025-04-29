@@ -1,38 +1,38 @@
-const { FusesPlugin } = require('@electron-forge/plugin-fuses');
-const { FuseV1Options, FuseVersion } = require('@electron/fuses');
+const { FusesPlugin } = require("@electron-forge/plugin-fuses");
+const { FuseV1Options, FuseVersion } = require("@electron/fuses");
 
 module.exports = {
   packagerConfig: {
     asar: true,
-    icon: 'public/icon-512x512', // sem extensão, Electron Forge adiciona .ico/.icns
+    icon: "public/icon-512x512", // sem extensão, Electron Forge adiciona .ico/.icns
   },
   rebuildConfig: {},
   makers: [
     {
-      name: '@electron-forge/maker-squirrel',
+      name: "@electron-forge/maker-squirrel",
       config: {
-        authors: 'Derek W',
-        description: 'Your notes, your way.',
+        authors: "Derek W",
+        description: "Your notes, your way.",
         // setupIcon: 'public/icons/icon-512x512.ico', // ícone do instalador
         // iconUrl: 'file://' + __dirname + '/public/icon-512x512.ico', // caminho absoluto para o ícone
       },
     },
     {
-      name: '@electron-forge/maker-zip',
-      platforms: ['darwin'],
+      name: "@electron-forge/maker-zip",
+      platforms: ["darwin"],
     },
     {
-      name: '@electron-forge/maker-deb',
+      name: "@electron-forge/maker-deb",
       config: {},
     },
     {
-      name: '@electron-forge/maker-rpm',
+      name: "@electron-forge/maker-rpm",
       config: {},
     },
   ],
   plugins: [
     {
-      name: '@electron-forge/plugin-auto-unpack-natives',
+      name: "@electron-forge/plugin-auto-unpack-natives",
       config: {},
     },
     // Fuses are used to enable/disable various Electron functionality

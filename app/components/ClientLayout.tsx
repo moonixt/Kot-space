@@ -3,11 +3,15 @@
 import React from "react";
 import { MusicPlayerProvider } from "../../context/MusicPlayerContext";
 import MusicPlayer from "./music";
-import Image from "next/image";
+// import Image from "next/image";
 import { useState, useRef, useEffect } from "react";
-import IA from "./ChatAssistent";
+// import IA from "./ChatAssistent";
 
-export default function ClientLayout({ children }: { children: React.ReactNode }) {
+export default function ClientLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
 

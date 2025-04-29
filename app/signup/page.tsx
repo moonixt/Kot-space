@@ -147,10 +147,17 @@ export default function SignUpPage() {
                   required
                   className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded mr-2 bg-[var(--container)]"
                 />
-                <label htmlFor="terms" className="text-sm text-[var(--foreground)] ">
-                  <Trans i18nKey="signup.agreeToTerms">
-                  </Trans>
-                 <Link href="/privacy" className="text-blue-400 hover:underline pl-2">Terms of Usege</Link>
+                <label
+                  htmlFor="terms"
+                  className="text-sm text-[var(--foreground)] "
+                >
+                  <Trans i18nKey="signup.agreeToTerms"></Trans>
+                  <Link
+                    href="/privacy"
+                    className="text-blue-400 hover:underline pl-2"
+                  >
+                    Terms of Usege
+                  </Link>
                 </label>
               </div>
 

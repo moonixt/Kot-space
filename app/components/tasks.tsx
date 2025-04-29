@@ -181,7 +181,7 @@ const Tasks = () => {
 
   // Handle key press in the add task input
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       addTask();
     }
@@ -191,23 +191,34 @@ const Tasks = () => {
     <div className="mb-8">
       {/* Stylish Tasks Header with Add Button */}
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-medium text-[var(--foreground)]">{t('tasks.myTasks')} </h2>
+        <h2 className="text-lg font-medium text-[var(--foreground)]">
+          {t("tasks.myTasks")}{" "}
+        </h2>
         <button
           onClick={() => {
             setIsAddingTask(!isAddingTask);
             setTimeout(() => newTaskInputRef.current?.focus(), 100);
           }}
-          className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-[var(--foreground)] text-[var(--background)] hover:opacity-90 transition-all text-sm"
+          className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-[var(--theme)] text-[var(--foreground)] hover:opacity-90 transition-all text-sm"
         >
           {isAddingTask ? (
-            <>{t('tasks.cancel')}</>
+            <>{t("tasks.cancel")}</>
           ) : (
             <>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
                 <line x1="12" y1="5" x2="12" y2="19"></line>
                 <line x1="5" y1="12" x2="19" y2="12"></line>
               </svg>
-              <span>{t('tasks.newTask')}</span>
+              <span>{t("tasks.newTask")}</span>
             </>
           )}
         </button>
@@ -236,7 +247,7 @@ const Tasks = () => {
                 value={newTaskDescription}
                 onChange={(e) => setNewTaskDescription(e.target.value)}
                 onKeyDown={(e) => {
-                  if (e.key === 'Enter' && e.ctrlKey) {
+                  if (e.key === "Enter" && e.ctrlKey) {
                     addTask();
                   }
                 }}
@@ -262,7 +273,14 @@ const Tasks = () => {
                       strokeLinecap="round"
                       strokeLinejoin="round"
                     >
-                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                      <rect
+                        x="3"
+                        y="4"
+                        width="18"
+                        height="18"
+                        rx="2"
+                        ry="2"
+                      ></rect>
                       <line x1="16" y1="2" x2="16" y2="6"></line>
                       <line x1="8" y1="2" x2="8" y2="6"></line>
                       <line x1="3" y1="10" x2="21" y2="10"></line>
@@ -275,12 +293,14 @@ const Tasks = () => {
                   </button>
 
                   <div className="relative">
-                    <button 
+                    <button
                       type="button"
                       className={`p-1.5 hover:bg-[var(--background)]/50 rounded-md flex items-center gap-1.5 ${
-                        newTaskPriority === 'high' ? 'text-red-500' : 
-                        newTaskPriority === 'medium' ? 'text-yellow-500' : 
-                        'text-green-500'
+                        newTaskPriority === "high"
+                          ? "text-red-500"
+                          : newTaskPriority === "medium"
+                            ? "text-yellow-500"
+                            : "text-green-500"
                       }`}
                     >
                       <svg
@@ -297,7 +317,11 @@ const Tasks = () => {
                       </svg>
                       <select
                         value={newTaskPriority}
-                        onChange={(e) => setNewTaskPriority(e.target.value as "low" | "medium" | "high")}
+                        onChange={(e) =>
+                          setNewTaskPriority(
+                            e.target.value as "low" | "medium" | "high",
+                          )
+                        }
                         className="appearance-none bg-transparent border-none focus:outline-none p-0"
                       >
                         {priorityOptions.map((opt) => (
@@ -316,9 +340,9 @@ const Tasks = () => {
                     onClick={addTask}
                     disabled={!newTask.trim()}
                     className={`px-3 py-1.5 rounded-md ${
-                      newTask.trim() 
-                        ? 'bg-[var(--foreground)] text-[var(--background)]' 
-                        : 'bg-[var(--background)]/30 text-[var(--foreground)]/50'
+                      newTask.trim()
+                        ? "bg-[var(--foreground)] text-[var(--background)]"
+                        : "bg-[var(--background)]/30 text-[var(--foreground)]/50"
                     } text-sm font-medium transition-colors`}
                   >
                     {t("tasks.add")}
@@ -374,14 +398,14 @@ const Tasks = () => {
             <div
               key={task.id}
               className={`p-3 bg-[var(--container)] hover:bg-opacity-90 transition-all rounded-md ${
-                task.is_completed
-                  ? "opacity-60"
-                  : ""
+                task.is_completed ? "opacity-60" : ""
               }`}
             >
               <div className="flex items-start gap-2">
                 <button
-                  onClick={() => toggleTaskCompletion(task.id, task.is_completed)}
+                  onClick={() =>
+                    toggleTaskCompletion(task.id, task.is_completed)
+                  }
                   className="flex-shrink-0 mt-1"
                 >
                   <div
@@ -448,7 +472,14 @@ const Tasks = () => {
                           strokeLinecap="round"
                           strokeLinejoin="round"
                         >
-                          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                          <rect
+                            x="3"
+                            y="4"
+                            width="18"
+                            height="18"
+                            rx="2"
+                            ry="2"
+                          ></rect>
                           <line x1="16" y1="2" x2="16" y2="6"></line>
                           <line x1="8" y1="2" x2="8" y2="6"></line>
                           <line x1="3" y1="10" x2="21" y2="10"></line>
@@ -466,7 +497,11 @@ const Tasks = () => {
                               : "bg-yellow-100 text-yellow-700"
                         }`}
                       >
-                        {task.priority === "high" ? "High" : task.priority === "low" ? "Low" : "Medium"}
+                        {task.priority === "high"
+                          ? "High"
+                          : task.priority === "low"
+                            ? "Low"
+                            : "Medium"}
                       </span>
                     )}
                   </div>
@@ -519,7 +554,9 @@ const Tasks = () => {
                         <div className="relative z-30 bg-[var(--background)] rounded-lg shadow-lg p-4">
                           <DatePicker
                             selected={editingTaskDate}
-                            onChange={(date) => updateTaskDueDate(task.id, date)}
+                            onChange={(date) =>
+                              updateTaskDueDate(task.id, date)
+                            }
                             inline
                             className="bg-[var(--background)] text-[var(--foreground)]"
                           />
@@ -553,7 +590,7 @@ const Tasks = () => {
                       width="16"
                       height="16"
                       viewBox="0 0 24 24"
-                      fill="none" 
+                      fill="none"
                       stroke="currentColor"
                       strokeWidth="2"
                       strokeLinecap="round"
@@ -592,15 +629,15 @@ const Tasks = () => {
       ) : (
         <div className="p-6 border border-dashed border-[var(--border-color)] text-center rounded-lg">
           <div className="flex flex-col items-center">
-            <svg 
-              width="32" 
-              height="32" 
-              viewBox="0 0 24 24" 
-              fill="none" 
-              stroke="currentColor" 
-              strokeWidth="1" 
-              strokeLinecap="round" 
-              strokeLinejoin="round" 
+            <svg
+              width="32"
+              height="32"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1"
+              strokeLinecap="round"
+              strokeLinejoin="round"
               className="mb-3 opacity-40"
             >
               <path d="M12 22a10 10 0 1 1 0-20 10 10 0 0 1 0 20z"></path>
@@ -608,7 +645,7 @@ const Tasks = () => {
               <path d="M12 13.5v3.5"></path>
             </svg>
             <p className="text-sm opacity-70 mb-2">{t("tasks.noTasksYet")}</p>
-            <button 
+            <button
               onClick={() => {
                 setIsAddingTask(true);
                 setTimeout(() => newTaskInputRef.current?.focus(), 100);
@@ -645,11 +682,15 @@ const Tasks = () => {
               </svg>
             </button>
 
-            <h3 className="font-semibold text-lg mb-4">{t("tasks.editTask")}</h3>
-            
+            <h3 className="font-semibold text-lg mb-4">
+              {t("tasks.editTask")}
+            </h3>
+
             <div className="space-y-4">
               <div>
-                <label className="block text-xs mb-1 opacity-70">{t("tasks.title")}</label>
+                <label className="block text-xs mb-1 opacity-70">
+                  {t("tasks.title")}
+                </label>
                 <input
                   className="w-full bg-[var(--container)] p-2.5 rounded-md"
                   value={editingTask.title}
@@ -659,9 +700,11 @@ const Tasks = () => {
                   placeholder={t("tasks.taskTitle")}
                 />
               </div>
-              
+
               <div>
-                <label className="block text-xs mb-1 opacity-70">{t("tasks.description")}</label>
+                <label className="block text-xs mb-1 opacity-70">
+                  {t("tasks.description")}
+                </label>
                 <textarea
                   className="w-full bg-[var(--container)] p-2.5 rounded-md min-h-[80px]"
                   value={editingTask.description || ""}
@@ -674,17 +717,19 @@ const Tasks = () => {
                   placeholder={t("tasks.addNotes")}
                 />
               </div>
-              
+
               <div>
-                <label className="block text-xs mb-1 opacity-70">{t("tasks.priority")}</label>
+                <label className="block text-xs mb-1 opacity-70">
+                  {t("tasks.priority")}
+                </label>
                 <div className="flex gap-3">
                   {["high", "medium", "low"].map((priority) => (
-                    <label 
+                    <label
                       key={priority}
                       className={`flex items-center gap-2 p-2.5 bg-[var(--container)] rounded-md flex-1 cursor-pointer border ${
-                        editingTask.priority === priority 
-                          ? priority === "high" 
-                            ? "border-red-400" 
+                        editingTask.priority === priority
+                          ? priority === "high"
+                            ? "border-red-400"
                             : priority === "medium"
                               ? "border-yellow-400"
                               : "border-green-400"
@@ -695,30 +740,29 @@ const Tasks = () => {
                         type="radio"
                         name="priority"
                         checked={editingTask.priority === priority}
-                        onChange={() => 
+                        onChange={() =>
                           setEditingTask({
-                            ...editingTask, 
-                            priority: priority as "low" | "medium" | "high"
+                            ...editingTask,
+                            priority: priority as "low" | "medium" | "high",
                           })
                         }
                         className="sr-only"
                       />
-                      <span 
+                      <span
                         className={`w-3 h-3 rounded-full ${
-                          priority === "high" 
-                            ? "bg-red-500" 
-                            : priority === "medium" 
-                              ? "bg-yellow-500" 
+                          priority === "high"
+                            ? "bg-red-500"
+                            : priority === "medium"
+                              ? "bg-yellow-500"
                               : "bg-green-500"
                         }`}
                       ></span>
                       <span className="text-sm">
-                        {priority === "high" 
-                          ? t("tasks.highPriority") 
-                          : priority === "medium" 
+                        {priority === "high"
+                          ? t("tasks.highPriority")
+                          : priority === "medium"
                             ? t("tasks.mediumPriority")
-                            : t("tasks.lowPriority")
-                        }
+                            : t("tasks.lowPriority")}
                       </span>
                     </label>
                   ))}

@@ -15,7 +15,6 @@ const Profile = () => {
   const [wallpaperLoading, setWallpaperLoading] = useState(true);
   const [avatar_url, setAvatarUrl] = useState<string | null>(null);
   const [avatarLoading, setAvatarLoading] = useState(true);
-  const [showWallpaperModal, setShowWallpaperModal] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -277,7 +276,6 @@ const Profile = () => {
       alert("Erro ao enviar imagem");
     } finally {
       setUploading(false);
-      setShowWallpaperModal(false);
     }
   };
 
@@ -621,8 +619,9 @@ const Profile = () => {
           </div>
 
           <button
-            onClick={() => setShowWallpaperModal(true)}
+            onClick={() => fileInputRef.current?.click()}
             className="absolute top-2 left-2 bg-[var(--background)] text-[var(--foreground)] p-2 rounded-full opacity-80 hover:opacity-100 shadow-sm"
+            title="Change wallpaper"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -639,6 +638,14 @@ const Profile = () => {
               <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
             </svg>
           </button>
+
+          {/* Loading indicator for wallpaper upload */}
+          {uploading && (
+            <div className="absolute top-2 left-14 bg-[var(--background)] text-[var(--foreground)] p-2 rounded-md shadow flex items-center gap-2">
+              <div className="h-4 w-4 border-2 border-t-transparent border-current rounded-full animate-spin"></div>
+              <span className="text-xs">Uploading...</span>
+            </div>
+          )}
         </div>
 
         <div className="flex justify-center items-center gap-2 mt-[-50px] pb-2 relative">
@@ -715,46 +722,6 @@ const Profile = () => {
             </h2>
           )}
         </div>
-
-        {/* Modal de upload de wallpaper */}
-        {showWallpaperModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-[var(--background)] p-6 rounded-lg w-80">
-              <h3 className="text-lg font-medium text-[var(--foreground)] mb-4">
-                Alter Wallpaper
-              </h3>
-
-              <div className="mb-4">
-                <label className="block text-sm text-[var(--foreground)] mb-2">
-                  Choose a image for your wallpaper:
-                </label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleFileChange}
-                  className="text-sm text-[var(--foreground)]"
-                  disabled={uploading}
-                />
-              </div>
-
-              <div className="flex justify-end space-x-2">
-                <button
-                  onClick={() => setShowWallpaperModal(false)}
-                  className="px-4 py-2 text-[var(--foreground)] bg-[var(--container)] rounded"
-                  disabled={uploading}
-                >
-                  Cancel
-                </button>
-
-                {uploading && (
-                  <div className="flex items-center px-4 py-2">
-                    <div className="h-5 w-5 border-2 border-t-transparent border-[var(--foreground)] rounded-full animate-spin"></div>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        )}
 
         {/* Input oculto para upload alternativo */}
         <input

@@ -394,7 +394,7 @@ const CalendarView: React.FC = () => {
             onClick={() => setHighlightToday(!highlightToday)}
             className={`text-sm px-3 py-1.5 border rounded-md transition-colors ${
               highlightToday
-                ? "bg-[var(--foreground)] text-[var(--background)]"
+                ? "bg-[var(--theme)] text-[var(--foreground)]"
                 : "border-[var(--border-color)] hover:bg-[var(--container)]"
             }`}
           >
@@ -473,7 +473,9 @@ const CalendarView: React.FC = () => {
                     }}
                     aria-label={`Event: ${event.title}`}
                   >
-                    <span className={`truncate flex-1 ${event.completed ? "line-through" : ""}`}>
+                    <span
+                      className={`truncate flex-1 ${event.completed ? "line-through" : ""}`}
+                    >
                       {event.title}
                     </span>
                     <Edit2 size={10} className="ml-1 opacity-75" />
