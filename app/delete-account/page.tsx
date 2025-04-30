@@ -137,7 +137,7 @@ export default function DeleteAccountPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-[var(--background)] p-4">
       <div className="w-full max-w-md">
-        <div className="bg-[var(--container)] rounded-xl overflow-hidden border border-[var(--border-color)] shadow-lg">
+        <div className="bg-[var(--container)] rounded-xl overflow-hidden  shadow-lg">
           <div className="p-8">
             <h1 className="text-2xl font-bold text-red-500 mb-6">
               Excluir Conta
