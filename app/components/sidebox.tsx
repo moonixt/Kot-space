@@ -16,6 +16,7 @@ import {
   Folder,
   FolderOpen,
   Inbox,
+  Settings
   // Book,
 } from "lucide-react";
 import Link from "next/link";
@@ -857,7 +858,7 @@ export default function Sidebox() {
                       setIsLoggingOut(false);
                     }
                   }}
-                  className="bg-red-500 text-white hover:bg-red-400 px-4 py-2 rounded disabled:opacity-60"
+                  className="bg-blue-500 text-white hover:bg-blue-400 px-4 py-2 rounded disabled:opacity-60"
                   disabled={isLoggingOut}
                 >
                   {isLoggingOut ? "Logging out..." : t("sidebar.logout")}
@@ -888,12 +889,17 @@ export default function Sidebox() {
             </div>
           </div>
           <div className="border-t border-slate-500/30 p-2 ">
-            <div className="flex justify-between items-center mb-3">
+            <div className="flex justify-end items-center gap-2 ">
               <p className="text-sm text-[var(--foreground)]">
-                {t("sidebar.theme")}
-              </p>
               <LanguageSwitcher />
+                
+              </p>
+              <Link href="/">
+              <Settings />
+              </Link>
+            
             </div>
+            
             <ThemeToggle />
           </div>
           {user && (
