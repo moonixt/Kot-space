@@ -34,7 +34,7 @@ export default function Settings() {
     </div>
     <div>
       <Link href="/pricing">
-      <button className="bg-green-700  text-[var(--background)] font-bold py-2 px-4 rounded  mb-5">
+      <button className="bg-green-700  text-white font-bold py-2 px-4 rounded  mb-5">
         Manage your subscription
       </button>
       </Link>
