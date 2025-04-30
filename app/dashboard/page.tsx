@@ -105,7 +105,7 @@ export default function DashboardPage() {
       // localStorage.setItem("showCalendar", showCalendar.toString());
       // localStorage.setItem("showTables", showTables.toString());
     }
-  }, [showTasks, ]);
+  }, [showTasks]);
   // showCalendar, showTables
 
   useEffect(() => {

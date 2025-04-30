@@ -69,14 +69,15 @@ const Tasks = () => {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      
+
       // Decrypt the task data
-      const decryptedTasks = data?.map(task => ({
-        ...task,
-        title: decrypt(task.title),
-        description: task.description ? decrypt(task.description) : null
-      })) || [];
-      
+      const decryptedTasks =
+        data?.map((task) => ({
+          ...task,
+          title: decrypt(task.title),
+          description: task.description ? decrypt(task.description) : null,
+        })) || [];
+
       setTasks(decryptedTasks);
     } catch (error) {
       console.error("Error fetching tasks:", error);
@@ -93,7 +94,9 @@ const Tasks = () => {
         is_completed: false,
         due_date: newTaskDueDate ? newTaskDueDate.toISOString() : null,
         priority: newTaskPriority,
-        description: newTaskDescription.trim() ? encrypt(newTaskDescription.trim()) : null,
+        description: newTaskDescription.trim()
+          ? encrypt(newTaskDescription.trim())
+          : null,
       });
 
       if (error) throw error;
