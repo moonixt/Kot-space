@@ -12,6 +12,7 @@ import CalendarView from "../components/CalendarView";
 import { decrypt } from "../components/Encryption";
 import { useTranslation } from "react-i18next";
 import Tables from "../components/tables";
+import { Eye } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -145,7 +146,7 @@ export default function DashboardPage() {
             <div className="mb-4 ">
               <DropdownMenu>
                 <DropdownMenuTrigger className="flex items-center gap-2 px-1 py-2  bg-[var(--theme)]/30 backdrop-blur-sm hover:bg-[var(--container)] transition-colors">
-                  <span>{t("dashboard.toggleComponents")}</span>
+                  <span><Eye/></span>
                   <svg
                     width="16"
                     height="16"
@@ -324,27 +325,6 @@ export default function DashboardPage() {
                   <line x1="5" y1="12" x2="19" y2="12"></line>
                 </svg>
               </button>
-
-              {/* Ebook Reader Button */}
-              <Link
-                href="/reader"
-                className="mt-4 px-4 py-2 bg-[var(--accent-color)] text-white hover:bg-opacity-80 transition-colors flex items-center gap-2 rounded-md"
-              >
-                <span>Open Ebook Reader</span>
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
-                  <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1-3-3h7z"></path>
-                </svg>
-              </Link>
             </div>
           )}
         </div>

@@ -480,9 +480,32 @@ function Editor() {
     >
       <Profile />
       <div className="mx-auto max-w-7xl w-full h-full flex flex-col flex-grow">
-        <div className="bg-[var(--background)]   overflow-hidden flex flex-col flex-grow h-full  border-[var(--border-color)] transition-all duration-300">
-          {/* Title Section */}
-          <div className="p-5 sm:p-6 border-b border-[var(--border-color)] relative">
+     
+        <div className="bg-[var(--background)]   overflow-hidden flex flex-col flex-grow h-full  transition-all duration-300">
+        
+          <button
+              className={`flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 w-46 rounded-md text-sm sm:text-base font-medium transition-all duration-300 ${
+                saving
+                  ? "bg-[var(--container)] text-[var(--foreground)] opacity-70"
+                  : "bg-[var(--theme)]  text-[var(--foreground)] shadow-sm"
+              }`}
+              onClick={saveNote}
+              disabled={saving || (!title.trim() && !content.trim())}
+            >
+              {saving ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-[var(--foreground)] border-t-transparent rounded-full animate-spin"></div>
+                  <span>{t("editor.saving")}</span>
+                </>
+              ) : (
+                <>
+                  <Save size={18} />
+                  <span>{t("editor.save")}</span>
+                </>
+              )}
+            </button>
+              {/* Title Section */}
+          <div className="p-5 sm:p-6 relative">
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setShowEmojiPicker(!showEmojiPicker)}
@@ -510,6 +533,7 @@ function Editor() {
                   />
                 </div>
               )}
+              
 
               {/* Add folder selection dropdown */}
               <div className="relative" ref={folderDropdownRef}>
@@ -528,7 +552,7 @@ function Editor() {
                 </button>
 
                 {showFolderDropdown && (
-                  <div className="absolute right-0 mt-1 w-48 rounded-md bg-[var(--background)] border border-[var(--border-color)] shadow-lg z-50">
+                  <div className="absolute right-0 mt-1 w-48 rounded-md bg-[var(--container)]  shadow-lg z-50">
                     <div className="py-1 max-h-60 overflow-y-auto scrollbar">
                       <button
                         onClick={() => {
@@ -580,9 +604,23 @@ function Editor() {
           </div>
 
           {/* Toolbar Section */}
-          <div className="bg-[var(--container)] bg-opacity-30 border-b border-[var(--border-color)] text-sm px-2 sm:px-3 py-2 text-[var(--foreground)] flex justify-between items-center sticky top-0 z-10">
+          <div className="bg-[var(--container)] bg-opacity-30   text-sm px-2 sm:px-3 py-2 text-[var(--foreground)] flex justify-between items-center sticky top-0 z-10">
             <div className="flex flex-wrap items-center gap-1 sm:gap-2">
               <div className="flex items-center space-x-1 mr-2">
+              <button
+                className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors flex items-center justify-center"
+                onClick={() => insertMarkdown("orderedList")}
+                title={t("editor.orderedList")}
+              >
+                <ListOrdered size={18} />
+              </button>
+              <button
+                className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors flex items-center justify-center"
+                onClick={() => insertMarkdown("unorderedList")}
+                title={t("editor.unorderedList")}
+              >
+                <LayoutList size={18} />
+              </button>
                 <button
                   className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors font-bold"
                   onClick={() => insertMarkdown("bold")}
@@ -632,7 +670,7 @@ function Editor() {
                   &lt;/&gt;
                 </button>
                 <button
-                  className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors hidden sm:flex items-center justify-center relative"
+                  className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors  sm:flex items-center justify-center relative"
                   onClick={() => {
                     if (imageUploadLoading) return;
                     if (fileInputRef.current) {
@@ -711,7 +749,7 @@ function Editor() {
           </div>
 
           {/* Mobile Toolbar */}
-          <div className="bg-[var(--container)] border-b border-[var(--border-color)] py-2 px-2 flex justify-between items-center sm:hidden">
+          {/* <div className="bg-[var(--container)] py-2 px-2 flex justify-between items-center sm:hidden">
             <div className="flex items-center space-x-2">
               <button
                 className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors flex items-center justify-center"
@@ -747,14 +785,14 @@ function Editor() {
                 )}
               </button>
             </div>
-          </div>
+          </div> */}
 
           {/* Content Area */}
           <div className=" scrollbar bg-[var(--background)] relative">
             {!isPreviewMode ? (
               <div className="h-full relative">
                 <textarea
-                  className="p-5 sm:p-6 w-full bg-transparent text-[var(--foreground)] resize-none focus:outline-none min-h-[370px] h-full text-base sm:text-lg overflow-auto transition-all duration-300"
+                  className="p-5 sm:p-6 w-full bg-transparent text-[var(--foreground)] resize-none focus:outline-none min-h-[270px] sm:min-h-[370px] h-full text-base sm:text-lg overflow-auto transition-all duration-300"
                   placeholder={t("editor.contentPlaceholder")}
                   maxLength={15000}
                   value={content}
@@ -782,7 +820,7 @@ function Editor() {
           </div>
 
           {/* Tags Search Section */}
-          <div className="border-t border-[var(--border-color)] p-3 sm:p-4 bg-[var(--container)] bg-opacity-20">
+          <div className="p-3 sm:p-4 bg-[var(--container)] bg-opacity-20">
             <div className="flex items-center gap-2">
               <span className="text-xs sm:text-sm text-[var(--foreground)] font-medium">
                 {t("editor.tags")}
@@ -793,14 +831,14 @@ function Editor() {
                   placeholder={t("editor.searchTags")}
                   value={tagSearchTerm}
                   onChange={(e) => setTagSearchTerm(e.target.value)}
-                  className="w-full px-3 py-2 text-xs sm:text-sm rounded-md bg-[var(--background)] text-[var(--foreground)] border border-[var(--border-color)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-color)] transition-all duration-200"
+                  className="w-full px-3 py-2 text-xs sm:text-sm rounded-md bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-color)] transition-all duration-200"
                 />
               </div>
             </div>
           </div>
 
           {/* Tags Selection Section */}
-          <div className="flex flex-wrap gap-1.5 sm:gap-2 p-3 sm:p-4 overflow-y-auto max-h-28 scrollbar bg-[var(--background)] border-t border-[var(--border-color)]">
+          <div className="flex flex-wrap gap-1.5 sm:gap-2 p-3 sm:p-4 overflow-y-auto max-h-28 scrollbar bg-[var(--background)] ">
             {[
               "agenda",
               "friendship",
@@ -968,33 +1006,13 @@ function Editor() {
           </div>
 
           {/* Footer Section */}
-          <div className="flex justify-between items-center p-4 sm:p-5 bg-[var(--container)] border-t border-[var(--border-color)]">
+          
+          <div className="flex justify-between items-center p-4 sm:p-5  bg-[var(--container)]">
+          
             <div className="text-xs sm:text-sm text-[var(--foreground)] opacity-70">
               <span className="font-medium">{content.length}</span> / 15000{" "}
               {t("editor.characters")}
             </div>
-
-            <button
-              className={`flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 rounded-md text-sm sm:text-base font-medium transition-all duration-300 ${
-                saving
-                  ? "bg-[var(--container)] text-[var(--foreground)] opacity-70"
-                  : "bg-[var(--button-bg1)] hover:bg-[var(--hover-color)] text-[var(--background)] shadow-sm"
-              }`}
-              onClick={saveNote}
-              disabled={saving || (!title.trim() && !content.trim())}
-            >
-              {saving ? (
-                <>
-                  <div className="w-4 h-4 border-2 border-[var(--foreground)] border-t-transparent rounded-full animate-spin"></div>
-                  <span>{t("editor.saving")}</span>
-                </>
-              ) : (
-                <>
-                  <Save size={18} />
-                  <span>{t("editor.save")}</span>
-                </>
-              )}
-            </button>
           </div>
         </div>
       </div>
