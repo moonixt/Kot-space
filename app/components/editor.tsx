@@ -480,31 +480,29 @@ function Editor() {
     >
       <Profile />
       <div className="mx-auto max-w-7xl w-full h-full flex flex-col flex-grow">
-     
         <div className="bg-[var(--background)]   overflow-hidden flex flex-col flex-grow h-full  transition-all duration-300">
-        
           <button
-              className={`flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 w-46 rounded-md text-sm sm:text-base font-medium transition-all duration-300 ${
-                saving
-                  ? "bg-[var(--container)] text-[var(--foreground)] opacity-70"
-                  : "bg-[var(--theme)]  text-[var(--foreground)] shadow-sm"
-              }`}
-              onClick={saveNote}
-              disabled={saving || (!title.trim() && !content.trim())}
-            >
-              {saving ? (
-                <>
-                  <div className="w-4 h-4 border-2 border-[var(--foreground)] border-t-transparent rounded-full animate-spin"></div>
-                  <span>{t("editor.saving")}</span>
-                </>
-              ) : (
-                <>
-                  <Save size={18} />
-                  <span>{t("editor.save")}</span>
-                </>
-              )}
-            </button>
-              {/* Title Section */}
+            className={`flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 w-46 rounded-md text-sm sm:text-base font-medium transition-all duration-300 ${
+              saving
+                ? "bg-[var(--container)] text-[var(--foreground)] opacity-70"
+                : "bg-[var(--theme)]  text-[var(--foreground)] shadow-sm"
+            }`}
+            onClick={saveNote}
+            disabled={saving || (!title.trim() && !content.trim())}
+          >
+            {saving ? (
+              <>
+                <div className="w-4 h-4 border-2 border-[var(--foreground)] border-t-transparent rounded-full animate-spin"></div>
+                <span>{t("editor.saving")}</span>
+              </>
+            ) : (
+              <>
+                <Save size={18} />
+                <span>{t("editor.save")}</span>
+              </>
+            )}
+          </button>
+          {/* Title Section */}
           <div className="p-5 sm:p-6 relative">
             <div className="flex items-center gap-3">
               <button
@@ -533,7 +531,6 @@ function Editor() {
                   />
                 </div>
               )}
-              
 
               {/* Add folder selection dropdown */}
               <div className="relative" ref={folderDropdownRef}>
@@ -607,20 +604,20 @@ function Editor() {
           <div className="bg-[var(--container)] bg-opacity-30   text-sm px-2 sm:px-3 py-2 text-[var(--foreground)] flex justify-between items-center sticky top-0 z-10">
             <div className="flex flex-wrap items-center gap-1 sm:gap-2">
               <div className="flex items-center space-x-1 mr-2">
-              <button
-                className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors flex items-center justify-center"
-                onClick={() => insertMarkdown("orderedList")}
-                title={t("editor.orderedList")}
-              >
-                <ListOrdered size={18} />
-              </button>
-              <button
-                className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors flex items-center justify-center"
-                onClick={() => insertMarkdown("unorderedList")}
-                title={t("editor.unorderedList")}
-              >
-                <LayoutList size={18} />
-              </button>
+                <button
+                  className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors flex items-center justify-center"
+                  onClick={() => insertMarkdown("orderedList")}
+                  title={t("editor.orderedList")}
+                >
+                  <ListOrdered size={18} />
+                </button>
+                <button
+                  className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors flex items-center justify-center"
+                  onClick={() => insertMarkdown("unorderedList")}
+                  title={t("editor.unorderedList")}
+                >
+                  <LayoutList size={18} />
+                </button>
                 <button
                   className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors font-bold"
                   onClick={() => insertMarkdown("bold")}
@@ -1006,9 +1003,8 @@ function Editor() {
           </div>
 
           {/* Footer Section */}
-          
+
           <div className="flex justify-between items-center p-4 sm:p-5  bg-[var(--container)]">
-          
             <div className="text-xs sm:text-sm text-[var(--foreground)] opacity-70">
               <span className="font-medium">{content.length}</span> / 15000{" "}
               {t("editor.characters")}

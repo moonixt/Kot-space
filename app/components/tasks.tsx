@@ -4,6 +4,7 @@ import { useAuth } from "../../context/AuthContext";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useTranslation } from "react-i18next";
+import { encrypt, decrypt } from "./Encryption"; // Import encryption functions
 
 interface Task {
   id: string;
@@ -68,7 +69,16 @@ const Tasks = () => {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      setTasks(data || []);
+
+      // Decrypt the task data
+      const decryptedTasks =
+        data?.map((task) => ({
+          ...task,
+          title: decrypt(task.title),
+          description: task.description ? decrypt(task.description) : null,
+        })) || [];
+
+      setTasks(decryptedTasks);
     } catch (error) {
       console.error("Error fetching tasks:", error);
     }
@@ -80,11 +90,13 @@ const Tasks = () => {
     try {
       const { error } = await supabase.from("tasks").insert({
         user_id: user?.id,
-        title: newTask,
+        title: encrypt(newTask),
         is_completed: false,
         due_date: newTaskDueDate ? newTaskDueDate.toISOString() : null,
         priority: newTaskPriority,
-        description: newTaskDescription.trim() || null,
+        description: newTaskDescription.trim()
+          ? encrypt(newTaskDescription.trim())
+          : null,
       });
 
       if (error) throw error;
@@ -148,10 +160,10 @@ const Tasks = () => {
       const { error } = await supabase
         .from("tasks")
         .update({
-          title: task.title,
+          title: encrypt(task.title),
           due_date: task.due_date,
           priority: task.priority,
-          description: task.description,
+          description: task.description ? encrypt(task.description) : null,
         })
         .eq("id", task.id);
       if (error) throw error;
