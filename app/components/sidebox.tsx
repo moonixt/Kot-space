@@ -894,9 +894,11 @@ export default function Sidebox() {
               <LanguageSwitcher />
                 
               </p>
-              <Link href="/">
+              <p className="pr-4">
+              <Link href="/settings">
               <Settings />
               </Link>
+              </p>
             
             </div>
             
