@@ -23,6 +23,8 @@ function createWindow() {
     height: 800,
     minWidth: 436,
     minHeight: 780,
+    autoHideMenuBar: true,
+    menuBarVisible: false,
     show: false, // Hide until ready
     backgroundColor: "#000",
     webPreferences: {

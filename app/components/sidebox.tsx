@@ -16,7 +16,7 @@ import {
   Folder,
   FolderOpen,
   Inbox,
-  Book,
+  // Book,
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -355,7 +355,7 @@ export default function Sidebox() {
                 )}
               </h1>
 
-              <div className="flex items-center space-x-2">
+              {/* <div className="flex items-center space-x-2">
                 <Link href="/reader">
                   <div
                     className="p-2 rounded-full hover:bg-[var(--container)] transition-colors"
@@ -372,7 +372,7 @@ export default function Sidebox() {
                 >
                   <PlusCircle size={20} className="text-[var(--foreground)]" />
                 </button>
-              </div>
+              </div> */}
             </div>
 
             {/* Search */}

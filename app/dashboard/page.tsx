@@ -8,11 +8,11 @@ import { useRouter } from "next/navigation";
 import { ProtectedRoute } from "../components/ProtectedRoute";
 import Profile from "../profile/page";
 import Tasks from "../components/tasks";
-import CalendarView from "../components/CalendarView";
+// import CalendarView from "../components/CalendarView";
 import { decrypt } from "../components/Encryption";
 import { useTranslation } from "react-i18next";
-import Tables from "../components/tables";
-import { Eye } from 'lucide-react';
+// import Tables from "../components/tables";
+import { Eye } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -41,21 +41,21 @@ export default function DashboardPage() {
     return true;
   });
 
-  const [showCalendar, setShowCalendar] = useState(() => {
-    if (typeof window !== "undefined") {
-      const savedShowCalendar = localStorage.getItem("showCalendar");
-      return savedShowCalendar === null ? false : savedShowCalendar === "true";
-    }
-    return true;
-  });
+  // const [showCalendar, setShowCalendar] = useState(() => {
+  //   if (typeof window !== "undefined") {
+  //     const savedShowCalendar = localStorage.getItem("showCalendar");
+  //     return savedShowCalendar === null ? false : savedShowCalendar === "true";
+  //   }
+  //   return true;
+  // });
 
-  const [showTables, setShowTables] = useState(() => {
-    if (typeof window !== "undefined") {
-      const savedShowTables = localStorage.getItem("showTables");
-      return savedShowTables === null ? false : savedShowTables === "true";
-    }
-    return true;
-  });
+  // const [showTables, setShowTables] = useState(() => {
+  //   if (typeof window !== "undefined") {
+  //     const savedShowTables = localStorage.getItem("showTables");
+  //     return savedShowTables === null ? false : savedShowTables === "true";
+  //   }
+  //   return true;
+  // });
   const { user } = useAuth();
 
   // Fetch notes from Supabase
@@ -85,16 +85,16 @@ export default function DashboardPage() {
   useEffect(() => {
     if (typeof window !== "undefined") {
       const savedShowTasks = localStorage.getItem("showTasks");
-      const savedShowCalendar = localStorage.getItem("showCalendar");
-      const savedShowTables = localStorage.getItem("showTables");
+      // const savedShowCalendar = localStorage.getItem("showCalendar");
+      // const savedShowTables = localStorage.getItem("showTables");
 
       setShowTasks(savedShowTasks === null ? true : savedShowTasks === "true");
-      setShowCalendar(
-        savedShowCalendar === null ? true : savedShowCalendar === "true",
-      );
-      setShowTables(
-        savedShowTables === null ? true : savedShowTables === "true",
-      );
+      // setShowCalendar(
+      //   savedShowCalendar === null ? true : savedShowCalendar === "true",
+      // );
+      // setShowTables(
+      //   savedShowTables === null ? true : savedShowTables === "true",
+      // );
     }
   }, []);
 
@@ -102,10 +102,11 @@ export default function DashboardPage() {
   useEffect(() => {
     if (typeof window !== "undefined") {
       localStorage.setItem("showTasks", showTasks.toString());
-      localStorage.setItem("showCalendar", showCalendar.toString());
-      localStorage.setItem("showTables", showTables.toString());
+      // localStorage.setItem("showCalendar", showCalendar.toString());
+      // localStorage.setItem("showTables", showTables.toString());
     }
-  }, [showTasks, showCalendar, showTables]);
+  }, [showTasks, ]);
+  // showCalendar, showTables
 
   useEffect(() => {
     fetchNotes();
@@ -146,7 +147,9 @@ export default function DashboardPage() {
             <div className="mb-4 ">
               <DropdownMenu>
                 <DropdownMenuTrigger className="flex items-center gap-2 px-1 py-2  bg-[var(--theme)]/30 backdrop-blur-sm hover:bg-[var(--container)] transition-colors">
-                  <span><Eye/></span>
+                  <span>
+                    <Eye />
+                  </span>
                   <svg
                     width="16"
                     height="16"
@@ -172,20 +175,20 @@ export default function DashboardPage() {
                   >
                     {t("dashboard.tasks")}
                   </DropdownMenuCheckboxItem>
-                  <DropdownMenuCheckboxItem
+                  {/* <DropdownMenuCheckboxItem
                     checked={showCalendar}
                     onCheckedChange={setShowCalendar}
                     className="text-[var(--text-color)]"
                   >
                     {t("dashboard.calendar")}
-                  </DropdownMenuCheckboxItem>
-                  <DropdownMenuCheckboxItem
-                    checked={showTables}
-                    onCheckedChange={setShowTables}
+                  </DropdownMenuCheckboxItem> */}
+                  {/* <DropdownMenuCheckboxItem
+                    // checked={showTables}
+                    // onCheckedChange={setShowTables}
                     className="text-[var(--text-color)]"
                   >
                     {t("dashboard.tables")}
-                  </DropdownMenuCheckboxItem>
+                  </DropdownMenuCheckboxItem> */}
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
@@ -202,7 +205,7 @@ export default function DashboardPage() {
             </div>
 
             {/* Calendar component with conditional rendering */}
-            <div
+            {/* <div
               className={`transition-all duration-600 ease-in-out overflow-hidden mt-4 ${
                 showCalendar
                   ? "max-h-[1000px] opacity-100"
@@ -217,11 +220,11 @@ export default function DashboardPage() {
                   <CalendarView />
                 </div>
               )}
-            </div>
+            </div> */}
           </div>
 
           {/* Tables component with conditional rendering */}
-          <div
+          {/* <div
             className={`transition-all duration-600 ease-in-out mt-4 ${
               showTables ? "opacity-100 " : "max-h-0 opacity-0 mb-0"
             }`}
@@ -231,7 +234,7 @@ export default function DashboardPage() {
                 <Tables />
               </div>
             )}
-          </div>
+          </div> */}
           <div>
             <h1 className="text-xl font-semibold mt-4 mb-2">
               {t("dashboard.documents")}
