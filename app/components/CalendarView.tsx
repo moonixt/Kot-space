@@ -77,13 +77,13 @@ const EventModal: React.FC<EventModalProps> = ({
         </button>
         <h3 className="font-bold mb-2">Edit Event</h3>
         <input
-          className="w-full border mb-2 p-2 rounded"
+          className="w-full  mb-2 p-2 rounded"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="Title"
         />
         <textarea
-          className="w-full border mb-2 p-2 rounded"
+          className="w-full  mb-2 p-2 rounded"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           placeholder="Description"
@@ -385,17 +385,17 @@ const CalendarView: React.FC = () => {
         <div className="flex space-x-2">
           <button
             onClick={handleTodayClick}
-            className="flex items-center gap-1 text-sm px-3 py-1.5 border border-[var(--border-color)] rounded-md hover:bg-[var(--container)] transition-colors"
+            className="flex items-center gap-1 text-sm px-3 py-1.5   hover:bg-[var(--container)] transition-colors"
           >
             <CalendarIcon size={16} />
             <span>{t("calendar.today")}</span>
           </button>
           <button
             onClick={() => setHighlightToday(!highlightToday)}
-            className={`text-sm px-3 py-1.5 border rounded-md transition-colors ${
+            className={`text-sm px-3 py-1.5   transition-colors ${
               highlightToday
                 ? "bg-[var(--theme)] text-[var(--foreground)]"
-                : "border-[var(--border-color)] hover:bg-[var(--container)]"
+                : "-[var(---color)] hover:bg-[var(--container)]"
             }`}
           >
             {t("calendar.highlightToday")}
@@ -419,7 +419,7 @@ const CalendarView: React.FC = () => {
           (_, index) => (
             <div
               key={`empty-${index}`}
-              className="bg-[var(--container)] bg-opacity-20 rounded-md h-24"
+              className="bg-[var(--container)] bg-opacity-20  h-24"
             ></div>
           ),
         )}
@@ -436,10 +436,10 @@ const CalendarView: React.FC = () => {
               key={dayNum}
               tabIndex={0}
               aria-label={`Day ${dayNum}${isToday(dayNum) ? ", today" : ""}`}
-              className={`h-24 flex flex-col rounded-md overflow-hidden transition-all duration-200
+              className={`h-24 flex flex-col  overflow-hidden transition-all duration-200
                 ${selectedDay === dayNum ? "ring-2 ring-blue-400 shadow-md transform scale-[1.02]" : ""}
                 ${isToday(dayNum) && highlightToday ? "bg-[var(--container)] bg-opacity-30" : "bg-[var(--container)] bg-opacity-10"}
-                ${hasEvents(dayNum) ? "border-[0.5px] border-[var(--accent-color)] border-opacity-30" : "border-[0.5px] border-[var(--border-color)] border-opacity-20"}
+                ${hasEvents(dayNum) ? "-[0.5px] -[var(--accent-color)] -opacity-30" : "-[0.5px] -[var(---color)] -opacity-20"}
                 hover:shadow-lg hover:bg-opacity-30 transition cursor-pointer`}
               onClick={() => setSelectedDay(dayNum)}
               onKeyDown={(e) => {
@@ -464,7 +464,7 @@ const CalendarView: React.FC = () => {
                 {showEvents.map((event) => (
                   <button
                     key={event.id}
-                    className={`w-full text-left px-2 py-1 rounded-md flex items-center text-xs
+                    className={`w-full text-left px-2 py-1  flex items-center text-xs
                       ${event.completed ? "opacity-60" : ""}
                       ${event.color || "bg-blue-400 text-white"}`}
                     onClick={(e) => {
@@ -494,7 +494,7 @@ const CalendarView: React.FC = () => {
 
       {/* Event management panel */}
       {selectedDay && (
-        <div className="p-5 bg-[var(--container)] bg-opacity-30 rounded-lg border border-[var(--border-color)] border-opacity-20 shadow-inner">
+        <div className="p-5 bg-[var(--container)] bg-opacity-30 rounded-lg  -opacity-20 shadow-inner">
           <h3 className="font-medium text-[var(--foreground)] text-center text-lg mb-4">
             {selectedDate.toLocaleString(i18n.language, { month: "long" })}{" "}
             {selectedDay}, {year}
@@ -512,7 +512,7 @@ const CalendarView: React.FC = () => {
                   value={newEvent}
                   onChange={(e) => setNewEvent(e.target.value)}
                   placeholder={t("calendar.eventTitle")}
-                  className="w-full border border-[var(--border-color)] rounded-md px-3 py-2.5 bg-transparent text-[var(--foreground)] focus:ring-1 focus:ring-[var(--accent-color)] focus:outline-none transition-all"
+                  className="w-full   px-3 py-2.5 bg-transparent text-[var(--foreground)] focus:ring-1 focus:ring-[var(--accent-color)] focus:outline-none transition-all"
                   onKeyDown={(e) => {
                     if (e.key === "Enter" && !e.shiftKey) {
                       e.preventDefault();
@@ -526,7 +526,7 @@ const CalendarView: React.FC = () => {
                   value={newDescription}
                   onChange={(e) => setNewDescription(e.target.value)}
                   placeholder={t("calendar.eventDescription")}
-                  className="w-full border border-[var(--border-color)] rounded-md px-3 py-2.5 bg-transparent text-[var(--foreground)] resize-none h-24 focus:ring-1 focus:ring-[var(--accent-color)] focus:outline-none transition-all"
+                  className="w-full   px-3 py-2.5 bg-transparent text-[var(--foreground)] resize-none h-24 focus:ring-1 focus:ring-[var(--accent-color)] focus:outline-none transition-all"
                   onKeyDown={(e) => {
                     if (e.key === "Enter" && e.ctrlKey) {
                       e.preventDefault();
@@ -555,7 +555,7 @@ const CalendarView: React.FC = () => {
                       e.preventDefault();
                       addEvent();
                     }}
-                    className="px-4 py-2 bg-[var(--foreground)] text-[var(--background)] hover:bg-opacity-80 rounded-md transition-colors ml-auto flex items-center gap-1"
+                    className="px-4 py-2 bg-[var(--foreground)] text-[var(--background)] hover:bg-opacity-80  transition-colors ml-auto flex items-center gap-1"
                   >
                     <Plus size={16} />
                     <span>Add</span>
@@ -569,12 +569,12 @@ const CalendarView: React.FC = () => {
               <h4 className="text-sm font-medium text-[var(--foreground)] mb-3 uppercase tracking-wide opacity-80">
                 {t("calendar.events")}
               </h4>
-              <div className="space-y-2.5 max-h-64 overflow-y-auto scrollbar-thin border border-[var(--border-color)] p-3 rounded-md shadow-inner bg-[var(--background)] bg-opacity-50">
+              <div className="space-y-2.5 max-h-64 overflow-y-auto scrollbar-thin  p-3  shadow-inner bg-[var(--background)] bg-opacity-50">
                 {getEventsForDay(selectedDay).length > 0 ? (
                   getEventsForDay(selectedDay).map((event) => (
                     <div
                       key={event.id}
-                      className={`flex flex-col p-3 border border-[var(--border-color)] rounded-md group ${event.color ? event.color + " bg-opacity-90" : ""} hover:shadow-md transition-all duration-200`}
+                      className={`flex flex-col p-3   group ${event.color ? event.color + " bg-opacity-90" : ""} hover:shadow-md transition-all duration-200`}
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2 min-w-0 flex-1 overflow-hidden">

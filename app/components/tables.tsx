@@ -1226,7 +1226,7 @@ export default function DataTable({ tableName = "" }: { tableName?: string }) {
 
       {loading ? (
         <div className="w-full h-64 flex items-center justify-center">
-          <div className="text-muted-foreground">Carregando...</div>
+          <div className="text-muted-foreground">Loading...</div>
         </div>
       ) : (
         <div
