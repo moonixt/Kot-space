@@ -38,7 +38,7 @@
     "plan": {
       "name": "Plano PRO",
       "mostPopular": "Mais Popular",
-      "price": "19.99",
+      "price": "R$ 9.99",
       "period": "mês",
       "perPeriod": "/mês",
       "included": "O que está incluído:",
@@ -135,11 +135,12 @@
     "openTablesPage": "Abrir Tabelas",
     "toggleComponents": "Mostrar/Esconder visualização",
     "components": "Mostrar/Esconder visualização",
+    "documents": "Documentos",
     "loading": "Carregando...",
     "emptyState": {
       "title": "Nenhum documento encontrado",
       "description": "Você ainda não criou nenhum documento. Comece agora mesmo!",
-      "createFirstNote": "Criar primeira nota"
+      "createFirstNote": "Criar primeiro documento"
     },
     "note": {
       "untitled": "Sem título",

@@ -155,7 +155,7 @@ export default function MusicPlayer() {
                 <span
                   className={`px-2 py-1 bg-white/10 hover:bg-white/20 transition ${isMobile ? "text-sm" : "text-xs"}`}
                 >
-                  🎵 {!audioFile && "Select Audio"}
+                  🎵 {!audioFile && "Audio"}
                 </span>
               </label>
 

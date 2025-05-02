@@ -107,7 +107,7 @@ function LoginForm() {
           alt={t("login.logoAlt")}
           width={1000}
           height={100}
-          className=" h-60 md:h-80 object-cover object-top"
+          className=" h-60 md:h-80 object-cover object-center"
           priority
         />
       </div>

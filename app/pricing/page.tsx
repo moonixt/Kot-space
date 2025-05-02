@@ -63,7 +63,7 @@ export default function PricingPage() {
               <h2 className="text-2xl font-bold text-[var(--foregorund)]">
                 {t("pricing.plan.name")}
               </h2>
-              <div className="bg-red-500 text-white px-3 py-1 text-sm font-medium rounded-full">
+              <div className="bg-green-500 text-white px-3 py-1 text-sm font-medium rounded-full">
                 {t("pricing.plan.mostPopular")}
               </div>
             </div>
@@ -71,7 +71,7 @@ export default function PricingPage() {
           <div className="p-8">
             <div className="mb-8 flex items-baseline">
               <span className="text-5xl font-extrabold text-[var(--foreground)]">
-                R$ {t("pricing.plan.price")}
+                {t("pricing.plan.price")}
               </span>
 
               <span className="ml-1 text-xl font-medium text-[var(--foreground)]">
@@ -147,7 +147,7 @@ export default function PricingPage() {
                 {t("pricing.orderSummary.planLabel")} {t("pricing.plan.name")}
               </span>
               <span className="font-medium text-[var(--foreground)]">
-                R$ {t("pricing.plan.price")}
+                {t("pricing.plan.price")}
               </span>
             </div>
             <div className="flex justify-between py-4 border-t border-b border-[var(--border-color)]">
@@ -163,7 +163,7 @@ export default function PricingPage() {
                 {t("pricing.orderSummary.total")}
               </span>
               <span className="text-lg font-bold text-[var(--foreground)]">
-                R$ {t("pricing.plan.price")}
+                 {t("pricing.plan.price")}
                 {t("pricing.plan.perPeriod")}
               </span>
             </div>
@@ -181,7 +181,7 @@ export default function PricingPage() {
             </div>
           </div>
         </div>
-        <div className="mt-12 bg-[var(--highlight)] p-6 rounded-2xl border-l-4 border-red-500">
+        {/* <div className="mt-12 bg-[var(--highlight)] p-6 rounded-2xl border-l-4 border-red-500">
           <h4 className="font-bold text-[var(--foreground)] text-center">
             Oferta especial por tempo limitado! Economize 33%
           </h4>
@@ -189,7 +189,7 @@ export default function PricingPage() {
             Organize, planeje e realize mais com recursos avançados de
             calendário e gerenciamento de tarefas
           </p>
-        </div>
+        </div> */}
       </div>
     </div>
   );
