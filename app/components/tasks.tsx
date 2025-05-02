@@ -211,7 +211,7 @@ const Tasks = () => {
             setIsAddingTask(!isAddingTask);
             setTimeout(() => newTaskInputRef.current?.focus(), 100);
           }}
-          className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-[var(--theme)] text-[var(--foreground)] hover:opacity-90 transition-all text-sm"
+          className="flex items-center gap-1 px-3 py-1.5 c bg-[var(--theme)] text-[var(--foreground)] hover:opacity-90 transition-all text-sm"
         >
           {isAddingTask ? (
             <>{t("tasks.cancel")}</>
@@ -420,7 +420,7 @@ const Tasks = () => {
                   }
                   className="flex-shrink-0 mt-1"
                 >
-                  <div
+                  <div id="checkbox"
                     className={`w-5 h-5 ${
                       task.is_completed
                         ? "bg-[var(--foreground)] border-[var(--foreground)]"
@@ -429,7 +429,7 @@ const Tasks = () => {
                           : task.priority === "low"
                             ? "border-green-400"
                             : "border-yellow-400"
-                    } border rounded-full flex items-center justify-center transition-colors`}
+                    } border flex items-center justify-center transition-colors`}
                   >
                     {task.is_completed && (
                       <svg

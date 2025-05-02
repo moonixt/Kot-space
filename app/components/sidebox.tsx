@@ -489,9 +489,9 @@ export default function Sidebox() {
                       <div className="flex items-center flex-1 min-w-0">
                         <div className="p-1">
                           {folder.expanded ? (
-                            <FolderOpen size={16} className="text-yellow-400" />
+                            <FolderOpen size={16} className="text-blue-400" />
                           ) : (
-                            <Folder size={16} className="text-yellow-400" />
+                            <Folder size={16} className="text-blue-400" />
                           )}
                         </div>
                         <ChevronDown
@@ -721,7 +721,7 @@ export default function Sidebox() {
                               <div className="ml-2 flex items-center text-xs">
                                 <Folder
                                   size={12}
-                                  className="mr-1 text-yellow-400"
+                                  className="mr-1 text-blue-400"
                                 />
                                 <span className="truncate max-w-[80px]">
                                   {folders.find((f) => f.id === note.folder_id)

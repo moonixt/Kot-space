@@ -10,7 +10,7 @@ export default function EditorPage() {
   return (
     <ProtectedRoute>
       <div className="h-screen bg-[var(--background)] overflow-y-auto scrollbar flex flex-col">
-        <div className="sticky top-0 bg-[var(--background)] bg-opacity-90 backdrop-blur-sm z-10 py-3 px-4   flex items-center">
+        <div className="sticky top-0 bg-[var(--background)]/60 bg-opacity-90 backdrop-blur-sm z-10 py-3 px-4   flex items-center">
           <Link
             href="/dashboard"
             className="p-2 rounded-full hover:bg-[var(--container)] transition-colors mr-2"
