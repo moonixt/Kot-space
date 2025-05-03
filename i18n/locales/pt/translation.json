@@ -125,7 +125,7 @@
   },
   "dashboard": {
     "mainTitle": "Dashboard",
-    "newDocument": "Novo documento",
+    "newDocument": "Nova anotação",
     "hideTasks": "Esconder Tarefas",
     "tasks": "Tarefas",
     "hideCalendar": "Esconder Calendário",
@@ -135,12 +135,12 @@
     "openTablesPage": "Abrir Tabelas",
     "toggleComponents": "Mostrar/Esconder visualização",
     "components": "Mostrar/Esconder visualização",
-    "documents": "Documentos",
+    "documents": "Notas",
     "loading": "Carregando...",
     "emptyState": {
-      "title": "Nenhum documento encontrado",
-      "description": "Você ainda não criou nenhum documento. Comece agora mesmo!",
-      "createFirstNote": "Criar primeiro documento"
+      "title": "Nenhuma nota encontrada",
+      "description": "Você ainda não criou nenhuma nota. Comece agora mesmo!",
+      "createFirstNote": "Criar primeira nota"
     },
     "note": {
       "untitled": "Sem título",
