@@ -79,7 +79,7 @@
   },
   "sidebar": {
     "myWorkspace": "My Space",
-    "newNote": "New Note",
+    "newNote": "New note",
     "searchNotes": "Search notes...",
     "untitled": "Untitled",
     "noNotesFound": "No notes found",
@@ -124,7 +124,7 @@
   },
   "dashboard": {
     "mainTitle": "Dashboard",
-    "newDocument": "New document",
+    "newDocument": "New note",
     "hideTasks": "Hide Tasks",
     "tasks": "Tasks",
     "hideCalendar": "Hide Calendar",
@@ -135,11 +135,11 @@
     "loading": "Loading...",
     "toggleComponents": "Show/Hide view",
     "components": "Show/Hide view",
-    "documents": "Documents",
+    "documents": "Notes",
 
     "emptyState": {
-      "title": "No documents found",
-      "description": "You haven't created any documents yet. Get started now!",
+      "title": "No notes found",
+      "description": "You haven't created any notes yet. Get started now!",
       "createFirstNote": "Create first note"
     },
     "note": {
@@ -236,7 +236,7 @@
     "createFolder": "Create folder",
     "enterFolderName": "Enter folder name",
     "folderCreateError": "Error creating folder. Please try again.",
-    "newNote": "New Note",
+    "newNote": "New note",
     "backToDashboard": "Back to dashboard"
   },
   "notes": {
