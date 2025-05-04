@@ -658,7 +658,7 @@ const Profile = () => {
                 className="cursor-pointer hover:opacity-86 transition-opacity duration-700"
               >
                 <AvatarImage
-                  className="h-[110px] w-[110px] rounded-full object-cover object-top border-1 border-black"
+                  className="h-[110px] w-[110px] rounded-full object-cover object-center border-1 border-black"
                   src={avatar_url || ""}
                   alt="Profile avatar"
                 />
