@@ -26,6 +26,15 @@ export default function Settings() {
       </button>
     </div>
     <div>
+      <button>
+        <Link href="/terms">
+          <div className="bg-[var(--theme)]  text-[var(--foreground)] font-bold py-2 px-4 rounded mt-5">
+            Terms of Service
+          </div>
+        </Link>
+      </button>
+    </div>
+    <div>
       <Link href="/delete-account">
       <button className="bg-[var(--theme)]  text-[var(--foreground)] font-bold py-2 px-4 rounded mt-5 mb-5">
         Delete Account
