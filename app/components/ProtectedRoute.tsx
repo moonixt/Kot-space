@@ -21,7 +21,6 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
     const verifyTrial = async () => {
       if (!isLoading && user) {
         const { isTrialActive } = await checkFreeTrial(user.id);
-
         if (!isTrialActive) {
           router.push("/pricing"); // Redireciona para a página de planos
         } else {
