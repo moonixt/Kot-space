@@ -11,28 +11,41 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useAuth();
   const router = useRouter();
   const [isTrialActive, setIsTrialActive] = useState(false);
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
   useEffect(() => {
-    //Consertado BUG the loading state infinito
-    if (!isLoading && !user) {
+    // Handle authentication check
+    if (!isLoading && !user && !isRedirecting) {
       console.log("Usuário não autenticado, redirecionando para login");
+      setIsRedirecting(true);
       router.push("/login");
+      return; // Stop execution here to prevent further checks
     }
+
+    // Only verify trial if user is authenticated
     const verifyTrial = async () => {
-      if (!isLoading && user) {
-        const { isTrialActive } = await checkFreeTrial(user.id);
-        if (!isTrialActive) {
-          router.push("/pricing"); // Redireciona para a página de planos
-        } else {
+      if (!isLoading && user && !isRedirecting) {
+        try {
+          const { isTrialActive: trialStatus } = await checkFreeTrial(user.id);
+          if (!trialStatus) {
+            setIsRedirecting(true);
+            router.push("/pricing"); // Redireciona para a página de planos
+          } else {
+            setIsTrialActive(true);
+          }
+        } catch (error) {
+          console.error("Error checking trial status:", error);
+          // Fallback to prevent infinite loading even if trial check fails
           setIsTrialActive(true);
         }
       }
     };
 
     verifyTrial();
-  }, [user, isLoading, router]);
+  }, [user, isLoading, router, isRedirecting]);
 
-  if (isLoading || !isTrialActive) {
+  // Show loading state when authenticating or redirecting
+  if (isLoading || isRedirecting || (!isTrialActive && user)) {
     return (
       <div className="flex justify-center items-center h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
@@ -41,5 +54,6 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
     );
   }
 
-  return <>{children}</>;
+  // Only render children if user is authenticated and trial is active
+  return user ? <>{children}</> : null;
 }
