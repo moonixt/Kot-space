@@ -146,7 +146,7 @@ export default function DashboardPage() {
             {/* Toggle components dropdown */}
             <div className="mb-4 ">
               <DropdownMenu>
-                <DropdownMenuTrigger className="flex items-center gap-2 px-1 py-2  bg-[var(--theme)]/30 backdrop-blur-sm hover:bg-[var(--container)] transition-colors">
+                <DropdownMenuTrigger className="flex items-center gap-2 px-1 py-2  bg-[var(--theme)] hover:bg-[var(--container)] transition-colors">
                   <span>
                     <Eye />
                   </span>
@@ -243,7 +243,7 @@ export default function DashboardPage() {
           {loading ? (
             <p>{t("dashboard.loading")}</p>
           ) : (
-            <div className="grid border-t border-[var(--foreground)] grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 pt-5">
+            <div className="grid  border-[var(--foreground)] grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 pt-5">
               {notes.map((note) => (
                 <Link
                   href={`/notes/${note.id}`}

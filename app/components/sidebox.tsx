@@ -317,7 +317,7 @@ export default function Sidebox() {
   };
 
   return (
-    <div className="border-t md:border-l z-50 border-[var(--border-color)] md:h-screen md:fixed md:right-0 md:top-0 overflow-y-auto scrollbar">
+    <div className="z-50 md:h-screen md:fixed md:right-0 md:top-0 overflow-y-auto scrollbar">
       {/* Mobile toggle button */}
       <button
         onClick={toggleMobileSidebar}
@@ -336,7 +336,7 @@ export default function Sidebox() {
       >
         <div className="flex flex-col h-full">
           {/* Header */}
-          <div className="p-4 border-b border-slate-700">
+          <div className="p-4">
             <div className="flex items-center justify-between">
               <h1 className="text-xl font-bold flex items-center">
                 <BookOpen size={20} className="text-[var(--foreground)]" />
@@ -393,7 +393,7 @@ export default function Sidebox() {
           </div>
 
           {/* Navigation Tabs */}
-          <div className="flex border-b border-slate-700">
+          <div className="flex">
             <button
               onClick={() => setShowFoldersTab(false)}
               className={`flex-1 py-3 px-2 text-center text-sm font-medium transition-colors ${!showFoldersTab ? "border-b-2 border-blue-500 text-[var(--text-color)]" : "text-[var(--foreground)]"}`}
@@ -415,7 +415,7 @@ export default function Sidebox() {
             className={`overflow-y-auto flex-1 ${showFoldersTab ? "" : "hidden"} ${!user ? "hidden" : ""}`}
           >
             {/* Folders Header */}
-            <div className="px-4 py-3 border-b border-slate-700/50 flex justify-between items-center bg-[var(--background-darker)]">
+            <div className="px-4 py-3 flex justify-between items-center bg-[var(--background-darker)]">
               <h3 className="text-sm font-medium text-[var(--foreground)]">
                 {t("sidebar.folders")}
               </h3>
@@ -582,7 +582,7 @@ export default function Sidebox() {
             </div>
 
             {/* Notas sem pasta para arrastar */}
-            <div className="mt-4 px-4 py-3 border-t border-b border-slate-700/50 flex items-center bg-[var(--background-darker)]">
+            <div className="mt-4 px-4 py-3 flex items-center bg-[var(--background-darker)]">
               <Inbox size={16} className="text-[var(--foreground)] mr-2" />
               <h3 className="text-sm font-medium text-[var(--foreground)]">
                 {t("sidebar.unfiled")}
@@ -828,7 +828,7 @@ export default function Sidebox() {
           </div>
 
           {/* Footer */}
-          <div className="p-4 border-t border-slate-700 text-xs text-[var(--foreground)]">
+          <div className="p-4 text-xs text-[var(--foreground)]">
             <div className="flex justify-between items-center">
               <div>
                 {t("sidebar.total")}: {notes.length}{" "}
@@ -888,9 +888,9 @@ export default function Sidebox() {
               </button>
             </div>
           </div>
-          <div className="border-t border-slate-500/30 p-2 ">
+          <div className="p-2 ">
             <div className="flex justify-end items-center gap-2 ">
-              <p className="text-sm text-[var(--foreground)]">
+              <p className="">
               <LanguageSwitcher />
                 
               </p>

@@ -153,10 +153,10 @@ export default function SignUpPage() {
                 >
                   <Trans i18nKey="signup.agreeToTerms"></Trans>
                   <Link
-                    href="/privacy"
+                    href="/terms"
                     className="text-blue-400 hover:underline pl-2"
                   >
-                    Terms of Usege
+                    Terms of Usage
                   </Link>
                 </label>
               </div>
