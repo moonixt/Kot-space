@@ -20,7 +20,7 @@ export default function TermsPage() {
                 <h2 className="text-xl font-bold mb-2">3. Responsabilidade do Usuário</h2>
                 <p className="mb-4">O usuário é o único responsável pelo conteúdo inserido, compartilhado ou armazenado no aplicativo. O uso inadequado pode resultar em suspensão ou exclusão da conta.</p>
                 <h2 className="text-xl font-bold mb-2">4. Limitação de Responsabilidade</h2>
-                <p className="mb-4">O aplicativo é fornecido "como está". Não nos responsabilizamos por perdas, danos, prejuízos, indisponibilidade, falhas, exclusão de dados ou qualquer consequência decorrente do uso ou da impossibilidade de uso do aplicativo, incluindo conteúdos publicados por usuários.</p>
+                <p className="mb-4">O aplicativo é fornecido como está. Não nos responsabilizamos por perdas, danos, prejuízos, indisponibilidade, falhas, exclusão de dados ou qualquer consequência decorrente do uso ou da impossibilidade de uso do aplicativo, incluindo conteúdos publicados por usuários.</p>
                 <h2 className="text-xl font-bold mb-2">5. Privacidade</h2>
                 <p className="mb-4">Seus dados serão tratados conforme nossa Política de Privacidade. Recomendamos a leitura atenta desse <Link href="/privacy" className="border-b text-blue-500">documento. </Link></p>
                 <h2 className="text-xl font-bold mb-2">6. Modificações dos Termos</h2>
