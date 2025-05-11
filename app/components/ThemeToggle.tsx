@@ -23,7 +23,7 @@ export default function ThemeToggle() {
         className={`p-2 rounded-md transition-colors ${
           theme === "light"
             ? "bg-black text-white"
-            : "hover:bg-[var(--card-border)] "
+            : "hover:bg-[var(--card-border)] hover:text-white"
         }`}
         aria-label="Light mode"
       >
@@ -34,7 +34,7 @@ export default function ThemeToggle() {
         className={`p-2 rounded-md transition-colors ${
           theme === "dark"
             ? "bg-white text-black"
-            : "hover:bg-[var(--card-border)] "
+            : "hover:bg-[var(--card-border)] hover:text-white"
         }`}
         aria-label="Dark mode"
       >
@@ -46,7 +46,7 @@ export default function ThemeToggle() {
         className={`p-2 rounded-md transition-colors ${
           theme === "purple"
             ? "bg-purple-500 text-white"
-            : "hover:bg-[var(--card-border)] "
+            : "hover:bg-[var(--card-border)] hover:text-white "
         }`}
         aria-label="Purple mode"
       >
@@ -57,7 +57,7 @@ export default function ThemeToggle() {
         className={`p-2 rounded-md transition-colors ${
           theme === "green"
             ? "bg-green-500 text-white"
-            : "hover:bg-[var(--card-border)] "
+            : "hover:bg-[var(--card-border)] hover:text-white"
         }`}
         aria-label="green mode"
       >
@@ -69,7 +69,7 @@ export default function ThemeToggle() {
         className={`p-2 rounded-md transition-colors ${
           theme === "yellow"
             ? "bg-yellow-300 text-white"
-            : "hover:bg-[var(--card-border)] "
+            : "hover:bg-[var(--card-border)] hover:text-white"
         }`}
         aria-label="Yellow mode"
       >
@@ -81,7 +81,7 @@ export default function ThemeToggle() {
         className={`p-2 rounded-md transition-colors ${
           theme === "red"
             ? "bg-red-600 text-white"
-            : "hover:bg-[var(--card-border)] "
+            : "hover:bg-[var(--card-border)] hover:text-white "
         }`}
         aria-label="Red mode"
       >
@@ -93,7 +93,7 @@ export default function ThemeToggle() {
         className={`p-2 rounded-md transition-colors ${
           theme === "blue"
             ? "bg-blue-500 text-white"
-            : "hover:bg-[var(--card-border)] "
+            : "hover:bg-[var(--card-border)] hover:text-white"
         }`}
         aria-label="Blue mode"
       >
@@ -105,7 +105,7 @@ export default function ThemeToggle() {
         className={`p-2 rounded-md transition-colors ${
           theme === "system"
             ? "bg-white text-black"
-            : "hover:bg-[var(--card-border)] "
+            : "hover:bg-[var(--card-border)] hover:text-white "
         }`}
         aria-label="System preference"
       >

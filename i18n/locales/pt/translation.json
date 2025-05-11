@@ -1,7 +1,7 @@
 {
   "login": {
-    "title": "Entrar no Кот-note",
-    "logoAlt": "Logo Кот-note",
+    "title": "Entrar no Кот-space",
+    "logoAlt": "Logo Кот-space",
     "signInWithGoogle": "Entrar com Google",
     "loggingInWithGoogle": "Entrando...",
     "or": "ou",
@@ -15,8 +15,8 @@
     "resetPassword": "Redefinir Senha"
   },
   "signup": {
-    "title": "Criar sua Conta Кот-note",
-    "logoAlt": "Logo Кот-note",
+    "title": "Criar sua Conta Кот-space",
+    "logoAlt": "Logo Кот-space",
     "email": "E-mail",
     "password": "Senha",
     "confirmPassword": "Confirmar Senha",
@@ -66,7 +66,7 @@
   },
   "resetPassword": {
     "title": "Redefinir Senha",
-    "logoAlt": "Logo Кот-note",
+    "logoAlt": "Logo Кот-space",
     "email": "E-mail",
     "sending": "Enviando...",
     "sendResetEmail": "Enviar E-mail de Redefinição",

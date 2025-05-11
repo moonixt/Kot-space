@@ -351,7 +351,7 @@ export default function Sidebox() {
                   </Link>
                 ) : (
                   <span className="text-[var(--foreground)] pl-2">
-                    Кот-note
+                    Кот-space
                   </span>
                 )}
               </h1>
