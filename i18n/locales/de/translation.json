@@ -47,8 +47,8 @@
     "resetPassword": "Passwort zurücksetzen"
   },
   "signup": {
-    "title": "Кот-note-Konto erstellen",
-    "logoAlt": "Кот-note Logo",
+    "title": "Кот-space-Konto erstellen",
+    "logoAlt": "Кот-space Logo",
     "email": "E-Mail",
     "password": "Passwort",
     "confirmPassword": "Passwort bestätigen",
@@ -64,7 +64,7 @@
   },
   "resetPassword": {
     "title": "Passwort zurücksetzen",
-    "logoAlt": "Кот-note Logo",
+    "logoAlt": "Кот-space Logo",
     "email": "E-Mail",
     "sending": "Senden...",
     "sendResetEmail": "Reset-E-Mail senden",

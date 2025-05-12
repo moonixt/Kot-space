@@ -29,7 +29,7 @@ export default function Settings() {
       <button>
         <Link href="/terms">
           <div className="bg-[var(--theme)]  text-[var(--foreground)] font-bold py-2 px-4 rounded mt-5">
-            Terms of Service
+            Terms of Use
           </div>
         </Link>
       </button>
