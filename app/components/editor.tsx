@@ -480,9 +480,10 @@ function Editor() {
     >
       <Profile />
       <div className="mx-auto max-w-7xl w-full h-full flex flex-col flex-grow">
-        <div className="bg-[var(--background)]   overflow-hidden flex flex-col flex-grow h-full  transition-all duration-300">
-          <button
-            className={`flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 w-46 rounded-md text-sm sm:text-base font-medium transition-all duration-300 ${
+        <div className="bg-[var(--background)] overflow-hidden flex flex-col flex-grow h-full  transition-all duration-300">
+          <div className="flex justify-center ">
+            <button
+            className={`flex flex justify-center  gap-2 px-4 py-2 sm:px-5 sm:py-2.5 w-46 rounded-md text-sm sm:text-base font-medium transition-all duration-300 ${
               saving
                 ? "bg-[var(--container)] text-[var(--foreground)] opacity-70"
                 : "bg-[var(--theme)]  text-[var(--foreground)] shadow-sm"
@@ -502,6 +503,7 @@ function Editor() {
               </>
             )}
           </button>
+          </div>
           {/* Title Section */}
           <div className="p-5 sm:p-6 relative">
             <div className="flex items-center gap-3">

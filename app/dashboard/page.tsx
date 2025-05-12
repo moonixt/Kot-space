@@ -12,7 +12,7 @@ import Tasks from "../components/tasks";
 import { decrypt } from "../components/Encryption";
 import { useTranslation } from "react-i18next";
 // import Tables from "../components/tables";
-import { Eye } from "lucide-react";
+import { Eye, Bookmark } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -121,14 +121,15 @@ export default function DashboardPage() {
           <Profile />
         </div>
         <div className="p-4  max-w-7xl mx-auto ">
+             
           <div className="flex-1  gap-4">
             {/* New document button */}
+            <div className="flex justify-center">
             <button
-              className="px-2 justify-center my-2 py-2 bg-[var(--theme)]  text-[var(--foreground)] hover:bg-opacity-60 transition-all hover:shadow-md transition-colors flex items-center gap-2"
+              className="px-4 py-2 flex justify-center sm:px-5 sm:py-2.5 sm:w-96 w-60 rounded-md  text-base font-medium  bg-[var(--theme)]  text-[var(--foreground)] hover:bg-opacity-60 transition-all hover:shadow-md transition-colors flex items-center gap-2"
               onClick={() => router.push("/editor")}
             >
-              <span>{t("dashboard.newDocument")}</span>
-              <svg
+               <svg
                 width="16"
                 height="16"
                 viewBox="0 0 24 24"
@@ -141,12 +142,64 @@ export default function DashboardPage() {
                 <line x1="12" y1="5" x2="12" y2="19"></line>
                 <line x1="5" y1="12" x2="19" y2="12"></line>
               </svg>
+              <span>{t("dashboard.newDocument")}</span>
+             
             </button>
+            </div>
 
-            {/* Toggle components dropdown */}
-            <div className="mb-4 ">
+         
+
+            {/* Tasks component with conditional rendering and animation */}
+            <div
+              className={`transition-all duration-600  ease-in-out overflow-hidden ${
+                showTasks
+                  ? "max-h-[1000px] pt-6 opacity-100"
+                  : "max-h-0 opacity-0 mb-0"
+              }`}
+            >
+              {showTasks && <Tasks />}
+            </div>
+
+            {/* Calendar component with conditional rendering */}
+            {/* <div
+              className={`transition-all duration-600 ease-in-out overflow-hidden mt-4 ${
+                showCalendar
+                  ? "max-h-[1000px] opacity-100"
+                  : "max-h-0 opacity-0 mb-0"
+              }`}
+            >
+              {showCalendar && (
+                <div>
+                  <h2 className="text-xl font-semibold ">
+                    {t("dashboard.calendar")}
+                  </h2>
+                  <CalendarView />
+                </div>
+              )}
+            </div> */}
+          </div>
+
+          {/* Tables component with conditional rendering */}
+          {/* <div
+            className={`transition-all duration-600 ease-in-out mt-4 ${
+              showTables ? "opacity-100 " : "max-h-0 opacity-0 mb-0"
+            }`}
+          >
+            {showTables && (
+              <div className="w-[380px] sm:w-auto ">
+                <Tables />
+              </div>
+            )}
+          </div> */}
+          <div className="flex justify-between items-center ">
+           
+            <h1 className="text-xl font-semibold mt-4 mb-2">
+              {t("dashboard.documents")}
+            </h1>
+             {/* Toggle components dropdown */}
+            <div className="">
               <DropdownMenu>
-                <DropdownMenuTrigger className="flex items-center gap-2 px-1 py-2  bg-[var(--theme)] hover:bg-[var(--container)] transition-colors">
+                <DropdownMenuTrigger className="flex items-center gap-2 px-1 py-2 rounded-md bg-[var(--theme)] hover:bg-[var(--container)] transition-colors">
                   <span>
                     <Eye />
                   </span>
@@ -192,75 +245,35 @@ export default function DashboardPage() {
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
-
-            {/* Tasks component with conditional rendering and animation */}
-            <div
-              className={`transition-all duration-600 ease-in-out overflow-hidden ${
-                showTasks
-                  ? "max-h-[1000px] opacity-100"
-                  : "max-h-0 opacity-0 mb-0"
-              }`}
-            >
-              {showTasks && <Tasks />}
-            </div>
-
-            {/* Calendar component with conditional rendering */}
-            {/* <div
-              className={`transition-all duration-600 ease-in-out overflow-hidden mt-4 ${
-                showCalendar
-                  ? "max-h-[1000px] opacity-100"
-                  : "max-h-0 opacity-0 mb-0"
-              }`}
-            >
-              {showCalendar && (
-                <div>
-                  <h2 className="text-xl font-semibold ">
-                    {t("dashboard.calendar")}
-                  </h2>
-                  <CalendarView />
-                </div>
-              )}
-            </div> */}
           </div>
-
-          {/* Tables component with conditional rendering */}
-          {/* <div
-            className={`transition-all duration-600 ease-in-out mt-4 ${
-              showTables ? "opacity-100 " : "max-h-0 opacity-0 mb-0"
-            }`}
-          >
-            {showTables && (
-              <div className="w-[380px] sm:w-auto ">
-                <Tables />
-              </div>
-            )}
-          </div> */}
-          <div>
-            <h1 className="text-xl font-semibold mt-4 mb-2">
-              {t("dashboard.documents")}
-            </h1>
-          </div>
+          
           {loading ? (
             <p>{t("dashboard.loading")}</p>
           ) : (
-            <div className="grid  border-[var(--foreground)] grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 pt-5">
+            <div className="grid border-[var(--foreground)] grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 pt-5 ">
               {notes.map((note) => (
                 <Link
                   href={`/notes/${note.id}`}
                   key={note.id}
                   className="block h-full"
                 >
-                  <div className="h-full p-5 bg-[var(--container)]/30 backdrop-blur-sm hover:bg-opacity-60 transition-all hover:translate-x-1 hover:shadow-md">
-                    <h2 className="text-lg font-semibold mb-3 line-clamp-1">
+                  <div className="h-[300px] sm:h-[400px] p-3 bg-[var(--container)]/30 backdrop-blur-sm hover:bg-opacity-60 transition-all hover:translate-x-1 hover:shadow-md flex flex-col">
+                   <div className="flex justify-end">
+                   <Bookmark 
+                    size={24}
+                    className="mb-1 hover:bg-[var(--foreground)] hover:text-[var(--background)] rounded-full"
+                    />
+                    </div>
+                    <h2 className="text-sm font-semibold mb-3">
                       {note.title
                         ? decrypt(note.title)
                         : t("dashboard.note.untitled")}
-                    </h2>
-                    <p className="text-sm text-[var(--foreground)] opacity-80 line-clamp-3 mb-4 h-14">
+                    </h2>     
+                    <p className="text-sm text-[var(--foreground)] opacity-80 line-clamp-5 mb-4 flex-grow">
                       {decrypt(note.content).replace(/[#*`_]/g, "") ||
                         t("dashboard.note.noContent")}
                     </p>
-                    <div className="flex justify-between items-center text-xs text-gray-500 mt-auto">
+                    <div className="flex justify-between items-center text-xs text-gray-500 mt-auto pt-3">
                       <span>
                         {new Date(note.created_at).toLocaleDateString()}
                       </span>

@@ -472,7 +472,7 @@ const Profile = () => {
           </div>
 
           {/* Informações do usuário e data */}
-          <div className="absolute bottom-5 right-2 sm:right-auto sm:left-2 flex flex-col gap-1">
+          <div className="absolute bottom-6 right-2 sm:right-auto sm:left-2 flex flex-col gap-1">
             <div className="bg-black/70 backdrop-blur-sm text-white text-sm px-3 py-1.5 rounded-md shadow-sm">
               {new Date().toLocaleDateString(undefined, {
                 weekday: "short",
@@ -509,7 +509,7 @@ const Profile = () => {
 
           {/* Pesquisa rápida */}
           <div
-            className="absolute top-24 left-1/2 transform -translate-x-1/2 z-5 "
+            className="absolute top-20 sm:top-24 left-1/2 transform -translate-x-1/2 z-5 "
             ref={searchResultsRef}
           >
             <div className="flex items-center bg-black/70 backdrop-blur-sm rounded-md shadow-sm p-1">
@@ -702,9 +702,9 @@ const Profile = () => {
           </div>
 
           {bioLoading ? (
-            <div className="italic text-[var(--foreground)] bg-[var(--container)] w-40 h-6 rounded animate-pulse"></div>
+            <div className="italic text-[var(--foreground)] bg-[var(--container)] w-40 h-6 rounded animate-pulse "></div>
           ) : (
-            <h2
+            <div
               contentEditable
               suppressContentEditableWarning
               onBlur={(e) => {
@@ -716,14 +716,14 @@ const Profile = () => {
                   e.target.innerText = bio || '"You are what you think"'; // Revert to the previous bio or use default
                 }
               }}
-              className="italic text-[var(--foreground)] bg-[var(--container)]/30 backdrop-blur-sm"
+              className="italic  text-[var(--foreground)] bg-[var(--container)]/30 backdrop-blur-sm max-w-[260px] overflow-wrap-anywhere"
             >
               {bio || '"You are what you think"'}
-            </h2>
+            </div>
           )}
         </div>
 
-        {/* Input oculto para upload alternativo */}
+        {/* Input oculto para uploa</h2>d alternativo */}
         <input
           type="file"
           ref={fileInputRef}
