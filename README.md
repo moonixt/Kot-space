@@ -2,9 +2,7 @@
 
 <div align="center">
   
-
-![512](https://github.com/user-attachments/assets/e5c31a98-74de-4c07-b3c3-b751e538adcf)
-
+![awdad](https://github.com/user-attachments/assets/5a16a488-2b4a-4050-94d7-17c3e7539cb7)
 
   <h1 align="center">Кot-space</h1>
 
