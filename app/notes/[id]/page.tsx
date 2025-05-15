@@ -813,12 +813,12 @@ export default function NotePage() {
             <div className="text-sm text-[var(--foreground)]">
               ID: {note.id.slice(0, 8)}...
             </div>
-            <div className="text-sm text-[var(--foreground)]">
+            {/* <div className="text-sm text-[var(--foreground)]">
               #
               {note.tags
                 ? note.tags.replace(/[\[\]"]/g, "").replace(/,/g, " #")
                 : ""}
-            </div>
+            </div> */}
 
             <div className="flex gap-2">
               <button

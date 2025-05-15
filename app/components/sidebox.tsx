@@ -2,7 +2,9 @@
 import { useState, useEffect } from "react";
 import {
   // PlusCircle,
+
   Search,
+  Fullscreen,
   Clock as ClockIcon,
   Menu,
   X,
@@ -293,6 +295,27 @@ export default function Sidebox() {
     }
   };
 
+
+const toggleFullscreen = () => {
+      if (!document.fullscreenElement) {
+        if (document.documentElement.requestFullscreen) {
+          document.documentElement.requestFullscreen();
+        } else if ((document.documentElement as any).webkitRequestFullscreen) { // Safari
+          (document.documentElement as any).webkitRequestFullscreen();
+        } else if ((document.documentElement as any).msRequestFullscreen) { // IE11
+          (document.documentElement as any).msRequestFullscreen();
+        }
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        } else if ((document as any).webkitExitFullscreen) { // Safari
+          (document as any).webkitExitFullscreen();
+        } else if ((document as any).msExitFullscreen) { // IE11
+          (document as any).msExitFullscreen();
+        }
+      }
+    };
+
   const moveNoteToFolder = async (noteId: string, folderId: string | null) => {
     if (!user) return;
 
@@ -314,6 +337,10 @@ export default function Sidebox() {
     } catch (error) {
       console.error("Erro ao mover nota:", error);
     }
+
+    
+
+
   };
 
   return (
@@ -349,9 +376,8 @@ export default function Sidebox() {
                       {t("sidebar.myWorkspace")}
                     </span>
                   </Link>
-                ) : (
-                  <span className="text-[var(--foreground)] pl-2">
-                    Кот-space
+                ) : (                  <span className="text-[var(--foreground)] pl-2">
+                    Кot-space
                   </span>
                 )}
               </h1>
@@ -890,6 +916,7 @@ export default function Sidebox() {
           </div>
           <div className="p-2 ">
             <div className="flex justify-end items-center gap-2 ">
+              <p><Fullscreen onClick={toggleFullscreen}/></p>
               <p className="">
               <LanguageSwitcher />
                 

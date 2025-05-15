@@ -1,7 +1,7 @@
 {
   "login": {
-    "title": "Entrar no Кот-space",
-    "logoAlt": "Logo Кот-space",
+    "title": "Entrar no Кot-space",
+    "logoAlt": "Logo Кot-space",
     "signInWithGoogle": "Entrar com Google",
     "loggingInWithGoogle": "Entrando...",
     "or": "ou",
@@ -15,8 +15,8 @@
     "resetPassword": "Redefinir Senha"
   },
   "signup": {
-    "title": "Criar sua Conta Кот-space",
-    "logoAlt": "Logo Кот-space",
+    "title": "Criar sua Conta Кot-space",
+    "logoAlt": "Logo Кot-space",
     "email": "E-mail",
     "password": "Senha",
     "confirmPassword": "Confirmar Senha",
@@ -34,7 +34,7 @@
   },
   "pricing": {
     "title": "Acesso ilimitado",
-    "subtitle": "Desbloqueie todo o potencial do Кот-space com nosso plano premium",
+    "subtitle": "Desbloqueie todo o potencial do Кot-space com nosso plano premium",
     "plan": {
       "name": "Plano PRO",
       "mostPopular": "Mais Popular",
@@ -66,7 +66,7 @@
   },
   "resetPassword": {
     "title": "Redefinir Senha",
-    "logoAlt": "Logo Кот-space",
+    "logoAlt": "Logo Кot-space",
     "email": "E-mail",
     "sending": "Enviando...",
     "sendResetEmail": "Enviar E-mail de Redefinição",

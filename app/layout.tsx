@@ -22,7 +22,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Кот-note",
+  title: "Кot-space",
   description: "Capture inspiration, craft ideas, and let your notes shine.",
   icons: {
     icon: "/favicon.ico",

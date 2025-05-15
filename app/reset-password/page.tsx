@@ -60,7 +60,7 @@ export default function ResetPasswordPage() {
       <div className="w-full max-w-md">
         <div>
           <Image
-            src="/static/images/dan2.jpg"
+            src="/static/images/sg.png"
             alt={t("resetPassword.logoAlt")}
             width={1000}
             height={100}
