@@ -252,7 +252,7 @@ html {
 
 /* Global styles */
 body {
-  font-family: Georgia, "Times New Roman", Times, serif;
+  font-family: geist;
   line-height: 1.7;
   font-size: 16px;
   text-rendering: optimizeLegibility;

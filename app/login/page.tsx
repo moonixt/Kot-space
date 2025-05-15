@@ -17,6 +17,7 @@ function LoginForm() {
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showEmailForm, setShowEmailForm] = useState(false); // Add state to control email form visibility
   const searchParams = useSearchParams();
   const message = searchParams?.get("message");
   const { signIn } = useAuth();
@@ -163,53 +164,67 @@ function LoginForm() {
             <div className="flex-grow border-t border-slate-700"></div>
           </div>
 
-          <form onSubmit={handleSubmit}>
-            <div className="mb-4">
-              <label
-                className="block text-[var(--foreground)] mb-2"
-                htmlFor="email"
-              >
-                {t("login.email")}
-              </label>
-              <input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="w-full px-4 py-2 bg-[var(--container)] border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-[var(--foreground)]"
-              />
-            </div>
+          {showEmailForm ? (
+            <form onSubmit={handleSubmit}>
+              <div className="mb-4">
+                <label
+                  className="block text-[var(--foreground)] mb-2"
+                  htmlFor="email"
+                >
+                  {t("login.email")}
+                </label>
+                <input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  className="w-full px-4 py-2 bg-[var(--container)] border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-[var(--foreground)]"
+                />
+              </div>
 
-            <div className="mb-6">
-              <label
-                className="block text-[var(--foreground)] mb-2"
-                htmlFor="password"
-              >
-                {t("login.password")}
-              </label>
-              <input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className="w-full px-4 py-2 bg-[var(--container)] border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-[var(--foreground)]"
-              />
-            </div>
+              <div className="mb-6">
+                <label
+                  className="block text-[var(--foreground)] mb-2"
+                  htmlFor="password"
+                >
+                  {t("login.password")}
+                </label>
+                <input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  className="w-full px-4 py-2 bg-[var(--container)] border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-[var(--foreground)]"
+                />
+              </div>
 
+              <div className="flex flex-col space-y-3">
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className={`w-full py-3 rounded-lg font-medium ${
+                    loading
+                      ? "bg-[var(--foreground)] cursor-not-allowed"
+                      : "bg-[var(--foreground)] "
+                  } text-[var(--background)] transition-colors`}
+                >
+                  {loading ? t("login.loggingIn") : t("login.signInWithEmail")}
+                </button>
+                
+               
+              </div>
+            </form>
+          ) : (
             <button
-              type="submit"
-              disabled={loading}
-              className={`w-full py-3 rounded-lg font-medium ${
-                loading
-                  ? "bg-[var(--foreground)] cursor-not-allowed"
-                  : "bg-[var(--foreground)] "
-              } text-[var(--background)] transition-colors`}
+              type="button"
+              onClick={() => setShowEmailForm(true)}
+              className="w-full py-3 rounded-lg font-medium border border-slate-700 text-[var(--foreground)] hover:bg-[var(--container)] transition-colors"
             >
-              {loading ? t("login.loggingIn") : t("login.signInWithEmail")}
+              {t("login.signInWithEmail")}
             </button>
-          </form>
+          )}
 
           <div className="mt-6 text-center text-[var(--foreground)]">
             {t("login.noAccount")}{" "}

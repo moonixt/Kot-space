@@ -1,7 +1,7 @@
 {
   "pricing": {
     "title": "Acceso PRO ilimitado",
-    "subtitle": "Desbloquea todo el potencial de Кот-note con nuestro plan premium",
+    "subtitle": "Desbloquea todo el potencial de Кot-space con nuestro plan premium",
     "plan": {
       "name": "Plan PRO",
       "mostPopular": "Más popular",
@@ -32,8 +32,8 @@
     }
   },
   "login": {
-    "title": "Iniciar sesión en Кот-note",
-    "logoAlt": "Logo de Кот-note",
+    "title": "Iniciar sesión en Кot-space",
+    "logoAlt": "Logo de Кot-space",
     "signInWithGoogle": "Iniciar sesión con Google",
     "loggingInWithGoogle": "Iniciando sesión...",
     "or": "o",
@@ -47,8 +47,8 @@
     "resetPassword": "Restablecer contraseña"
   },
   "signup": {
-    "title": "Crear cuenta de Кот-note",
-    "logoAlt": "Logo de Кот-note",
+    "title": "Crear cuenta de Кot-space",
+    "logoAlt": "Logo de Кot-space",
     "email": "Correo electrónico",
     "password": "Contraseña",
     "confirmPassword": "Confirmar contraseña",
@@ -64,7 +64,7 @@
   },
   "resetPassword": {
     "title": "Restablecer contraseña",
-    "logoAlt": "Logo de Кот-note",
+    "logoAlt": "Logo de Кot-space",
     "email": "Correo electrónico",
     "sending": "Enviando...",
     "sendResetEmail": "Enviar correo de restablecimiento",

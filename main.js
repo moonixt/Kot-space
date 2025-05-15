@@ -33,7 +33,7 @@ function createWindow() {
       contextIsolation: true,
     },
     icon: path.join(__dirname, "public", "icon-512x512.png"),
-    title: "Кот-space",
+    title: "Кot-space",
   });
 
   const startUrl = process.env.ELECTRON_START_URL || "http://localhost:3000";

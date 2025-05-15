@@ -40,7 +40,7 @@ function Editor() {
   const [showEmojiPickerContent, setShowEmojiPickerContent] = useState(false); //state for the emoji picker in the content area
   const [imageUploadLoading, setImageUploadLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [tagSearchTerm, setTagSearchTerm] = useState("");
+  // const [tagSearchTerm, setTagSearchTerm] = useState("");
   const { t } = useTranslation(); // Add the translation hook to access translations
 
   // Add state for folders and folder selection
@@ -121,14 +121,14 @@ function Editor() {
     }
   }, [title, content, selectedTags, selectedFolder]);
 
-  const toggleTag = (tag: string) => {
-    //function to togle in the tags, if the tag is already selected, it will be removed, otherwise it will be added to the selected tags
-    setSelectedTags((prevTags) =>
-      prevTags.includes(tag)
-        ? prevTags.filter((t) => t !== tag)
-        : [...prevTags, tag],
-    );
-  };
+  // const toggleTag = (tag: string) => {
+  //   //function to togle in the tags, if the tag is already selected, it will be removed, otherwise it will be added to the selected tags
+  //   setSelectedTags((prevTags) =>
+  //     prevTags.includes(tag)
+  //       ? prevTags.filter((t) => t !== tag)
+  //       : [...prevTags, tag],
+  //   );
+  // };
 
   //Handle Emoji selector, working in the title and TextArea
   const handleEmojiSelect = (emojiData: EmojiClickData) => {
@@ -390,10 +390,10 @@ function Editor() {
   };
 
   // This function safely handles dynamic translation keys
-  const translateTag = (tagKey: string): string => {
-    // Using string interpolation with type assertion to satisfy TypeScript
-    return t(`tags.${tagKey}`, { defaultValue: tagKey });
-  };
+  // const translateTag = (tagKey: string): string => {
+  //   // Using string interpolation with type assertion to satisfy TypeScript
+  //   return t(`tags.${tagKey}`, { defaultValue: tagKey });
+  // };
 
   // Add fetchFolders function to get user's folders
   const fetchFolders = async () => {
@@ -818,7 +818,7 @@ function Editor() {
             )}
           </div>
 
-          {/* Tags Search Section */}
+          {/* Tags Search Section
           <div className="p-3 sm:p-4 bg-[var(--container)] bg-opacity-20">
             <div className="flex items-center gap-2">
               <span className="text-xs sm:text-sm text-[var(--foreground)] font-medium">
@@ -836,7 +836,6 @@ function Editor() {
             </div>
           </div>
 
-          {/* Tags Selection Section */}
           <div className="flex flex-wrap gap-1.5 sm:gap-2 p-3 sm:p-4 overflow-y-auto max-h-28 scrollbar bg-[var(--background)] ">
             {[
               "agenda",
@@ -1002,7 +1001,7 @@ function Editor() {
                   {t("editor.noTagsFound")} {tagSearchTerm}
                 </div>
               )}
-          </div>
+          </div> */}
 
           {/* Footer Section */}
 

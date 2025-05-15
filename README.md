@@ -2,14 +2,12 @@
 
 <div align="center">
   
+![awdad](https://github.com/user-attachments/assets/5a16a488-2b4a-4050-94d7-17c3e7539cb7)
 
-![512](https://github.com/user-attachments/assets/e5c31a98-74de-4c07-b3c3-b751e538adcf)
-
-
-  <h1 align="center">Кот-space</h1>
+  <h1 align="center">Кot-space</h1>
 
   <p align="center">
-      <strong>Кот-space is an elegant, modern Progressive Web App designed to elevate your note-taking experience. Combining powerful organization with minimalist design, it provides a seamless way to capture, develop, and organize your thoughts across all devices. With features like intuitive markdown support, tag-based organization, and encrypted storage, Кот-note gives you complete control over your digital notes while maintaining exceptional privacy. Transform how you document your ideas—elegantly, efficiently, securely.</strong>
+      <strong>Кot-space is an elegant, modern Progressive Web App designed to elevate your note-taking experience. Combining powerful organization with minimalist design, it provides a seamless way to capture, develop, and organize your thoughts across all devices. With features like intuitive markdown support, tag-based organization, and encrypted storage, Кot-space gives you complete control over your digital notes while maintaining exceptional privacy. Transform how you document your ideas—elegantly, efficiently, securely.</strong>
   </p>
 
 [![pt-BR](https://img.shields.io/badge/lang-pt--BR-green.svg)](./docs/README.pt-BR.md)

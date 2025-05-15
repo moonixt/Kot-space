@@ -72,11 +72,11 @@ export default function SignUpPage() {
         )}
         <div>
           <Image
-            src="/static/images/sg.jpg"
+            src="/static/images/sg.png"
             alt={t("login.logoAlt")}
             width={1000}
             height={100}
-            className=" h-60 md:h-80 object-cover object-top"
+            className=" h-60 md:h-80 object-cover object-center"
             priority
           />
         </div>
@@ -154,9 +154,9 @@ export default function SignUpPage() {
                   <Trans i18nKey="signup.agreeToTerms"></Trans>
                   <Link
                     href="/terms"
-                    className="text-blue-400 hover:underline pl-2"
+                    className="text-blue-400 hover:underline ml-1"
                   >
-                    Terms of Usage
+                    Terms page
                   </Link>
                 </label>
               </div>
