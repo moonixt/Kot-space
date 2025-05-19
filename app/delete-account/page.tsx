@@ -190,7 +190,7 @@ export default function DeleteAccountPage() {
 
                 <div className="flex justify-between">
                   <Link
-                    href="/login"
+                    href="/dashboard"
                     className="px-6 py-2 bg-[var(--background)] hover:bg-[var(--container)] text-[var(--foreground)] rounded-lg transition-colors"
                   >
                     Cancelar

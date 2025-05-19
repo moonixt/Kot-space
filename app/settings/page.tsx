@@ -12,8 +12,6 @@ import {
   Trash2,
   ChevronRight,
   BellRing,
-  Moon,
-  PenTool,
   HelpCircle,
   Settings as SettingsIcon,
   ArrowLeft,
@@ -23,6 +21,7 @@ import {
   ChevronDown
 } from "lucide-react";
 import { useState, useEffect } from "react";
+import { useAuth } from "../../context/AuthContext";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -34,6 +33,42 @@ export default function Settings() {
   const [activeCategory, setActiveCategory] = useState("account");
   const [isMobile, setIsMobile] = useState(false);
   const [, setShowSidebar] = useState(true);
+  const [isLoadingPortal, setIsLoadingPortal] = useState(false);
+  const { user } = useAuth();
+  
+  // Função para redirecionar para o portal do cliente Stripe
+  const handleManageSubscription = async () => {
+    if (!user) return;
+    
+    setIsLoadingPortal(true);
+    
+    try {
+      const response = await fetch('/api/stripe/customer-portal', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userId: user.id }),
+      });
+      
+      const { url, error } = await response.json();
+      
+      if (error) {
+        console.error('Erro ao acessar o portal:', error);
+        alert('Não foi possível acessar o portal de assinatura. Por favor, tente novamente mais tarde.');
+        return;
+      }
+      
+      // Redirecionar para o portal do Stripe
+      window.location.href = url;
+    } catch (error) {
+      console.error('Erro ao processar requisição:', error);
+      alert('Ocorreu um erro ao tentar acessar o portal de assinatura.');
+    } finally {
+      setIsLoadingPortal(false);
+    }
+  };
+  
   // Detect screen size on mount and when resized
   useEffect(() => {
     const checkScreenSize = () => {
@@ -52,10 +87,10 @@ export default function Settings() {
     { id: "account", name: "Account", icon: <User className="mr-2 h-4 w-4" />, description: "Manage your personal account details" },
     { id: "subscription", name: "Subscription", icon: <CreditCard className="mr-2 h-4 w-4" />, description: "Manage your subscription plan" },
     { id: "privacy", name: "Privacy & Security", icon: <Shield className="mr-2 h-4 w-4" />, description: "Control your data and security settings" },
-    { id: "appearance", name: "Appearance", icon: <Moon className="mr-2 h-4 w-4" />, description: "Customize your visual experience" },
-    { id: "notifications", name: "Notifications", icon: <BellRing className="mr-2 h-4 w-4" />, description: "Manage your notification preferences" },
+    // { id: "appearance", name: "Appearance", icon: <Moon className="mr-2 h-4 w-4" />, description: "Customize your visual experience" },
+    // { id: "notifications", name: "Notifications", icon: <BellRing className="mr-2 h-4 w-4" />, description: "Manage your notification preferences" },
     { id: "legal", name: "Legal", icon: <FileText className="mr-2 h-4 w-4" />, description: "View legal documents and policies" },
-    { id: "help", name: "Help & Support", icon: <HelpCircle className="mr-2 h-4 w-4" />, description: "Get help with Kot-space" }
+    // { id: "help", name: "Help & Support", icon: <HelpCircle className="mr-2 h-4 w-4" />, description: "Get help with Kot-space" }
   ];
   return (
     <ProtectedRoute>
@@ -130,7 +165,7 @@ export default function Settings() {
                   <Button
                     key={category.id}
                     variant={activeCategory === category.id ? "secondary" : "ghost"}
-                    className={`justify-start text-left h-11 ${activeCategory === category.id ? "bg-[var(--theme)]/20 text-[var(--theme)]" : ""}`}
+                    className={`justify-start text-left h-11`}
                     onClick={() => {
                       setActiveCategory(category.id);
                       if (isMobile) setShowSidebar(false);
@@ -165,7 +200,7 @@ export default function Settings() {
               </p>
 
               <div className="space-y-4">
-                <div className="flex items-center justify-between p-4 hover:bg-[var(--theme)]/10 rounded-lg transition-colors">
+                {/* <div className="flex items-center justify-between p-4 hover:bg-[var(--theme)]/10 rounded-lg transition-colors">
                   <div className="flex items-center">
                     <User className="h-5 w-5 mr-3 text-[var(--foreground)] opacity-70" />
                     <div>
@@ -174,9 +209,9 @@ export default function Settings() {
                     </div>
                   </div>
                   <ChevronRight className="h-5 w-5 text-[var(--foreground)] opacity-70" />
-                </div>
+                </div> */}
 
-                <div className="flex items-center justify-between p-4 hover:bg-[var(--theme)]/10 rounded-lg transition-colors">
+                {/* <div className="flex items-center justify-between p-4 hover:bg-[var(--theme)]/10 rounded-lg transition-colors">
                   <div className="flex items-center">
                     <PenTool className="h-5 w-5 mr-3 text-[var(--foreground)] opacity-70" />
                     <div>
@@ -185,9 +220,9 @@ export default function Settings() {
                     </div>
                   </div>
                   <ChevronRight className="h-5 w-5 text-[var(--foreground)] opacity-70" />
-                </div>
+                </div> */}
 
-                <div className="flex items-center justify-between p-4 hover:bg-[var(--theme)]/10 rounded-lg transition-colors">
+                {/* <div className="flex items-center justify-between p-4 hover:bg-[var(--theme)]/10 rounded-lg transition-colors">
                   <div className="flex items-center">
                     <BellRing className="h-5 w-5 mr-3 text-[var(--foreground)] opacity-70" />
                     <div>
@@ -196,9 +231,9 @@ export default function Settings() {
                     </div>
                   </div>
                   <ChevronRight className="h-5 w-5 text-[var(--foreground)] opacity-70" />
-                </div>
+                </div> */}
                 
-                <div className="flex items-center justify-between p-4 hover:bg-[var(--theme)]/10 rounded-lg transition-colors">
+                {/* <div className="flex items-center justify-between p-4 hover:bg-[var(--theme)]/10 rounded-lg transition-colors">
                   <div className="flex items-center">
                     <Moon className="h-5 w-5 mr-3 text-[var(--foreground)] opacity-70" />
                     <div>
@@ -207,10 +242,10 @@ export default function Settings() {
                     </div>
                   </div>
                   <ChevronRight className="h-5 w-5 text-[var(--foreground)] opacity-70" />
-                </div>
+                </div> */}
 
                 <Link href="/delete-account">
-                  <div className="mt-8 p-4 border border-red-500/20 rounded-lg hover:bg-red-500/10 transition-colors flex items-center">
+                  <div className="mt-8 p-4  rounded-lg hover:bg-red-500/10 transition-colors flex items-center">
                     <Trash2 className="h-5 w-5 mr-3 text-red-400" />
                     <div>
                       <h3 className="font-medium text-red-400">Delete Account</h3>
@@ -229,44 +264,25 @@ export default function Settings() {
                 Manage your subscription plan and billing information
               </p>
               
-              <div className="mb-8 p-6 bg-gradient-to-br from-green-800/20 to-emerald-800/30 rounded-lg border border-green-700/30">
+              <div className="mb-8 p-6 bg-gradient-to-br from-green-800 to-emerald-800/30 rounded-lg border border-green-700/30">
                 <div className="flex justify-between items-start">
                   <div>
                     <p className="text-xs uppercase font-medium text-green-400/80">Current Plan</p>
-                    <h3 className="text-2xl font-bold text-green-400 mt-1">PRO Plan</h3>
-                    <p className="text-sm mt-2 text-green-400/70">Your next billing date is June 15, 2025</p>
+                    <h3 className="text-2xl font-bold text-green-400 mt-1">Unlimited Access</h3>
                   </div>
                   <div className="shrink-0 bg-green-500/20 p-3 rounded-full">
                     <CreditCard className="h-6 w-6 text-green-400" />
                   </div>
                 </div>
-                
-                <Link href="/pricing">
-                  <Button className="mt-4 bg-green-700 hover:bg-green-800 text-white">
-                    Manage Subscription
-                  </Button>
-                </Link>
+                  <Button 
+                  onClick={handleManageSubscription} 
+                  className="mt-4 bg-green-700 hover:bg-green-800 text-white"
+                  disabled={isLoadingPortal}
+                >
+                  {isLoadingPortal ? "Loading..." : "Manage Subscription"}
+                </Button>
               </div>
-              
-              <div className="space-y-4 mt-6">
-                <h3 className="font-medium text-lg">Payment History</h3>
-                <div className="space-y-2">
-                  <div className="flex justify-between items-center p-3 bg-[var(--theme)]/10 rounded-md">
-                    <div>
-                      <p className="font-medium">PRO Plan - Monthly</p>
-                      <p className="text-xs opacity-70">May 15, 2025</p>
-                    </div>
-                    <p className="font-medium">$4.99</p>
-                  </div>
-                  <div className="flex justify-between items-center p-3 bg-[var(--theme)]/10 rounded-md">
-                    <div>
-                      <p className="font-medium">PRO Plan - Monthly</p>
-                      <p className="text-xs opacity-70">April 15, 2025</p>
-                    </div>
-                    <p className="font-medium">$4.99</p>
-                  </div>
-                </div>
-              </div>
+             
             </div>
           )}
 
@@ -294,10 +310,10 @@ export default function Settings() {
                       Privacy Policy
                     </Button>
                   </Link>
-                  <Button variant="outline" className="w-full justify-start">
+                  {/* <Button variant="outline" className="w-full justify-start">
                     <Shield className="mr-2 h-4 w-4" />
                     Request Data Download
-                  </Button>
+                  </Button> */}
                 </div>
               </div>
             </div>
@@ -322,10 +338,7 @@ export default function Settings() {
                 </Button>
               </Link>
               
-              <Button variant="outline" className="w-full justify-start">
-                <FileText className="mr-2 h-4 w-4" />
-                Cookie Policy
-              </Button>
+             
             </div>
           )}
           
