@@ -1,8 +1,9 @@
 "use client";
 
-import { ProtectedRoute } from "../components/ProtectedRoute";
+import { AuthenticatedRoute } from "../components/AuthenticatedRoute";
 import Profile from "../profile/page";
 import Link from "next/link";
+import { checkSubscriptionStatus } from "../../lib/checkSubscriptionStatus";
 import { Button } from "../../components/ui/button";
 import {
   User, 
@@ -21,6 +22,7 @@ import {
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
+import { useRouter } from "next/navigation";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,12 +30,42 @@ import {
   DropdownMenuTrigger,
 } from "../../components/ui/dropdown-menu";
 
-export default function Settings() {
+export default function Settings() {  
   const [activeCategory, setActiveCategory] = useState("account");
   const [isMobile, setIsMobile] = useState(false);
   const [, setShowSidebar] = useState(true);
   const [isLoadingPortal, setIsLoadingPortal] = useState(false);
   const { user } = useAuth();
+  const router = useRouter();
+  const [subscriptionStatus, setSubscriptionStatus] = useState<string | null>(null);
+  const [isSubscriptionActive, setIsSubscriptionActive] = useState(false);
+  const [subscriptionEndDate, setSubscriptionEndDate] = useState<string | null>(null);
+  
+  // Função para verificar o status da assinatura
+  useEffect(() => {
+    const checkUserSubscription = async () => {
+      if (user) {
+        try {
+          const { isSubscriptionActive, subscriptionStatus, subscriptionEndDate } = 
+            await checkSubscriptionStatus(user.id);
+          
+          setIsSubscriptionActive(isSubscriptionActive);
+          setSubscriptionStatus(subscriptionStatus);
+          setSubscriptionEndDate(subscriptionEndDate);
+          
+          console.log("Status da assinatura carregado:", {
+            isActive: isSubscriptionActive,
+            status: subscriptionStatus,
+            endDate: subscriptionEndDate
+          });
+        } catch (error) {
+          console.error("Erro ao verificar assinatura:", error);
+        }
+      }
+    };
+    
+    checkUserSubscription();
+  }, [user]);
   
   // Função para redirecionar para o portal do cliente Stripe
   const handleManageSubscription = async () => {
@@ -90,9 +122,8 @@ export default function Settings() {
     // { id: "notifications", name: "Notifications", icon: <BellRing className="mr-2 h-4 w-4" />, description: "Manage your notification preferences" },
     { id: "legal", name: "Legal", icon: <FileText className="mr-2 h-4 w-4" />, description: "View legal documents and policies" },
     // { id: "help", name: "Help & Support", icon: <HelpCircle className="mr-2 h-4 w-4" />, description: "Get help with Kot-space" }
-  ];
-  return (
-    <ProtectedRoute>
+  ];  return (
+    <AuthenticatedRoute>
       <Profile/>
       <div className="flex flex-col md:flex-row justify-center min-h-screen p-4 gap-6">        {/* Mobile navigation header */}
         {isMobile && (
@@ -251,27 +282,160 @@ export default function Settings() {
               <h2 className="text-2xl font-bold text-[var(--foreground)] mb-4">Subscription</h2>
               <p className="text-[var(--foreground)] opacity-80 mb-6">
                 Manage your subscription plan and billing information
-              </p>
-              
-              <div className="mb-8 p-6 bg-gradient-to-br from-green-800 to-emerald-800/30 rounded-lg border border-green-700/30">
+              </p>              <div className={`mb-8 p-6 bg-gradient-to-br rounded-lg border transition-all duration-200 ease-in-out
+                ${isSubscriptionActive && subscriptionStatus !== 'canceled' 
+                  ? 'from-green-800 to-emerald-800/30 border-green-700/30' 
+                  : subscriptionStatus === 'canceled' 
+                  ? 'from-amber-800 to-amber-800/30 border-amber-700/30' 
+                  : 'from-red-800 to-red-800/30 border-red-700/30'}`}
+              >
                 <div className="flex justify-between items-start">
-                  <div>
-                    <p className="text-xs uppercase font-medium text-green-400/80">Current Plan</p>
-                    <h3 className="text-2xl font-bold text-green-400 mt-1">Unlimited Access</h3>
-                  </div>
-                  <div className="shrink-0 bg-green-500/20 p-3 rounded-full">
-                    <CreditCard className="h-6 w-6 text-green-400" />
+                  <div>                    <p className={`text-xs uppercase font-medium 
+                      ${isSubscriptionActive && subscriptionStatus !== 'canceled' 
+                        ? 'text-green-400/80' 
+                        : subscriptionStatus === 'canceled' 
+                        ? 'text-amber-400/80' 
+                        : 'text-red-400/80'}`}
+                    >
+                      Current Plan
+                    </p>                    <h3 className={`text-2xl font-bold mt-1
+                      ${isSubscriptionActive && subscriptionStatus !== 'canceled' 
+                        ? 'text-green-400' 
+                        : subscriptionStatus === 'canceled' 
+                        ? 'text-amber-400' 
+                        : 'text-red-400'}`}
+                    >
+                      Unlimited Access
+                    </h3>
+                    
+                    {subscriptionStatus === "canceled" && !subscriptionEndDate ? (
+                      <p className="text-sm text-amber-400 mt-2">
+                        Subscription canceled
+                      </p>
+                    ) : subscriptionStatus === "canceled" ? (
+                      <p className="text-sm text-amber-400 mt-2">
+                        Subscription canceled. Access until {new Date(subscriptionEndDate || "").toLocaleDateString()}
+                      </p>
+                    ) : isSubscriptionActive && subscriptionEndDate ? (
+                      <p className="text-sm text-green-300 mt-2">
+                        Active subscription until {new Date(subscriptionEndDate).toLocaleDateString()}
+                      </p>
+                    ) : isSubscriptionActive ? (
+                      <p className="text-sm text-green-300 mt-2">
+                        Active subscription
+                      </p>
+                    ) : (
+                      <p className="text-sm text-red-400 mt-2">
+                        Subscription expired
+                      </p>
+                    )}
+                  </div>                  <div className={`shrink-0 p-3 rounded-full 
+                    ${isSubscriptionActive && subscriptionStatus !== 'canceled' 
+                      ? 'bg-green-500/20' 
+                      : subscriptionStatus === 'canceled' 
+                      ? 'bg-amber-500/20' 
+                      : 'bg-red-500/20'}`}
+                  >
+                    <CreditCard className={`h-6 w-6 
+                      ${isSubscriptionActive && subscriptionStatus !== 'canceled' 
+                        ? 'text-green-400' 
+                        : subscriptionStatus === 'canceled' 
+                        ? 'text-amber-400' 
+                        : 'text-red-400'}`} 
+                    />
                   </div>
                 </div>
+
+                {subscriptionStatus === "canceled" && new Date(subscriptionEndDate || "") > new Date() ? (
+                  <div className="mt-4 flex flex-col space-y-2">
+                    <Button 
+                      onClick={handleManageSubscription} 
+                      className="bg-amber-600 hover:bg-amber-700 text-white"
+                      disabled={isLoadingPortal}
+                    >
+                      {isLoadingPortal ? "Loading..." : "Reactivate Subscription"}
+                    </Button>
+                    <Button 
+                      onClick={handleManageSubscription} 
+                      variant="outline"
+                      className="border-amber-700 text-amber-400 hover:bg-amber-900/20"
+                      disabled={isLoadingPortal}
+                    >
+                      {isLoadingPortal ? "Loading..." : "Manage Subscription"}
+                    </Button>
+                  </div>
+                ) : !isSubscriptionActive ? (
+                  <div className="mt-4">
+                    <Button 
+                      onClick={() => router.push('/pricing')} 
+                      className="bg-green-700 hover:bg-green-800 text-white"
+                    >
+                      Get Subscription
+                    </Button>
+                  </div>
+                ) : (
                   <Button 
-                  onClick={handleManageSubscription} 
-                  className="mt-4 bg-green-700 hover:bg-green-800 text-white"
-                  disabled={isLoadingPortal}
-                >
-                  {isLoadingPortal ? "Loading..." : "Manage Subscription"}
-                </Button>
+                    onClick={handleManageSubscription} 
+                    className="mt-4 bg-green-700 hover:bg-green-800 text-white"
+                    disabled={isLoadingPortal}
+                  >
+                    {isLoadingPortal ? "Loading..." : "Manage Subscription"}
+                  </Button>
+                )}
               </div>
-             
+              
+              {/* Subscription Details Section */}
+              {(isSubscriptionActive || subscriptionStatus === "canceled") && (
+                <div className="mt-6 space-y-4">
+                  <h3 className="text-lg font-medium text-[var(--foreground)]">Subscription Details</h3>
+                  
+                  <div className="space-y-2 border-b border-[var(--foreground)]/10 pb-4">
+                    <div className="flex justify-between">
+                      <span className="text-[var(--foreground)]/70">Status:</span>
+                      <span className={`font-medium ${
+                        isSubscriptionActive && subscriptionStatus !== 'canceled' 
+                          ? 'text-green-400' 
+                          : subscriptionStatus === 'canceled' 
+                            ? 'text-amber-400' 
+                            : 'text-red-400'
+                      }`}>
+                        {subscriptionStatus === 'canceled' 
+                          ? 'Canceled' 
+                          : isSubscriptionActive 
+                            ? 'Active' 
+                            : 'Expired'}
+                      </span>
+                    </div>
+                    
+                    {subscriptionEndDate && (
+                      <div className="flex justify-between">
+                        <span className="text-[var(--foreground)]/70">
+                          {subscriptionStatus === 'canceled' ? 'Access Until:' : 'Renewal Date:'}
+                        </span>
+                        <span className="font-medium">
+                          {new Date(subscriptionEndDate).toLocaleDateString()}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                  
+                  <div className="pt-2">
+                    <p className="text-sm text-[var(--foreground)]/70 mb-3">
+                      {subscriptionStatus === 'canceled'
+                        ? 'Your subscription has been canceled but you still have access until the end of your billing period.'
+                        : isSubscriptionActive
+                          ? 'Your subscription is active and will automatically renew on the date shown above.'
+                          : 'Your subscription has expired. Renew now to continue using premium features.'}
+                    </p>
+                    
+                    {subscriptionStatus === 'canceled' && new Date(subscriptionEndDate || "") > new Date() && (
+                      <p className="text-sm text-amber-400/80 mb-3">
+                        To continue using premium features beyond that date, you will need to reactivate your subscription.
+                      </p>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
@@ -482,7 +646,6 @@ export default function Settings() {
             </div>
           )}
         </div>
-      </div>
-    </ProtectedRoute>
+      </div>    </AuthenticatedRoute>
   );
 }
