@@ -1,257 +1,107 @@
 "use client";
 
+/**
+ * Página de Solicitação de Exclusão de Conta
+ * 
+ * Esta página permite que o usuário solicite a exclusão de sua conta
+ * enviando um email para o suporte, com as informações necessárias já preenchidas.
+ */
+
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-// import { useTranslation } from "react-i18next";
 import { useAuth } from "../../context/AuthContext";
-import { supabase } from "../../lib/supabase";
 import Link from "next/link";
+import { ArrowLeft, Copy, Mail } from "lucide-react";
 
 export default function DeleteAccountPage() {
-  const [password, setPassword] = useState("");
-  const [confirmText, setConfirmText] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-  const router = useRouter();
-  const { user, signOut } = useAuth();
-  //   const { t } = useTranslation();
+  const [copied, setCopied] = useState(false);
+  const { user } = useAuth();
 
-  // Texto que o usuário deve digitar para confirmar exclusão
-  const confirmationText = "EXCLUIR MINHA CONTA";
+  const supportEmail = "suporte@fairoute.com.br";
+  const emailSubject = "Solicitação de Exclusão de Conta";
+  const emailBody = `Olá, 
+  
+Gostaria de solicitar a exclusão da minha conta do Fair Note.
 
-  // Verificações iniciais antes de mostrar o diálogo de confirmação
-  const handleInitialSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
+ID da conta: ${user?.id || ""}
+Email: ${user?.email || ""}
 
-    if (!user) {
-      setError("Você precisa estar logado para excluir sua conta.");
-      return;
-    }
+Entendo que esta ação é permanente e irá excluir todos os meus dados.
 
-    if (!password) {
-      setError(
-        "Por favor, digite sua senha atual para confirmar sua identidade.",
-      );
-      return;
-    }
+Atenciosamente,
+[Seu Nome]`;
 
-    setIsLoading(true);
-
-    try {
-      // Verificar a senha atual do usuário por meio de uma tentativa de login
-      const { error: authError } = await supabase.auth.signInWithPassword({
-        email: user.email || "",
-        password,
-      });
-
-      if (authError) {
-        throw new Error(
-          "Senha incorreta. Por favor, verifique e tente novamente.",
-        );
-      }
-
-      // Se chegou aqui, a senha está correta, mostrar diálogo de confirmação
-      setShowConfirmDialog(true);
-    } catch (err) {
-      setError(
-        err instanceof Error
-          ? err.message
-          : "Ocorreu um erro ao verificar sua senha.",
-      );
-    } finally {
-      setIsLoading(false);
-    }
+  const handleCopy = () => {
+    navigator.clipboard.writeText(emailBody);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
-  // Lógica de exclusão da conta após a confirmação final
-  const handleDeleteAccount = async () => {
-    if (confirmText !== confirmationText) {
-      setError(`Por favor, digite "${confirmationText}" para confirmar.`);
-      return;
-    }
-
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      if (!user) {
-        throw new Error("Usuário não encontrado.");
-      }
-
-      // 1. Excluir dados do usuário das tabelas relacionadas
-      // Notas
-      await supabase.from("notes").delete().eq("user_id", user.id);
-
-      // Eventos de calendário
-      await supabase.from("calendar_events").delete().eq("user_id", user.id);
-
-      // Metadados do usuário
-      await supabase.from("user_metadata").delete().eq("id", user.id);
-
-      // Perfil
-      const { data: profileData } = await supabase
-        .from("profiles")
-        .select("avatar_url, wallpaper_url")
-        .eq("id", user.id)
-        .single();
-
-      // 2. Excluir arquivos do Storage
-      if (profileData) {
-        if (profileData.avatar_url) {
-          await supabase.storage
-            .from("user-avatar")
-            .remove([profileData.avatar_url]);
-        }
-        if (profileData.wallpaper_url) {
-          await supabase.storage
-            .from("user-wallpaper")
-            .remove([profileData.wallpaper_url]);
-        }
-      }
-
-      await supabase.from("profiles").delete().eq("id", user.id);
-
-      // 3. Excluir a conta do usuário no Auth
-      const { error: deleteError } = await supabase.auth.admin.deleteUser(
-        user.id,
-      );
-
-      if (deleteError) throw deleteError;
-
-      // 4. Fazer logout e redirecionar para a página inicial
-      await signOut();
-      router.push("/?message=Sua conta foi excluída com sucesso");
-    } catch (err) {
-      console.error("Erro ao excluir conta:", err);
-      setError(
-        err instanceof Error
-          ? err.message
-          : "Ocorreu um erro ao excluir sua conta.",
-      );
-      setIsLoading(false);
-    }
+  const handleMailtoClick = () => {
+    const mailtoLink = `mailto:${supportEmail}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
+    window.location.href = mailtoLink;
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[var(--background)] p-4">
       <div className="w-full max-w-md">
-        <div className="bg-[var(--container)] rounded-xl overflow-hidden  shadow-lg">
+        <div className="bg-[var(--container)] rounded-xl overflow-hidden shadow-lg">
           <div className="p-8">
             <h1 className="text-2xl font-bold text-red-500 mb-6">
-              Excluir Conta
+              Solicitar Exclusão de Conta
             </h1>
 
-            {error && (
-              <div className="mb-6 p-4 bg-red-500/20 border border-red-500/30 rounded-lg text-red-400">
-                {error}
-              </div>
-            )}
-
-            {!showConfirmDialog ? (
-              // Primeiro passo: Confirmação de senha
-              <form onSubmit={handleInitialSubmit} className="space-y-6">
-                <div>
-                  <p className="text-[var(--foreground)] mb-4">
-                    Ao excluir sua conta, você perderá permanentemente:
-                  </p>
-                  <ul className="list-disc pl-5 mb-4 text-[var(--foreground)]">
-                    <li>Todas as suas notas</li>
-                    <li>Eventos de calendário</li>
-                    <li>Configurações personalizadas</li>
-                    <li>Dados do perfil</li>
-                  </ul>
-                  <p className="text-[var(--foreground)] mb-6">
-                    Esta ação{" "}
-                    <span className="font-bold text-red-500">
-                      não pode ser desfeita
-                    </span>
-                    .
-                  </p>
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="password"
-                    className="block text-[var(--foreground)] mb-2"
-                  >
-                    Digite sua senha atual para confirmar:
-                  </label>
-                  <input
-                    id="password"
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    className="w-full px-4 py-2 bg-[var(--background)] border border-[var(--border-color)] rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-[var(--foreground)]"
-                  />
-                </div>
-
-                <div className="flex justify-between">
-                  <Link
-                    href="/dashboard"
-                    className="px-6 py-2 bg-[var(--background)] hover:bg-[var(--container)] text-[var(--foreground)] rounded-lg transition-colors"
-                  >
-                    Cancelar
-                  </Link>
-                  <button
-                    type="submit"
-                    disabled={isLoading}
-                    className="px-6 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors"
-                  >
-                    {isLoading ? "Verificando..." : "Continuar"}
-                  </button>
-                </div>
-              </form>
-            ) : (
-              // Segundo passo: Confirmação final com digitação de texto específico
-              <div className="space-y-6">
-                <p className="text-red-500 font-semibold mb-4">
-                  Esta é uma ação permanente e irreversível!
+            <div className="space-y-6">
+              <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-4 mb-4">
+                <p className="text-amber-400 font-semibold mb-2">
+                  Processo Manual de Exclusão
                 </p>
-                <p className="text-[var(--foreground)] mb-4">
-                  Para confirmar que deseja excluir permanentemente sua conta e
-                  todos os seus dados, digite{" "}
-                  <span className="font-mono font-bold">
-                    {confirmationText}
-                  </span>{" "}
-                  abaixo:
+                <p className="text-[var(--muted)] text-sm">
+                  Para garantir a segurança dos seus dados, implementamos um processo de exclusão manual. 
+                  Por favor, envie um email para nossa equipe de suporte com as informações abaixo.
                 </p>
-
-                <input
-                  type="text"
-                  value={confirmText}
-                  onChange={(e) => setConfirmText(e.target.value)}
-                  placeholder={confirmationText}
-                  className="w-full px-4 py-2 bg-[var(--background)] border border-[var(--border-color)] rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-[var(--foreground)]"
-                />
-
-                <div className="flex justify-between">
-                  <button
-                    onClick={() => {
-                      setShowConfirmDialog(false);
-                      setConfirmText("");
-                      setError(null);
-                    }}
-                    className="px-6 py-2 bg-[var(--background)] hover:bg-[var(--container)] text-[var(--foreground)] rounded-lg transition-colors"
-                  >
-                    Cancelar
-                  </button>
-                  <button
-                    onClick={handleDeleteAccount}
-                    disabled={isLoading || confirmText !== confirmationText}
-                    className={`px-6 py-2 ${
-                      isLoading || confirmText !== confirmationText
-                        ? "bg-red-300 cursor-not-allowed"
-                        : "bg-red-600 hover:bg-red-700"
-                    } text-white rounded-lg transition-colors`}
-                  >
-                    {isLoading ? "Excluindo..." : "Excluir Permanentemente"}
-                  </button>
-                </div>
               </div>
-            )}
+
+              <div className="bg-[var(--muted-background)] rounded-lg p-4 mb-4 relative">
+                <p className="text-xs text-[var(--muted)] mb-1">Mensagem Sugerida:</p>
+                <pre className="text-xs whitespace-pre-wrap text-[var(--foreground)] font-mono p-2 bg-[var(--background)]/50 rounded border border-[var(--border)]">
+                  {emailBody}
+                </pre>
+                <button 
+                  onClick={handleCopy}
+                  className="absolute top-3 right-3 p-1.5 rounded-md bg-[var(--muted-background)] hover:bg-[var(--muted)]/30 text-[var(--muted)]"
+                  title="Copiar mensagem"
+                >
+                  <Copy size={16} />
+                </button>
+                {copied && (
+                  <div className="absolute -top-2 right-12 bg-green-600 text-white text-xs py-1 px-2 rounded">
+                    Copiado!
+                  </div>
+                )}
+              </div>
+
+              <div className="flex flex-col space-y-3">
+                <button
+                  onClick={handleMailtoClick}
+                  className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg flex items-center justify-center gap-2"
+                >
+                  <Mail size={16} />
+                  Enviar Email para {supportEmail}
+                </button>
+                
+                <Link href="/settings">
+                  <button className="w-full py-3 px-4 bg-[var(--background)] hover:bg-[var(--background-highlight)] text-[var(--foreground)] rounded-lg flex items-center justify-center gap-2 border border-[var(--border)]">
+                    <ArrowLeft size={16} />
+                    Voltar para Configurações
+                  </button>
+                </Link>
+              </div>
+
+              <p className="text-xs text-[var(--muted)] text-center mt-6">
+                Nossa equipe processará sua solicitação em até 48 horas úteis.
+                Você receberá uma confirmação por email quando a exclusão for concluída.
+              </p>
+            </div>
           </div>
         </div>
       </div>
