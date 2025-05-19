@@ -12,7 +12,8 @@ import Tasks from "../components/tasks";
 import { decrypt } from "../components/Encryption";
 import { useTranslation } from "react-i18next";
 // import Tables from "../components/tables";
-import { Eye, Bookmark } from "lucide-react";
+import { Eye,  } from "lucide-react";
+// Bookmark
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -259,10 +260,10 @@ export default function DashboardPage() {
                 >
                   <div className="h-[300px] sm:h-[400px] p-3 bg-[var(--container)]/30 backdrop-blur-sm hover:bg-opacity-60 transition-all hover:translate-x-1 hover:shadow-md flex flex-col">
                    <div className="flex justify-end">
-                   <Bookmark 
+                   {/* <Bookmark 
                     size={24}
                     className="mb-1 hover:bg-[var(--foreground)] hover:text-[var(--background)] rounded-full"
-                    />
+                    /> */}
                     </div>
                     <h2 className="text-sm font-semibold mb-3">
                       {note.title
