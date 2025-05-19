@@ -25,7 +25,7 @@ import EmojiPicker, { Theme } from "emoji-picker-react"; //LIbrary to enable sup
 import { EmojiClickData } from "emoji-picker-react"; //Type for the emoji click data
 // import ClientLayout from "./ClientLayout";
 import Profile from "../profile/page";
-import { encrypt } from "./Encryption"; // Importar a função de criptografia
+import { encrypt, decrypt } from "./Encryption"; // Importar funções de criptografia e descriptografia
 import { useTranslation } from "react-i18next"; // Import the translation hook
 
 function Editor() {
@@ -409,7 +409,12 @@ function Editor() {
       if (error) throw error;
 
       if (data) {
-        setFolders(data);
+        // Descriptografar os nomes das pastas
+        const decryptedFolders = data.map(folder => ({
+          ...folder,
+          name: decrypt(folder.name)
+        }));
+        setFolders(decryptedFolders);
       }
     } catch (error) {
       console.error("Error fetching folders:", error);

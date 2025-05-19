@@ -29,7 +29,7 @@ import ThemeToggle from "./ThemeToggle";
 import { useTranslation } from "next-i18next";
 import i18n from "../../i18n";
 import LanguageSwitcher from "../../components/LanguageSwitcher";
-import { decrypt } from "./Encryption";
+import { encrypt, decrypt } from "./Encryption";
 import eventEmitter from "../../lib/eventEmitter";
 import { Button } from "../../components/ui/button";
 import {
@@ -143,11 +143,10 @@ export default function Sidebox() {
         .from("folders")
         .select("*")
         .eq("user_id", user.id)
-        .order("name", { ascending: true });
-
-      setFolders(
+        .order("name", { ascending: true });      setFolders(
         (data || []).map((folder) => ({
           ...folder,
+          name: decrypt(folder.name), // Descriptografa o nome da pasta
           expanded: false,
         })),
       );
@@ -222,9 +221,7 @@ export default function Sidebox() {
         },
       );
     }
-  }
-
-  const toggleMobileSidebar = () => {
+  }  const toggleMobileSidebar = () => {
     setIsMobileOpen(!isMobileOpen);
   };
 
@@ -237,25 +234,24 @@ export default function Sidebox() {
       ),
     );
   };
-
   const createFolder = async () => {
     if (!newFolderName.trim() || !user) return;
 
     try {
       // Set loading state to true when starting folder creation
       setIsFolderCreating(true);
-
+      
       const { data, error } = await supabase
         .from("folders")
-        .insert([{ name: newFolderName, user_id: user.id }])
+        .insert([{ name: encrypt(newFolderName), user_id: user.id }])
         .select();
 
       if (error) throw error;
-
+      
       if (data && data[0]) {
         setFolders([
           ...folders,
-          { id: data[0].id, name: data[0].name, expanded: false },
+          { id: data[0].id, name: newFolderName, expanded: false }, // Usamos o nome original, já que estamos adicionando à lista local
         ]);
         setNewFolderName("");
         setIsAddingFolder(false);
