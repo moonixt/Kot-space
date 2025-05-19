@@ -15,7 +15,6 @@ import {
   HelpCircle,
   Settings as SettingsIcon,
   ArrowLeft,
-  LogOut,
   Languages,
   MessageSquareText,
   ChevronDown
@@ -176,16 +175,6 @@ export default function Settings() {
                   </Button>
                 ))}
               </nav>
-              
-              <div className="mt-8 pt-4 border-t border-slate-700">
-                <Button
-                  variant="ghost"
-                  className="justify-start text-left h-11 w-full text-red-400 hover:text-red-300 hover:bg-red-500/10"
-                >
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Sign Out
-                </Button>
-              </div>
             </div>
           </div>
         )}
