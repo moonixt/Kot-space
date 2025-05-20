@@ -147,7 +147,8 @@
       "noContent": "内容なし"
     },
     "bookmark": "ブックマーク",
-    "unbookmark": "ブックマークを外す"
+      "unbookmark": "ブックマークを外す",
+    "info": "ヘルプと情報"
   },
   "tasks": {
     "addNew": "新しいタスクを追加",
@@ -463,5 +464,15 @@
       "categories": "カテゴリー",
       "settingsPreferences": "設定と環境設定"
     }
+  },
+  "chatAssistent": {
+    "welcome": "どのようにお手伝いできますか？",
+    "editor": "エディター",
+    "dashboard": "ダッシュボード",
+    "settings": "設定",
+    "privacy": "プライバシー",
+    "support": "サポートに連絡するにはどうすればいいですか？",
+    "editorHelp": "エディターで何ができますか？",
+    "createNote": "新しいノートはどうやって作成しますか？"
   }
 }

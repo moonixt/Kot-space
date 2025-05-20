@@ -143,6 +143,7 @@
     "documents": "Notes",
     "bookmark": "Bookmark",
     "unbookmark": "Remove bookmark",
+    "info": "Help & Info",
 
     "emptyState": {
       "title": "No notes found",
@@ -458,5 +459,15 @@
       "categories": "Categories",
       "settingsPreferences": "Settings & Preferences"
     }
+  },
+  "chatAssistent": {
+    "welcome": "How can I help you?",
+    "editor": "Editor",
+    "dashboard": "Dashboard",
+    "settings": "Settings",
+    "privacy": "Privacy",
+    "support": "How do I contact the support?",
+    "editorHelp": "What can I do with the editor?",
+    "createNote": "How do I create a new note?"
   }
 }

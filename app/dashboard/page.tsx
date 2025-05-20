@@ -12,7 +12,7 @@ import Tasks from "../components/tasks";
 import { decrypt } from "../components/Encryption";
 import { useTranslation } from "react-i18next";
 // import Tables from "../components/tables";
-import { Eye, Bookmark  } from "lucide-react";
+import { Eye, Bookmark,   Info } from "lucide-react";
 // Bookmark
 import {
   DropdownMenu,
@@ -151,6 +151,7 @@ export default function DashboardPage() {
               <span>{t("dashboard.newDocument")}</span>
              
             </button>
+           
             </div>
 
          
@@ -197,6 +198,7 @@ export default function DashboardPage() {
               </div>
             )}
           </div> */}
+          
           <div className="flex justify-between items-center ">
            
             <h1 className="text-xl font-semibold mt-4 mb-2">
@@ -234,20 +236,14 @@ export default function DashboardPage() {
                   >
                     {t("dashboard.tasks")}
                   </DropdownMenuCheckboxItem>
-                  {/* <DropdownMenuCheckboxItem
-                    checked={showCalendar}
-                    onCheckedChange={setShowCalendar}
-                    className="text-[var(--text-color)]"
-                  >
-                    {t("dashboard.calendar")}
-                  </DropdownMenuCheckboxItem> */}
-                  {/* <DropdownMenuCheckboxItem
-                    // checked={showTables}
-                    // onCheckedChange={setShowTables}
-                    className="text-[var(--text-color)]"
-                  >
-                    {t("dashboard.tables")}
-                  </DropdownMenuCheckboxItem> */}
+                  {/* Info/help item */}
+                  <DropdownMenuSeparator />
+                  <Link href="/chat" passHref legacyBehavior>
+                    <a className="flex items-center gap-2 px-2 py-2 rounded-md text-[var(--text-color)] hover:bg-[var(--container)] transition-colors" title="Help & Info">
+                      <Info className="h-4 w-4" />
+                      <span>{t("dashboard.info", "Help") || "Help & Info"}</span>
+                    </a>
+                  </Link>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
@@ -264,18 +260,18 @@ export default function DashboardPage() {
                   className="block h-full"
                 >
                   <div className="h-[300px] sm:h-[400px] p-3 bg-[var(--container)]/30 backdrop-blur-sm hover:bg-opacity-60 transition-all hover:translate-x-1 hover:shadow-md flex flex-col">
-                   <div className="flex justify-end">
-                    <button
-                      type="button"
-                      aria-label={note.favorite ? t("dashboard.unbookmark") : t("dashboard.bookmark")}
-                      onClick={e => {
-                        e.preventDefault();
-                        toggleFavorite(note.id, note.favorite);
-                      }}
-                      className={`mb-1 rounded-full p-1 transition-colors ${note.favorite ? "bg-[var(--foreground)] text-[var(--background)]" : "hover:bg-[var(--foreground)] hover:text-[var(--background)]"}`}
-                    >
-                      <Bookmark size={24} fill={note.favorite ? "currentColor" : "none"} />
-                    </button>
+                    <div className="flex justify-end">
+                      <button
+                        type="button"
+                        aria-label={note.favorite ? t("dashboard.unbookmark") : t("dashboard.bookmark")}
+                        onClick={e => {
+                          e.preventDefault();
+                          toggleFavorite(note.id, note.favorite);
+                        }}
+                        className={`mb-1 rounded-full p-1 transition-colors ${note.favorite ? "bg-[var(--foreground)] text-[var(--background)]" : "hover:bg-[var(--foreground)] hover:text-[var(--background)]"}`}
+                      >
+                        <Bookmark size={20} fill={note.favorite ? "currentColor" : "none"} />
+                      </button>
                     </div>
                     <h2 className="text-sm font-semibold mb-3">
                       {note.title
@@ -324,7 +320,7 @@ export default function DashboardPage() {
                 strokeLinejoin="round"
                 className="mb-4 opacity-50"
               >
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-6"></path>
                 <polyline points="14 2 14 8 20 8"></polyline>
                 <line x1="12" y1="18" x2="12" y2="12"></line>
                 <line x1="9" y1="15" x2="15" y2="15"></line>

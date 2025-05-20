@@ -286,5 +286,15 @@
       "categories": "Kategorien",
       "settingsPreferences": "Einstellungen & Präferenzen"
     }
+  },
+  "chatAssistent": {
+    "welcome": "Wie kann ich Ihnen helfen?",
+    "editor": "Editor",
+    "dashboard": "Dashboard",
+    "settings": "Einstellungen",
+    "privacy": "Datenschutz",
+    "support": "Wie kontaktiere ich den Support?",
+    "editorHelp": "Was kann ich mit dem Editor machen?",
+    "createNote": "Wie erstelle ich eine neue Notiz?"
   }
 }

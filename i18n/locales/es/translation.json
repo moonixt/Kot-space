@@ -147,7 +147,8 @@
       "noContent": "Sin contenido"
     },
     "bookmark": "Marcar como favorito",
-    "unbookmark": "Remover dos favoritos"
+    "unbookmark": "Remover dos favoritos",
+    "info": "Ayuda e Información"
   },
   "tasks": {
     "addNew": "Agregar una nueva tarea",
@@ -285,5 +286,15 @@
       "categories": "Categorías",
       "settingsPreferences": "Configuración y Preferencias"
     }
+  },
+  "chatAssistent": {
+    "welcome": "¿En qué puedo ayudarte?",
+    "editor": "Editor",
+    "dashboard": "Panel",
+    "settings": "Configuración",
+    "privacy": "Privacidad",
+    "support": "¿Cómo contacto con el soporte?",
+    "editorHelp": "¿Qué puedo hacer con el editor?",
+    "createNote": "¿Cómo creo una nueva nota?"
   }
 }
