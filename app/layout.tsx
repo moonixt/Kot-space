@@ -98,7 +98,7 @@ export default async function RootLayout({
         />
         <meta
           property="og:image"
-          content="https://fair-note.vercel.app/static/images/logo.png"
+          content="https://fair-note.vercel.app/static/images/og.jpg"
         />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://fair-note.vercel.app/" />
