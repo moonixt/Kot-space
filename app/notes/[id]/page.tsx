@@ -530,7 +530,7 @@ export default function NotePage() {
               {editMode ? (
                 <>
                   <button
-                    className="rounded hover:bg-green-400 transition-colors px-2 py-1 flex items-center gap-1"
+                    className="rounded  transition-colors px-2 py-1 flex items-center gap-1"
                     title={t("editor.save")}
                     onClick={handleSave}
                     disabled={saving}
@@ -553,7 +553,7 @@ export default function NotePage() {
                 </>
               ) : (
                 <button
-                  className="rounded hover:bg-green-400 transition-colors px-2 py-1 flex items-center gap-1"
+                  className="rounded  transition-colors px-2 py-1 flex items-center gap-1"
                   title={t("editor.edit")}
                   onClick={() => setEditMode(true)}
                 >

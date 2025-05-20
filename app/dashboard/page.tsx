@@ -12,7 +12,7 @@ import Tasks from "../components/tasks";
 import { decrypt } from "../components/Encryption";
 import { useTranslation } from "react-i18next";
 // import Tables from "../components/tables";
-import { Eye,  } from "lucide-react";
+import { Eye, Bookmark  } from "lucide-react";
 // Bookmark
 import {
   DropdownMenu,
@@ -28,6 +28,7 @@ interface Note {
   title: string;
   content: string;
   created_at: string;
+  favorite?: boolean;
 }
 
 export default function DashboardPage() {
@@ -41,25 +42,30 @@ export default function DashboardPage() {
     }
     return true;
   });
-
-  // const [showCalendar, setShowCalendar] = useState(() => {
-  //   if (typeof window !== "undefined") {
-  //     const savedShowCalendar = localStorage.getItem("showCalendar");
-  //     return savedShowCalendar === null ? false : savedShowCalendar === "true";
-  //   }
-  //   return true;
-  // });
-
-  // const [showTables, setShowTables] = useState(() => {
-  //   if (typeof window !== "undefined") {
-  //     const savedShowTables = localStorage.getItem("showTables");
-  //     return savedShowTables === null ? false : savedShowTables === "true";
-  //   }
-  //   return true;
-  // });
   const { user } = useAuth();
 
-  // Fetch notes from Supabase
+  // Função para alternar o favorito
+  const toggleFavorite = async (noteId: string, currentFavorite: boolean | undefined) => {
+    if (!user) return;
+    try {
+      const { error } = await supabase
+        .from("notes")
+        .update({ favorite: !currentFavorite })
+        .eq("id", noteId)
+        .eq("user_id", user.id);
+      if (error) throw error;
+      // Atualiza localmente
+      setNotes((prev) =>
+        prev.map((note) =>
+          note.id === noteId ? { ...note, favorite: !currentFavorite } : note
+        )
+      );
+    } catch (error) {
+      console.error("Erro ao atualizar favorito:", error);
+    }
+  };
+
+  // Buscar notas do Supabase, favoritos primeiro
   const fetchNotes = async () => {
     setLoading(true);
     try {
@@ -67,13 +73,12 @@ export default function DashboardPage() {
         setNotes([]);
         return;
       }
-
       const { data } = await supabase
         .from("notes")
         .select("*")
         .eq("user_id", user.id)
+        .order("favorite", { ascending: false, nullsFirst: true })
         .order("created_at", { ascending: false });
-
       setNotes(data || []);
     } catch (error) {
       console.error("Erro ao buscar notas:", error);
@@ -260,10 +265,17 @@ export default function DashboardPage() {
                 >
                   <div className="h-[300px] sm:h-[400px] p-3 bg-[var(--container)]/30 backdrop-blur-sm hover:bg-opacity-60 transition-all hover:translate-x-1 hover:shadow-md flex flex-col">
                    <div className="flex justify-end">
-                   {/* <Bookmark 
-                    size={24}
-                    className="mb-1 hover:bg-[var(--foreground)] hover:text-[var(--background)] rounded-full"
-                    /> */}
+                    <button
+                      type="button"
+                      aria-label={note.favorite ? t("dashboard.unbookmark") : t("dashboard.bookmark")}
+                      onClick={e => {
+                        e.preventDefault();
+                        toggleFavorite(note.id, note.favorite);
+                      }}
+                      className={`mb-1 rounded-full p-1 transition-colors ${note.favorite ? "bg-[var(--foreground)] text-[var(--background)]" : "hover:bg-[var(--foreground)] hover:text-[var(--background)]"}`}
+                    >
+                      <Bookmark size={24} fill={note.favorite ? "currentColor" : "none"} />
+                    </button>
                     </div>
                     <h2 className="text-sm font-semibold mb-3">
                       {note.title

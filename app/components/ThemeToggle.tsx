@@ -22,63 +22,64 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useTranslation } from "next-i18next";
 
 export default function ThemeToggle() {
   const { theme, setTheme } = useTheme();
+  const { t } = useTranslation();
 
   // Define todos os temas disponíveis com suas propriedades
   const themes = [
     {
       id: "light",
-      name: "Claro",
+      name: t("theme.light", "Claro"),
       icon: <Sun size={16} />,
     },
     {
       id: "dark",
-      name: "Escuro",
+      name: t("theme.dark", "Escuro"),
       icon: <Moon size={16} />,
     },
     {
       id: "grey",
-      name: "Eclipse",
+      name: t("theme.eclipse", "Eclipse"),
       icon: <Eclipse size={16} />,
       color: "#18191e"
     },
     {
       id: "blue",
-      name: "Blue",
+      name: t("theme.blue", "Blue"),
       icon: <Droplet size={16} />,
       color: "#3b82f6"
     },
     {
       id: "purple",
-      name: "Purple",
+      name: t("theme.purple", "Purple"),
       icon: <Shell size={16} />,
       color: "#8b5cf6"
     },
     {
       id: "green",
-      name: "Green",
+      name: t("theme.green", "Green"),
       icon: <Leaf size={16} />,
       color: "#22c55e"
     },
     {
       id: "red",
-      name: "Red",
+      name: t("theme.red", "Red"),
       icon: <Heart size={16} />,
       color: "#e11d48"
     },
     {
       id: "yellow",
-      name: "Yellow",
+      name: t("theme.yellow", "Yellow"),
       icon: <Rabbit size={16} />,
       color: "#eab308"
     },
     {
       id: "system",
-      name: "Sistema",
+      name: t("theme.system", "System"),
       icon: <Monitor size={16} />,
-     
     }
   ];
 
@@ -103,11 +104,11 @@ export default function ThemeToggle() {
       </DropdownMenuTrigger>
       
       <DropdownMenuContent className="w-48 bg-[var(--background)] border border-[var(--card-border)]">
-        <DropdownMenuLabel className="text-[var(--foreground)] opacity-70">Escolha um tema</DropdownMenuLabel>
+        <DropdownMenuLabel className="text-[var(--foreground)] opacity-70">{t("theme.choose", "Escolha um tema")}</DropdownMenuLabel>
         <DropdownMenuSeparator className="bg-[var(--card-border)]" />
         
         <div className="py-1">
-          <DropdownMenuLabel className="text-xs text-[var(--foreground)] opacity-70 px-2">Básicos</DropdownMenuLabel>
+          <DropdownMenuLabel className="text-xs text-[var(--foreground)] opacity-70 px-2">{t("theme.basic", "Básicos")}</DropdownMenuLabel>
           {themes.slice(0, 2).map((item) => (
             <DropdownMenuItem
               key={item.id}
@@ -130,7 +131,7 @@ export default function ThemeToggle() {
         <DropdownMenuSeparator className="bg-[var(--card-border)]" />
         
         <div className="py-1">
-          <DropdownMenuLabel className="text-xs text-[var(--foreground)] opacity-70 px-2">Cores</DropdownMenuLabel>
+          <DropdownMenuLabel className="text-xs text-[var(--foreground)] opacity-70 px-2">{t("theme.colors", "Cores")}</DropdownMenuLabel>
           {themes.slice(2, -1).map((item) => (
             <DropdownMenuItem
               key={item.id}
@@ -163,7 +164,7 @@ export default function ThemeToggle() {
               </div>
               <span className="flex items-center gap-2">
                 <Monitor size={16} />
-                <span className="text-sm">Preferência do Sistema</span>
+                <span className="text-sm">{t("theme.systemPreference","System Preference" )}</span>
               </span>
             </div>
           </DropdownMenuItem>

@@ -145,7 +145,9 @@
     "note": {
       "untitled": "Sin título",
       "noContent": "Sin contenido"
-    }
+    },
+    "bookmark": "Marcar como favorito",
+    "unbookmark": "Remover dos favoritos"
   },
   "tasks": {
     "addNew": "Agregar una nueva tarea",
@@ -197,5 +199,91 @@
   },
   "editor": {
     "backToDashboard": "Volver al dashboard"
+  },
+  "profile": {
+    "wallpaper": {
+      "upload": "Subir fondo de pantalla",
+      "positionTop": "Alinear arriba",
+      "positionCenter": "Centrar",
+      "positionBottom": "Alinear abajo"
+    }
+  },
+  "theme": {
+    "light": "Claro",
+    "dark": "Oscuro",
+    "eclipse": "Eclipse",
+    "blue": "Azul",
+    "purple": "Púrpura",
+    "green": "Verde",
+    "red": "Rojo",
+    "yellow": "Amarillo",
+    "system": "Sistema",
+    "systemPreference": "Preferencia del sistema",
+    "choose": "Elige un tema",
+    "basic": "Básicos",
+    "colors": "Colores"
+  },
+  "settings": {
+    "subscription": {
+      "title": "Suscripción",
+      "manage": "Administra tu suscripción",
+      "status": "Estado:",
+      "canceled": "Cancelada",
+      "active": "Activa",
+      "expired": "Expirada",
+      "accessUntil": "Acceso hasta:",
+      "renewalDate": "Fecha de renovación:",
+      "canceledMsg": "Tu suscripción ha sido cancelada pero aún tienes acceso hasta el final de tu período de facturación.",
+      "activeMsg": "Tu suscripción está activa y se renovará automáticamente en la fecha mostrada arriba.",
+      "expiredMsg": "Tu suscripción ha expirado. Renueva ahora para seguir usando funciones premium.",
+      "reactivateMsg": "Para seguir usando funciones premium después de esa fecha, deberás reactivar tu suscripción.",
+      "reactivate": "Reactivar Suscripción",
+      "get": "Obtener Suscripción",
+      "details": "Detalles de la Suscripción",
+      "canceledUntil": "Suscripción cancelada. Acceso hasta {{date}}",
+      "activeUntil": "Suscripción activa hasta {{date}}"
+    },
+    "categories": {
+      "account": "Cuenta",
+      "subscription": "Suscripción",
+      "privacy": "Privacidad y Seguridad",
+      "appearance": "Apariencia",
+      "notifications": "Notificaciones",
+      "legal": "Legal",
+      "help": "Ayuda y Soporte",
+      "settings": "Configuración"
+    },
+    "descriptions": {
+      "account": "Administra los detalles de tu cuenta personal",
+      "subscription": "Administra tu plan de suscripción",
+      "privacy": "Controla tu configuración de datos y seguridad",
+      "appearance": "Personaliza tu experiencia visual",
+      "notifications": "Administra tus preferencias de notificación",
+      "legal": "Ver documentos legales y políticas",
+      "help": "Obtén ayuda con Kot-space"
+    },
+    "account": {
+      "title": "Configuración de la Cuenta",
+      "description": "Administra tu configuración y preferencias personales",
+      "deleteAccount": "Eliminar Cuenta",
+      "deleteDescription": "Elimina permanentemente tu cuenta y datos"
+    },
+    "privacy": {
+      "title": "Privacidad y Seguridad",
+      "description": "Administra tu configuración de privacidad y preferencias de seguridad",
+      "passwordAuthentication": "Contraseña y Autenticación",
+      "changePassword": "Cambiar Contraseña",
+      "dataPrivacy": "Datos y Privacidad",
+      "privacyPolicy": "Política de Privacidad"
+    },
+    "legal": {
+      "title": "Legal",
+      "description": "Documentos legales e información importante",
+      "termsOfService": "Términos de Servicio"
+    },
+    "navigation": {
+      "categories": "Categorías",
+      "settingsPreferences": "Configuración y Preferencias"
+    }
   }
 }
