@@ -28,7 +28,7 @@ import { useAuth } from "../../context/AuthContext";
 import ThemeToggle from "./ThemeToggle";
 import { useTranslation } from "next-i18next";
 import i18n from "../../i18n";
-import LanguageSwitcher from "../../components/LanguageSwitcher";
+// import LanguageSwitcher from "../../components/LanguageSwitcher";
 import { encrypt, decrypt } from "./Encryption";
 import eventEmitter from "../../lib/eventEmitter";
 import { Button } from "../../components/ui/button";
@@ -37,9 +37,9 @@ import {
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuLabel,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
+  DropdownMenuRadioGroup,  DropdownMenuRadioItem,
   DropdownMenuSeparator,
+  DropdownMenuItem,
 } from "../../components/ui/dropdown-menu";
 
 export default function Sidebox() {
@@ -65,12 +65,19 @@ export default function Sidebox() {
   const [newFolderName, setNewFolderName] = useState("");
   const [isAddingFolder, setIsAddingFolder] = useState(false);
   const [isFolderCreating, setIsFolderCreating] = useState(false);
-  const [showFoldersTab, setShowFoldersTab] = useState(false);
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [showFoldersTab, setShowFoldersTab] = useState(false);  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const router = useRouter();
   const { user } = useAuth();
   const [, setError] = useState<string | null>(null);
   const { t } = useTranslation();
+  
+  const languages = [
+    { code: "en", name: "English" },
+    { code: "pt-BR", name: "Português (BR)" },
+    { code: "ja", name: "日本語" },
+    { code: "de", name: "Deutsch" },
+    { code: "es", name: "Español" },
+  ];
 
   // Initialize language detection based on browser language
   useEffect(() => {
@@ -909,20 +916,40 @@ const toggleFullscreen = () => {
                 </svg>
               </button>
             </div>
-          </div>
-          <div className="p-2 ">
+          </div>          <div className="p-2 ">
             <div className="flex justify-end items-center gap-2 ">
-              <p><Fullscreen onClick={toggleFullscreen}/></p>
-              <p className="">
-              <LanguageSwitcher />
-                
-              </p>
-              <p className="pr-4">
-              <Link href="/settings">
-              <Settings />
-              </Link>
-              </p>
-            
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" aria-label="Controls">
+                    <Settings className="h-5 w-5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuLabel>{t("sidebar.controls")}</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={toggleFullscreen}>
+                    <Fullscreen className="mr-2 h-4 w-4" />
+                    {t("sidebar.fullscreen")}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/settings" className="flex items-center">
+                      <Settings className="mr-2 h-4 w-4" />
+                      {t("sidebar.settings")}
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuLabel>{t("sidebar.language")}</DropdownMenuLabel>
+                  {languages.map((lang) => (
+                    <DropdownMenuItem
+                      key={lang.code}
+                      onClick={() => i18n.changeLanguage(lang.code)}
+                      className={i18n.language === lang.code ? "font-bold" : ""}
+                    >
+                      {lang.name}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
             
             <ThemeToggle />

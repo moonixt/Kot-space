@@ -113,7 +113,7 @@ html {
   overscroll-behavior: none;
 }
 
-.dark {
+.grey {
   --background: #0d1117;
   --foreground: #ffffff;
   --text-color: #ffffff;
@@ -133,6 +133,28 @@ html {
   --card-bg: rgba(15, 23, 42, 0.7);
   --card-border: #334155;
   --input-bg: rgba(15, 23, 42, 0.8);
+}
+
+.dark {
+  --background: #1a1b20; 
+  --foreground: #f1f1f3;
+  --text-color: #f1f1f3;
+  --theme: #1a1b20;
+  --button-bg: #313239;
+  --button-bg1: #2a2b33;
+  --button-bg2: rgba(49, 50, 57, 0.7);
+  --container: #1a1b20;
+  --accent-color: #0072ce; 
+  --border-color: #313239;
+  --code-bg: #25262e;
+  --blockquote-color: #94a3b8;
+  --table-header-bg: rgba(49, 50, 57, 0.7);
+  --table-border: #313239;
+  --selection-bg: rgba(0, 114, 206, 0.25);
+  --selection-text: #f1f1f3;
+  --card-bg: rgba(37, 38, 46, 0.7);
+  --card-border: #313239;
+  --input-bg: rgba(37, 38, 46, 0.8);
 }
 
 .green {
