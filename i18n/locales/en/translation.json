@@ -141,6 +141,9 @@
     "toggleComponents": "Show/Hide view",
     "components": "Show/Hide view",
     "documents": "Notes",
+    "bookmark": "Bookmark",
+    "unbookmark": "Remove bookmark",
+    "info": "Help & Info",
 
     "emptyState": {
       "title": "No notes found",
@@ -385,5 +388,86 @@
     "sales": "sales",
     "travel": "travel",
     "volunteering": "volunteering"
+  },
+  "profile": {
+    "wallpaper": {
+      "upload": "Upload wallpaper",
+      "positionTop": "Align top",
+      "positionCenter": "Align center",
+      "positionBottom": "Align bottom"
+    }
+  },
+  "settings": {
+    "subscription": {
+      "title": "Subscription",
+      "manage": "Manage your subscription",
+      "canceled": "Canceled",
+      "active": "Active",
+      "expired": "Expired",
+      "canceledUntil": "Subscription canceled. Access until {{date}}",
+      "activeUntil": "Active subscription until {{date}}",
+      "accessUntil": "Access Until:",
+      "renewalDate": "Renewal Date:",
+      "canceledMsg": "Your subscription has been canceled but you still have access until the end of your billing period.",
+      "activeMsg": "Your subscription is active and will automatically renew on the date shown above.",
+      "expiredMsg": "Your subscription has expired. Renew now to continue using premium features.",
+      "reactivateMsg": "To continue using premium features beyond that date, you will need to reactivate your subscription.",
+      "reactivate": "Reactivate Subscription",
+      "get": "Get Subscription",
+      "status": "Status:",
+      "details": "Subscription Details"
+    },
+    "categories": {
+      "account": "Account",
+      "subscription": "Subscription",
+      "privacy": "Privacy & Security",
+      "appearance": "Appearance",
+      "notifications": "Notifications",
+      "legal": "Legal",
+      "help": "Help & Support",
+      "settings": "Settings"
+    },
+    "descriptions": {
+      "account": "Manage your personal account details",
+      "subscription": "Manage your subscription plan",
+      "privacy": "Control your data and security settings",
+      "appearance": "Customize your visual experience",
+      "notifications": "Manage your notification preferences",
+      "legal": "View legal documents and policies",
+      "help": "Get help with Kot-space"
+    },
+    "account": {
+      "title": "Account Settings",
+      "description": "Manage your personal account settings and preferences",
+      "deleteAccount": "Delete Account",
+      "deleteDescription": "Permanently delete your account and data"
+    },
+    "privacy": {
+      "title": "Privacy & Security",
+      "description": "Manage your privacy settings and security preferences",
+      "passwordAuthentication": "Password & Authentication",
+      "changePassword": "Change Password",
+      "dataPrivacy": "Data & Privacy",
+      "privacyPolicy": "Privacy Policy"
+    },
+    "legal": {
+      "title": "Legal",
+      "description": "Important legal documents and information",
+      "termsOfService": "Terms of Service"
+    },
+    "navigation": {
+      "categories": "Categories",
+      "settingsPreferences": "Settings & Preferences"
+    }
+  },
+  "chatAssistent": {
+    "welcome": "How can I help you?",
+    "editor": "Editor",
+    "dashboard": "Dashboard",
+    "settings": "Settings",
+    "privacy": "Privacy",
+    "support": "How do I contact the support?",
+    "editorHelp": "What can I do with the editor?",
+    "createNote": "How do I create a new note?"
   }
 }

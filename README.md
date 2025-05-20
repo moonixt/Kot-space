@@ -30,7 +30,6 @@
 
 - **Clean & Modern UI**: Intuitive interface with dark mode and responsive design ✅
 - **Progressive Web App**: Install on any device ✅
-- **Tag Organization**: Categorize notes with hashtags ✅
 - **Markdown Support**: Format your notes with simple markdown syntax ✅
 - **Full-Text Search**: Quickly find the notes you need ✅
 - **Responsive Design**: Works beautifully on desktop and mobile ✅

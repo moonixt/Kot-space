@@ -29,8 +29,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../../components/ui/dropdown-menu";
+import { useTranslation } from "next-i18next";
 
 export default function Settings() {  
+  const { t } = useTranslation();
   const [activeCategory, setActiveCategory] = useState("account");
   const [isMobile, setIsMobile] = useState(false);
   const [, setShowSidebar] = useState(true);
@@ -113,25 +115,23 @@ export default function Settings() {
     
     return () => window.removeEventListener('resize', checkScreenSize);
   }, []);
-
   const categories = [
-    { id: "account", name: "Account", icon: <User className="mr-2 h-4 w-4" />, description: "Manage your personal account details" },
-    { id: "subscription", name: "Subscription", icon: <CreditCard className="mr-2 h-4 w-4" />, description: "Manage your subscription plan" },
-    { id: "privacy", name: "Privacy & Security", icon: <Shield className="mr-2 h-4 w-4" />, description: "Control your data and security settings" },
-    // { id: "appearance", name: "Appearance", icon: <Moon className="mr-2 h-4 w-4" />, description: "Customize your visual experience" },
-    // { id: "notifications", name: "Notifications", icon: <BellRing className="mr-2 h-4 w-4" />, description: "Manage your notification preferences" },
-    { id: "legal", name: "Legal", icon: <FileText className="mr-2 h-4 w-4" />, description: "View legal documents and policies" },
-    // { id: "help", name: "Help & Support", icon: <HelpCircle className="mr-2 h-4 w-4" />, description: "Get help with Kot-space" }
-  ];  return (
+    { id: "account", name: t("settings.categories.account", "Account"), icon: <User className="mr-2 h-4 w-4" />, description: t("settings.descriptions.account", "Manage your personal account details") },
+    { id: "subscription", name: t("settings.categories.subscription", "Subscription"), icon: <CreditCard className="mr-2 h-4 w-4" />, description: t("settings.descriptions.subscription", "Manage your subscription plan") },
+    { id: "privacy", name: t("settings.categories.privacy", "Privacy & Security"), icon: <Shield className="mr-2 h-4 w-4" />, description: t("settings.descriptions.privacy", "Control your data and security settings") },
+    // { id: "appearance", name: t("settings.categories.appearance", "Appearance"), icon: <Moon className="mr-2 h-4 w-4" />, description: t("settings.descriptions.appearance", "Customize your visual experience") },
+    // { id: "notifications", name: t("settings.categories.notifications", "Notifications"), icon: <BellRing className="mr-2 h-4 w-4" />, description: t("settings.descriptions.notifications", "Manage your notification preferences") },
+    { id: "legal", name: t("settings.categories.legal", "Legal"), icon: <FileText className="mr-2 h-4 w-4" />, description: t("settings.descriptions.legal", "View legal documents and policies") },
+    // { id: "help", name: t("settings.categories.help", "Help & Support"), icon: <HelpCircle className="mr-2 h-4 w-4" />, description: t("settings.descriptions.help", "Get help with Kot-space") }
+  ];return (
     <AuthenticatedRoute>
       <Profile/>
       <div className="flex flex-col md:flex-row justify-center min-h-screen p-4 gap-6">        {/* Mobile navigation header */}
         {isMobile && (
           <div className="w-full bg-[var(--container)] rounded-lg p-4 shadow-sm mb-4 flex items-center justify-between sticky top-0 z-30">
             <div className="flex items-center">
-              <SettingsIcon className="h-5 w-5 mr-2 text-[var(--foreground)]" />
-              <h2 className="text-xl font-bold text-[var(--foreground)]">
-                {categories.find(cat => cat.id === activeCategory)?.name || "Settings"}
+              <SettingsIcon className="h-5 w-5 mr-2 text-[var(--foreground)]" />              <h2 className="text-xl font-bold text-[var(--foreground)]">
+                {categories.find(cat => cat.id === activeCategory)?.name || t("settings.categories.settings", "Settings")}
               </h2>
               <span className="ml-2 text-sm text-[var(--foreground)]/60 hidden sm:inline">
                 {categories.find(cat => cat.id === activeCategory)?.description}
@@ -142,10 +142,9 @@ export default function Settings() {
                 <Button 
                   variant="outline" 
                   className="md:hidden"
-                >
-                  <span className="sr-only">Settings</span>
+                >                  <span className="sr-only">{t("settings.categories.settings", "Settings")}</span>
                   <span className="flex items-center">
-                    Categories 
+                    {t("settings.navigation.categories", "Categories")} 
                     <ChevronDown className="ml-1 h-4 w-4" />
                   </span>
                 </Button>
@@ -170,9 +169,8 @@ export default function Settings() {
         {!isMobile && (
           <div className="w-full md:w-64 shrink-0">
             <div className="sticky top-4 bg-[var(--container)] rounded-lg p-4 shadow-sm">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-bold text-[var(--foreground)]">
-                  Settings
+              <div className="flex items-center justify-between mb-6">                <h2 className="text-xl font-bold text-[var(--foreground)]">
+                  {t("settings.categories.settings", "Settings")}
                 </h2>
                 {isMobile && (
                   <Button 
@@ -187,7 +185,7 @@ export default function Settings() {
               </div>
               
               <div className="border-b border-slate-700 mb-4 pb-2">
-                <p className="text-sm text-[var(--foreground)]/70 mb-2">Settings & Preferences</p>
+                <p className="text-sm text-[var(--foreground)]/70 mb-2">{t("settings.navigation.settingsPreferences", "Settings & Preferences")}</p>
               </div>
               
               <nav className="flex flex-col gap-1.5">
@@ -211,12 +209,11 @@ export default function Settings() {
         )}
 
         {/* Main content */}
-        <div className="flex-1 max-w-3xl">
-          {activeCategory === "account" && (
+        <div className="flex-1 max-w-3xl">          {activeCategory === "account" && (
             <div className="bg-[var(--container)] rounded-lg p-6 shadow-sm">
-              <h2 className="text-2xl font-bold text-[var(--foreground)] mb-4">Account Settings</h2>
+              <h2 className="text-2xl font-bold text-[var(--foreground)] mb-4">{t("settings.account.title", "Account Settings")}</h2>
               <p className="text-[var(--foreground)] opacity-80 mb-6">
-                Manage your personal account settings and preferences
+                {t("settings.account.description", "Manage your personal account settings and preferences")}
               </p>
 
               <div className="space-y-4">
@@ -268,8 +265,8 @@ export default function Settings() {
                   <div className="mt-8 p-4  rounded-lg hover:bg-red-500/10 transition-colors flex items-center">
                     <Trash2 className="h-5 w-5 mr-3 text-red-400" />
                     <div>
-                      <h3 className="font-medium text-red-400">Delete Account</h3>
-                      <p className="text-sm text-red-400/70">Permanently delete your account and data</p>
+                      <h3 className="font-medium text-red-400">{t("settings.account.deleteAccount", "Delete Account")}</h3>
+                      <p className="text-sm text-red-400/70">{t("settings.account.deleteDescription", "Permanently delete your account and data")}</p>
                     </div>
                   </div>
                 </Link>
@@ -279,54 +276,48 @@ export default function Settings() {
 
           {activeCategory === "subscription" && (
             <div className="bg-[var(--container)] rounded-lg p-6 shadow-sm">
-              <h2 className="text-2xl font-bold text-[var(--foreground)] mb-4">Subscription</h2>
+              <h2 className="text-2xl font-bold text-[var(--foreground)] mb-4">{t("settings.subscription.title", "Subscription")}</h2>
               <p className="text-[var(--foreground)] opacity-80 mb-6">
-                Manage your subscription plan and billing information
-              </p>              <div className={`mb-8 p-6 bg-gradient-to-br rounded-lg border transition-all duration-200 ease-in-out
+                {t("settings.subscription.manage", "Manage your subscription plan and billing information")}
+              </p>
+              <div className={`mb-8 p-6 bg-gradient-to-br rounded-lg border transition-all duration-200 ease-in-out
                 ${isSubscriptionActive && subscriptionStatus !== 'canceled' 
                   ? 'from-green-800 to-emerald-800/30 border-green-700/30' 
                   : subscriptionStatus === 'canceled' 
                   ? 'from-amber-800 to-amber-800/30 border-amber-700/30' 
-                  : 'from-red-800 to-red-800/30 border-red-700/30'}`}
+                  : 'from-red-800 to-red-700/30 border-red-700/30'}`}
               >
                 <div className="flex justify-between items-start">
-                  <div>                    <p className={`text-xs uppercase font-medium 
-                      ${isSubscriptionActive && subscriptionStatus !== 'canceled' 
-                        ? 'text-green-400/80' 
-                        : subscriptionStatus === 'canceled' 
-                        ? 'text-amber-400/80' 
-                        : 'text-red-400/80'}`}
-                    >
-                      Current Plan
-                    </p>                    <h3 className={`text-2xl font-bold mt-1
+                  <div>
+                    <h3 className={`text-2xl font-bold mt-1
                       ${isSubscriptionActive && subscriptionStatus !== 'canceled' 
                         ? 'text-green-400' 
                         : subscriptionStatus === 'canceled' 
                         ? 'text-amber-400' 
                         : 'text-red-400'}`}
                     >
-                      Unlimited Access
+                      {t("pricing.title", "Unlimited Access")}
                     </h3>
                     
                     {subscriptionStatus === "canceled" && !subscriptionEndDate ? (
                       <p className="text-sm text-amber-400 mt-2">
-                        Subscription canceled
+                        {t("settings.subscription.canceled", "Subscription canceled")}
                       </p>
                     ) : subscriptionStatus === "canceled" ? (
                       <p className="text-sm text-amber-400 mt-2">
-                        Subscription canceled. Access until {new Date(subscriptionEndDate || "").toLocaleDateString()}
+                        {t("settings.subscription.canceledUntil", "Subscription canceled. Access until {date}", { date: new Date(subscriptionEndDate || "").toLocaleDateString() })}
                       </p>
                     ) : isSubscriptionActive && subscriptionEndDate ? (
                       <p className="text-sm text-green-300 mt-2">
-                        Active subscription until {new Date(subscriptionEndDate).toLocaleDateString()}
+                        {t("settings.subscription.activeUntil", "Active subscription until {{date}}", { date: new Date(subscriptionEndDate).toLocaleDateString() })}
                       </p>
                     ) : isSubscriptionActive ? (
                       <p className="text-sm text-green-300 mt-2">
-                        Active subscription
+                        {t("settings.subscription.active", "Active subscription")}
                       </p>
                     ) : (
                       <p className="text-sm text-red-400 mt-2">
-                        Subscription expired
+                        {t("settings.subscription.expired", "Subscription expired")}
                       </p>
                     )}
                   </div>                  <div className={`shrink-0 p-3 rounded-full 
@@ -353,7 +344,7 @@ export default function Settings() {
                       className="bg-amber-600 hover:bg-amber-700 text-white"
                       disabled={isLoadingPortal}
                     >
-                      {isLoadingPortal ? "Loading..." : "Reactivate Subscription"}
+                      {isLoadingPortal ? t("common.loading", "Loading...") : t("settings.subscription.reactivate", "Reactivate Subscription")}
                     </Button>
                     <Button 
                       onClick={handleManageSubscription} 
@@ -361,7 +352,7 @@ export default function Settings() {
                       className="border-amber-700 text-amber-400 hover:bg-amber-900/20"
                       disabled={isLoadingPortal}
                     >
-                      {isLoadingPortal ? "Loading..." : "Manage Subscription"}
+                      {isLoadingPortal ? t("common.loading", "Loading...") : t("settings.subscription.manage", "Manage Subscription")}
                     </Button>
                   </div>
                 ) : !isSubscriptionActive ? (
@@ -370,7 +361,7 @@ export default function Settings() {
                       onClick={() => router.push('/pricing')} 
                       className="bg-green-700 hover:bg-green-800 text-white"
                     >
-                      Get Subscription
+                      {t("settings.subscription.get", "Get Subscription")}
                     </Button>
                   </div>
                 ) : (
@@ -379,7 +370,7 @@ export default function Settings() {
                     className="mt-4 bg-green-700 hover:bg-green-800 text-white"
                     disabled={isLoadingPortal}
                   >
-                    {isLoadingPortal ? "Loading..." : "Manage Subscription"}
+                    {isLoadingPortal ? t("common.loading", "Loading...") : t("settings.subscription.manage", "Manage Subscription")}
                   </Button>
                 )}
               </div>
@@ -387,11 +378,11 @@ export default function Settings() {
               {/* Subscription Details Section */}
               {(isSubscriptionActive || subscriptionStatus === "canceled") && (
                 <div className="mt-6 space-y-4">
-                  <h3 className="text-lg font-medium text-[var(--foreground)]">Subscription Details</h3>
+                  <h3 className="text-lg font-medium text-[var(--foreground)]">{t("settings.subscription.details", "Subscription Details")}</h3>
                   
                   <div className="space-y-2 border-b border-[var(--foreground)]/10 pb-4">
                     <div className="flex justify-between">
-                      <span className="text-[var(--foreground)]/70">Status:</span>
+                      <span className="text-[var(--foreground)]/70">{t("settings.subscription.status", "Status:")}</span>
                       <span className={`font-medium ${
                         isSubscriptionActive && subscriptionStatus !== 'canceled' 
                           ? 'text-green-400' 
@@ -400,17 +391,19 @@ export default function Settings() {
                             : 'text-red-400'
                       }`}>
                         {subscriptionStatus === 'canceled' 
-                          ? 'Canceled' 
+                          ? t("settings.subscription.canceled", "Canceled")
                           : isSubscriptionActive 
-                            ? 'Active' 
-                            : 'Expired'}
+                            ? t("settings.subscription.active", "Active")
+                            : t("settings.subscription.expired", "Expired")}
                       </span>
                     </div>
                     
                     {subscriptionEndDate && (
                       <div className="flex justify-between">
                         <span className="text-[var(--foreground)]/70">
-                          {subscriptionStatus === 'canceled' ? 'Access Until:' : 'Renewal Date:'}
+                          {subscriptionStatus === 'canceled' 
+                            ? t("settings.subscription.accessUntil", "Access Until:")
+                            : t("settings.subscription.renewalDate", "Renewal Date:")}
                         </span>
                         <span className="font-medium">
                           {new Date(subscriptionEndDate).toLocaleDateString()}
@@ -422,45 +415,43 @@ export default function Settings() {
                   <div className="pt-2">
                     <p className="text-sm text-[var(--foreground)]/70 mb-3">
                       {subscriptionStatus === 'canceled'
-                        ? 'Your subscription has been canceled but you still have access until the end of your billing period.'
+                        ? t("settings.subscription.canceledMsg", "Your subscription has been canceled but you still have access until the end of your billing period.")
                         : isSubscriptionActive
-                          ? 'Your subscription is active and will automatically renew on the date shown above.'
-                          : 'Your subscription has expired. Renew now to continue using premium features.'}
+                          ? t("settings.subscription.activeMsg", "Your subscription is active and will automatically renew on the date shown above.")
+                          : t("settings.subscription.expiredMsg", "Your subscription has expired. Renew now to continue using premium features.")}
                     </p>
                     
                     {subscriptionStatus === 'canceled' && new Date(subscriptionEndDate || "") > new Date() && (
                       <p className="text-sm text-amber-400/80 mb-3">
-                        To continue using premium features beyond that date, you will need to reactivate your subscription.
+                        {t("settings.subscription.reactivateMsg", "To continue using premium features beyond that date, you will need to reactivate your subscription.")}
                       </p>
                     )}
                   </div>
                 </div>
               )}
             </div>
-          )}
-
-          {activeCategory === "privacy" && (
+          )}          {activeCategory === "privacy" && (
             <div className="bg-[var(--container)] rounded-lg p-6 shadow-sm">
-              <h2 className="text-2xl font-bold text-[var(--foreground)] mb-4">Privacy & Security</h2>
+              <h2 className="text-2xl font-bold text-[var(--foreground)] mb-4">{t("settings.privacy.title", "Privacy & Security")}</h2>
               <p className="text-[var(--foreground)] opacity-80 mb-6">
-                Manage your privacy settings and security preferences
+                {t("settings.privacy.description", "Manage your privacy settings and security preferences")}
               </p>
               
               <div className="space-y-6">
                 <div>
-                  <h3 className="font-medium text-lg mb-3">Password & Authentication</h3>
+                  <h3 className="font-medium text-lg mb-3">{t("settings.privacy.passwordAuthentication", "Password & Authentication")}</h3>
                   <Button variant="outline" className="w-full justify-start">
                     <Shield className="mr-2 h-4 w-4" />
-                    Change Password
+                    {t("settings.privacy.changePassword", "Change Password")}
                   </Button>
                 </div>
                 
                 <div>
-                  <h3 className="font-medium text-lg mb-3">Data & Privacy</h3>
+                  <h3 className="font-medium text-lg mb-3">{t("settings.privacy.dataPrivacy", "Data & Privacy")}</h3>
                   <Link href="/privacy">
                     <Button variant="outline" className="w-full justify-start mb-3">
                       <FileText className="mr-2 h-4 w-4" />
-                      Privacy Policy
+                      {t("settings.privacy.privacyPolicy", "Privacy Policy")}
                     </Button>
                   </Link>
                   {/* <Button variant="outline" className="w-full justify-start">
@@ -472,22 +463,22 @@ export default function Settings() {
             </div>
           )}          {activeCategory === "legal" && (
             <div className="bg-[var(--container)] rounded-lg p-6 shadow-sm">
-              <h2 className="text-2xl font-bold text-[var(--foreground)] mb-4">Legal</h2>
+              <h2 className="text-2xl font-bold text-[var(--foreground)] mb-4">{t("settings.legal.title", "Legal")}</h2>
               <p className="text-[var(--foreground)] opacity-80 mb-6">
-                Important legal documents and information
+                {t("settings.legal.description", "Important legal documents and information")}
               </p>
               
               <Link href="/terms">
                 <Button variant="outline" className="w-full justify-start mb-3">
                   <FileText className="mr-2 h-4 w-4" />
-                  Terms of Service
+                  {t("settings.legal.termsOfService", "Terms of Service")}
                 </Button>
               </Link>
               
               <Link href="/privacy">
                 <Button variant="outline" className="w-full justify-start mb-3">
                   <FileText className="mr-2 h-4 w-4" />
-                  Privacy Policy
+                  {t("settings.privacy.privacyPolicy", "Privacy Policy")}
                 </Button>
               </Link>
               

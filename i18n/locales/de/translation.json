@@ -146,7 +146,9 @@
     "note": {
       "untitled": "Ohne Titel",
       "noContent": "Kein Inhalt"
-    }
+    },
+    "bookmark": "Als Favorit markieren",
+    "unbookmark": "Favorit entfernen"
   },
   "tasks": {
     "addNew": "Neue Aufgabe hinzufügen",
@@ -198,5 +200,101 @@
   },
   "editor": {
     "backToDashboard": "Zurück zum Dashboard"
+  },
+  "profile": {
+    "wallpaper": {
+      "upload": "Hintergrundbild hochladen",
+      "positionTop": "Oben ausrichten",
+      "positionCenter": "Zentrieren",
+      "positionBottom": "Unten ausrichten"
+    }
+  },
+  "theme": {
+    "light": "Hell",
+    "dark": "Dunkel",
+    "eclipse": "Eclipse",
+    "blue": "Blau",
+    "purple": "Lila",
+    "green": "Grün",
+    "red": "Rot",
+    "yellow": "Gelb",
+    "system": "System",
+    "systemPreference": "Systemeinstellung",
+    "choose": "Wähle ein Thema",
+    "basic": "Grundlegend",
+    "colors": "Farben"
+  },
+  "settings": {
+    "subscription": {
+      "title": "Abonnement",
+      "manage": "Verwalte dein Abonnement",
+      "status": "Status:",
+      "canceled": "Gekündigt",
+      "active": "Aktiv",
+      "expired": "Abgelaufen",
+      "accessUntil": "Zugang bis:",
+      "renewalDate": "Verlängerungsdatum:",
+      "canceledMsg": "Ihr Abonnement wurde gekündigt, aber Sie haben weiterhin Zugriff bis zum Ende Ihres Abrechnungszeitraums.",
+      "activeMsg": "Ihr Abonnement ist aktiv und wird am oben angegebenen Datum automatisch verlängert.",
+      "expiredMsg": "Ihr Abonnement ist abgelaufen. Erneuern Sie jetzt, um Premium-Funktionen weiterhin zu nutzen.",
+      "reactivateMsg": "Um Premium-Funktionen nach diesem Datum weiter zu nutzen, müssen Sie Ihr Abonnement reaktivieren.",
+      "reactivate": "Abonnement reaktivieren",
+      "get": "Abonnement abschließen",
+      "details": "Abonnement-Details",
+      "canceledUntil": "Abonnement gekündigt. Zugang bis {{date}}",
+      "activeUntil": "Aktives Abonnement bis {{date}}"
+    },
+    "categories": {
+      "account": "Konto",
+      "subscription": "Abonnement",
+      "privacy": "Datenschutz & Sicherheit",
+      "appearance": "Erscheinungsbild",
+      "notifications": "Benachrichtigungen",
+      "legal": "Rechtliches",
+      "help": "Hilfe & Support",
+      "settings": "Einstellungen"
+    },
+    "descriptions": {
+      "account": "Verwalten Sie Ihre persönlichen Kontodetails",
+      "subscription": "Verwalten Sie Ihren Abonnementplan",
+      "privacy": "Steuern Sie Ihre Daten- und Sicherheitseinstellungen",
+      "appearance": "Passen Sie Ihr visuelles Erlebnis an",
+      "notifications": "Verwalten Sie Ihre Benachrichtigungseinstellungen",
+      "legal": "Zeigen Sie rechtliche Dokumente und Richtlinien an",
+      "help": "Erhalten Sie Hilfe zu Kot-space"
+    },
+    "account": {
+      "title": "Kontoeinstellungen",
+      "description": "Verwalten Sie Ihre persönlichen Einstellungen und Präferenzen",
+      "deleteAccount": "Konto löschen",
+      "deleteDescription": "Löschen Sie Ihr Konto und Ihre Daten dauerhaft"
+    },
+    "privacy": {
+      "title": "Datenschutz & Sicherheit",
+      "description": "Verwalten Sie Ihre Datenschutzeinstellungen und Sicherheitspräferenzen",
+      "passwordAuthentication": "Passwort & Authentifizierung",
+      "changePassword": "Passwort ändern",
+      "dataPrivacy": "Daten & Datenschutz",
+      "privacyPolicy": "Datenschutzrichtlinie"
+    },
+    "legal": {
+      "title": "Rechtliches",
+      "description": "Wichtige rechtliche Dokumente und Informationen",
+      "termsOfService": "Nutzungsbedingungen"
+    },
+    "navigation": {
+      "categories": "Kategorien",
+      "settingsPreferences": "Einstellungen & Präferenzen"
+    }
+  },
+  "chatAssistent": {
+    "welcome": "Wie kann ich Ihnen helfen?",
+    "editor": "Editor",
+    "dashboard": "Dashboard",
+    "settings": "Einstellungen",
+    "privacy": "Datenschutz",
+    "support": "Wie kontaktiere ich den Support?",
+    "editorHelp": "Was kann ich mit dem Editor machen?",
+    "createNote": "Wie erstelle ich eine neue Notiz?"
   }
 }

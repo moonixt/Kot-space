@@ -918,6 +918,7 @@ const toggleFullscreen = () => {
             </div>
           </div>          <div className="p-2 ">
             <div className="flex justify-end items-center gap-2 ">
+               
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="icon" aria-label="Controls">

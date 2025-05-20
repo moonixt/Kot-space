@@ -9,8 +9,10 @@ import Clock from "../components/clock";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { decrypt } from "../components/Encryption";
+import { useTranslation } from "next-i18next";
 
 const Profile = () => {
+  const { t } = useTranslation();
   const [wallpaperUrl, setWallpaperUrl] = useState<string | null>(null);
   const [wallpaperLoading, setWallpaperLoading] = useState(true);
   const [avatar_url, setAvatarUrl] = useState<string | null>(null);
@@ -504,7 +506,7 @@ const Profile = () => {
             <button 
               onClick={() => fileInputRef.current?.click()}
               className="w-7 h-7 flex items-center justify-center rounded hover:bg-white/10"
-              title="Upload wallpaper"
+              title={t("profile.wallpaper.upload")}
               type="button"
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
@@ -512,7 +514,7 @@ const Profile = () => {
             <button 
               onClick={() => updateWallpaperPosition("top")}
               className={`w-7 h-7 flex items-center justify-center rounded ${wallpaperPosition === 'top' ? 'bg-white/30 border border-white' : 'hover:bg-white/10'}`}
-              title="Alinhar ao topo"
+              title={t("profile.wallpaper.positionTop")}
               type="button"
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line></svg>
@@ -520,7 +522,7 @@ const Profile = () => {
             <button 
               onClick={() => updateWallpaperPosition("center")}
               className={`w-7 h-7 flex items-center justify-center rounded ${wallpaperPosition === 'center' ? 'bg-white/30 border border-white' : 'hover:bg-white/10'}`}
-              title="Centralizar"
+              title={t("profile.wallpaper.positionCenter")}
               type="button"
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="12" y1="3" x2="12" y2="21"></line><line x1="3" y1="12" x2="21" y2="12"></line></svg>
@@ -528,7 +530,7 @@ const Profile = () => {
             <button 
               onClick={() => updateWallpaperPosition("bottom")}
               className={`w-7 h-7 flex items-center justify-center rounded ${wallpaperPosition === 'bottom' ? 'bg-white/30 border border-white' : 'hover:bg-white/10'}`}
-              title="Alinhar embaixo"
+              title={t("profile.wallpaper.positionBottom")}
               type="button"
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="15" x2="21" y2="15"></line></svg>
@@ -600,7 +602,7 @@ const Profile = () => {
               </svg>
               <input
                 type="text"
-                placeholder="Pesquisar notas..."
+                placeholder={t("sidebar.searchNotes")}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="bg-transparent text-white px-2 py-1.5 w-48 focus:outline-none text-sm"
@@ -647,7 +649,7 @@ const Profile = () => {
                           <polyline points="14 2 14 8 20 8"></polyline>
                         </svg>
                         <p className="text-white text-sm font-medium truncate flex-1">
-                          {note.title || "Sem título"}
+                          {note.title || t("sidebar.untitled")}
                         </p>
                       </div>
 
@@ -680,8 +682,8 @@ const Profile = () => {
                 ) : (
                   <div className="p-4 text-center text-white/70 text-sm">
                     {searchTerm.length > 0
-                      ? "Nenhuma nota encontrada"
-                      : "Digite para pesquisar"}
+                      ? t("sidebar.noNotesFound")
+                      : t("sidebar.searchNotes")}
                   </div>
                 )}
               </div>
