@@ -29,6 +29,7 @@ const Profile = () => {
   const [isSearching, setIsSearching] = useState(false);
   const [showSearchResults, setShowSearchResults] = useState(false);
   const searchResultsRef = useRef<HTMLDivElement>(null);
+  const [wallpaperPosition, setWallpaperPosition] = useState<string>("center");
 
   useEffect(() => {
     if (user) {
@@ -45,7 +46,7 @@ const Profile = () => {
     try {
       const { data, error } = await supabase
         .from("profiles")
-        .select("wallpaper_url")
+        .select("wallpaper_url, wallpaper_position")
         .eq("id", user?.id)
         .single();
 
@@ -58,13 +59,17 @@ const Profile = () => {
           .getPublicUrl(data.wallpaper_url);
 
         setWallpaperUrl(urlData.publicUrl);
+        // Set position if available, otherwise default to center
+        setWallpaperPosition(data?.wallpaper_position || "center");
       } else {
         // If no wallpaper is set, use the default
         setWallpaperUrl("/static/images/susan.jpg");
+        setWallpaperPosition("center");
       }
     } catch (error) {
       console.error("Erro ao buscar wallpaper:", error);
       setWallpaperUrl("/static/images/susan.jpg");
+      setWallpaperPosition("center");
     } finally {
       setWallpaperLoading(false);
     }
@@ -445,6 +450,27 @@ const Profile = () => {
     uploadWallpaper(e.target.files[0]);
   };
 
+  // Add this function to update the wallpaper position
+  const updateWallpaperPosition = async (position: string) => {
+    if (!user) return;
+    
+    setWallpaperPosition(position);
+    
+    try {
+      const { error } = await supabase
+        .from("profiles")
+        .update({ 
+          wallpaper_position: position,
+          updated_at: new Date().toISOString() 
+        })
+        .eq("id", user.id);
+
+      if (error) throw error;
+    } catch (error) {
+      console.error("Error updating wallpaper position:", error);
+    }
+  };
+
   return (
     <div className="flex justify-center ">
       <div className="bg-[var(--background)] text-[var(--background]">
@@ -452,18 +478,62 @@ const Profile = () => {
           {wallpaperLoading ? (
             <div className="w-600 h-55 sm:h-130 md:h-70 2xl:h-150 bg-gray-200 animate-pulse"></div>
           ) : (
-            <Link href="/dashboard">
-              <Image
-                src={wallpaperUrl || "/static/images/susan.jpg"}
-                alt="Profile"
-                width={4000}
-                height={4000}
-                className="w-640 h-80 sm:h-130 md:h-70 2xl:h-150 object-cover object-center"
-                priority
-                unoptimized={wallpaperUrl?.endsWith(".gif")}
-              />
-            </Link>
+            <>
+              <Link href="/dashboard">
+                <Image
+                  src={wallpaperUrl || "/static/images/susan.jpg"}
+                  alt="Profile"
+                  width={4000}
+                  height={4000}
+                  className={`w-640 h-80 sm:h-130 md:h-70 2xl:h-150 object-cover ${
+                    wallpaperPosition === "top"
+                      ? "object-top"
+                      : wallpaperPosition === "bottom"
+                      ? "object-bottom"
+                      : "object-center"
+                  }`}
+                  priority
+                  unoptimized={wallpaperUrl?.endsWith(".gif")}
+                />
+              </Link>
+            </>
           )}
+
+          {/* Position controls - always visible, above wallpaper */}
+            <div className="absolute z-20 top-2 left-0 flex gap-1  rounded-md p-1 shadow-lg">
+            <button 
+              onClick={() => fileInputRef.current?.click()}
+              className="w-7 h-7 flex items-center justify-center rounded hover:bg-white/10"
+              title="Upload wallpaper"
+              type="button"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+            </button>
+            <button 
+              onClick={() => updateWallpaperPosition("top")}
+              className={`w-7 h-7 flex items-center justify-center rounded ${wallpaperPosition === 'top' ? 'bg-white/30 border border-white' : 'hover:bg-white/10'}`}
+              title="Alinhar ao topo"
+              type="button"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line></svg>
+            </button>
+            <button 
+              onClick={() => updateWallpaperPosition("center")}
+              className={`w-7 h-7 flex items-center justify-center rounded ${wallpaperPosition === 'center' ? 'bg-white/30 border border-white' : 'hover:bg-white/10'}`}
+              title="Centralizar"
+              type="button"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="12" y1="3" x2="12" y2="21"></line><line x1="3" y1="12" x2="21" y2="12"></line></svg>
+            </button>
+            <button 
+              onClick={() => updateWallpaperPosition("bottom")}
+              className={`w-7 h-7 flex items-center justify-center rounded ${wallpaperPosition === 'bottom' ? 'bg-white/30 border border-white' : 'hover:bg-white/10'}`}
+              title="Alinhar embaixo"
+              type="button"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="15" x2="21" y2="15"></line></svg>
+            </button>
+            </div>
 
           <div className="absolute top-0 ">
             <div id="clock" className="bg-black/80 backdrop-blur-sm">
@@ -617,27 +687,6 @@ const Profile = () => {
               </div>
             )}
           </div>
-
-          <button
-            onClick={() => fileInputRef.current?.click()}
-            className="absolute top-2 left-2 bg-[var(--background)] text-[var(--foreground)] p-2 rounded-full opacity-80 hover:opacity-100 shadow-sm"
-            title="Change wallpaper"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-            </svg>
-          </button>
 
           {/* Loading indicator for wallpaper upload */}
           {uploading && (
