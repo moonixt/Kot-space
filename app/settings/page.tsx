@@ -33,7 +33,7 @@ import { useTranslation } from "next-i18next";
 
 export default function Settings() {  
   const { t } = useTranslation();
-  const [activeCategory, setActiveCategory] = useState("account");
+  const [activeCategory, setActiveCategory] = useState("subscription");
   const [isMobile, setIsMobile] = useState(false);
   const [, setShowSidebar] = useState(true);
   const [isLoadingPortal, setIsLoadingPortal] = useState(false);
@@ -116,8 +116,8 @@ export default function Settings() {
     return () => window.removeEventListener('resize', checkScreenSize);
   }, []);
   const categories = [
-    { id: "account", name: t("settings.categories.account", "Account"), icon: <User className="mr-2 h-4 w-4" />, description: t("settings.descriptions.account", "Manage your personal account details") },
     { id: "subscription", name: t("settings.categories.subscription", "Subscription"), icon: <CreditCard className="mr-2 h-4 w-4" />, description: t("settings.descriptions.subscription", "Manage your subscription plan") },
+    { id: "account", name: t("settings.categories.account", "Account"), icon: <User className="mr-2 h-4 w-4" />, description: t("settings.descriptions.account", "Manage your personal account details") },
     { id: "privacy", name: t("settings.categories.privacy", "Privacy & Security"), icon: <Shield className="mr-2 h-4 w-4" />, description: t("settings.descriptions.privacy", "Control your data and security settings") },
     // { id: "appearance", name: t("settings.categories.appearance", "Appearance"), icon: <Moon className="mr-2 h-4 w-4" />, description: t("settings.descriptions.appearance", "Customize your visual experience") },
     // { id: "notifications", name: t("settings.categories.notifications", "Notifications"), icon: <BellRing className="mr-2 h-4 w-4" />, description: t("settings.descriptions.notifications", "Manage your notification preferences") },
