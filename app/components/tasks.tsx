@@ -688,8 +688,8 @@ const Tasks = () => {
 
       {/* Pagination Controls - Only show if there are 5 or more tasks */}
       {tasks.length >= 5 && (
-        <div className="flex justify-between items-center text-sm text-[var(--foreground)] opacity-70 mt-4">
-          <div>
+        <div className="items-center text-sm text-[var(--foreground)] opacity-70 mt-4">
+          <div className="flex">
             {t("tasks.page")} {currentPage} {t("tasks.of")}{" "}
             {Math.ceil(tasks.length / tasksPerPage)}
           </div>
