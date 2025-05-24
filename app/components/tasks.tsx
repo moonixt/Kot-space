@@ -16,14 +16,14 @@ interface Task {
   description?: string;
 }
 
-const priorityOptions = [
-  { value: "low", label: "Low Priority", color: "bg-green-200" },
-  { value: "medium", label: "Medium Priority", color: "bg-yellow-200" },
-  { value: "high", label: "High Priority", color: "bg-red-200" },
-];
-
 const Tasks = () => {
   const { t } = useTranslation();
+  
+  const priorityOptions = [
+    { value: "low", label: t("tasks.lowPriority"), color: "bg-green-200" },
+    { value: "medium", label: t("tasks.mediumPriority"), color: "bg-yellow-200" },
+    { value: "high", label: t("tasks.highPriority"), color: "bg-red-200" },
+  ];
   const [tasks, setTasks] = useState<Task[]>([]);
   const [newTask, setNewTask] = useState("");
   const [newTaskDueDate, setNewTaskDueDate] = useState<Date | null>(null);
@@ -35,6 +35,9 @@ const Tasks = () => {
   const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
   const [editingTaskDate, setEditingTaskDate] = useState<Date | null>(null);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [tasksPerPage] = useState(5);
   const datePickerRef = useRef<HTMLDivElement>(null);
   const newTaskInputRef = useRef<HTMLInputElement>(null);
   const { user } = useAuth();
@@ -198,6 +201,19 @@ const Tasks = () => {
       addTask();
     }
   };
+
+  // Get current tasks for the active page
+  const indexOfLastTask = currentPage * tasksPerPage;
+  const indexOfFirstTask = indexOfLastTask - tasksPerPage;
+  const currentTasks = tasks.slice(indexOfFirstTask, indexOfLastTask);
+
+  // // Calculate total pages
+  // const totalPages = Math.ceil(tasks.length / tasksPerPage);
+
+  // // Handle page change
+  // const handlePageChange = (page: number) => {
+  //   setCurrentPage(page);
+  // };
 
   return (
     <div className="mb-8">
@@ -406,7 +422,7 @@ const Tasks = () => {
       {/* Task List - Stylish version */}
       {tasks.length > 0 ? (
         <div className="space-y-2">
-          {tasks.map((task) => (
+          {currentTasks.map((task) => (
             <div
               key={task.id}
               className={`p-3 bg-[var(--container)] hover:bg-opacity-90 transition-all rounded-md ${
@@ -510,10 +526,10 @@ const Tasks = () => {
                         }`}
                       >
                         {task.priority === "high"
-                          ? "High"
+                          ? t("tasks.highPriority")
                           : task.priority === "low"
-                            ? "Low"
-                            : "Medium"}
+                            ? t("tasks.lowPriority")
+                            : t("tasks.mediumPriority")}
                       </span>
                     )}
                   </div>
@@ -670,6 +686,114 @@ const Tasks = () => {
         </div>
       )}
 
+      {/* Pagination Controls - Only show if there are 5 or more tasks */}
+      {tasks.length >= 5 && (
+        <div className="flex justify-between items-center text-sm text-[var(--foreground)] opacity-70 mt-4">
+          <div>
+            {t("tasks.page")} {currentPage} {t("tasks.of")}{" "}
+            {Math.ceil(tasks.length / tasksPerPage)}
+          </div>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setCurrentPage(1)}
+              disabled={currentPage === 1}
+              className={`px-3 py-1 rounded-md transition-all flex items-center gap-1 ${
+                currentPage === 1
+                  ? "bg-[var(--background)]/30 text-[var(--foreground)]/50 cursor-not-allowed"
+                  : "bg-[var(--foreground)] text-[var(--background)]"
+              }`}
+            >
+              <svg
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="transform rotate-180"
+              >
+                <path d="M12 4v16m8-8H4"></path>
+              </svg>
+              {t("tasks.first")}
+            </button>
+            <button
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+              className={`px-3 py-1 rounded-md transition-all flex items-center gap-1 ${
+                currentPage === 1
+                  ? "bg-[var(--background)]/30 text-[var(--foreground)]/50 cursor-not-allowed"
+                  : "bg-[var(--foreground)] text-[var(--background)]"
+              }`}
+            >
+              <svg
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M12 4v16m8-8H4"></path>
+              </svg>
+              {t("tasks.prev")}
+            </button>
+            <button
+              onClick={() => setCurrentPage((prev) => prev + 1)}
+              disabled={currentPage === Math.ceil(tasks.length / tasksPerPage)}
+              className={`px-3 py-1 rounded-md transition-all flex items-center gap-1 ${
+                currentPage === Math.ceil(tasks.length / tasksPerPage)
+                  ? "bg-[var(--background)]/30 text-[var(--foreground)]/50 cursor-not-allowed"
+                  : "bg-[var(--foreground)] text-[var(--background)]"
+              }`}
+            >
+              {t("tasks.next")}
+              <svg
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M12 4v16m8-8H4"></path>
+              </svg>
+            </button>
+            <button
+              onClick={() =>
+                setCurrentPage(Math.ceil(tasks.length / tasksPerPage))
+              }
+              disabled={currentPage === Math.ceil(tasks.length / tasksPerPage)}
+              className={`px-3 py-1 rounded-md transition-all flex items-center gap-1 ${
+                currentPage === Math.ceil(tasks.length / tasksPerPage)
+                  ? "bg-[var(--background)]/30 text-[var(--foreground)]/50 cursor-not-allowed"
+                  : "bg-[var(--foreground)] text-[var(--background)]"
+              }`}
+            >
+              {t("tasks.last")}
+              <svg
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="transform rotate-180"
+              >
+                <path d="M12 4v16m8-8H4"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Edit Task Modal - Styled version */}
       {editingTask && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 backdrop-blur-sm">
@@ -701,7 +825,7 @@ const Tasks = () => {
             <div className="space-y-4">
               <div>
                 <label className="block text-xs mb-1 opacity-70">
-                  {t("tasks.title")}
+                  {t("tasks.taskTitle")}
                 </label>
                 <input
                   className="w-full bg-[var(--container)] p-2.5 rounded-md"

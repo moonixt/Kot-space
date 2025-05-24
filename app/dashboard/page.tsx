@@ -12,7 +12,7 @@ import Tasks from "../components/tasks";
 import { decrypt } from "../components/Encryption";
 import { useTranslation } from "react-i18next";
 // import Tables from "../components/tables";
-import { Eye, Bookmark,   Info } from "lucide-react";
+import { Eye, Star,   Info } from "lucide-react";
 // Bookmark
 import {
   DropdownMenu,
@@ -126,10 +126,13 @@ export default function DashboardPage() {
         <div>
           <Profile />
         </div>
-        <div className="p-4  max-w-7xl mx-auto ">
-             
+
+          
+        <div className="p-4  max-w-7xl mx-auto  ">
+    
           <div className="flex-1  gap-4">
             {/* New document button */}
+            
             <div className="flex justify-center">
             <button
               className="px-4 py-2 flex justify-center sm:px-5 sm:py-2.5 sm:w-96 w-60 rounded-md  text-base font-medium  bg-[var(--theme)]  text-[var(--foreground)] hover:bg-opacity-60 transition-all hover:shadow-md transition-colors flex items-center gap-2"
@@ -268,9 +271,9 @@ export default function DashboardPage() {
                           e.preventDefault();
                           toggleFavorite(note.id, note.favorite);
                         }}
-                        className={`mb-1 rounded-full p-1 transition-colors ${note.favorite ? "bg-[var(--foreground)] text-[var(--background)]" : "hover:bg-[var(--foreground)] hover:text-[var(--background)]"}`}
+                        className={`mb-1 rounded-full p-1 transition-colors ${note.favorite ? " text-[var(--foreground)]" : "hover:bg-[var(--foreground)] hover:text-[var(--background)]"}`}
                       >
-                        <Bookmark size={20} fill={note.favorite ? "currentColor" : "none"} />
+                        <Star size={20} fill={note.favorite ? "currentColor" : "none"} />
                       </button>
                     </div>
                     <h2 className="text-sm font-semibold mb-3">

@@ -175,7 +175,13 @@
     "lowPriority": "Prioridad Baja",
     "taskTitle": "Título de la tarea",
     "createFirst": "Crear primera tarea",
-    "cancel": "Cancelar"
+    "cancel": "Cancelar",
+    "page": "Página",
+    "of": "de",
+    "first": "Primera",
+    "prev": "Anterior",
+    "next": "Siguiente",
+    "last": "Última"
   },
   "tables": {
     "title": "Tablas",

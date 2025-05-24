@@ -175,7 +175,13 @@
     "lowPriority": "Niedrige Priorität",
     "taskTitle": "Aufgabentitel",
     "createFirst": "Erste Aufgabe erstellen",
-    "cancel": "Abbrechen"
+    "cancel": "Abbrechen",
+    "page": "Seite",
+    "of": "von",
+    "first": "Erste",
+    "prev": "Zurück",
+    "next": "Weiter",
+    "last": "Letzte"
   },
   "tables": {
     "title": "Tabellen",

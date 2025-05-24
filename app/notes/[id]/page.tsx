@@ -5,7 +5,6 @@ import { useRouter, useParams } from "next/navigation";
 import { supabase } from "../../../lib/supabase";
 import { useAuth } from "../../../context/AuthContext";
 import {
-  Trash2,
   Save,
   ArrowLeft,
   Calendar,
@@ -16,8 +15,6 @@ import {
   LayoutList,
   ListOrdered,
   Eye,
-  FileText,
-  BookMarked,
 } from "lucide-react";
 import { encrypt, decrypt } from "../../components/Encryption";
 import { useTranslation } from "next-i18next";
@@ -824,20 +821,20 @@ export default function NotePage() {
               <button
                 onClick={handleExportTxt}
                 disabled={!note}
-                className="flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 transition-colors"
+                className="flex items-center gap-2 px-3 py-2 rounded-lg  hover:bg-blue-500/20 transition-colors"
                 title={t("editor.exportAsTXT")}
               >
-                <FileText size={14} />
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
                 <span>TXT</span>
               </button>
 
               <button
                 onClick={handleExportPdf}
                 disabled={!note}
-                className="flex items-center gap-2 px-3 py-2 rounded-lg bg-purple-500/10 text-purple-400 hover:bg-purple-500/20 transition-colors"
+                className="flex items-center gap-2 px-3 py-2 rounded-lg  hover:bg-purple-500/20 transition-colors"
                 title={t("editor.exportAsPDF")}
               >
-                <BookMarked size={14} />
+                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
                 <span>PDF</span>
               </button>
 
@@ -847,7 +844,7 @@ export default function NotePage() {
                 className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
                   deleting || editMode
                     ? "bg-slate-700 text-slate-400 cursor-not-allowed"
-                    : "bg-red-500/10 text-red-500 hover:bg-red-500/20"
+                    : " hover:bg-red-500/20"
                 }`}
                 title={t("editor.deleteNote")}
               >
@@ -855,7 +852,7 @@ export default function NotePage() {
                   <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                 ) : (
                   <>
-                    <Trash2 size={14} />
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
                     <span>{t("editor.delete")}</span>
                   </>
                 )}

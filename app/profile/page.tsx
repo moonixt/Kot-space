@@ -543,6 +543,8 @@ const Profile = () => {
             </div>
           </div>
 
+           
+
           {/* Informações do usuário e data */}
           <div className="absolute bottom-6 right-2 sm:right-auto sm:left-2 flex flex-col gap-1">
             <div className="bg-black/70 backdrop-blur-sm text-white text-sm px-3 py-1.5 rounded-md shadow-sm">
@@ -700,6 +702,7 @@ const Profile = () => {
         </div>
 
         <div className="flex justify-center items-center gap-2 mt-[-50px] pb-2 relative">
+            <div id="background blur" className="absolute inset-0 bg-[var(--background)]/10 backdrop-blur z-0 h-[30px] mt-11"> </div>
           <div className="relative">
             {avatarLoading ? (
               <div className="h-[80px] w-[80px] rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse"></div>
