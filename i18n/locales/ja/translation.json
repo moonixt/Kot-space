@@ -175,7 +175,13 @@
     "lowPriority": "低優先度",
     "taskTitle": "タスクのタイトル",
     "createFirst": "最初のタスクを作成",
-    "cancel": "キャンセル"
+    "cancel": "キャンセル",
+    "page": "ページ",
+    "of": "の",
+    "first": "最初",
+    "prev": "前へ",
+    "next": "次へ",
+    "last": "最後"
   },
   "calendar": {
     "today": "今日",
