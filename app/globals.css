@@ -8,6 +8,10 @@
   --button-bg2: #0000008d;
   --text-color: #0d1117;
   --theme: #f6f8fa;
+  --button-theme: rgb(22 101 52);
+  --theme2:  rgb(6 95 70);
+  --text-theme: rgb(134 239 172);
+  --border-theme: rgb(21 128 61);
   --button-bg: #f8f8f845;
   --hover-color: oklch(80.9% 0.105 251.813);
   --container: #f6f8fa;
@@ -118,6 +122,8 @@ html {
   --foreground: #ffffff;
   --text-color: #ffffff;
   --theme: #010409;
+    --theme2:  rgb(6 95 70);
+  --text-theme: rgb(134 239 172);
   --button-bg: #f5f5f5;
   --button-bg1: #ffffff;
   --button-bg2: #f8f8f845;
@@ -140,6 +146,10 @@ html {
   --foreground: #f1f1f3;
   --text-color: #f1f1f3;
   --theme: #1a1b20;
+  --button-theme: rgb(22 101 52);
+  --theme2:  rgb(6 95 70);
+  --text-theme: rgb(134 239 172);
+  --border-theme: rgb(21 128 61);
   --button-bg: #313239;
   --button-bg1: #2a2b33;
   --button-bg2: rgba(49, 50, 57, 0.7);
@@ -163,7 +173,10 @@ html {
   --button-bg1: oklch(72.3% 0.219 149.579);
   --button-bg2: #f8f8f845;
   --text-color: oklch(0.871 0.15 154.449);
-  --theme: oklch(0.871 0.15 154.449);
+  --theme: rgb(22 101 52);
+  --theme2:  rgb(6 95 70);
+  --border-theme: rgb(21 128 61);
+  --text-theme: rgb(134 239 172);
   --button-bg: oklch(72.3% 0.219 149.579);
   --hover-color: oklch(79.2% 0.209 151.711);
   --container: #010409;
@@ -184,6 +197,10 @@ html {
   --background: #0d1117;
   --foreground: #ffffff;
   --theme: #a78bfa;
+    --button-theme: #a78bfa;
+  --theme2:  rgb(0, 0, 0);
+  --border-theme:   rgb(21 128 61);
+  --text-theme: rgb(216 180 254);
   --button-bg1: #8b5cf6;
   --button-bg2: #f8f8f845;
   --text-color: #a78bfa;
@@ -210,6 +227,9 @@ html {
   --button-bg2: #f8f8f845;
   --text-color: oklch(90.5% 0.182 98.111);
   --theme: oklch(90.5% 0.182 98.111);
+  --button-theme: oklch(90.5% 0.182 98.111);
+  --theme2:    rgb(133 77 14);
+  --text-theme:   rgb(253 224 71);
   --button-bg: oklch(90.5% 0.182 98.111);
   --hover-color: oklch(85.2% 0.199 91.936);
   --container: #010409;
@@ -233,6 +253,9 @@ html {
   --button-bg2: #f8f8f845;
   --text-color: #60a5fa;
   --theme: #60a5fa;
+  --button-theme: #60a5fa;
+  --theme2:   rgb(30 64 175);
+  --text-theme:  rgb(147 197 253);
   --button-bg: #3b82f6;
   --hover-color: #93c5fd;
   --container: #010409;
@@ -257,6 +280,10 @@ html {
   --text-color: #ee396f;
   --button-bg: #e11d48;
   --theme: #ee396f;
+  --button-theme: #ee396f;
+  --border-theme: rgb(185 28 28);
+  --theme2:   rgb(153 27 27);
+  --text-theme:  rgb(252 165 165);
   --hover-color: #fb7185;
   --container: #010409;
   --accent-color: #f43f5e;

@@ -486,12 +486,12 @@ function Editor() {
       <Profile />
       <div className="mx-auto max-w-7xl w-full h-full flex flex-col flex-grow">
         <div className="bg-[var(--background)] overflow-hidden flex flex-col flex-grow h-full  transition-all duration-300">
-          <div className="flex justify-center ">
+          <div className="flex justify-center pt-5 ">
             <button
             className={`flex flex justify-center  gap-2 px-4 py-2 sm:px-5 sm:py-2.5 w-46 rounded-md text-sm sm:text-base font-medium transition-all duration-300 ${
               saving
                 ? "bg-[var(--container)] text-[var(--foreground)] opacity-70"
-                : "bg-[var(--theme)]  text-[var(--foreground)] shadow-sm"
+                : "bg-gradient-to-r from-[var(--button-theme)] to-[var(--theme2)]/40 border border-[var(--border-theme)]/30 text-[var(--text-theme)]"
             }`}
             onClick={saveNote}
             disabled={saving || (!title.trim() && !content.trim())}
@@ -731,7 +731,7 @@ function Editor() {
                 className={`rounded-md px-3 py-1.5 transition-all duration-200 flex items-center gap-1.5 ${
                   isPreviewMode
                     ? "bg-transparent text-[var(--foreground)] border border-[var(--border-color)]"
-                    : "bg-[var(--button-bg1)] text-[var(--background)]"
+                    : "bg-gradient-to-r from-[var(--button-theme)] to-[var(--theme2)]/40 border border-[var(--border-theme)]/30 text-[var(--text-theme)]"
                 }`}
                 onClick={() => setIsPreviewMode(false)}
                 disabled={!isPreviewMode}
@@ -742,7 +742,7 @@ function Editor() {
                 className={`rounded-md px-3 py-1.5 transition-all duration-200 flex items-center gap-1.5 ${
                   !isPreviewMode
                     ? "bg-transparent text-[var(--foreground)] border border-[var(--border-color)]"
-                    : "bg-[var(--button-bg1)] text-[var(--background)]"
+                    : "bg-gradient-to-r from-[var(--button-theme)] to-[var(--theme2)]/40 border border-[var(--border-theme)]/30 text-[var(--text-theme)]"
                 }`}
                 onClick={() => setIsPreviewMode(true)}
                 disabled={isPreviewMode}

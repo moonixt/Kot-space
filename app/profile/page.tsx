@@ -487,7 +487,7 @@ const Profile = () => {
                   alt="Profile"
                   width={4000}
                   height={4000}
-                  className={`w-640 h-80 sm:h-130 md:h-70 2xl:h-150 object-cover ${
+                  className={`w-screen h-80 sm:h-130 md:h-90 2xl:h-180 object-cover ${
                     wallpaperPosition === "top"
                       ? "object-top"
                       : wallpaperPosition === "bottom"
@@ -537,7 +537,7 @@ const Profile = () => {
             </button>
             </div>
 
-          <div className="absolute top-0 ">
+          <div className="absolute top-0 flex justify-center  w-full  ">
             <div id="clock" className="bg-black/80 backdrop-blur-sm">
               <Clock />
             </div>

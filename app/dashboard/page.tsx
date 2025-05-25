@@ -135,7 +135,7 @@ export default function DashboardPage() {
             
             <div className="flex justify-center">
             <button
-              className="px-4 py-2 flex justify-center sm:px-5 sm:py-2.5 sm:w-96 w-60 rounded-md  text-base font-medium  bg-[var(--theme)]  text-[var(--foreground)] hover:bg-opacity-60 transition-all hover:shadow-md transition-colors flex items-center gap-2"
+              className="px-4 py-2 flex justify-center sm:px-5 sm:py-2.5 sm:w-96 w-60 rounded-md  text-base font-medium  bg-gradient-to-r from-[var(--button-theme)] to-[var(--theme2)]/40 border border-[var(--border-theme)]/30 text-[var(--text-theme)]   hover:bg-opacity-60 transition-all hover:shadow-md transition-colors flex items-center gap-2"
               onClick={() => router.push("/editor")}
             >
                <svg
@@ -210,7 +210,7 @@ export default function DashboardPage() {
              {/* Toggle components dropdown */}
             <div className="">
               <DropdownMenu>
-                <DropdownMenuTrigger className="flex items-center gap-2 px-1 py-2 rounded-md bg-[var(--theme)] hover:bg-[var(--container)] transition-colors">
+                <DropdownMenuTrigger className="flex items-center gap-2 px-1 py-2 rounded-md bg-gradient-to-r from-[var(--button-theme)] to-[var(--theme2)]/40 border border-[var(--border-theme)]/30 text-[var(--text-theme)] hover:bg-[var(--container)] transition-colors">
                   <span>
                     <Eye />
                   </span>
