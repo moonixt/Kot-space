@@ -227,7 +227,7 @@ const Tasks = () => {
             setIsAddingTask(!isAddingTask);
             setTimeout(() => newTaskInputRef.current?.focus(), 100);
           }}
-          className="flex items-center gap-1 px-3 py-1.5 c bg-[var(--theme)] text-[var(--foreground)] hover:opacity-90 transition-all text-sm"
+          className="flex items-center rounded-md gap-1 px-3 py-1.5 c bg-gradient-to-r from-[var(--button-theme)] to-[var(--theme2)]/40 border border-[var(--border-theme)]/30 text-[var(--text-theme)] text-[var(--foreground)] hover:opacity-90 transition-all text-sm"
         >
           {isAddingTask ? (
             <>{t("tasks.cancel")}</>
@@ -700,7 +700,7 @@ const Tasks = () => {
               className={`px-3 py-1 rounded-md transition-all flex items-center gap-1 ${
                 currentPage === 1
                   ? "bg-[var(--background)]/30 text-[var(--foreground)]/50 cursor-not-allowed"
-                  : "bg-[var(--foreground)] text-[var(--background)]"
+                  : "bg-gradient-to-r from-[var(--button-theme)] to-[var(--theme2)]/40 border border-[var(--border-theme)]/30 text-[var(--text-theme)]"
               }`}
             >
               <svg
@@ -724,7 +724,7 @@ const Tasks = () => {
               className={`px-3 py-1 rounded-md transition-all flex items-center gap-1 ${
                 currentPage === 1
                   ? "bg-[var(--background)]/30 text-[var(--foreground)]/50 cursor-not-allowed"
-                  : "bg-[var(--foreground)] text-[var(--background)]"
+                  : "bg-gradient-to-r from-[var(--button-theme)] to-[var(--theme2)]/40 border border-[var(--border-theme)]/30 text-[var(--text-theme)] "
               }`}
             >
               <svg
@@ -747,7 +747,7 @@ const Tasks = () => {
               className={`px-3 py-1 rounded-md transition-all flex items-center gap-1 ${
                 currentPage === Math.ceil(tasks.length / tasksPerPage)
                   ? "bg-[var(--background)]/30 text-[var(--foreground)]/50 cursor-not-allowed"
-                  : "bg-[var(--foreground)] text-[var(--background)]"
+                  : "bg-gradient-to-r from-[var(--button-theme)] to-[var(--theme2)]/40 border border-[var(--border-theme)]/30 text-[var(--text-theme)]"
               }`}
             >
               {t("tasks.next")}
@@ -772,7 +772,7 @@ const Tasks = () => {
               className={`px-3 py-1 rounded-md transition-all flex items-center gap-1 ${
                 currentPage === Math.ceil(tasks.length / tasksPerPage)
                   ? "bg-[var(--background)]/30 text-[var(--foreground)]/50 cursor-not-allowed"
-                  : "bg-[var(--foreground)] text-[var(--background)]"
+                  : "bg-gradient-to-r from-[var(--button-theme)] to-[var(--theme2)]/40 border border-[var(--border-theme)]/30 text-[var(--text-theme)]"
               }`}
             >
               {t("tasks.last")}
