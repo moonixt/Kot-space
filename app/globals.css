@@ -367,7 +367,6 @@ select:focus {
 .markdown-content h2 {
   font-size: 1.75rem;
   letter-spacing: -0.02em;
-  border-bottom: 1px solid var(--border-color);
   padding-bottom: 0.375rem;
 }
 

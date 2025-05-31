@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState, useMemo } from "react";
 import { supabase } from "../lib/supabase";
 import { Session, User } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
@@ -143,16 +143,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const value = {
+  // Memoizar o valor do contexto para evitar re-renderizações desnecessárias
+  const contextValue = useMemo(() => ({
     user,
     session,
     isLoading,
     signIn,
     signUp,
     signOut,
-  };
+  }), [user, session, isLoading]);
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {

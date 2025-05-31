@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, memo, useCallback } from "react";
 import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
 import Image from "next/image";
 import { supabase } from "../../lib/supabase";
@@ -9,9 +9,9 @@ import Clock from "../components/clock";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { decrypt } from "../components/Encryption";
-import { useTranslation } from "next-i18next";
+import { useTranslation } from "react-i18next";
 
-const Profile = () => {
+const Profile = memo(() => {
   const { t } = useTranslation();
   const [wallpaperUrl, setWallpaperUrl] = useState<string | null>(null);
   const [wallpaperLoading, setWallpaperLoading] = useState(true);
@@ -32,39 +32,34 @@ const Profile = () => {
   const [showSearchResults, setShowSearchResults] = useState(false);
   const searchResultsRef = useRef<HTMLDivElement>(null);
   const [wallpaperPosition, setWallpaperPosition] = useState<string>("center");
+  const [dataLoaded, setDataLoaded] = useState(false);
+  // Se não há usuário, não renderizar nada
+  if (!user) {
+    return null;
+  }
 
-  useEffect(() => {
-    if (user) {
-      getUserWallpaper();
-      getUserPhoto();
-      getUserBio();
-      getUserNotes();
-    }
-  }, [user]);
-
-  // Buscar wallpaper do usuário
-  const getUserWallpaper = async () => {
+  // Memoizar funções para evitar re-criações desnecessárias
+  const getUserWallpaper = useCallback(async () => {
+    if (!user?.id || dataLoaded) return;
+    
     setWallpaperLoading(true);
     try {
       const { data, error } = await supabase
         .from("profiles")
         .select("wallpaper_url, wallpaper_position")
-        .eq("id", user?.id)
+        .eq("id", user.id)
         .single();
 
       if (error && error.code !== "PGRST116") throw error;
 
       if (data?.wallpaper_url) {
-        // Obter URL pública
         const { data: urlData } = supabase.storage
           .from("user-wallpaper")
           .getPublicUrl(data.wallpaper_url);
 
         setWallpaperUrl(urlData.publicUrl);
-        // Set position if available, otherwise default to center
         setWallpaperPosition(data?.wallpaper_position || "center");
       } else {
-        // If no wallpaper is set, use the default
         setWallpaperUrl("/static/images/susan.jpg");
         setWallpaperPosition("center");
       }
@@ -75,15 +70,17 @@ const Profile = () => {
     } finally {
       setWallpaperLoading(false);
     }
-  };
+  }, [user?.id, dataLoaded]);
 
-  const getUserPhoto = async () => {
+  const getUserPhoto = useCallback(async () => {
+    if (!user?.id || dataLoaded) return;
+    
     setAvatarLoading(true);
     try {
       const { data, error } = await supabase
         .from("profiles")
         .select("avatar_url")
-        .eq("id", user?.id)
+        .eq("id", user.id)
         .single();
 
       if (error && error.code !== "PGRST116") throw error;
@@ -94,24 +91,25 @@ const Profile = () => {
           .getPublicUrl(data.avatar_url);
         setAvatarUrl(urlData.publicUrl);
       } else {
-        // Default avatar if none is set
         setAvatarUrl("/static/images/profilepic.png");
       }
     } catch (error) {
       console.error("Erro ao buscar avatar:", error);
-      setAvatarUrl("/staticimages/profilepic.png");
+      setAvatarUrl("/static/images/profilepic.png");
     } finally {
       setAvatarLoading(false);
     }
-  };
+  }, [user?.id, dataLoaded]);
 
-  const getUserBio = async () => {
+  const getUserBio = useCallback(async () => {
+    if (!user?.id || dataLoaded) return;
+    
     setBioLoading(true);
     try {
       const { data, error } = await supabase
         .from("profiles")
         .select("bio")
-        .eq("id", user?.id)
+        .eq("id", user.id)
         .single();
 
       if (error && error.code !== "PGRST116") throw error;
@@ -127,14 +125,16 @@ const Profile = () => {
     } finally {
       setBioLoading(false);
     }
-  };
+  }, [user?.id, dataLoaded]);
 
-  const getUserNotes = async () => {
+  const getUserNotes = useCallback(async () => {
+    if (!user?.id || dataLoaded) return;
+    
     try {
       const { data, error } = await supabase
         .from("notes")
         .select("*", { count: "exact" })
-        .eq("user_id", user?.id);
+        .eq("user_id", user.id);
 
       if (error) throw error;
 
@@ -143,7 +143,47 @@ const Profile = () => {
       console.error("Error fetching notes:", error);
       setNotes(0);
     }
-  };
+  }, [user?.id, dataLoaded]);
+
+  // Carregar dados apenas uma vez quando o usuário estiver disponível
+  useEffect(() => {
+    if (user?.id && !dataLoaded) {
+      const loadAllData = async () => {
+        await Promise.all([
+          getUserWallpaper(),
+          getUserPhoto(),
+          getUserBio(),
+          getUserNotes()
+        ]);
+        setDataLoaded(true);
+      };
+      
+      loadAllData();
+    }
+  }, [user?.id, dataLoaded, getUserWallpaper, getUserPhoto, getUserBio, getUserNotes]);
+
+  // Resetar estado quando usuário mudar
+  useEffect(() => {
+    if (user?.id) {
+      setDataLoaded(false);
+    }
+  }, [user?.id]);
+
+  // Prevenir re-execução desnecessária quando a página volta a ter foco
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        console.log("Profile component visible - não recarregando dados");
+        // NÃO recarregar dados aqui
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, []);
 
   const updateBio = async (newBio: string) => {
     if (!user) return;
@@ -782,12 +822,13 @@ const Profile = () => {
           type="file"
           ref={fileInputRef}
           onChange={handleFileChange}
-          accept="image/*"
-          style={{ display: "none" }}
+          accept="image/*"        style={{ display: "none" }}
         />
       </div>
     </div>
   );
-};
+});
+
+Profile.displayName = 'Profile';
 
 export default Profile;
