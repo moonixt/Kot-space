@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useMemo, memo } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { supabase } from "../../lib/supabase";
 import { useAuth } from "../../context/AuthContext";
 import Link from "next/link";
@@ -41,11 +41,11 @@ export default function DashboardPage() {
       const savedShowTasks = localStorage.getItem("showTasks");
       return savedShowTasks === null ? false : savedShowTasks === "true";
     }
-    return true;
-  });  const { user } = useAuth();
+    return true;  });  
+  const { user } = useAuth();
 
-  // Memoizar o componente Profile corretamente
-  const MemoizedProfile = useMemo(() => memo(() => <Profile />), []);
+  // Memoizar o componente Profile corretamente  
+  const MemoizedProfile = useMemo(() => <Profile />, [user?.id]);
 
   // Função para alternar o favorito
   const toggleFavorite = async (noteId: string, currentFavorite: boolean | undefined) => {
@@ -143,10 +143,9 @@ export default function DashboardPage() {
 
   const router = useRouter();
 
-  return (    <ProtectedRoute>
-      <div className="smooth overflow-y-auto max-h-screen scrollbar">
+  return (    <ProtectedRoute>      <div className="smooth overflow-y-auto max-h-screen scrollbar">
         <div>
-          <MemoizedProfile />
+          {MemoizedProfile}
         </div>
 
           

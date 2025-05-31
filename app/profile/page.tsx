@@ -33,10 +33,6 @@ const Profile = memo(() => {
   const searchResultsRef = useRef<HTMLDivElement>(null);
   const [wallpaperPosition, setWallpaperPosition] = useState<string>("center");
   const [dataLoaded, setDataLoaded] = useState(false);
-  // Se não há usuário, não renderizar nada
-  if (!user) {
-    return null;
-  }
 
   // Memoizar funções para evitar re-criações desnecessárias
   const getUserWallpaper = useCallback(async () => {
@@ -458,8 +454,12 @@ const Profile = memo(() => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
+    };  }, []);
+
+  // Se não há usuário, não renderizar nada
+  if (!user) {
+    return null;
+  }
 
   // Função auxiliar para exibir excertos de conteúdo
   const getExcerpt = (content: string | undefined, maxLength = 60) => {
