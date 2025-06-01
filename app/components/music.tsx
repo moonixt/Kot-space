@@ -326,18 +326,17 @@ export default function MusicPlayer({ onVisibilityChange }: MusicPlayerProps) {
               </div>
             )}
 
-            {/* Load Saved Tracks Button - only show when no tracks are loaded */}
-            {audioFiles.length === 0 && (
+            {/* {audioFiles.length === 0 && (
               <div className="mt-3 text-center">
                 <button
                   onClick={loadSavedTracks}
-                  className="text-xs text-blue-400 hover:text-blue-300 transition-colors px-3 py-1 rounded border border-blue-400/30 hover:border-blue-300/50"
+                  className="text-xs text-blue-400  transition-colors px-3 py-1 rounded border border-blue-400/30 hover:border-blue-300/50"
                   title="Carregar músicas salvas do localStorage"
                 >
                   {t('musicPlayer.loadSavedTracks') || 'Carregar Músicas Salvas'}
                 </button>
               </div>
-            )}
+            )} */}
           </div>
 
           {/* Current Track Info */}
