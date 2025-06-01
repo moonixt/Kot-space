@@ -14,7 +14,7 @@ export type Theme =
   | "system";
 
 interface ThemeContextType {
-  theme: Theme;
+  theme: Theme | undefined;
   setTheme: (theme: Theme) => void;
   resolvedTheme:
     | "green"
@@ -25,32 +25,58 @@ interface ThemeContextType {
     | "red"
     | "blue"
     | "grey";
+  isClient: boolean;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  // Inicializar com a preferência salva ou "system"
-  const [theme, setTheme] = useState<Theme>("system");
+  // Initialize with undefined to avoid hydration issues
+  const [theme, setThemeState] = useState<Theme | undefined>(undefined);
   const [resolvedTheme, setResolvedTheme] = useState<
     "green" | "light" | "purple" | "yellow" | "dark" | "red" | "blue" | "grey"
   >("green");
+  const [isClient, setIsClient] = useState(false);
 
+  // Custom setTheme function that also updates localStorage
+  const setTheme = (newTheme: Theme) => {
+    setThemeState(newTheme);
+    if (isClient) {
+      try {
+        localStorage.setItem("theme", newTheme);
+      } catch (error) {
+        console.warn("Failed to save theme to localStorage:", error);
+      }
+    }
+  };
+
+  // Mark when we're on the client and load theme
   useEffect(() => {
-    // Carregar tema das preferências do usuário
-    const savedTheme = localStorage.getItem("theme") as Theme | null;
-    if (savedTheme) {
-      setTheme(savedTheme);
+    setIsClient(true);
+    
+    // Load theme from localStorage only on client side
+    try {
+      const savedTheme = localStorage.getItem("theme") as Theme | null;
+      const validThemes: Theme[] = ["green", "light", "purple", "yellow", "dark", "red", "blue", "grey", "system"];
+      
+      if (savedTheme && validThemes.includes(savedTheme)) {
+        setThemeState(savedTheme);
+      } else {
+        // Set default theme if no saved theme
+        setThemeState("system");
+      }
+    } catch (error) {
+      // Fallback if localStorage is not available
+      console.warn("localStorage not available, using default theme");
+      setThemeState("system");
     }
   }, []);
 
   useEffect(() => {
-    // Salvar tema nas preferências do usuário
-    if (theme) {
-      localStorage.setItem("theme", theme);
-    }
+    // Only execute if we're on client and theme is defined
+    if (!isClient || theme === undefined) return;
 
-    // Determinar o tema resolvido com base na escolha do usuário
+    // Determine resolved theme based on user choice
     if (theme === "system") {
       const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
         .matches
@@ -58,7 +84,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         : "light";
       setResolvedTheme(systemTheme);
 
-      // Adicionar a classe ao elemento html
+      // Apply class to html element
       document.documentElement.classList.remove(
         "light",
         "green",
@@ -73,7 +99,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     } else {
       setResolvedTheme(theme);
 
-      // Adicionar a classe ao elemento html
+      // Apply class to html element
       document.documentElement.classList.remove(
         "light",
         "green",
@@ -86,10 +112,12 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       );
       document.documentElement.classList.add(theme);
     }
-  }, [theme]);
+  }, [theme, isClient]);
 
-  // Ouvir alterações nas preferências do sistema
+  // Listen to system preference changes
   useEffect(() => {
+    if (!isClient || theme === undefined) return;
+    
     const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
 
     const handleChange = () => {
@@ -112,10 +140,10 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
     mediaQuery.addEventListener("change", handleChange);
     return () => mediaQuery.removeEventListener("change", handleChange);
-  }, [theme]);
+  }, [theme, isClient]);
 
   return (
-    <ThemeContext.Provider value={{ theme, setTheme, resolvedTheme }}>
+    <ThemeContext.Provider value={{ theme, setTheme, resolvedTheme, isClient }}>
       {children}
     </ThemeContext.Provider>
   );
