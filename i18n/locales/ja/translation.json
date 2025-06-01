@@ -482,10 +482,11 @@
     "createNote": "新しいノートはどうやって作成しますか？"
   },
   "musicPlayer": {
-    "uploadAudioFiles": "音声ファイルをアップロード",
-    "changeAudioFiles": "音声ファイルを変更",
+    "uploadAudioFiles": "プレイリストを読み込む",
+    "changeAudioFiles": "プレイリスト用ファイルを選択",
     "multiFileHint": "プレイリスト用に複数のファイルを選択できます",
     "clearPlaylist": "プレイリストをクリア",
+    "loadSavedTracks": "プレイリストを読み込む",
     "tracks": "トラック",
     "nowPlaying": "現在再生中",
     "trackOf": "トラック {{current}} / {{total}}",

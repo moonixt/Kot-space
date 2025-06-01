@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useMusicPlayer } from "../../context/MusicPlayerContext";
 import { useTranslation } from "react-i18next";
 import {
-  Headphones,
+  Headphones, ListMusic,
 } from "lucide-react";
 
 interface MusicPlayerProps {
@@ -27,6 +27,7 @@ export default function MusicPlayer({ onVisibilityChange }: MusicPlayerProps) {
     currentTrackIndex,
     audioRef,
     clearPlaylist,
+    loadSavedTracks,
   } = useMusicPlayer();
 
   const [isVisible, setIsVisible] = useState(false);
@@ -41,6 +42,50 @@ export default function MusicPlayer({ onVisibilityChange }: MusicPlayerProps) {
     artist?: string;
     album?: string;
   }>({});
+
+  // Load saved volume from localStorage
+  useEffect(() => {
+    const savedVolume = localStorage.getItem('musicPlayerVolume');
+    if (savedVolume) {
+      const vol = parseFloat(savedVolume);
+      setVolume(vol);
+      console.log('Loaded saved volume:', vol);
+    }
+  }, []);
+
+  // Save volume to localStorage when it changes
+  useEffect(() => {
+    localStorage.setItem('musicPlayerVolume', volume.toString());
+  }, [volume]);
+
+  // Load saved player visibility state
+  useEffect(() => {
+    const savedVisibility = localStorage.getItem('musicPlayerVisible');
+    if (savedVisibility === 'true' && audioFiles.length > 0) {
+      setIsVisible(true);
+      onVisibilityChange?.(true);
+    }
+  }, [audioFiles.length, onVisibilityChange]);
+
+  // Save player visibility state
+  useEffect(() => {
+    localStorage.setItem('musicPlayerVisible', isVisible.toString());
+  }, [isVisible]);
+
+  // Check for saved tracks on component mount
+  useEffect(() => {
+    const checkSavedTracks = async () => {
+      const savedTracksData = localStorage.getItem('musicPlayerTracks');
+      console.log('Music component mounted, checking for saved tracks...', !!savedTracksData);
+      
+      if (savedTracksData && audioFiles.length === 0) {
+        console.log('Found saved tracks, loading automatically...');
+        await loadSavedTracks();
+      }
+    };
+    
+    checkSavedTracks();
+  }, [loadSavedTracks, audioFiles.length]);
 
   // Check for mobile screen size
   useEffect(() => {
@@ -252,8 +297,10 @@ export default function MusicPlayer({ onVisibilityChange }: MusicPlayerProps) {
                 className="hidden"
                 multiple
               />
-              <div className="border-2 border-dashed border-white/20 hover:border-blue-400/50 rounded-lg  text-center transition-colors">
-                <div className="text-2xl ">🎵</div>
+              <div className="text-center ">
+                <div className="text-2xl ">
+                  <ListMusic size={20} className="inline-block " />
+                </div>
                 <span className="text-sm">
                   {!audioFile ? t('musicPlayer.uploadAudioFiles') : t('musicPlayer.changeAudioFiles')}
                 </span>
@@ -268,13 +315,26 @@ export default function MusicPlayer({ onVisibilityChange }: MusicPlayerProps) {
 
             {/* Clear Playlist Button */}
             {audioFiles.length > 0 && (
-              <div className="mt-3 text-center">
+              <div className="mt-3 text-center space-y-2">
                 <button
                   onClick={clearPlaylist}
                   className="text-xs text-red-400 hover:text-red-300 transition-colors px-3 py-1 rounded border border-red-400/30 hover:border-red-300/50"
                   title={`${t('musicPlayer.clearPlaylist')} (${audioFiles.length} ${t('musicPlayer.tracks')})`}
                 >
                   {t('musicPlayer.clearPlaylist')} ({audioFiles.length} {t('musicPlayer.tracks')})
+                </button>
+              </div>
+            )}
+
+            {/* Load Saved Tracks Button - only show when no tracks are loaded */}
+            {audioFiles.length === 0 && (
+              <div className="mt-3 text-center">
+                <button
+                  onClick={loadSavedTracks}
+                  className="text-xs text-blue-400 hover:text-blue-300 transition-colors px-3 py-1 rounded border border-blue-400/30 hover:border-blue-300/50"
+                  title="Carregar músicas salvas do localStorage"
+                >
+                  {t('musicPlayer.loadSavedTracks') || 'Carregar Músicas Salvas'}
                 </button>
               </div>
             )}
