@@ -2,6 +2,9 @@
 
 import React, { useState, useEffect } from "react";
 import { useMusicPlayer } from "../../context/MusicPlayerContext";
+import {
+  Headphones,
+} from "lucide-react";
 
 export default function MusicPlayer() {
   const {
@@ -110,18 +113,18 @@ export default function MusicPlayer() {
       <button
         onClick={toggleVisibility}
         aria-label={isVisible ? "Hide player" : "Show player"}
-        className="fixed z-[60] flex items-center justify-center w-8 h-8 rounded-full bg-black/50 hover:bg-black/70 text-white/80 transition-colors"
+        className="fixed z-[60] flex items-center justify-center w-8 h-8 rounded-full bg-black/50 backdrop-blur hover:bg-black/30 text-white/80 transition-colors"
         style={{
           right: "24px",
-          bottom: isVisible ? `calc(64px + 16px)` : "16px", // 64px = approx player height
+          bottom: isVisible ? `calc(54px + 16px)` : "16px", // 64px = approx player height
         }}
       >
-        <span>{isVisible ? "▼" : "▲"}</span>
+        <span>{isVisible ? <Headphones size={18}/> : <Headphones size={18}/>}</span>
       </button>
 
       {/* Player container */}
       <div
-        className={`backdrop-blur bg-black/80 shadow-lg flex flex-col items-center justify-center transition-all duration-300 w-full`}
+        className={`backdrop-blur bg-black/70 shadow-lg flex flex-col items-center justify-center transition-all duration-300 w-full`}
         style={{
           position: "fixed",
           bottom: isVisible ? "0" : "-200px",
