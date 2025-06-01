@@ -105,13 +105,13 @@ export function MusicPlayerProvider({
           localStorage.removeItem('musicPlayerTracks');
           localStorage.removeItem('musicPlayerCurrentIndex');
           localStorage.removeItem('musicPlayerLastSaved');
-          alert('LocalStorage cheio! Dados de música antigos foram removidos. Tente novamente.');
+          console.log('✅ LocalStorage cheio! Dados de música antigos foram removidos automaticamente.');
         } catch (clearError) {
-          console.error('Error clearing localStorage:', clearError);
-          alert('Erro ao salvar músicas: LocalStorage cheio e não foi possível limpar.');
+          console.error('❌ Error clearing localStorage:', clearError);
+          console.error('Erro ao salvar músicas: LocalStorage cheio e não foi possível limpar.');
         }
       } else {
-        alert('Erro ao salvar músicas no navegador. Verifique o console para mais detalhes.');
+        console.error('❌ Erro ao salvar músicas no navegador:', error);
       }
     }
   };
