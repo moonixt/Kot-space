@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { supabase } from "../../lib/supabase";
 import { useAuth } from "../../context/AuthContext";
 import Link from "next/link";
@@ -35,14 +35,17 @@ export default function DashboardPage() {
   const { t } = useTranslation();
   const [notes, setNotes] = useState<Note[]>([]);
   const [loading, setLoading] = useState(true);
+  const [notesLoaded, setNotesLoaded] = useState(false); // Controlar se já carregou as notas
   const [showTasks, setShowTasks] = useState(() => {
     if (typeof window !== "undefined") {
       const savedShowTasks = localStorage.getItem("showTasks");
       return savedShowTasks === null ? false : savedShowTasks === "true";
     }
-    return true;
-  });
+    return true;  });  
   const { user } = useAuth();
+
+  // Memoizar o componente Profile corretamente  
+  const MemoizedProfile = useMemo(() => <Profile />, [user?.id]);
 
   // Função para alternar o favorito
   const toggleFavorite = async (noteId: string, currentFavorite: boolean | undefined) => {
@@ -64,15 +67,12 @@ export default function DashboardPage() {
       console.error("Erro ao atualizar favorito:", error);
     }
   };
-
   // Buscar notas do Supabase, favoritos primeiro
   const fetchNotes = async () => {
+    if (!user || notesLoaded) return; // Não buscar se já carregou
+    
     setLoading(true);
     try {
-      if (!user) {
-        setNotes([]);
-        return;
-      }
       const { data } = await supabase
         .from("notes")
         .select("*")
@@ -80,6 +80,7 @@ export default function DashboardPage() {
         .order("favorite", { ascending: false, nullsFirst: true })
         .order("created_at", { ascending: false });
       setNotes(data || []);
+      setNotesLoaded(true); // Marcar como carregado
     } catch (error) {
       console.error("Erro ao buscar notas:", error);
     } finally {
@@ -111,20 +112,40 @@ export default function DashboardPage() {
       // localStorage.setItem("showCalendar", showCalendar.toString());
       // localStorage.setItem("showTables", showTables.toString());
     }
-  }, [showTasks]);
-  // showCalendar, showTables
+  }, [showTasks]);  // showCalendar, showTables
 
   useEffect(() => {
     fetchNotes();
   }, [user]);
 
+  // Resetar estado quando usuário mudar
+  useEffect(() => {
+    if (user?.id) {
+      setNotesLoaded(false); // Resetar para novo usuário
+    }
+  }, [user?.id]);
+
+  // Prevenir re-fetch desnecessário quando a página volta a ter foco
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        console.log("Dashboard visível - não fazendo re-fetch das notas");
+        // NÃO fazer fetchNotes() aqui
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, []);
+
   const router = useRouter();
 
-  return (
-    <ProtectedRoute>
-      <div className="smooth overflow-y-auto max-h-screen scrollbar">
+  return (    <ProtectedRoute>      <div className="smooth overflow-y-auto max-h-screen scrollbar">
         <div>
-          <Profile />
+          {MemoizedProfile}
         </div>
 
           
