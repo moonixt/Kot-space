@@ -302,5 +302,24 @@
     "support": "¿Cómo contacto con el soporte?",
     "editorHelp": "¿Qué puedo hacer con el editor?",
     "createNote": "¿Cómo creo una nueva nota?"
+  },
+  "musicPlayer": {
+    "uploadAudioFiles": "Subir Archivos de Audio",
+    "changeAudioFiles": "Cambiar Archivos de Audio",
+    "multiFileHint": "Puedes seleccionar múltiples archivos para una lista de reproducción",
+    "clearPlaylist": "Limpiar Lista",
+    "tracks": "pistas",
+    "nowPlaying": "Reproduciendo Ahora",
+    "trackOf": "Pista {{current}} de {{total}}",
+    "previousTrack": "Pista anterior",
+    "nextTrack": "Siguiente pista",
+    "play": "Reproducir",
+    "pause": "Pausar",
+    "volume": "Volumen",
+    "playlist": "Lista de Reproducción",
+    "saved": "Guardado",
+    "showPlayer": "Mostrar reproductor",
+    "hidePlayer": "Ocultar reproductor",
+    "noCover": "Sin Carátula"
   }
 }

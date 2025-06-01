@@ -302,5 +302,24 @@
     "support": "Wie kontaktiere ich den Support?",
     "editorHelp": "Was kann ich mit dem Editor machen?",
     "createNote": "Wie erstelle ich eine neue Notiz?"
+  },
+  "musicPlayer": {
+    "uploadAudioFiles": "Audio-Dateien hochladen",
+    "changeAudioFiles": "Audio-Dateien ändern",
+    "multiFileHint": "Sie können mehrere Dateien für eine Wiedergabeliste auswählen",
+    "clearPlaylist": "Wiedergabeliste löschen",
+    "tracks": "Titel",
+    "nowPlaying": "Wird gerade abgespielt",
+    "trackOf": "Titel {{current}} von {{total}}",
+    "previousTrack": "Vorheriger Titel",
+    "nextTrack": "Nächster Titel",
+    "play": "Abspielen",
+    "pause": "Pausieren",
+    "volume": "Lautstärke",
+    "playlist": "Wiedergabeliste",
+    "saved": "Gespeichert",
+    "showPlayer": "Player anzeigen",
+    "hidePlayer": "Player ausblenden",
+    "noCover": "Kein Cover"
   }
 }

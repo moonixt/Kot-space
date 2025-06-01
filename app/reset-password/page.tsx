@@ -6,6 +6,8 @@ import { useTranslation } from "react-i18next";
 import i18n from "../../i18n";
 import Image from "next/image";
 import Link from "next/link";
+import { Turnstile } from "@marsidev/react-turnstile";
+import { useTurnstile } from "../../lib/useTurnstile";
 
 export default function ResetPasswordPage() {
   const [email, setEmail] = useState("");
@@ -13,6 +15,7 @@ export default function ResetPasswordPage() {
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const { t } = useTranslation();
+  const { token: turnstileToken, onSuccess: onTurnstileSuccess, onError: onTurnstileError, reset: resetTurnstile } = useTurnstile();
 
   // Initialize language detection based on browser language
   useEffect(() => {
@@ -34,7 +37,31 @@ export default function ResetPasswordPage() {
     setMessage(null);
     setError(null);
 
+    // Verificar se o captcha foi completado
+    if (!turnstileToken) {
+      setError(t("login.captcha.required"));
+      setLoading(false);
+      return;
+    }
+
     try {
+      // Verificar o captcha no backend primeiro
+      const captchaResponse = await fetch('/api/verify-turnstile', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ token: turnstileToken }),
+      });
+
+      const captchaResult = await captchaResponse.json();
+      
+      if (!captchaResult.success) {
+        setError(t("login.captcha.error"));
+        resetTurnstile();
+        return;
+      }
+
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/update-password`,
       });
@@ -50,6 +77,8 @@ export default function ResetPasswordPage() {
       } else {
         setError(t("resetPassword.errors.unknownError"));
       }
+      // Reset captcha em caso de erro
+      resetTurnstile();
     } finally {
       setLoading(false);
     }
@@ -101,6 +130,16 @@ export default function ResetPasswordPage() {
                 required
                 className="w-full px-4 py-2 bg-[var(--container)] border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-[var(--foreground)] mb-4"
               />
+
+              {/* Turnstile Captcha */}
+              <div className="mb-6 flex justify-center">
+                <Turnstile
+                  siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || ""}
+                  onSuccess={onTurnstileSuccess}
+                  onError={() => onTurnstileError(t("login.captcha.error"))}
+                />
+              </div>
+
               <button
                 type="submit"
                 disabled={loading}

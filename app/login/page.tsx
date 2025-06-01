@@ -9,6 +9,8 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "next-i18next";
 import i18n from "../../i18n";
+import { Turnstile } from "@marsidev/react-turnstile";
+import { useTurnstile } from "../../lib/useTurnstile";
 
 // Create a separate client component for the part that uses useSearchParams
 function LoginForm() {
@@ -23,6 +25,7 @@ function LoginForm() {
   const { signIn } = useAuth();
   const router = useRouter();
   const { t } = useTranslation();
+  const { token: turnstileToken, onSuccess: onTurnstileSuccess, onError: onTurnstileError, reset: resetTurnstile } = useTurnstile();
 
   // Initialize language detection based on browser language
   useEffect(() => {
@@ -41,9 +44,33 @@ function LoginForm() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
+    
+    // Verificar se o captcha foi completado
+    if (!turnstileToken) {
+      setError(t("login.captcha.required"));
+      return;
+    }
+    
     setLoading(true);
 
     try {
+      // Verificar o captcha no backend primeiro
+      const captchaResponse = await fetch('/api/verify-turnstile', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ token: turnstileToken }),
+      });
+
+      const captchaResult = await captchaResponse.json();
+      
+      if (!captchaResult.success) {
+        setError(t("login.captcha.error"));
+        resetTurnstile();
+        return;
+      }
+
       console.log("Tentando fazer login na página de login");
       await signIn(email, password);
       console.log("Login realizado com sucesso");
@@ -55,6 +82,8 @@ function LoginForm() {
       } else {
         setError("Erro desconhecido ao fazer login.");
       }
+      // Reset captcha em caso de erro
+      resetTurnstile();
     } finally {
       setLoading(false);
     }
@@ -69,13 +98,14 @@ function LoginForm() {
         provider: "google",
         options: {
           redirectTo: `${window.location.origin}/`,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'select_account', // Força o usuário a escolher a conta
+          }
         },
       });
 
       if (error) throw error;
-
-      // Não é necessário redirecionar, o Supabase já cuida disso
-      // O redirecionamento será feito pelo próprio Supabase
     } catch (error) {
       if (error instanceof Error) {
         console.error("Erro ao fazer login com Google:", error);
@@ -197,6 +227,15 @@ function LoginForm() {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   className="w-full px-4 py-2 bg-[var(--container)] border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-[var(--foreground)]"
+                />
+              </div>
+
+              {/* Turnstile Captcha */}
+              <div className="mb-6 flex justify-center">
+                <Turnstile
+                  siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || ""}
+                  onSuccess={onTurnstileSuccess}
+                  onError={() => onTurnstileError(t("login.captcha.error"))}
                 />
               </div>
 

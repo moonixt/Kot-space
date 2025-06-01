@@ -12,7 +12,12 @@
     "noAccount": "Não tem uma conta?",
     "createAccount": "Criar uma conta",
     "forgotPassword": "Esqueceu sua senha?",
-    "resetPassword": "Redefinir Senha"
+    "resetPassword": "Redefinir Senha",
+    "captcha": {
+      "required": "Por favor, complete a verificação de segurança",
+      "error": "Erro na verificação de segurança. Tente novamente",
+      "loading": "Carregando verificação de segurança..."
+    }
   },
   "signup": {
     "title": "Criar sua Conta Кot-space",
@@ -25,6 +30,11 @@
     "alreadyHaveAccount": "Já tem uma conta?",
     "signIn": "Entrar",
     "agreeToTerms": "Eu concordo com os Termos de Uso",
+    "captcha": {
+      "required": "Por favor, complete a verificação de segurança",
+      "error": "Erro na verificação de segurança. Tente novamente",
+      "loading": "Carregando verificação de segurança..."
+    },
     "errors": {
       "passwordsDontMatch": "As senhas não coincidem.",
       "genericError": "Falha ao criar conta. Por favor, tente novamente.",
@@ -472,5 +482,24 @@
     "support": "Como entro em contato com o suporte?",
     "editorHelp": "O que posso fazer no editor?",
     "createNote": "Como crio uma nova nota?"
+  },
+  "musicPlayer": {
+    "uploadAudioFiles": "Carregar Arquivos de Áudio",
+    "changeAudioFiles": "Alterar Arquivos de Áudio",
+    "multiFileHint": "Você pode selecionar múltiplos arquivos para uma playlist",
+    "clearPlaylist": "Limpar Playlist",
+    "tracks": "faixas",
+    "nowPlaying": "Tocando Agora",
+    "trackOf": "Faixa {{current}} de {{total}}",
+    "previousTrack": "Faixa anterior",
+    "nextTrack": "Próxima faixa",
+    "play": "Reproduzir",
+    "pause": "Pausar",
+    "volume": "Volume",
+    "playlist": "Playlist",
+    "saved": "Salvo",
+    "showPlayer": "Mostrar player",
+    "hidePlayer": "Ocultar player",
+    "noCover": "Sem Capa"
   }
 }

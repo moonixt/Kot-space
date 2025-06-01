@@ -23,7 +23,7 @@ export default function EditorPage() {
           </h1>
         </div>
 
-        <div className="flex-grow ">
+        <div className="flex-grow overflow-y-auto scrollbar ">
           <Editor />
         </div>
       </div>

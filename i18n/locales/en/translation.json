@@ -45,7 +45,12 @@
     "createAccount": "Create an account",
     "forgotPassword": "Forgot your password?",
     "resetPassword": "Reset Password",
-    "backToOptions": "Back to options"
+    "backToOptions": "Back to options",
+    "captcha": {
+      "required": "Please complete the security verification",
+      "error": "Security verification error. Please try again",
+      "loading": "Loading security verification..."
+    }
   },
   "signup": {
     "title": "Create your Кot-space Account",
@@ -58,6 +63,11 @@
     "alreadyHaveAccount": "Already have an account?",
     "signIn": "Sign in",
     "agreeToTerms": "I agree to the Terms of Use",
+    "captcha": {
+      "required": "Please complete the security verification",
+      "error": "Security verification error. Please try again",
+      "loading": "Loading security verification..."
+    },
     "errors": {
       "passwordsDontMatch": "Passwords don't match.",
       "genericError": "Failed to create account. Please try again.",
@@ -474,5 +484,24 @@
     "support": "How do I contact the support?",
     "editorHelp": "What can I do with the editor?",
     "createNote": "How do I create a new note?"
+  },
+  "musicPlayer": {
+    "uploadAudioFiles": "Upload Audio Files",
+    "changeAudioFiles": "Change Audio Files",
+    "multiFileHint": "You can select multiple files for a playlist",
+    "clearPlaylist": "Clear Playlist",
+    "tracks": "tracks",
+    "nowPlaying": "Now Playing",
+    "trackOf": "Track {{current}} of {{total}}",
+    "previousTrack": "Previous track",
+    "nextTrack": "Next track",
+    "play": "Play",
+    "pause": "Pause",
+    "volume": "Volume",
+    "playlist": "Playlist",
+    "saved": "Saved",
+    "showPlayer": "Show player",
+    "hidePlayer": "Hide player",
+    "noCover": "No Cover"
   }
 }
