@@ -6,9 +6,10 @@ import Link from "next/link";
 import Image from "next/image";
 import { useTranslation, Trans } from "react-i18next";
 import i18n from "../../i18n";
+import { Turnstile } from "@marsidev/react-turnstile";
+import { useTurnstile } from "../../lib/useTurnstile";
 
-export default function SignUpPage() {
-  const [email, setEmail] = useState("");
+export default function SignUpPage() {  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [agreedToTerms, setAgreedToTerms] = useState(false);
@@ -16,6 +17,7 @@ export default function SignUpPage() {
   const [error, setError] = useState<string | null>(null);
   const { signUp } = useAuth();
   const { t } = useTranslation();
+  const { token: turnstileToken, onSuccess: onTurnstileSuccess, onError: onTurnstileError, reset: resetTurnstile } = useTurnstile();
 
   // Initialize language detection based on browser language
   useEffect(() => {
@@ -30,7 +32,6 @@ export default function SignUpPage() {
       i18n.changeLanguage("pt-BR");
     }
   }, []);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -43,11 +44,32 @@ export default function SignUpPage() {
     if (!agreedToTerms) {
       setError(t("signup.errors.mustAgreeToTerms"));
       return;
+    }    // Verificar se o captcha foi completado
+    if (!turnstileToken) {
+      setError(t("login.captcha.required"));
+      return;
     }
 
     setLoading(true);
 
     try {
+      // Verificar o captcha no backend primeiro
+      const captchaResponse = await fetch('/api/verify-turnstile', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ token: turnstileToken }),
+      });
+
+      const captchaResult = await captchaResponse.json();
+      
+      if (!captchaResult.success) {
+        setError(t("login.captcha.error"));
+        resetTurnstile();
+        return;
+      }
+
       await signUp(email, password);
       // O redirecionamento já está tratado na função signUp
     } catch (error: unknown) {
@@ -57,6 +79,8 @@ export default function SignUpPage() {
       } else {
         setError(t("signup.errors.unknownError"));
       }
+      // Reset captcha em caso de erro
+      resetTurnstile();
     } finally {
       setLoading(false);
     }
@@ -136,9 +160,7 @@ export default function SignUpPage() {
                   required
                   className="w-full px-4 py-2 bg-[var(--container)] border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-[var(--foreground)]"
                 />
-              </div>
-
-              <div className="mb-6 flex items-center">
+              </div>              <div className="mb-6 flex items-center">
                 <input
                   id="terms"
                   type="checkbox"
@@ -159,6 +181,13 @@ export default function SignUpPage() {
                     Terms page
                   </Link>
                 </label>
+              </div>              {/* Turnstile Captcha */}
+              <div className="mb-6 flex justify-center">
+                <Turnstile
+                  siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || ""}
+                  onSuccess={onTurnstileSuccess}
+                  onError={() => onTurnstileError(t("login.captcha.error"))}
+                />
               </div>
 
               <button

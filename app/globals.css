@@ -309,6 +309,59 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Music Player Sidebar Scrollbar */
+.music-player-sidebar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.3) rgba(0, 0, 0, 0.1);
+}
+
+.music-player-sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.music-player-sidebar::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
+}
+
+.music-player-sidebar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+}
+
+.music-player-sidebar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+/* Music Player Scrollbar Styles */
+.music-player-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+
+.music-player-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.music-player-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 3px;
+}
+
+.music-player-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+  transition: background-color 0.2s ease;
+}
+
+.music-player-scrollbar:hover::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.music-player-scrollbar::-webkit-scrollbar-thumb:active {
+  background-color: rgba(255, 255, 255, 0.4);
+}
+
 .ghub {
   background-color: #010409;
 }
@@ -838,4 +891,33 @@ button:focus {
   font-family: Georgia, "Times New Roman", Times, serif;
   text-align: center;
   text-shadow: 3px 3px 5px hsla(0, 0%, 0%, 0.75);
+}
+
+/* Music Player Scrollbar Styles */
+.music-player-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+
+.music-player-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.music-player-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 3px;
+}
+
+.music-player-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+  transition: background-color 0.2s ease;
+}
+
+.music-player-scrollbar:hover::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.music-player-scrollbar::-webkit-scrollbar-thumb:active {
+  background-color: rgba(255, 255, 255, 0.4);
 }

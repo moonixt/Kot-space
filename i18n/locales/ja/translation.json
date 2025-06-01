@@ -480,5 +480,24 @@
     "support": "サポートに連絡するにはどうすればいいですか？",
     "editorHelp": "エディターで何ができますか？",
     "createNote": "新しいノートはどうやって作成しますか？"
+  },
+  "musicPlayer": {
+    "uploadAudioFiles": "音声ファイルをアップロード",
+    "changeAudioFiles": "音声ファイルを変更",
+    "multiFileHint": "プレイリスト用に複数のファイルを選択できます",
+    "clearPlaylist": "プレイリストをクリア",
+    "tracks": "トラック",
+    "nowPlaying": "現在再生中",
+    "trackOf": "トラック {{current}} / {{total}}",
+    "previousTrack": "前のトラック",
+    "nextTrack": "次のトラック",
+    "play": "再生",
+    "pause": "一時停止",
+    "volume": "音量",
+    "playlist": "プレイリスト",
+    "saved": "保存済み",
+    "showPlayer": "プレーヤーを表示",
+    "hidePlayer": "プレーヤーを非表示",
+    "noCover": "カバーなし"
   }
 }

@@ -3,6 +3,7 @@
 import React from "react";
 import { MusicPlayerProvider } from "../../context/MusicPlayerContext";
 import MusicPlayer from "./music";
+import { useAuth } from "../../context/AuthContext";
 // import Image from "next/image";
 import { useState, useRef, useEffect } from "react";
 // import IA from "./ChatAssistent";
@@ -13,7 +14,26 @@ export default function ClientLayout({
   children: React.ReactNode;
 }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isMusicPlayerVisible, setIsMusicPlayerVisible] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
+  const { user } = useAuth(); // Obter o usuário logado
+
+  // Check for mobile screen size
+  useEffect(() => {
+    const checkIfMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    // Initial check
+    checkIfMobile();
+
+    // Listen for window resize
+    window.addEventListener("resize", checkIfMobile);
+
+    // Clean up
+    return () => window.removeEventListener("resize", checkIfMobile);
+  }, []);
 
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
@@ -40,11 +60,21 @@ export default function ClientLayout({
 
   return (
     <MusicPlayerProvider>
-      {children}
-      {/* Fixed position music player that persists across all pages */}
-      <div className="fixed bottom-4 right-4 z-50">
-        <MusicPlayer />
+      <div 
+        className={`transition-all duration-300`}
+        style={{
+          paddingLeft: user && isMusicPlayerVisible ? 
+            (isMobile ? '0' : '320px') : '0'
+        }}
+      >
+        {children}
       </div>
+      {/* Music player sidebar - only for logged users */}
+      {user && (
+        <MusicPlayer 
+          onVisibilityChange={setIsMusicPlayerVisible}
+        />
+      )}
       {/* <div id="Chatbot">
         <button
           onClick={toggleModal}
