@@ -29,34 +29,6 @@ const nextConfig: NextConfig = {
 
     return config;
   },
-  async headers() {
-    return [
-      {
-        source: '/(.*)',
-        headers: [
-          {
-            key: 'X-Frame-Options',
-            value: 'SAMEORIGIN'
-          },
-          {
-            key: 'Content-Security-Policy',
-            value: [
-              "default-src 'self' ",
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://challenges.cloudflare.com",
-              "frame-src 'self' https://challenges.cloudflare.com",
-              "connect-src 'self' https://challenges.cloudflare.com https://*.supabase.co",
-              "img-src 'self' data: blob: https:",
-              "style-src 'self' 'unsafe-inline'",
-              "font-src 'self' data:"
-            ].join('; ')
-          }
-        ]
-      }
-    ]
-  },
-  experimental: {
-    serverComponentsExternalPackages: ['@cloudflare/turnstile']
-  }
 };
 
 export default nextConfig;

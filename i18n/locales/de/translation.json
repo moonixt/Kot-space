@@ -304,10 +304,11 @@
     "createNote": "Wie erstelle ich eine neue Notiz?"
   },
   "musicPlayer": {
-    "uploadAudioFiles": "Audio-Dateien hochladen",
-    "changeAudioFiles": "Audio-Dateien ändern",
+    "uploadAudioFiles": "Playlist laden",
+    "changeAudioFiles": "Dateien für Playlist auswählen",
     "multiFileHint": "Sie können mehrere Dateien für eine Wiedergabeliste auswählen",
     "clearPlaylist": "Wiedergabeliste löschen",
+    "loadSavedTracks": "Playlist laden",
     "tracks": "Titel",
     "nowPlaying": "Wird gerade abgespielt",
     "trackOf": "Titel {{current}} von {{total}}",

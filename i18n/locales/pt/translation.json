@@ -484,10 +484,11 @@
     "createNote": "Como crio uma nova nota?"
   },
   "musicPlayer": {
-    "uploadAudioFiles": "Carregar Arquivos de Áudio",
-    "changeAudioFiles": "Alterar Arquivos de Áudio",
+    "uploadAudioFiles": "Carregar Playlist",
+    "changeAudioFiles": "Alterar Arquivos da Playlist",
     "multiFileHint": "Você pode selecionar múltiplos arquivos para uma playlist",
     "clearPlaylist": "Limpar Playlist",
+    "loadSavedTracks": "Carregar Playlist",
     "tracks": "faixas",
     "nowPlaying": "Tocando Agora",
     "trackOf": "Faixa {{current}} de {{total}}",

@@ -486,10 +486,11 @@
     "createNote": "How do I create a new note?"
   },
   "musicPlayer": {
-    "uploadAudioFiles": "Upload Audio Files",
-    "changeAudioFiles": "Change Audio Files",
+    "uploadAudioFiles": "Load Playlist",
+    "changeAudioFiles": "Select Files for Playlist",
     "multiFileHint": "You can select multiple files for a playlist",
     "clearPlaylist": "Clear Playlist",
+    "loadSavedTracks": "Load Playlist",
     "tracks": "tracks",
     "nowPlaying": "Now Playing",
     "trackOf": "Track {{current}} of {{total}}",
