@@ -5,12 +5,18 @@ import { supabase } from "../lib/supabase";
 import { Session, User } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
 
+export type SignUpResult = {
+  success: boolean;
+  needsEmailConfirmation: boolean;
+  user?: User;
+};
+
 type AuthContextType = {
   user: User | null;
   session: Session | null;
   isLoading: boolean;
   signIn: (email: string, password: string) => Promise<any>;
-  signUp: (email: string, password: string) => Promise<void>;
+  signUp: (email: string, password: string) => Promise<SignUpResult>;
   signOut: () => Promise<void>;
 };
 
@@ -87,7 +93,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const signUp = async (email: string, password: string) => {
+  const signUp = async (email: string, password: string): Promise<SignUpResult> => {
     try {
       console.log("Tentando criar conta com:", email);
       const { data, error } = await supabase.auth.signUp({
@@ -109,16 +115,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       console.log("Conta criada:", !!data.user);
 
-      // Verificar se precisa de confirmação de email
-      if (data.user && data.user.identities?.length === 0) {
-        console.log("Confirmação de email necessária");
-        router.push(
-          "/login?message=Verifique seu email para confirmar sua conta",
-        );
-      } else if (data.user) {
-        // Usuário criado e logado automaticamente
-        // O redirecionamento será tratado pelo onAuthStateChange
-      }
+      // Sempre requer confirmação de email
+      return {
+        success: true,
+        needsEmailConfirmation: true,
+        user: data.user || undefined
+      };
     } catch (error) {
       console.error("Erro ao criar conta:", error);
       throw error;

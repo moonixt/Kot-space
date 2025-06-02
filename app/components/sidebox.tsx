@@ -42,7 +42,11 @@ import {
   DropdownMenuItem,
 } from "../../components/ui/dropdown-menu";
 
-export default function Sidebox() {
+interface SideboxProps {
+  onVisibilityChange?: (isVisible: boolean) => void;
+}
+
+export default function Sidebox({ onVisibilityChange }: SideboxProps = {}) {
   interface Note {
     id: string;
     title: string;
@@ -229,8 +233,21 @@ export default function Sidebox() {
       );
     }
   }  const toggleMobileSidebar = () => {
-    setIsMobileOpen(!isMobileOpen);
+    const newState = !isMobileOpen;
+    setIsMobileOpen(newState);
+    
+    // Notificar o componente pai sobre a mudança de visibilidade
+    if (onVisibilityChange) {
+      onVisibilityChange(newState);
+    }
   };
+
+  // Adicione um useEffect para notificar mudanças de visibilidade
+  useEffect(() => {
+    if (onVisibilityChange) {
+      onVisibilityChange(isMobileOpen);
+    }
+  }, [isMobileOpen, onVisibilityChange]);
 
   const toggleFolder = (folderId: string) => {
     setFolders(

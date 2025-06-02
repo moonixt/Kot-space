@@ -35,11 +35,17 @@
       "error": "Erro na verificação de segurança. Tente novamente",
       "loading": "Carregando verificação de segurança..."
     },
+    "success": {
+      "accountCreated": "Conta criada com sucesso!",
+      "checkEmail": "Verifique seu email para confirmar sua conta"
+    },
     "errors": {
       "passwordsDontMatch": "As senhas não coincidem.",
       "genericError": "Falha ao criar conta. Por favor, tente novamente.",
       "unknownError": "Ocorreu um erro desconhecido.",
-      "mustAgreeToTerms": "Você deve concordar com os Termos de Uso e Política de Privacidade para criar uma conta."
+      "mustAgreeToTerms": "Você deve concordar com os Termos de Uso e Política de Privacidade para criar uma conta.",
+      "rateLimitError": "Por motivos de segurança, aguarde alguns instantes antes de tentar novamente.",
+      "emailAlreadyExists": "Este email já está registrado. Tente fazer login ao invés."
     }
   },
   "pricing": {
@@ -502,5 +508,29 @@
     "showPlayer": "Mostrar player",
     "hidePlayer": "Ocultar player",
     "noCover": "Sem Capa"
+  },
+  "cookies": {
+    "title": "Aviso de Cookies",
+    "description": "Utilizamos cookies para melhorar sua experiência. Ao continuar navegando, você concorda com o uso de cookies de acordo com nossa",
+    "privacyPolicy": "Política de Privacidade",
+    "accept": "Aceitar",
+    "decline": "Recusar",
+    "preferences": "Preferências de Cookies",
+    "acceptAll": "Aceitar Todos",
+    "customize": "Personalizar",
+    "back": "Voltar",
+    "savePreferences": "Salvar Preferências",
+    "essential": {
+      "title": "Cookies Essenciais",
+      "description": "Necessários para o funcionamento básico do site"
+    },
+    "analytics": {
+      "title": "Cookies Analíticos", 
+      "description": "Ajudam a entender como você usa o site"
+    },
+    "marketing": {
+      "title": "Cookies de Marketing",
+      "description": "Usados para exibir anúncios relevantes"
+    }
   }
 }

@@ -440,10 +440,12 @@ export default function Settings() {
               <div className="space-y-6">
                 <div>
                   <h3 className="font-medium text-lg mb-3">{t("settings.privacy.passwordAuthentication", "Password & Authentication")}</h3>
+                  <Link href="/reset-password">
                   <Button variant="outline" className="w-full justify-start">
                     <Shield className="mr-2 h-4 w-4" />
                     {t("settings.privacy.changePassword", "Change Password")}
                   </Button>
+                  </Link>
                 </div>
                 
                 <div>

@@ -7,6 +7,7 @@ import { useAuth } from "../../context/AuthContext";
 // import Image from "next/image";
 import { useState, useRef, useEffect } from "react";
 // import IA from "./ChatAssistent";
+import Sidebox from "./sidebox";
 
 export default function ClientLayout({
   children,
@@ -15,6 +16,7 @@ export default function ClientLayout({
 }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isMusicPlayerVisible, setIsMusicPlayerVisible] = useState(false);
+  const [isSidebarVisible, setIsSidebarVisible] = useState(false); // Novo estado
   const [isMobile, setIsMobile] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
   const { user } = useAuth(); // Obter o usuário logado
@@ -64,7 +66,9 @@ export default function ClientLayout({
         className={`transition-all duration-300`}
         style={{
           paddingLeft: user && isMusicPlayerVisible ? 
-            (isMobile ? '0' : '320px') : '0'
+            (isMobile ? '0' : '320px') : '0',
+          paddingRight: isSidebarVisible ? 
+            (isMobile ? '0' : '288px') : '0' // 288px = w-72 (18rem)
         }}
       >
         {children}
@@ -75,6 +79,10 @@ export default function ClientLayout({
           onVisibilityChange={setIsMusicPlayerVisible}
         />
       )}
+      
+      {/* Sidebar */}
+      <Sidebox onVisibilityChange={setIsSidebarVisible} />
+      
       {/* <div id="Chatbot">
         <button
           onClick={toggleModal}

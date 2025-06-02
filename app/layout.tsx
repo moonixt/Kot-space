@@ -9,6 +9,8 @@ import TranslationProvider from "../components/TranslationProvider";
 import LanguageLoader from "../components/LanguageLoader";
 import { cookies } from "next/headers";
 import ClientLayout from "./components/ClientLayout";
+import CookieConsent from "./components/CookieConsent";
+import { CookieConsentProvider } from "../lib/useCookieConsent";
 // import Profile from "./profile/page";
 
 const geistSans = Geist({
@@ -123,16 +125,19 @@ export default async function RootLayout({
           <LanguageLoader>
             <AuthProvider>
               <ThemeProvider>
-                <ClientLayout>
-                  <div className="flex flex-col md:flex-row min-h-screen  ">
-                    <div className="flex-1  flex flex-col ">
-                      {/* <Profile /> */}
-                      {children}
-                    </div>
+                <CookieConsentProvider>
+                  <ClientLayout>
+                    <div className="flex flex-col md:flex-row min-h-screen  ">
+                      <div className="flex-1  flex flex-col ">
+                        {/* <Profile /> */}
+                        {children}
+                      </div>
 
-                    <Sidebox />
-                  </div>
-                </ClientLayout>
+                      <Sidebox />
+                    </div>
+                  </ClientLayout>
+                  <CookieConsent />
+                </CookieConsentProvider>
               </ThemeProvider>
             </AuthProvider>
           </LanguageLoader>

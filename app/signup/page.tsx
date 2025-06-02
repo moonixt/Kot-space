@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth, SignUpResult } from "../../context/AuthContext";
 import Link from "next/link";
 import Image from "next/image";
 import { useTranslation, Trans } from "react-i18next";
@@ -15,6 +15,7 @@ export default function SignUpPage() {  const [email, setEmail] = useState("");
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [successResult, setSuccessResult] = useState<SignUpResult | null>(null);
   const { signUp } = useAuth();
   const { t } = useTranslation();
   const { token: turnstileToken, onSuccess: onTurnstileSuccess, onError: onTurnstileError, reset: resetTurnstile } = useTurnstile();
@@ -31,10 +32,10 @@ export default function SignUpPage() {  const [email, setEmail] = useState("");
       // Handle cases like pt-PT, pt, etc. falling back to pt-BR
       i18n.changeLanguage("pt-BR");
     }
-  }, []);
-  const handleSubmit = async (e: React.FormEvent) => {
+  }, []);  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setSuccessResult(null);
 
     if (password !== confirmPassword) {
       setError(t("signup.errors.passwordsDontMatch"));
@@ -44,7 +45,7 @@ export default function SignUpPage() {  const [email, setEmail] = useState("");
     if (!agreedToTerms) {
       setError(t("signup.errors.mustAgreeToTerms"));
       return;
-    }    // Verificar se o captcha foi completado
+    }// Verificar se o captcha foi completado
     if (!turnstileToken) {
       setError(t("login.captcha.required"));
       return;
@@ -68,15 +69,31 @@ export default function SignUpPage() {  const [email, setEmail] = useState("");
         setError(t("login.captcha.error"));
         resetTurnstile();
         return;
-      }
-
-      await signUp(email, password);
-      // O redirecionamento já está tratado na função signUp
-    } catch (error: unknown) {
+      }      const result = await signUp(email, password);
+      setSuccessResult(result);
+      // Clear form on success
+      setEmail("");
+      setPassword("");
+      setConfirmPassword("");
+      setAgreedToTerms(false);
+      resetTurnstile();    } catch (error: unknown) {
       if (error instanceof Error) {
-        console.error("Erro ao criar conta:", error);
-        setError(error.message || t("signup.errors.genericError"));
-      } else {
+        // Check for email already registered
+        if (error.message.includes("User already registered") || 
+            error.message.includes("already been registered") ||
+            error.message.includes("Email already in use") ||
+            error.message.toLowerCase().includes("user with this email already exists")) {
+          setError(t("signup.errors.emailAlreadyExists"));
+        }
+        // Check for rate limiting error and show user-friendly message
+        else if (error.message.includes("For security purposes") || 
+            error.message.includes("you can only request this after") ||
+            error.message.includes("seconds")) {
+          setError(t("signup.errors.rateLimitError"));
+        } else {
+          // Show the actual error message to the user
+          setError(error.message || t("signup.errors.genericError"));
+        }} else {
         setError(t("signup.errors.unknownError"));
       }
       // Reset captcha em caso de erro
@@ -85,15 +102,9 @@ export default function SignUpPage() {  const [email, setEmail] = useState("");
       setLoading(false);
     }
   };
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-[var(--container)] p-4">
       <div className="w-full max-w-md">
-        {error && (
-          <div className="mb-4 p-4 bg-red-500/20 border border-red-500/30 rounded-lg text-red-400">
-            {error}
-          </div>
-        )}
         <div>
           <Image
             src="/static/images/sg.png"
@@ -188,9 +199,7 @@ export default function SignUpPage() {  const [email, setEmail] = useState("");
                   onSuccess={onTurnstileSuccess}
                   onError={() => onTurnstileError(t("login.captcha.error"))}
                 />
-              </div>
-
-              <button
+              </div>              <button
                 type="submit"
                 disabled={loading || !agreedToTerms}
                 className={`w-full py-3 rounded-lg font-medium ${
@@ -201,9 +210,26 @@ export default function SignUpPage() {  const [email, setEmail] = useState("");
               >
                 {loading
                   ? t("signup.creatingAccount")
-                  : t("signup.createAccount")}
-              </button>
+                  : t("signup.createAccount")}              </button>
             </form>
+
+            {error && (
+              <div className="mt-4 p-4 bg-red-500/20 border border-red-500/30 rounded-lg text-red-400">
+                {error}
+              </div>
+            )}
+
+            {successResult && (
+              <div className="mt-4 p-4 bg-green-500/20 border border-green-500/30 rounded-lg text-green-400">
+                <div className="flex items-center mb-2">
+                  <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  <span className="font-semibold">{t("signup.success.accountCreated")}</span>
+                </div>
+                <p>{t("signup.success.checkEmail")}</p>
+              </div>
+            )}
 
             <div className="mt-6 text-center text-[var(--foreground)]">
               {t("signup.alreadyHaveAccount")}{" "}

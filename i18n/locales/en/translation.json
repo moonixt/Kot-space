@@ -68,11 +68,17 @@
       "error": "Security verification error. Please try again",
       "loading": "Loading security verification..."
     },
+    "success": {
+      "accountCreated": "Account created successfully!",
+      "checkEmail": "Please check your email to confirm your account"
+    },
     "errors": {
       "passwordsDontMatch": "Passwords don't match.",
       "genericError": "Failed to create account. Please try again.",
       "unknownError": "An unknown error occurred.",
-      "mustAgreeToTerms": "You must agree to the Terms of Use and Privacy Policy to create an account."
+      "mustAgreeToTerms": "You must agree to the Terms of Use and Privacy Policy to create an account.",
+      "rateLimitError": "For security reasons, please wait a few moments before trying again.",
+      "emailAlreadyExists": "This email is already registered. Please try signing in instead."
     }
   },
   "resetPassword": {
@@ -504,5 +510,29 @@
     "showPlayer": "Show player",
     "hidePlayer": "Hide player",
     "noCover": "No Cover"
+  },
+  "cookies": {
+    "title": "Cookie Notice",
+    "description": "We use cookies to improve your experience. By continuing to browse, you agree to the use of cookies in accordance with our",
+    "privacyPolicy": "Privacy Policy",
+    "accept": "Accept",
+    "decline": "Decline",
+    "preferences": "Cookie Preferences",
+    "acceptAll": "Accept All",
+    "customize": "Customize",
+    "back": "Back",
+    "savePreferences": "Save Preferences",
+    "essential": {
+      "title": "Essential Cookies",
+      "description": "Necessary for the basic functioning of the site"
+    },
+    "analytics": {
+      "title": "Analytics Cookies", 
+      "description": "Help understand how you use the site"
+    },
+    "marketing": {
+      "title": "Marketing Cookies",
+      "description": "Used to display relevant advertisements"
+    }
   }
 }
