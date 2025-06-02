@@ -39,50 +39,57 @@ export default function PricingPage() {
     }
     // Create URL with query parameters
     const checkoutUrl = new URL(
-      "https://buy.stripe.com/14AaEZbZpbNW7L1at0ds402",
+      "https://buy.stripe.com/6oU14pe7x6tCc1h9oWds403",
     );
     checkoutUrl.searchParams.append("client_reference_id", user.id);
     // Open in new tab
     window.open(checkoutUrl.toString(), "_blank");
   };
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[var(--background)] to-[var(--background-secondary)] py-16 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-3xl mx-auto">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-extrabold text-[var(--foreground)] mb-4">
+    <div className="min-h-screen bg-[var(--background)] py-20 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-4xl mx-auto">
+        {/* Header Section */}
+        <div className="text-center mb-16">
+          <div className="inline-flex items-center px-4 py-2 rounded-full bg-[var(--foreground)] text-[var(--background)] text-sm font-medium mb-6">
+            <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
+            </svg>
+            Plano Premium
+          </div>
+          <h1 className="text-5xl font-bold text-[var(--foreground)] mb-6 tracking-tight">
             {t("pricing.title")}
           </h1>
-          <p className="text-xl text-[var(--foreground)] max-w-2xl mx-auto">
+          <p className="text-xl text-[var(--foreground)] max-w-2xl mx-auto leading-relaxed">
             {t("pricing.subtitle")}
           </p>
-          <div className="flex items-center justify-center mt-8 space-x-4"></div>
         </div>
-        <div className="bg-[var(--container)] rounded-2xl shadow-lg overflow-hidden mb-8">
-          <div className="bg-[var(--container)] px-6 py-4">
+        
+        {/* Plan Card */}
+        <div className="bg-[var(--foreground)] text-[var(--foreground)] border border-[var(--border)] rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200 mb-8 overflow-hidden">
+          <div className="border-b border-[var(--border)] px-8 py-6">
             <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-bold text-[var(--foregorund)]">
+              <h2 className="text-2xl font-semibold text-[var(--foreground)]">
                 {t("pricing.plan.name")}
               </h2>
-              <div className="bg-green-500 text-white px-3 py-1 text-sm font-medium rounded-full">
+              <div className="bg-emerald-500 text-white px-3 py-1 text-sm font-medium rounded-full ">
                 {t("pricing.plan.mostPopular")}
               </div>
             </div>
           </div>
           <div className="p-8">
             <div className="mb-8 flex items-baseline">
-              <span className="text-5xl font-extrabold text-[var(--foreground)]">
+              <span className="text-5xl font-bold text-[var(--background)]">
                 {t("pricing.plan.price")}
               </span>
-
-              <span className="ml-1 text-xl font-medium text-[var(--foreground)]">
+              <span className="ml-2 text-lg font-medium text-[var(--background)]">
                 {t("pricing.plan.perPeriod")}
               </span>
             </div>
-            <div className="mb-6">
-              <h3 className="text-lg font-medium text-[var(--foreground)] mb-4">
+            <div className="mb-8">
+              <h3 className="text-lg font-medium text-[var(--background)] mb-6">
                 {t("pricing.plan.included")}
               </h3>
-              <ul className="space-y-3">
+              <ul className="space-y-4">
                 {features.map((feature, index) => (
                   <li key={index} className="flex items-start">
                     <svg
@@ -95,91 +102,66 @@ export default function PricingPage() {
                       strokeWidth="2"
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      className="flex-shrink-0 h-5 w-5 text-green-500"
+                      className="flex-shrink-0 h-5 w-5 text-[var(--background)] mt-0.5"
                     >
                       <polyline points="20 6 9 17 4 12"></polyline>
                     </svg>
-                    <span className="ml-3 text-[var(--foreground)]">
+                    <span className="ml-3 text-[var(--background)] leading-relaxed">
                       {feature}
                     </span>
                   </li>
                 ))}
               </ul>
             </div>
-          </div>
-        </div>
-        <div className="bg-[var(--container)] rounded-3xl shadow-xl overflow-hidden border border-[var(--border-color)]">
-          <div className="p-8">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-bold text-[var(--foreground)]">
-                {t("pricing.orderSummary.title")}
-              </h3>
-              <div className="flex items-center text-green-600">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="h-4 w-4 mr-1"
-                >
-                  <rect
-                    x="3"
-                    y="11"
-                    width="18"
-                    height="11"
-                    rx="2"
-                    ry="2"
-                  ></rect>
-                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                </svg>
-                <span className="text-sm font-medium">
-                  {t("pricing.orderSummary.securePayment")}
-                </span>
-              </div>
-            </div>
-            <div className="flex justify-between py-4 border-t border-[var(--border-color)]">
-              <span className="text-[var(--foreground)]">
-                {t("pricing.orderSummary.planLabel")} {t("pricing.plan.name")}
-              </span>
-              <span className="font-medium text-[var(--foreground)]">
-                {t("pricing.plan.price")}
-              </span>
-            </div>
-            <div className="flex justify-between py-4 border-t border-b border-[var(--border-color)]">
-              <span className="text-[var(--foreground)]">
-                {t("pricing.orderSummary.taxes")}
-              </span>
-              <span className="font-medium text-[var(--foreground)]">
-                {t("pricing.orderSummary.included")}
-              </span>
-            </div>
-            <div className="flex justify-between py-4 mt-2">
-              <span className="text-lg font-bold text-[var(--foreground)]">
-                {t("pricing.orderSummary.total")}
-              </span>
-              <span className="text-lg font-bold text-[var(--foreground)]">
-                 {t("pricing.plan.price")}
-                {t("pricing.plan.perPeriod")}
-              </span>
-            </div>
+            
+            {/* Checkout Button */}
             <div className="mt-8">
               <button
                 onClick={handleCheckout}
-                className="w-full bg-[var(--foreground)] hover:bg-[var(--hover-color)] text-[var(--background)] py-4 px-6 rounded-xl font-semibold flex items-center justify-center transition-all duration-200"
+                className="w-full bg-[var(--background)]  text-[var(--foreground)] py-4 px-6 rounded-lg font-semibold flex items-center justify-center transition-colors duration-200"
               >
                 <CreditCard className="mr-2 h-5 w-5" />
                 <span>{t("pricing.orderSummary.checkout")}</span>
               </button>
-              <p className="text-center text-[var(--muted)] mt-4 text-sm">
-                Cancele a qualquer momento. Sem compromisso.
-              </p>
+             
             </div>
           </div>
+        </div>
+        
+        {/* Trust & Value Section */}
+        <div className="mt-12 text-center">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+            <div className="flex flex-col items-center">
+              <div className="w-12 h-12 bg-[var(--muted)] rounded-lg flex items-center justify-center mb-3">
+                <svg className="w-6 h-6 text-[var(--muted-foreground)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                </svg>
+              </div>
+              <h4 className="font-medium text-[var(--foreground)] mb-1">Segurança Total</h4>
+              <p className="text-sm text-[var(--muted-foreground)] text-center">Seus dados protegidos com criptografia de ponta</p>
+            </div>
+            <div className="flex flex-col items-center">
+              <div className="w-12 h-12 bg-[var(--muted)] rounded-lg flex items-center justify-center mb-3">
+                <svg className="w-6 h-6 text-[var(--muted-foreground)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                </svg>
+              </div>
+              <h4 className="font-medium text-[var(--foreground)] mb-1">Ultra Rápido</h4>
+              <p className="text-sm text-[var(--muted-foreground)] text-center">Sincronização instantânea entre dispositivos</p>
+            </div>
+            <div className="flex flex-col items-center">
+              <div className="w-12 h-12 bg-[var(--muted)] rounded-lg flex items-center justify-center mb-3">
+                <svg className="w-6 h-6 text-[var(--muted-foreground)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                </svg>
+              </div>
+              <h4 className="font-medium text-[var(--foreground)] mb-1">Sem Compromisso</h4>
+              <p className="text-sm text-[var(--muted-foreground)] text-center">Cancele quando quiser, dados sempre seus</p>
+            </div>
+          </div>
+          <p className="text-sm text-[var(--muted-foreground)]">
+            Junte-se a milhares de usuários que confiam em nossa plataforma para organizar suas ideias
+          </p>
         </div>
         {/* <div className="mt-12 bg-[var(--highlight)] p-6 rounded-2xl border-l-4 border-red-500">
           <h4 className="font-bold text-[var(--foreground)] text-center">
