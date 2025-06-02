@@ -527,7 +527,7 @@ const Profile = memo(() => {
                   alt="Profile"
                   width={4000}
                   height={4000}
-                  className={`w-screen h-80 sm:h-130 md:h-90 2xl:h-180 object-cover ${
+                  className={`w-screen  h-80 sm:h-130 md:h-90 2xl:h-180 object-cover ${
                     wallpaperPosition === "top"
                       ? "object-top"
                       : wallpaperPosition === "bottom"

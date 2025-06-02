@@ -57,10 +57,23 @@
     "creatingAccount": "Konto wird erstellt...",
     "alreadyHaveAccount": "Bereits ein Konto?",
     "signIn": "Anmelden",
+    "agreeToTerms": "Ich stimme den Nutzungsbedingungen zu",
+    "captcha": {
+      "required": "Bitte schließen Sie die Sicherheitsüberprüfung ab",
+      "error": "Fehler bei der Sicherheitsüberprüfung. Bitte versuchen Sie es erneut",
+      "loading": "Lade Sicherheitsüberprüfung..."
+    },
+    "success": {
+      "accountCreated": "Konto erfolgreich erstellt!",
+      "checkEmail": "Überprüfen Sie Ihre E-Mail, um Ihr Konto zu bestätigen"
+    },
     "errors": {
       "passwordsDontMatch": "Passwörter stimmen nicht überein.",
       "genericError": "Kontoerstellung fehlgeschlagen. Bitte versuchen Sie es erneut.",
-      "unknownError": "Ein unbekannter Fehler ist aufgetreten."
+      "unknownError": "Ein unbekannter Fehler ist aufgetreten.",
+      "mustAgreeToTerms": "Sie müssen den Nutzungsbedingungen und der Datenschutzrichtlinie zustimmen, um ein Konto zu erstellen.",
+      "rateLimitError": "Aus Sicherheitsgründen warten Sie bitte, bevor Sie es erneut versuchen.",
+      "emailAlreadyExists": "Diese E-Mail ist bereits registriert. Versuchen Sie sich stattdessen anzumelden."
     }
   },
   "resetPassword": {
@@ -322,5 +335,29 @@
     "showPlayer": "Player anzeigen",
     "hidePlayer": "Player ausblenden",
     "noCover": "Kein Cover"
+  },
+  "cookies": {
+    "title": "Cookie-Hinweis",
+    "description": "Wir verwenden Cookies, um Ihre Erfahrung zu verbessern. Durch die weitere Nutzung stimmen Sie der Verwendung von Cookies gemäß unserer",
+    "privacyPolicy": "Datenschutzrichtlinie",
+    "accept": "Akzeptieren",
+    "decline": "Ablehnen",
+    "preferences": "Cookie-Einstellungen",
+    "acceptAll": "Alle akzeptieren",
+    "customize": "Anpassen",
+    "back": "Zurück",
+    "savePreferences": "Einstellungen speichern",
+    "essential": {
+      "title": "Wesentliche Cookies",
+      "description": "Notwendig für die grundlegende Funktionsweise der Website"
+    },
+    "analytics": {
+      "title": "Analytische Cookies", 
+      "description": "Helfen zu verstehen, wie Sie die Website nutzen"
+    },
+    "marketing": {
+      "title": "Marketing-Cookies",
+      "description": "Werden verwendet, um relevante Werbung anzuzeigen"
+    }
   }
 }

@@ -56,10 +56,23 @@
     "creatingAccount": "アカウント作成中...",
     "alreadyHaveAccount": "すでにアカウントをお持ちですか？",
     "signIn": "サインイン",
+    "agreeToTerms": "利用規約に同意します",
+    "captcha": {
+      "required": "セキュリティ認証を完了してください",
+      "error": "セキュリティ認証エラー。再度お試しください",
+      "loading": "セキュリティ認証を読み込み中..."
+    },
+    "success": {
+      "accountCreated": "アカウントが正常に作成されました！",
+      "checkEmail": "アカウントを確認するためにメールをチェックしてください"
+    },
     "errors": {
       "passwordsDontMatch": "パスワードが一致しません。",
       "genericError": "アカウント作成に失敗しました。再試行してください。",
-      "unknownError": "不明なエラーが発生しました。"
+      "unknownError": "不明なエラーが発生しました。",
+      "mustAgreeToTerms": "アカウントを作成するには利用規約とプライバシーポリシーに同意する必要があります。",
+      "rateLimitError": "セキュリティ上の理由により、再試行前にお待ちください。",
+      "emailAlreadyExists": "このメールアドレスは既に登録されています。代わりにサインインしてください。"
     }
   },
   "resetPassword": {
@@ -500,5 +513,29 @@
     "showPlayer": "プレーヤーを表示",
     "hidePlayer": "プレーヤーを非表示",
     "noCover": "カバーなし"
+  },
+  "cookies": {
+    "title": "Cookieについて",
+    "description": "私たちはあなたの体験を向上させるためにCookieを使用しています。閲覧を続けることで、当社の",
+    "privacyPolicy": "プライバシーポリシー",
+    "accept": "同意する",
+    "decline": "拒否する",
+    "preferences": "Cookie設定",
+    "acceptAll": "すべて同意",
+    "customize": "カスタマイズ",
+    "back": "戻る",
+    "savePreferences": "設定を保存",
+    "essential": {
+      "title": "必須Cookie",
+      "description": "サイトの基本機能に必要です"
+    },
+    "analytics": {
+      "title": "分析Cookie", 
+      "description": "サイトの利用状況を理解するのに役立ちます"
+    },
+    "marketing": {
+      "title": "マーケティングCookie",
+      "description": "関連する広告を表示するために使用されます"
+    }
   }
 }

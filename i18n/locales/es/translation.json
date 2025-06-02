@@ -56,10 +56,23 @@
     "creatingAccount": "Creando cuenta...",
     "alreadyHaveAccount": "¿Ya tienes una cuenta?",
     "signIn": "Iniciar sesión",
+    "agreeToTerms": "Acepto los Términos de Uso",
+    "captcha": {
+      "required": "Por favor, complete la verificación de seguridad",
+      "error": "Error en la verificación de seguridad. Inténtalo de nuevo",
+      "loading": "Cargando verificación de seguridad..."
+    },
+    "success": {
+      "accountCreated": "¡Cuenta creada exitosamente!",
+      "checkEmail": "Revisa tu email para confirmar tu cuenta"
+    },
     "errors": {
       "passwordsDontMatch": "Las contraseñas no coinciden.",
       "genericError": "No se pudo crear la cuenta. Inténtalo de nuevo.",
-      "unknownError": "Ocurrió un error desconocido."
+      "unknownError": "Ocurrió un error desconocido.",
+      "mustAgreeToTerms": "Debes aceptar los Términos de Uso y Política de Privacidad para crear una cuenta.",
+      "rateLimitError": "Por motivos de seguridad, espera antes de intentar nuevamente.",
+      "emailAlreadyExists": "Este correo ya está registrado. Intenta iniciar sesión en su lugar."
     }
   },
   "resetPassword": {
@@ -322,5 +335,29 @@
     "showPlayer": "Mostrar reproductor",
     "hidePlayer": "Ocultar reproductor",
     "noCover": "Sin Carátula"
+  },
+  "cookies": {
+    "title": "Aviso de Cookies",
+    "description": "Utilizamos cookies para mejorar su experiencia. Al continuar navegando, acepta el uso de cookies de acuerdo con nuestra",
+    "privacyPolicy": "Política de Privacidad",
+    "accept": "Aceptar",
+    "decline": "Rechazar",
+    "preferences": "Preferencias de Cookies",
+    "acceptAll": "Aceptar Todas",
+    "customize": "Personalizar",
+    "back": "Volver",
+    "savePreferences": "Guardar Preferencias",
+    "essential": {
+      "title": "Cookies Esenciales",
+      "description": "Necesarias para el funcionamiento básico del sitio"
+    },
+    "analytics": {
+      "title": "Cookies Analíticas", 
+      "description": "Ayudan a entender cómo usa el sitio"
+    },
+    "marketing": {
+      "title": "Cookies de Marketing",
+      "description": "Utilizadas para mostrar anuncios relevantes"
+    }
   }
 }
