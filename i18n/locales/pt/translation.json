@@ -532,5 +532,344 @@
       "title": "Cookies de Marketing",
       "description": "Usados para exibir anúncios relevantes"
     }
+  },
+  "privacyPolicy": {
+    "title": "Política de Privacidade do Kot-space",
+    "lastUpdated": "Última atualização: 3 de junho de 2025",
+    "version": "Versão 2.0 - Atualizada para conformidade com LGPD e GDPR",
+    "backToLogin": "Voltar ao login",
+    "languageSwitcher": {
+      "pt": "PT",
+      "en": "EN", 
+      "de": "DE",
+      "es": "ES",
+      "ja": "JA"
+    },
+    "sections": {
+      "introduction": {
+        "title": "1. Introdução",
+        "content": {
+          "welcome": "Bem-vindo à Política de Privacidade do Kot-space. Esta política descreve como coletamos, usamos, processamos e protegemos seus dados pessoais quando você utiliza nosso aplicativo Kot-space (\"Aplicativo\"). Respeitamos sua privacidade e estamos comprometidos com a proteção de seus dados pessoais.",
+          "compliance": "Esta política foi elaborada em conformidade com a Lei Geral de Proteção de Dados (LGPD, Lei nº 13.709/2018) do Brasil e o Regulamento Geral de Proteção de Dados (GDPR, 2016/679) da União Europeia.",
+          "agreement": "Ao usar nosso Aplicativo, você concorda com a coleta e uso de informações de acordo com esta política. As informações pessoais que coletamos são usadas para fornecer e melhorar o Aplicativo. Não usaremos ou compartilharemos suas informações com ninguém, exceto conforme descrito nesta Política de Privacidade."
+        }
+      },
+      "dataController": {
+        "title": "2. Controlador de Dados",
+        "content": {
+          "description": "Kot-space (\"nós\", \"nosso\" ou \"nossa\") é o controlador dos dados pessoais coletados através deste Aplicativo. Como controlador, somos responsáveis por determinar as finalidades e meios do processamento de seus dados pessoais.",
+          "contactInfo": "Informações de Contato do Controlador:",
+          "name": "Nome: Kot-space",
+          "email": "E-mail: privacy@ederin.net"
+        }
+      },
+      "dataTypes": {
+        "title": "3. Tipos de Dados Que Coletamos",
+        "description": "Coletamos e processamos os seguintes tipos de dados pessoais:",
+        "types": {
+          "registration": "Dados de Cadastro: Quando você cria uma conta, coletamos seu endereço de e-mail e nome de usuário.",
+          "profile": "Dados de Perfil: Informações como foto de perfil, biografia e papel de parede personalizados que você opta por adicionar ao seu perfil.",
+          "userContent": "Conteúdo do Usuário: Notas e eventos de tarefas são criptografados e não são acessíveis por nós. Esses dados são armazenados de forma segura e só podem ser acessados por você através do Aplicativo.",
+          "usage": "Dados de Uso: Informações sobre como você utiliza o Aplicativo, incluindo tempo de uso, recursos acessados, preferências, frequência de uso e padrões de navegação.",
+          "technical": "Dados Técnicos: Endereço IP, tipo e versão do navegador, configuração de fuso horário, tipos e versões de plugins, sistema operacional, plataforma, identificadores únicos de dispositivo e dados de desempenho.",
+          "location": "Dados de Localização: Informações de fuso horário e localização aproximada baseada no endereço IP (quando necessário para funcionalidades do aplicativo).",
+          "cookies": "Dados de Cookies: Informações armazenadas em seu dispositivo para lembrar suas preferências e manter sua sessão."
+        }
+      },
+      "dataCollection": {
+        "title": "4. Como Coletamos Seus Dados",
+        "description": "Coletamos dados pessoais através dos seguintes métodos:",
+        "methods": {
+          "directly": "Diretamente de você, quando você cria uma conta ou adiciona conteúdo ao Aplicativo;",
+          "automatically": "Automaticamente, por meio de cookies e tecnologias similares quando você usa nosso Aplicativo;",
+          "thirdParty": "De provedores de serviços terceirizados, como provedores de serviços de autenticação (por exemplo, Google)."
+        }
+      },
+      "dataPurposes": {
+        "title": "5. Finalidades do Processamento de Dados",
+        "description": "Usamos seus dados pessoais para as seguintes finalidades:",
+        "purposes": {
+          "provide": "Fornecer e manter nosso Aplicativo;",
+          "account": "Criar e gerenciar sua conta;",
+          "storage": "Permitir que você armazene e acesse suas notas e eventos de tarefas;",
+          "personalize": "Personalizar sua experiência com base nas suas preferências;",
+          "improve": "Melhorar nosso Aplicativo através da análise de como você o utiliza;",
+          "support": "Fornecer suporte ao cliente;",
+          "payment": "Processar transações de pagamento para recursos premium (quando aplicável);",
+          "security": "Garantir a segurança e prevenir fraudes;",
+          "legal": "Cumprir obrigações legais;",
+          "sync": "Sincronizar dados entre seus dispositivos."
+        }
+      },
+      "legalBasis": {
+        "title": "6. Base Legal para Processamento",
+        "description": "Processamos seus dados pessoais com base nas seguintes justificativas legais:",
+        "bases": {
+          "consent": "Consentimento: Quando você concorda explicitamente com o processamento de seus dados para finalidades específicas;",
+          "contract": "Execução de Contrato: Quando o processamento é necessário para cumprir nossos termos de serviço com você;",
+          "legitimate": "Interesses Legítimos: Quando o processamento é necessário para nossos interesses legítimos e esses interesses não são sobrepostos pelos seus direitos e liberdades;",
+          "legal": "Cumprimento de Obrigações Legais: Quando o processamento é necessário para cumprir uma obrigação legal."
+        }
+      },
+      "dataRetention": {
+        "title": "7. Retenção de Dados",
+        "content": {
+          "principle": "Mantemos seus dados pessoais apenas pelo tempo necessário para cumprir as finalidades para as quais os coletamos, incluindo para satisfazer requisitos legais, contábeis ou de relatórios.",
+          "factors": "Para determinar o período de retenção apropriado para dados pessoais, consideramos a quantidade, natureza e sensibilidade dos dados pessoais, o risco potencial de dano por uso ou divulgação não autorizados, as finalidades para as quais processamos seus dados pessoais e se podemos alcançar essas finalidades por outros meios, além de requisitos legais aplicáveis.",
+          "anonymization": "Em algumas circunstâncias, podemos anonimizar seus dados pessoais (para que não possam mais ser associados a você) para fins de pesquisa ou estatística, caso em que podemos usar essas informações indefinidamente sem aviso adicional."
+        }
+      },
+      "dataSharing": {
+        "title": "8. Compartilhamento de Dados",
+        "description": "Podemos compartilhar seus dados pessoais com as seguintes categorias de terceiros:",
+        "categories": {
+          "serviceProviders": "Provedores de Serviços: Terceiros que nos ajudam a fornecer nosso Aplicativo, como provedores de hospedagem (Supabase), processadores de pagamento (Stripe) e serviços de análise.",
+          "authorities": "Autoridades Públicas: Quando exigido por lei, ordem judicial ou regulamentação.",
+          "business": "Parceiros de Negócios: No caso de uma fusão, aquisição ou venda de ativos, seus dados pessoais podem ser transferidos para a empresa adquirente."
+        },
+        "note": "Exigimos que todos os terceiros respeitem a segurança de seus dados pessoais e os tratem de acordo com a lei. Não permitimos que nossos provedores de serviços terceirizados usem seus dados pessoais para seus próprios fins."
+      },
+      "internationalTransfers": {
+        "title": "9. Transferências Internacionais",
+        "content": "Seus dados pessoais podem ser transferidos para, e processados em, países fora do Brasil ou da União Europeia. Nesses casos, tomaremos medidas para garantir que seus dados pessoais recebam um nível de proteção adequado, incluindo a implementação de cláusulas contratuais padrão aprovadas pela Comissão Europeia ou mecanismos de certificação aprovados."
+      },
+      "dataSecurity": {
+        "title": "10. Segurança de Dados",
+        "description": "Implementamos medidas de segurança técnicas e organizacionais apropriadas para proteger seus dados pessoais contra processamento não autorizado ou ilegal e contra perda acidental, destruição ou dano. Estas medidas incluem:",
+        "measures": {
+          "encryption": "Criptografia de dados;",
+          "authentication": "Autenticação segura para acesso às contas;",
+          "monitoring": "Monitoramento e testes regulares de nossos sistemas de segurança;",
+          "access": "Acesso restrito a seus dados pessoais por nossos funcionários com base na necessidade de conhecimento."
+        }
+      },
+      "yourRights": {
+        "title": "11. Seus Direitos",
+        "description": "Sob as leis de proteção de dados aplicáveis, você tem os seguintes direitos relacionados aos seus dados pessoais:",
+        "rights": {
+          "access": "Direito de Acesso: Você tem o direito de solicitar acesso aos seus dados pessoais que coletamos;",
+          "rectification": "Direito de Retificação: Você pode solicitar a correção de dados pessoais imprecisos ou incompletos;",
+          "erasure": "Direito ao Esquecimento: Em certas circunstâncias, você pode solicitar a exclusão de seus dados pessoais;",
+          "restriction": "Direito à Restrição de Processamento: Você pode solicitar que restrinjamos o processamento de seus dados pessoais;",
+          "portability": "Direito à Portabilidade de Dados: Você pode solicitar uma cópia de seus dados pessoais em um formato estruturado e legível por máquina;",
+          "objection": "Direito de Oposição: Você pode se opor ao processamento de seus dados pessoais em certas circunstâncias;",
+          "withdraw": "Direito de Retirar o Consentimento: Quando o processamento é baseado no consentimento, você pode retirar seu consentimento a qualquer momento;",
+          "automated": "Direito de Não Estar Sujeito à Decisão Automatizada: Você tem o direito de não estar sujeito a decisões baseadas unicamente em processamento automatizado que produzam efeitos legais."
+        },
+        "exercise": "Para exercer qualquer um dos direitos acima, entre em contato conosco pelo e-mail privacy@ederin.net. Responderemos à sua solicitação dentro de 15 dias."
+      },
+      "contact": {
+        "title": "19. Como Nos Contatar",
+        "description": "Se você tiver alguma dúvida ou preocupação sobre esta Política de Privacidade ou sobre o tratamento de seus dados pessoais, entre em contato conosco:",
+        "contacts": {
+          "main": "E-mail Principal: privacy@ederin.net",
+          "dpo": "Encarregado de Dados: privacy@ederin.net",
+          "support": "Suporte Geral: privacy@ederin.net"
+        },
+        "complaint": "Você também tem o direito de apresentar uma reclamação a uma autoridade de proteção de dados se não estiver satisfeito com a maneira como processamos seus dados pessoais:",
+        "authorities": {
+          "brazil": "Brasil: Autoridade Nacional de Proteção de Dados (ANPD) - anpd.gov.br",
+          "eu": "União Europeia: Autoridade supervisora do seu país de residência"
+        }
+      }
+    }
+  },
+  "termsOfService": {
+    "title": "Termos de Serviço do Kot-space",
+    "lastUpdated": "Última atualização: 3 de junho de 2025",
+    "backToLogin": "Voltar ao login",
+    "sections": {
+      "acceptance": {
+        "title": "1. Aceitação dos Termos",
+        "content": {
+          "welcome": "Bem-vindo ao Kot-space. Estes Termos de Serviço (\"Termos\") regem o uso do aplicativo Kot-space (\"Aplicativo\", \"Serviço\") operado por nós (\"nós\", \"nosso\" ou \"nossa\").",
+          "agreement": "Ao acessar ou utilizar nosso Aplicativo, você concorda em ficar vinculado a estes Termos. Se você discordar de qualquer parte destes termos, então você não pode acessar o Aplicativo.",
+          "application": "Estes Termos aplicam-se a todos os visitantes, usuários e outras pessoas que acessam ou usam o Aplicativo."
+        }
+      },
+      "serviceDescription": {
+        "title": "2. Descrição do Serviço",
+        "content": {
+          "description": "O Kot-space é um aplicativo de produtividade que permite aos usuários:",
+          "features": [
+            "Criar, editar e organizar notas pessoais",
+            "Gerenciar calendários e eventos",
+            "Personalizar a interface com temas e configurações",
+            "Sincronizar dados entre diferentes dispositivos",
+            "Acessar recursos de produtividade avançados"
+          ]
+        }
+      },
+      "eligibility": {
+        "title": "3. Elegibilidade e Cadastro",
+        "content": {
+          "description": "Para usar o Kot-space, você deve:",
+          "requirements": [
+            "Ter pelo menos 13 anos de idade",
+            "Fornecer informações precisas e completas durante o registro",
+            "Manter a segurança de sua conta e senha",
+            "Notificar-nos imediatamente sobre qualquer uso não autorizado de sua conta"
+          ],
+          "responsibility": "Você é responsável por todas as atividades que ocorrem em sua conta e deve manter sua senha confidencial e segura."
+        }
+      },
+      "acceptableUse": {
+        "title": "4. Uso Aceitável",
+        "content": {
+          "description": "Ao usar o Kot-space, você concorda em NÃO:",
+          "restrictions": [
+            "Usar o Aplicativo para qualquer finalidade ilegal ou não autorizada",
+            "Criar, armazenar ou compartilhar conteúdo que seja:",
+            "Interferir ou interromper o Aplicativo ou servidores conectados",
+            "Tentar obter acesso não autorizado a contas, sistemas ou redes",
+            "Usar bots, scripts ou outros meios automatizados para acessar o Aplicativo",
+            "Fazer engenharia reversa, descompilar ou desmontar o Aplicativo",
+            "Vender, licenciar ou explorar comercialmente o Aplicativo sem permissão"
+          ],
+          "contentRestrictions": [
+            "Ilegal, prejudicial, ameaçador, abusivo, difamatório ou obsceno",
+            "Discriminatório com base em raça, gênero, religião, orientação sexual",
+            "Violador de direitos de propriedade intelectual de terceiros",
+            "Contendo vírus, malware ou código malicioso",
+            "Spam ou conteúdo promocional não solicitado"
+          ]
+        }
+      },
+      "userContent": {
+        "title": "5. Conteúdo do Usuário",
+        "content": {
+          "description": "Nosso Aplicativo pode permitir que você publique, carregue, compartilhe ou armazene conteúdo (\"Conteúdo do Usuário\"). Você mantém todos os direitos sobre seu Conteúdo do Usuário.",
+          "license": "Ao publicar Conteúdo do Usuário, você nos concede uma licença mundial, não exclusiva, livre de royalties para usar, reproduzir e exibir esse conteúdo apenas para fornecer e melhorar nosso Aplicativo.",
+          "representations": "Você declara e garante que:",
+          "warranties": [
+            "Possui todos os direitos necessários sobre seu Conteúdo do Usuário",
+            "Seu conteúdo não viola estes Termos ou qualquer lei aplicável",
+            "Seu conteúdo não infringe direitos de terceiros"
+          ]
+        }
+      },
+      "intellectualProperty": {
+        "title": "6. Propriedade Intelectual",
+        "content": {
+          "ownership": "O Aplicativo e seu conteúdo original, recursos e funcionalidades são e permanecerão propriedade exclusiva do Kot-space e seus licenciadores.",
+          "protection": "O Aplicativo é protegido por direitos autorais, marcas registradas, patentes, segredos comerciais e outras leis de propriedade intelectual."
+        }
+      },
+      "subscriptions": {
+        "title": "7. Assinaturas e Pagamentos",
+        "content": {
+          "description": "Algumas partes do Aplicativo são oferecidas mediante pagamento (\"Serviços Pagos\").",
+          "terms": "Para Serviços Pagos:",
+          "conditions": [
+            "Você será cobrado antecipadamente de forma recorrente",
+            "As taxas de assinatura são não reembolsáveis, exceto conforme exigido por lei",
+            "Você pode cancelar sua assinatura a qualquer momento",
+            "O cancelamento entrará em vigor no final do período de cobrança atual",
+            "Reservamo-nos o direito de alterar preços mediante aviso prévio"
+          ]
+        }
+      },
+      "cancellation": {
+        "title": "8. Política de Cancelamento e Reembolso",
+        "content": {
+          "cancellation": "Você pode cancelar sua assinatura a qualquer momento através das configurações da sua conta ou entrando em contato conosco.",
+          "refunds": "Reembolsos são oferecidos apenas nas seguintes circunstâncias:",
+          "conditions": [
+            "Problemas técnicos críticos que impedem o uso do Aplicativo",
+            "Cobrança duplicada ou erro de processamento",
+            "Cancelamento dentro de 7 dias da primeira assinatura (período de teste)"
+          ]
+        }
+      },
+      "termination": {
+        "title": "9. Suspensão e Encerramento",
+        "content": {
+          "suspension": "Podemos encerrar ou suspender sua conta imediatamente, sem aviso prévio, por qualquer motivo, incluindo sem limitação se você violar os Termos.",
+          "userTermination": "Você pode encerrar sua conta a qualquer momento excluindo-a através das configurações ou entrando em contato conosco.",
+          "afterTermination": "Após o encerramento, seu direito de usar o Aplicativo cessará imediatamente. Se você desejar excluir sua conta, envie-nos um e-mail."
+        }
+      },
+      "disclaimers": {
+        "title": "10. Isenção de Garantias",
+        "content": {
+          "asIs": "As informações neste Aplicativo são fornecidas \"como estão\". Na máxima extensão permitida por lei, isentamo-nos de todas as garantias, expressas ou implícitas, incluindo garantias de comercialização, adequação para uma finalidade específica e não violação.",
+          "noGuarantee": "Não garantimos que:",
+          "conditions": [
+            "O Aplicativo atenderá aos seus requisitos",
+            "O Aplicativo será ininterrupto, oportuno, seguro ou livre de erros",
+            "Os resultados obtidos do uso do Aplicativo serão precisos ou confiáveis",
+            "Quaisquer erros no Aplicativo serão corrigidos"
+          ]
+        }
+      },
+      "limitation": {
+        "title": "11. Limitação de Responsabilidade",
+        "content": {
+          "limitation": "Em nenhuma circunstância seremos responsáveis por quaisquer danos diretos, indiretos, incidentais, especiais, consequenciais ou punitivos, incluindo sem limitação, perda de lucros, dados, uso, boa vontade ou outras perdas intangíveis, resultantes de:",
+          "scenarios": [
+            "Seu acesso ou uso ou incapacidade de acessar ou usar o Aplicativo",
+            "Qualquer conduta ou conteúdo de terceiros no Aplicativo",
+            "Qualquer conteúdo obtido do Aplicativo",
+            "Acesso não autorizado, uso ou alteração de suas transmissões ou conteúdo"
+          ]
+        }
+      },
+      "indemnification": {
+        "title": "12. Indenização",
+        "content": {
+          "agreement": "Você concorda em defender, indenizar e isentar-nos de responsabilidade contra qualquer reivindicação, danos, obrigações, perdas, responsabilidades, custos ou dívidas e despesas (incluindo honorários advocatícios), resultantes de:",
+          "scenarios": [
+            "Seu uso e acesso ao Aplicativo",
+            "Sua violação destes Termos",
+            "Sua violação de qualquer direito de terceiros"
+          ]
+        }
+      },
+      "governingLaw": {
+        "title": "13. Lei Aplicável",
+        "content": {
+          "law": "Estes Termos serão interpretados e regidos de acordo com as leis do Brasil, sem consideração a conflitos de princípios legais.",
+          "enforcement": "Nossa falha em fazer cumprir qualquer direito ou disposição destes Termos não será considerada uma renúncia a esses direitos."
+        }
+      },
+      "disputes": {
+        "title": "14. Resolução de Disputas",
+        "content": {
+          "arbitration": "Qualquer disputa relacionada a estes Termos será resolvida através de arbitragem vinculante conforme as regras da Câmara de Arbitragem competente.",
+          "informal": "Você concorda em primeiro tentar resolver qualquer disputa conosco informalmente por pelo menos 30 dias antes de iniciar qualquer arbitragem."
+        }
+      },
+      "changes": {
+        "title": "15. Alterações nos Termos",
+        "content": {
+          "right": "Reservamo-nos o direito, a nosso exclusivo critério, de modificar ou substituir estes Termos a qualquer momento. Se uma revisão for material, tentaremos fornecer pelo menos 30 dias de aviso antes que os novos termos entrem em vigor.",
+          "determination": "O que constitui uma alteração material será determinado a nosso exclusivo critério.",
+          "continuedUse": "Ao continuar a acessar ou usar nosso Aplicativo após essas revisões entrarem em vigor, você concorda em ficar vinculado aos termos revisados."
+        }
+      },
+      "general": {
+        "title": "16. Disposições Gerais",
+        "content": {
+          "severability": "Divisibilidade: Se qualquer disposição destes Termos for considerada inaplicável, o restante permanecerá em pleno vigor e efeito.",
+          "waiver": "Renúncia: Nossa falha em exercer ou fazer cumprir qualquer direito ou disposição destes Termos não constituirá uma renúncia a tal direito.",
+          "entireAgreement": "Acordo Integral: Estes Termos constituem o acordo integral entre você e nós sobre nosso Aplicativo."
+        }
+      },
+      "contact": {
+        "title": "17. Informações de Contato",
+        "content": {
+          "description": "Se você tiver alguma dúvida sobre estes Termos de Serviço, entre em contato conosco:",
+          "methods": [
+            "Por e-mail: privacy@ederin.net",
+            "Através do link de suporte em nosso aplicativo"
+          ],
+          "response": "Faremos o possível para responder às suas perguntas e resolver quaisquer preocupações que você possa ter."
+        }
+      },
+      "important": {
+        "title": "Importante",
+        "content": "Ao usar o Kot-space, você reconhece que leu, compreendeu e concorda em ficar vinculado a estes Termos de Serviço. Recomendamos que você também leia nossa Política de Privacidade para entender como tratamos suas informações pessoais."
+      }
+    }
   }
 }

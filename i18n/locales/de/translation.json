@@ -359,5 +359,344 @@
       "title": "Marketing-Cookies",
       "description": "Werden verwendet, um relevante Werbung anzuzeigen"
     }
+  },
+  "privacyPolicy": {
+    "title": "Kot-space Datenschutzrichtlinie",
+    "lastUpdated": "Zuletzt aktualisiert: 3. Juni 2025",
+    "version": "Version 2.0 - Aktualisiert für LGPD- und GDPR-Konformität",
+    "backToLogin": "Zurück zur Anmeldung",
+    "languageSwitcher": {
+      "pt": "PT",
+      "en": "EN", 
+      "de": "DE",
+      "es": "ES",
+      "ja": "JA"
+    },
+    "sections": {
+      "introduction": {
+        "title": "1. Einführung",
+        "content": {
+          "welcome": "Willkommen bei der Kot-space Datenschutzrichtlinie. Diese Richtlinie beschreibt, wie wir Ihre personenbezogenen Daten sammeln, verwenden, verarbeiten und schützen, wenn Sie unsere Kot-space-Anwendung (\"Anwendung\") nutzen. Wir respektieren Ihre Privatsphäre und sind dem Schutz Ihrer personenbezogenen Daten verpflichtet.",
+          "compliance": "Diese Richtlinie wurde in Übereinstimmung mit dem brasilianischen Allgemeinen Datenschutzgesetz (LGPD, Gesetz Nr. 13.709/2018) und der Datenschutz-Grundverordnung der Europäischen Union (DSGVO, 2016/679) entwickelt.",
+          "agreement": "Durch die Nutzung unserer Anwendung stimmen Sie der Sammlung und Verwendung von Informationen gemäß dieser Richtlinie zu. Die von uns gesammelten persönlichen Informationen werden zur Bereitstellung und Verbesserung der Anwendung verwendet. Wir werden Ihre Informationen nicht verwenden oder mit Dritten teilen, außer wie in dieser Datenschutzrichtlinie beschrieben."
+        }
+      },
+      "dataController": {
+        "title": "2. Datenverantwortlicher",
+        "content": {
+          "description": "Kot-space (\"wir\", \"unser\" oder \"uns\") ist der Verantwortliche für die über diese Anwendung gesammelten personenbezogenen Daten. Als Verantwortlicher sind wir für die Bestimmung der Zwecke und Mittel der Verarbeitung Ihrer personenbezogenen Daten zuständig.",
+          "contactInfo": "Kontaktinformationen des Verantwortlichen:",
+          "name": "Name: Kot-space",
+          "email": "E-Mail: privacy@ederin.net"
+        }
+      },
+      "dataTypes": {
+        "title": "3. Arten von Daten, die wir sammeln",
+        "description": "Wir sammeln und verarbeiten die folgenden Arten von personenbezogenen Daten:",
+        "types": {
+          "registration": "Registrierungsdaten: Wenn Sie ein Konto erstellen, sammeln wir Ihre E-Mail-Adresse und Ihren Benutzernamen.",
+          "profile": "Profildaten: Informationen wie Profilbild, Biografie und benutzerdefinierte Hintergrundbilder, die Sie zu Ihrem Profil hinzufügen möchten.",
+          "userContent": "Benutzerinhalte: Notizen und Aufgabenereignisse sind verschlüsselt und für uns nicht zugänglich. Diese Daten werden sicher gespeichert und können nur von Ihnen über die Anwendung abgerufen werden.",
+          "usage": "Nutzungsdaten: Informationen darüber, wie Sie die Anwendung nutzen, einschließlich Nutzungszeit, aufgerufene Funktionen, Einstellungen, Nutzungshäufigkeit und Navigationsmuster.",
+          "technical": "Technische Daten: IP-Adresse, Browser-Typ und -Version, Zeitzonenkonfiguration, Plugin-Typen und -Versionen, Betriebssystem, Plattform, eindeutige Gerätekennungen und Leistungsdaten.",
+          "location": "Standortdaten: Zeitzoneninformationen und ungefährer Standort basierend auf der IP-Adresse (wenn für die Anwendungsfunktionalität erforderlich).",
+          "cookies": "Cookie-Daten: Auf Ihrem Gerät gespeicherte Informationen, um Ihre Einstellungen zu speichern und Ihre Sitzung aufrechtzuerhalten."
+        }
+      },
+      "dataCollection": {
+        "title": "4. Wie wir Ihre Daten sammeln",
+        "description": "Wir sammeln personenbezogene Daten über die folgenden Methoden:",
+        "methods": {
+          "directly": "Direkt von Ihnen, wenn Sie ein Konto erstellen oder Inhalte zur Anwendung hinzufügen;",
+          "automatically": "Automatisch über Cookies und ähnliche Technologien, wenn Sie unsere Anwendung nutzen;",
+          "thirdParty": "Von Drittanbietern, wie z.B. Authentifizierungsdienstleistern (z.B. Google)."
+        }
+      },
+      "dataPurposes": {
+        "title": "5. Zwecke der Datenverarbeitung",
+        "description": "Wir verwenden Ihre personenbezogenen Daten für die folgenden Zwecke:",
+        "purposes": {
+          "provide": "Bereitstellung und Wartung unserer Anwendung;",
+          "account": "Erstellen und Verwalten Ihres Kontos;",
+          "storage": "Ermöglichen, dass Sie Ihre Notizen und Aufgabenereignisse speichern und darauf zugreifen können;",
+          "personalize": "Personalisierung Ihrer Erfahrung basierend auf Ihren Einstellungen;",
+          "improve": "Verbesserung unserer Anwendung durch Analyse Ihrer Nutzung;",
+          "support": "Bereitstellung von Kundensupport;",
+          "payment": "Verarbeitung von Zahlungstransaktionen für Premium-Funktionen (falls zutreffend);",
+          "security": "Gewährleistung der Sicherheit und Betrugsverhinderung;",
+          "legal": "Erfüllung rechtlicher Verpflichtungen;",
+          "sync": "Synchronisation von Daten zwischen Ihren Geräten."
+        }
+      },
+      "legalBasis": {
+        "title": "6. Rechtsgrundlage für die Verarbeitung",
+        "description": "Wir verarbeiten Ihre personenbezogenen Daten auf der Grundlage der folgenden rechtlichen Rechtfertigungen:",
+        "bases": {
+          "consent": "Einwilligung: Wenn Sie ausdrücklich der Verarbeitung Ihrer Daten für bestimmte Zwecke zustimmen;",
+          "contract": "Vertragserfüllung: Wenn die Verarbeitung zur Erfüllung unserer Nutzungsbedingungen mit Ihnen erforderlich ist;",
+          "legitimate": "Berechtigte Interessen: Wenn die Verarbeitung für unsere berechtigten Interessen erforderlich ist und diese Interessen nicht durch Ihre Rechte und Freiheiten überwiegen;",
+          "legal": "Erfüllung rechtlicher Verpflichtungen: Wenn die Verarbeitung zur Erfüllung einer rechtlichen Verpflichtung erforderlich ist."
+        }
+      },
+      "dataRetention": {
+        "title": "7. Datenspeicherung",
+        "content": {
+          "principle": "Wir speichern Ihre personenbezogenen Daten nur so lange, wie es zur Erfüllung der Zwecke erforderlich ist, für die wir sie gesammelt haben, einschließlich zur Erfüllung rechtlicher, buchhalterischer oder berichtsbezogener Anforderungen.",
+          "factors": "Um die angemessene Aufbewahrungsdauer für personenbezogene Daten zu bestimmen, berücksichtigen wir die Menge, Art und Sensibilität der personenbezogenen Daten, das potenzielle Schadensrisiko durch unbefugte Nutzung oder Offenlegung, die Zwecke, für die wir Ihre personenbezogenen Daten verarbeiten, und ob wir diese Zwecke durch andere Mittel erreichen können, sowie geltende rechtliche Anforderungen.",
+          "anonymization": "Unter bestimmten Umständen können wir Ihre personenbezogenen Daten anonymisieren (sodass sie nicht mehr mit Ihnen in Verbindung gebracht werden können) für Forschungs- oder statistische Zwecke, in welchem Fall wir diese Informationen unbegrenzt ohne weitere Benachrichtigung verwenden können."
+        }
+      },
+      "dataSharing": {
+        "title": "8. Datenweitergabe",
+        "description": "Wir können Ihre personenbezogenen Daten mit den folgenden Kategorien von Dritten teilen:",
+        "categories": {
+          "serviceProviders": "Dienstleister: Dritte, die uns bei der Bereitstellung unserer Anwendung helfen, wie z.B. Hosting-Anbieter (Supabase), Zahlungsabwickler (Stripe) und Analysedienste.",
+          "authorities": "Öffentliche Behörden: Wenn gesetzlich vorgeschrieben, durch Gerichtsbeschluss oder Verordnung.",
+          "business": "Geschäftspartner: Im Falle einer Fusion, Übernahme oder eines Vermögensverkaufs können Ihre personenbezogenen Daten an das übernehmende Unternehmen übertragen werden."
+        },
+        "note": "Wir verlangen von allen Dritten, die Sicherheit Ihrer personenbezogenen Daten zu respektieren und sie in Übereinstimmung mit dem Gesetz zu behandeln. Wir erlauben unseren Drittanbietern nicht, Ihre personenbezogenen Daten für ihre eigenen Zwecke zu verwenden."
+      },
+      "internationalTransfers": {
+        "title": "9. Internationale Übertragungen",
+        "content": "Ihre personenbezogenen Daten können in Länder außerhalb Brasiliens oder der Europäischen Union übertragen und dort verarbeitet werden. In solchen Fällen werden wir Maßnahmen ergreifen, um sicherzustellen, dass Ihre personenbezogenen Daten ein angemessenes Schutzniveau erhalten, einschließlich der Implementierung von Standardvertragsklauseln, die von der Europäischen Kommission genehmigt wurden, oder genehmigten Zertifizierungsmechanismen."
+      },
+      "dataSecurity": {
+        "title": "10. Datensicherheit",
+        "description": "Wir implementieren angemessene technische und organisatorische Sicherheitsmaßnahmen, um Ihre personenbezogenen Daten vor unbefugter oder unrechtmäßiger Verarbeitung sowie vor versehentlichem Verlust, Zerstörung oder Schaden zu schützen. Diese Maßnahmen umfassen:",
+        "measures": {
+          "encryption": "Datenverschlüsselung;",
+          "authentication": "Sichere Authentifizierung für den Kontozugang;",
+          "monitoring": "Regelmäßige Überwachung und Prüfung unserer Sicherheitssysteme;",
+          "access": "Beschränkter Zugang zu Ihren personenbezogenen Daten durch unsere Mitarbeiter auf Need-to-know-Basis."
+        }
+      },
+      "yourRights": {
+        "title": "11. Ihre Rechte",
+        "description": "Unter den geltenden Datenschutzgesetzen haben Sie die folgenden Rechte bezüglich Ihrer personenbezogenen Daten:",
+        "rights": {
+          "access": "Recht auf Zugang: Sie haben das Recht, Zugang zu Ihren personenbezogenen Daten zu verlangen, die wir sammeln;",
+          "rectification": "Recht auf Berichtigung: Sie können die Korrektur unrichtiger oder unvollständiger personenbezogener Daten verlangen;",
+          "erasure": "Recht auf Vergessenwerden: Unter bestimmten Umständen können Sie die Löschung Ihrer personenbezogenen Daten verlangen;",
+          "restriction": "Recht auf Einschränkung der Verarbeitung: Sie können verlangen, dass wir die Verarbeitung Ihrer personenbezogenen Daten einschränken;",
+          "portability": "Recht auf Datenübertragbarkeit: Sie können eine Kopie Ihrer personenbezogenen Daten in einem strukturierten, maschinenlesbaren Format verlangen;",
+          "objection": "Widerspruchsrecht: Sie können unter bestimmten Umständen der Verarbeitung Ihrer personenbezogenen Daten widersprechen;",
+          "withdraw": "Recht auf Widerruf der Einwilligung: Wenn die Verarbeitung auf Einwilligung basiert, können Sie Ihre Einwilligung jederzeit widerrufen;",
+          "automated": "Recht, nicht einer automatisierten Entscheidungsfindung unterworfen zu werden: Sie haben das Recht, nicht Entscheidungen unterworfen zu werden, die ausschließlich auf automatisierter Verarbeitung beruhen und rechtliche Auswirkungen haben."
+        },
+        "exercise": "Um eines der oben genannten Rechte auszuüben, kontaktieren Sie uns unter privacy@ederin.net. Wir werden innerhalb von 15 Tagen auf Ihre Anfrage antworten."
+      },
+      "contact": {
+        "title": "19. Wie Sie uns kontaktieren",
+        "description": "Wenn Sie Fragen oder Bedenken zu dieser Datenschutzrichtlinie oder zur Verarbeitung Ihrer personenbezogenen Daten haben, kontaktieren Sie uns:",
+        "contacts": {
+          "main": "Haupt-E-Mail: privacy@ederin.net",
+          "dpo": "Datenschutzbeauftragter: privacy@ederin.net",
+          "support": "Allgemeiner Support: privacy@ederin.net"
+        },
+        "complaint": "Sie haben auch das Recht, eine Beschwerde bei einer Datenschutzbehörde einzureichen, wenn Sie mit der Art und Weise, wie wir Ihre personenbezogenen Daten verarbeiten, nicht zufrieden sind:",
+        "authorities": {
+          "brazil": "Brasilien: Nationale Datenschutzbehörde (ANPD) - anpd.gov.br",
+          "eu": "Europäische Union: Aufsichtsbehörde Ihres Wohnsitzlandes"
+        }
+      }
+    }
+  },
+  "termsOfService": {
+    "title": "Kot-space Nutzungsbedingungen",
+    "lastUpdated": "Letzte Aktualisierung: 3. Juni 2025",
+    "backToLogin": "Zurück zum Login",
+    "sections": {
+      "acceptance": {
+        "title": "1. Annahme der Bedingungen",
+        "content": {
+          "welcome": "Willkommen bei Kot-space. Diese Nutzungsbedingungen (\"Bedingungen\") regeln die Nutzung der Kot-space-Anwendung (\"Anwendung\", \"Service\"), die von uns betrieben wird (\"wir\", \"unser\" oder \"uns\").",
+          "agreement": "Durch den Zugriff auf oder die Nutzung unserer Anwendung stimmen Sie zu, an diese Bedingungen gebunden zu sein. Wenn Sie mit einem Teil dieser Bedingungen nicht einverstanden sind, dürfen Sie nicht auf die Anwendung zugreifen.",
+          "application": "Diese Bedingungen gelten für alle Besucher, Benutzer und andere Personen, die auf die Anwendung zugreifen oder sie nutzen."
+        }
+      },
+      "serviceDescription": {
+        "title": "2. Service-Beschreibung",
+        "content": {
+          "description": "Kot-space ist eine Produktivitätsanwendung, die Benutzern ermöglicht:",
+          "features": [
+            "Persönliche Notizen erstellen, bearbeiten und organisieren",
+            "Kalender und Ereignisse verwalten",
+            "Die Benutzeroberfläche mit Themen und Einstellungen anpassen",
+            "Daten zwischen verschiedenen Geräten synchronisieren",
+            "Auf erweiterte Produktivitätsfunktionen zugreifen"
+          ]
+        }
+      },
+      "eligibility": {
+        "title": "3. Berechtigung und Registrierung",
+        "content": {
+          "description": "Um Kot-space zu nutzen, müssen Sie:",
+          "requirements": [
+            "Mindestens 13 Jahre alt sein",
+            "Genaue und vollständige Informationen bei der Registrierung angeben",
+            "Die Sicherheit Ihres Kontos und Passworts gewährleisten",
+            "Uns unverzüglich über jede unbefugte Nutzung Ihres Kontos informieren"
+          ],
+          "responsibility": "Sie sind verantwortlich für alle Aktivitäten, die unter Ihrem Konto auftreten, und müssen Ihr Passwort vertraulich und sicher halten."
+        }
+      },
+      "acceptableUse": {
+        "title": "4. Akzeptable Nutzung",
+        "content": {
+          "description": "Durch die Nutzung von Kot-space stimmen Sie zu, NICHT:",
+          "restrictions": [
+            "Die Anwendung für illegale oder unbefugte Zwecke zu verwenden",
+            "Inhalte zu erstellen, zu speichern oder zu teilen, die:",
+            "Die Anwendung oder verbundene Server zu stören oder zu unterbrechen",
+            "Unbefugten Zugang zu Konten, Systemen oder Netzwerken zu erlangen",
+            "Bots, Skripte oder andere automatisierte Mittel für den Zugang zur Anwendung zu verwenden",
+            "Die Anwendung zurückzuentwickeln, zu dekompilieren oder zu demontieren",
+            "Die Anwendung ohne Erlaubnis zu verkaufen, zu lizenzieren oder kommerziell zu nutzen"
+          ],
+          "contentRestrictions": [
+            "Illegal, schädlich, bedrohlich, missbräuchlich, verleumderisch oder obszön",
+            "Diskriminierend aufgrund von Rasse, Geschlecht, Religion, sexueller Orientierung",
+            "Verletzung von Rechten des geistigen Eigentums Dritter",
+            "Enthaltend Viren, Malware oder bösartigen Code",
+            "Spam oder unerwünschte Werbeinhalte"
+          ]
+        }
+      },
+      "userContent": {
+        "title": "5. Benutzerinhalte",
+        "content": {
+          "description": "Unsere Anwendung kann Ihnen ermöglichen, Inhalte zu veröffentlichen, hochzuladen, zu teilen oder zu speichern (\"Benutzerinhalte\"). Sie behalten alle Rechte an Ihren Benutzerinhalten.",
+          "license": "Durch das Veröffentlichen von Benutzerinhalten gewähren Sie uns eine weltweite, nicht-exklusive, gebührenfreie Lizenz zur Nutzung, Reproduktion und Anzeige dieser Inhalte ausschließlich zur Bereitstellung und Verbesserung unserer Anwendung.",
+          "representations": "Sie erklären und gewährleisten, dass:",
+          "warranties": [
+            "Sie alle notwendigen Rechte an Ihren Benutzerinhalten besitzen",
+            "Ihr Inhalt diese Bedingungen oder geltende Gesetze nicht verletzt",
+            "Ihr Inhalt keine Rechte Dritter verletzt"
+          ]
+        }
+      },
+      "intellectualProperty": {
+        "title": "6. Geistiges Eigentum",
+        "content": {
+          "ownership": "Die Anwendung und ihre ursprünglichen Inhalte, Funktionen und Funktionalitäten sind und bleiben das ausschließliche Eigentum von Kot-space und seinen Lizenzgebern.",
+          "protection": "Die Anwendung ist durch Urheberrechte, Marken, Patente, Geschäftsgeheimnisse und andere Gesetze zum geistigen Eigentum geschützt."
+        }
+      },
+      "subscriptions": {
+        "title": "7. Abonnements und Zahlungen",
+        "content": {
+          "description": "Einige Teile der Anwendung werden gegen Bezahlung angeboten (\"Bezahlte Dienste\").",
+          "terms": "Für Bezahlte Dienste:",
+          "conditions": [
+            "Sie werden im Voraus auf wiederkehrender Basis belastet",
+            "Abonnementgebühren sind nicht erstattungsfähig, außer wie gesetzlich vorgeschrieben",
+            "Sie können Ihr Abonnement jederzeit kündigen",
+            "Die Kündigung wird am Ende der aktuellen Abrechnungsperiode wirksam",
+            "Wir behalten uns das Recht vor, Preise mit vorheriger Ankündigung zu ändern"
+          ]
+        }
+      },
+      "cancellation": {
+        "title": "8. Kündigungs- und Erstattungsrichtlinie",
+        "content": {
+          "cancellation": "Sie können Ihr Abonnement jederzeit über Ihre Kontoeinstellungen oder durch Kontaktaufnahme mit uns kündigen.",
+          "refunds": "Erstattungen werden nur unter den folgenden Umständen angeboten:",
+          "conditions": [
+            "Kritische technische Probleme, die die Nutzung der Anwendung verhindern",
+            "Doppelte Abrechnung oder Verarbeitungsfehler",
+            "Kündigung innerhalb von 7 Tagen nach dem ersten Abonnement (Testperiode)"
+          ]
+        }
+      },
+      "termination": {
+        "title": "9. Aussetzung und Beendigung",
+        "content": {
+          "suspension": "Wir können Ihr Konto sofort und ohne Vorankündigung aus beliebigen Gründen beenden oder aussetzen, einschließlich ohne Einschränkung, wenn Sie gegen die Bedingungen verstoßen.",
+          "userTermination": "Sie können Ihr Konto jederzeit beenden, indem Sie es über die Einstellungen löschen oder uns kontaktieren.",
+          "afterTermination": "Nach der Beendigung erlischt Ihr Recht zur Nutzung der Anwendung sofort. Wenn Sie Ihr Konto löschen möchten, senden Sie uns bitte eine E-Mail."
+        }
+      },
+      "disclaimers": {
+        "title": "10. Haftungsausschlüsse",
+        "content": {
+          "asIs": "Die Informationen in dieser Anwendung werden \"wie sie sind\" bereitgestellt. Soweit gesetzlich zulässig, schließen wir alle Gewährleistungen aus, ausdrücklich oder stillschweigend, einschließlich Gewährleistungen der Marktgängigkeit, Eignung für einen bestimmten Zweck und Nichtverletzung.",
+          "noGuarantee": "Wir gewährleisten nicht, dass:",
+          "conditions": [
+            "Die Anwendung Ihre Anforderungen erfüllt",
+            "Die Anwendung ununterbrochen, zeitgerecht, sicher oder fehlerfrei ist",
+            "Die aus der Nutzung der Anwendung erhaltenen Ergebnisse genau oder zuverlässig sind",
+            "Fehler in der Anwendung korrigiert werden"
+          ]
+        }
+      },
+      "limitation": {
+        "title": "11. Haftungsbeschränkung",
+        "content": {
+          "limitation": "Unter keinen Umständen haften wir für direkte, indirekte, zufällige, besondere, Folge- oder Strafschäden, einschließlich ohne Einschränkung Verlust von Gewinnen, Daten, Nutzung, Goodwill oder anderen immateriellen Verlusten, die sich ergeben aus:",
+          "scenarios": [
+            "Ihrem Zugang zu oder der Nutzung oder Unfähigkeit, auf die Anwendung zuzugreifen oder sie zu nutzen",
+            "Jeglichem Verhalten oder Inhalt Dritter in der Anwendung",
+            "Jeglichem aus der Anwendung erhaltenen Inhalt",
+            "Unbefugtem Zugang, Nutzung oder Änderung Ihrer Übertragungen oder Inhalte"
+          ]
+        }
+      },
+      "indemnification": {
+        "title": "12. Schadloshaltung",
+        "content": {
+          "agreement": "Sie stimmen zu, uns gegen alle Ansprüche, Schäden, Verpflichtungen, Verluste, Haftungen, Kosten oder Schulden und Ausgaben (einschließlich Anwaltsgebühren) zu verteidigen, schadlos zu halten und freizustellen, die sich ergeben aus:",
+          "scenarios": [
+            "Ihrer Nutzung und Ihrem Zugang zur Anwendung",
+            "Ihrer Verletzung dieser Bedingungen",
+            "Ihrer Verletzung von Rechten Dritter"
+          ]
+        }
+      },
+      "governingLaw": {
+        "title": "13. Anwendbares Recht",
+        "content": {
+          "law": "Diese Bedingungen werden in Übereinstimmung mit den Gesetzen Brasiliens ausgelegt und geregelt, ohne Rücksicht auf Kollisionsnormen.",
+          "enforcement": "Unser Versäumnis, ein Recht oder eine Bestimmung dieser Bedingungen durchzusetzen, wird nicht als Verzicht auf diese Rechte betrachtet."
+        }
+      },
+      "disputes": {
+        "title": "14. Streitbeilegung",
+        "content": {
+          "arbitration": "Jede Streitigkeit in Bezug auf diese Bedingungen wird durch verbindliche Schiedsgerichtsbarkeit gemäß den Regeln der zuständigen Schiedskammer beigelegt.",
+          "informal": "Sie stimmen zu, zunächst zu versuchen, jede Streitigkeit mit uns informell für mindestens 30 Tage beizulegen, bevor Sie ein Schiedsverfahren einleiten."
+        }
+      },
+      "changes": {
+        "title": "15. Änderungen der Bedingungen",
+        "content": {
+          "right": "Wir behalten uns das Recht vor, nach unserem alleinigen Ermessen diese Bedingungen jederzeit zu ändern oder zu ersetzen. Wenn eine Überarbeitung wesentlich ist, werden wir versuchen, mindestens 30 Tage im Voraus zu benachrichtigen, bevor neue Bedingungen in Kraft treten.",
+          "determination": "Was eine wesentliche Änderung darstellt, wird nach unserem alleinigen Ermessen bestimmt.",
+          "continuedUse": "Durch die weitere Nutzung unserer Anwendung nach Inkrafttreten dieser Überarbeitungen stimmen Sie zu, an die überarbeiteten Bedingungen gebunden zu sein."
+        }
+      },
+      "general": {
+        "title": "16. Allgemeine Bestimmungen",
+        "content": {
+          "severability": "Teilnichtigkeit: Sollte eine Bestimmung dieser Bedingungen als nicht durchsetzbar erachtet werden, bleibt der Rest in vollem Umfang in Kraft.",
+          "waiver": "Verzicht: Unser Versäumnis, ein Recht oder eine Bestimmung dieser Bedingungen auszuüben oder durchzusetzen, stellt keinen Verzicht auf dieses Recht dar.",
+          "entireAgreement": "Gesamtvereinbarung: Diese Bedingungen stellen die gesamte Vereinbarung zwischen Ihnen und uns bezüglich unserer Anwendung dar."
+        }
+      },
+      "contact": {
+        "title": "17. Kontaktinformationen",
+        "content": {
+          "description": "Wenn Sie Fragen zu diesen Nutzungsbedingungen haben, kontaktieren Sie uns bitte:",
+          "methods": [
+            "Per E-Mail: privacy@ederin.net",
+            "Über den Support-Link in unserer Anwendung"
+          ],
+          "response": "Wir werden unser Bestes tun, um Ihre Fragen zu beantworten und alle Bedenken zu lösen, die Sie haben könnten."
+        }
+      },
+      "important": {
+        "title": "Wichtig",
+        "content": "Durch die Nutzung von Kot-space bestätigen Sie, dass Sie diese Nutzungsbedingungen gelesen, verstanden haben und sich damit einverstanden erklären, daran gebunden zu sein. Wir empfehlen Ihnen auch, unsere Datenschutzrichtlinie zu lesen, um zu verstehen, wie wir Ihre persönlichen Informationen behandeln."
+      }
+    }
   }
 }
