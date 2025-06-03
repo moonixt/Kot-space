@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, Suspense, useEffect } from "react";
+import { useState, Suspense, useEffect, useRef } from "react";
 import { useAuth } from "../../context/AuthContext";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -10,7 +10,6 @@ import { useRouter } from "next/navigation";
 import { useTranslation } from "next-i18next";
 import i18n from "../../i18n";
 import { Turnstile } from "@marsidev/react-turnstile";
-import { useTurnstile } from "../../lib/useTurnstile";
 
 // Create a separate client component for the part that uses useSearchParams
 function LoginForm() {
@@ -20,12 +19,21 @@ function LoginForm() {
   const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showEmailForm, setShowEmailForm] = useState(false); // Add state to control email form visibility
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const turnstileRef = useRef<any>(null);
   const searchParams = useSearchParams();
   const message = searchParams?.get("message");
   const { signIn } = useAuth();
   const router = useRouter();
   const { t } = useTranslation();
-  const { token: turnstileToken, onSuccess: onTurnstileSuccess, onError: onTurnstileError, reset: resetTurnstile } = useTurnstile();
+
+  // Função para resetar o Turnstile
+  const resetTurnstile = () => {
+    if (turnstileRef.current) {
+      turnstileRef.current.reset();
+    }
+    setTurnstileToken(null);
+  };
 
   // Initialize language detection based on browser language
   useEffect(() => {
@@ -233,9 +241,20 @@ function LoginForm() {
               {/* Turnstile Captcha */}
               <div className="mb-6 flex justify-center">
                 <Turnstile
+                  ref={turnstileRef}
                   siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || ""}
-                  onSuccess={onTurnstileSuccess}
-                  onError={() => onTurnstileError(t("login.captcha.error"))}
+                  onSuccess={(token) => {
+                    setTurnstileToken(token);
+                    setError(null);
+                  }}
+                  onError={() => {
+                    setError(t("login.captcha.error"));
+                    resetTurnstile();
+                  }}
+                  onExpire={() => {
+                    setError(t("login.captcha.error"));
+                    resetTurnstile();
+                  }}
                 />
               </div>
 

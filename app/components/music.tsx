@@ -345,7 +345,7 @@ export default function MusicPlayer({ onVisibilityChange }: MusicPlayerProps) {
               <div className="text-center">
                 {/* Album Art */}
                 <div className="mb-4 flex justify-center">
-                  <div className="w-36 h-36 rounded-lg overflow-hidden bg-white/10 flex items-center justify-center shadow-lg transition-transform duration-300 hover:scale-105">
+                  <div className="w-full h-full rounded-lg overflow-hidden bg-white/10 flex items-center justify-center shadow-lg transition-transform duration-300 hover:scale-105">
                     {albumArt ? (
                       <img 
                         src={albumArt} 

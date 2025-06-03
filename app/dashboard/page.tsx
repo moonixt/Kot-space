@@ -12,7 +12,8 @@ import Tasks from "../components/tasks";
 import { decrypt } from "../components/Encryption";
 import { useTranslation } from "react-i18next";
 // import Tables from "../components/tables";
-import { Eye, Star,   Info } from "lucide-react";
+import { Eye, Star, Info } from "lucide-react";
+
 // Bookmark
 import {
   DropdownMenu,
@@ -30,6 +31,26 @@ interface Note {
   created_at: string;
   favorite?: boolean;
 }
+
+// Utility function to extract first image from markdown content
+const extractFirstImage = (content: string): string | null => {
+  const imageRegex = /!\[.*?\]\((.*?)\)/;
+  const match = content.match(imageRegex);
+  return match ? match[1] : null;
+};
+
+// Utility function to get text content without images and markdown formatting
+const getTextPreview = (content: string, maxLength: number = 150): string => {
+  // Remove image markdown syntax
+  const withoutImages = content.replace(/!\[.*?\]\(.*?\)/g, '');
+  // Remove other markdown formatting
+  const withoutMarkdown = withoutImages.replace(/[#*`_]/g, "");
+  // Clean up extra whitespace
+  const cleaned = withoutMarkdown.replace(/\s+/g, ' ').trim();
+  
+  if (cleaned.length <= maxLength) return cleaned;
+  return cleaned.substring(0, maxLength) + "...";
+};
 
 export default function DashboardPage() {
   const { t } = useTranslation();
@@ -149,7 +170,7 @@ export default function DashboardPage() {
         </div>
 
           
-        <div className="p-4  max-w-7xl mx-auto  ">
+        <div className="p-4   mx-auto max-w-screen  sm:max-w-2xl md:max-w-3xl lg:max-w-5xl xl:max-w-7xl 2xl:max-w-7xl">
     
           <div className="flex-1  gap-4">
             {/* New document button */}
@@ -184,7 +205,7 @@ export default function DashboardPage() {
             <div
               className={`transition-all duration-600  ease-in-out overflow-hidden ${
                 showTasks
-                  ? "max-h-[1000px] pt-6 opacity-100"
+                  ? "max-h-full pt-6 opacity-100"
                   : "max-h-0 opacity-0 mb-0"
               }`}
             >
@@ -272,62 +293,92 @@ export default function DashboardPage() {
               </DropdownMenu>
             </div>
           </div>
-          
-          {loading ? (
+            {loading ? (
             <p>{t("dashboard.loading")}</p>
-          ) : (
-            <div className="grid border-[var(--foreground)] grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 pt-5 ">
-              {notes.map((note) => (
-                <Link
-                  href={`/notes/${note.id}`}
-                  key={note.id}
-                  className="block h-full"
-                >
-                  <div className="h-[300px] sm:h-[400px] p-3 bg-[var(--container)]/30 backdrop-blur-sm hover:bg-opacity-60 transition-all hover:translate-x-1 hover:shadow-md flex flex-col">
-                    <div className="flex justify-end">
-                      <button
-                        type="button"
-                        aria-label={note.favorite ? t("dashboard.unbookmark") : t("dashboard.bookmark")}
-                        onClick={e => {
-                          e.preventDefault();
-                          toggleFavorite(note.id, note.favorite);
-                        }}
-                        className={`mb-1 rounded-full p-1 transition-colors ${note.favorite ? " text-[var(--foreground)]" : "hover:bg-[var(--foreground)] hover:text-[var(--background)]"}`}
-                      >
-                        <Star size={20} fill={note.favorite ? "currentColor" : "none"} />
-                      </button>
+          ) : (            <div className="columns-2 sm:columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-4 pt-5 space-y-4">
+              {notes.map((note, index) => {
+                // Calculate dynamic height based on content length and index for variety
+                const decryptedContent = decrypt(note.content);
+                const firstImage = extractFirstImage(decryptedContent);
+                const textPreview = getTextPreview(decryptedContent);
+                
+                const contentLength = decryptedContent.length;
+                const baseHeight = firstImage ? 280 : 200; // More height for cards with images
+                const contentHeight = Math.min(contentLength / 3, 150);
+                const varietyHeight = (index % 3) * 70; // Adds variety: 0, 40, or 80px
+                const totalHeight = baseHeight + contentHeight + varietyHeight;
+                
+                return (
+                  <Link
+                    href={`/notes/${note.id}`}
+                    key={note.id}
+                    className="block break-inside-avoid mb-4"
+                  >                    <div 
+                      className="p-4 bg-[var(--container)]/30 backdrop-blur-sm hover:bg-opacity-60 transition-all hover:scale-[1.02] hover:shadow-lg flex flex-col rounded-lg border border-[var(--foreground)]/20 overflow-hidden"
+                      style={{ minHeight: `${totalHeight}px` }}
+                    >
+                      <div className="flex justify-end mb-2 ">
+                        <button
+                          type="button"
+                          aria-label={note.favorite ? t("dashboard.unbookmark") : t("dashboard.bookmark")}
+                          onClick={e => {
+                            e.preventDefault();
+                            toggleFavorite(note.id, note.favorite);
+                          }}
+                          className={`rounded-full p-1.5 transition-colors ${note.favorite ? " text-[var(--foreground)]" : "hover:bg-[var(--foreground)] hover:text-[var(--background)]"}`}
+                        >
+                          <Star size={18} fill={note.favorite ? "currentColor" : "none"} />
+                        </button>
+                      </div>
+                      
+                      <h2 className="text-base font-semibold mb-3 leading-tight break-words overflow-hidden">
+                        {note.title
+                          ? decrypt(note.title)
+                          : t("dashboard.note.untitled")}
+                      </h2>     
+                      
+                      {/* Display first image if available */}
+                      {firstImage && (
+                        <div className="mb-3 overflow-hidden rounded-lg">
+                          <img 
+                            src={firstImage} 
+                            alt="Note preview" 
+                            className="w-full h-32 object-cover object-top rounded-lg shadow-sm hover:shadow-md transition-shadow"
+                            onError={(e) => {
+                              // Hide image if it fails to load
+                              e.currentTarget.style.display = 'none';
+                            }}
+                          />
+                        </div>
+                      )}
+                      
+                      <p className="text-sm text-[var(--foreground)] opacity-80 mb-4 flex-grow leading-relaxed break-words overflow-hidden">
+                        {textPreview || t("dashboard.note.noContent")}
+                      </p>
+                      <div className="flex justify-between items-center text-xs text-gray-500 mt-auto pt-3 border-t border-[var(--container)]/20">
+                        <span>
+                          {new Date(note.created_at).toLocaleDateString()}
+                        </span>
+                        <svg
+                          width="14"
+                          height="14"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          className="opacity-60"
+                        >
+                          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1-2-2h6"></path>
+                          <polyline points="15 3 21 3 21 9"></polyline>
+                          <line x1="10" y1="14" x2="21" y2="3"></line>
+                        </svg>
+                      </div>
                     </div>
-                    <h2 className="text-sm font-semibold mb-3">
-                      {note.title
-                        ? decrypt(note.title)
-                        : t("dashboard.note.untitled")}
-                    </h2>     
-                    <p className="text-sm text-[var(--foreground)] opacity-80 line-clamp-5 mb-4 flex-grow">
-                      {decrypt(note.content).replace(/[#*`_]/g, "") ||
-                        t("dashboard.note.noContent")}
-                    </p>
-                    <div className="flex justify-between items-center text-xs text-gray-500 mt-auto pt-3">
-                      <span>
-                        {new Date(note.created_at).toLocaleDateString()}
-                      </span>
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1-2-2h6"></path>
-                        <polyline points="15 3 21 3 21 9"></polyline>
-                        <line x1="10" y1="14" x2="21" y2="3"></line>
-                      </svg>
-                    </div>
-                  </div>
-                </Link>
-              ))}
+                  </Link>
+                );
+              })}
             </div>
           )}
 

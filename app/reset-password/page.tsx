@@ -1,21 +1,29 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { supabase } from "../../lib/supabase";
 import { useTranslation } from "react-i18next";
 import i18n from "../../i18n";
 import Image from "next/image";
 import Link from "next/link";
 import { Turnstile } from "@marsidev/react-turnstile";
-import { useTurnstile } from "../../lib/useTurnstile";
 
 export default function ResetPasswordPage() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const turnstileRef = useRef<any>(null);
   const { t } = useTranslation();
-  const { token: turnstileToken, onSuccess: onTurnstileSuccess, onError: onTurnstileError, reset: resetTurnstile } = useTurnstile();
+
+  // Função para resetar o Turnstile
+  const resetTurnstile = () => {
+    if (turnstileRef.current) {
+      turnstileRef.current.reset();
+    }
+    setTurnstileToken(null);
+  };
 
   // Initialize language detection based on browser language
   useEffect(() => {
@@ -134,9 +142,20 @@ export default function ResetPasswordPage() {
               {/* Turnstile Captcha */}
               <div className="mb-6 flex justify-center">
                 <Turnstile
+                  ref={turnstileRef}
                   siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || ""}
-                  onSuccess={onTurnstileSuccess}
-                  onError={() => onTurnstileError(t("login.captcha.error"))}
+                  onSuccess={(token) => {
+                    setTurnstileToken(token);
+                    setError(null);
+                  }}
+                  onError={() => {
+                    setError(t("login.captcha.error"));
+                    resetTurnstile();
+                  }}
+                  onExpire={() => {
+                    setError(t("login.captcha.error"));
+                    resetTurnstile();
+                  }}
                 />
               </div>
 
