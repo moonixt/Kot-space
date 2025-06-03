@@ -170,7 +170,7 @@ export default function DashboardPage() {
         </div>
 
           
-        <div className="p-4   mx-auto max-w-screen  sm:max-w-2xl md:max-w-3xl lg:max-w-5xl xl:max-w-7xl 2xl:max-w-7xl">
+        <div className="p-4   mx-auto max-w-screen  sm:max-w-2xl md:max-w-3xl lg:max-w-5xl xl:max-w-7xl 2xl:max-w-7xl ">
     
           <div className="flex-1  gap-4">
             {/* New document button */}

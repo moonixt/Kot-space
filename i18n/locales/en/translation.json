@@ -534,5 +534,344 @@
       "title": "Marketing Cookies",
       "description": "Used to display relevant advertisements"
     }
+  },
+  "privacyPolicy": {
+    "title": "Kot-space Privacy Policy",
+    "lastUpdated": "Last updated: June 3, 2025",
+    "version": "Version 2.0 - Updated for LGPD and GDPR compliance",
+    "backToLogin": "Back to login",
+    "languageSwitcher": {
+      "pt": "PT",
+      "en": "EN", 
+      "de": "DE",
+      "es": "ES",
+      "ja": "JA"
+    },
+    "sections": {
+      "introduction": {
+        "title": "1. Introduction",
+        "content": {
+          "welcome": "Welcome to the Kot-space Privacy Policy. This policy describes how we collect, use, process and protect your personal data when you use our Kot-space application (\"Application\"). We respect your privacy and are committed to protecting your personal data.",
+          "compliance": "This policy has been developed in compliance with Brazil's General Data Protection Law (LGPD, Law No. 13.709/2018) and the European Union's General Data Protection Regulation (GDPR, 2016/679).",
+          "agreement": "By using our Application, you agree to the collection and use of information in accordance with this policy. The personal information we collect is used to provide and improve the Application. We will not use or share your information with anyone except as described in this Privacy Policy."
+        }
+      },
+      "dataController": {
+        "title": "2. Data Controller",
+        "content": {
+          "description": "Kot-space (\"we\", \"our\" or \"us\") is the controller of personal data collected through this Application. As controller, we are responsible for determining the purposes and means of processing your personal data.",
+          "contactInfo": "Controller Contact Information:",
+          "name": "Name: Kot-space",
+          "email": "Email: privacy@ederin.net"
+        }
+      },
+      "dataTypes": {
+        "title": "3. Types of Data We Collect",
+        "description": "We collect and process the following types of personal data:",
+        "types": {
+          "registration": "Registration Data: When you create an account, we collect your email address and username.",
+          "profile": "Profile Data: Information such as profile picture, biography and custom wallpapers that you choose to add to your profile.",
+          "userContent": "User Content: Notes and task events are encrypted and not accessible by us. This data is stored securely and can only be accessed by you through the Application.",
+          "usage": "Usage Data: Information about how you use the Application, including usage time, accessed features, preferences, frequency of use and navigation patterns.",
+          "technical": "Technical Data: IP address, browser type and version, time zone configuration, plugin types and versions, operating system, platform, unique device identifiers and performance data.",
+          "location": "Location Data: Time zone information and approximate location based on IP address (when necessary for application functionality).",
+          "cookies": "Cookie Data: Information stored on your device to remember your preferences and maintain your session."
+        }
+      },
+      "dataCollection": {
+        "title": "4. How We Collect Your Data",
+        "description": "We collect personal data through the following methods:",
+        "methods": {
+          "directly": "Directly from you, when you create an account or add content to the Application;",
+          "automatically": "Automatically, through cookies and similar technologies when you use our Application;",
+          "thirdParty": "From third-party service providers, such as authentication service providers (e.g., Google)."
+        }
+      },
+      "dataPurposes": {
+        "title": "5. Data Processing Purposes",
+        "description": "We use your personal data for the following purposes:",
+        "purposes": {
+          "provide": "Provide and maintain our Application;",
+          "account": "Create and manage your account;",
+          "storage": "Allow you to store and access your notes and task events;",
+          "personalize": "Personalize your experience based on your preferences;",
+          "improve": "Improve our Application through analysis of how you use it;",
+          "support": "Provide customer support;",
+          "payment": "Process payment transactions for premium features (when applicable);",
+          "security": "Ensure security and prevent fraud;",
+          "legal": "Comply with legal obligations;",
+          "sync": "Synchronize data between your devices."
+        }
+      },
+      "legalBasis": {
+        "title": "6. Legal Basis for Processing",
+        "description": "We process your personal data based on the following legal justifications:",
+        "bases": {
+          "consent": "Consent: When you explicitly agree to the processing of your data for specific purposes;",
+          "contract": "Contract Performance: When processing is necessary to fulfill our terms of service with you;",
+          "legitimate": "Legitimate Interests: When processing is necessary for our legitimate interests and these interests are not overridden by your rights and freedoms;",
+          "legal": "Legal Obligation Compliance: When processing is necessary to comply with a legal obligation."
+        }
+      },
+      "dataRetention": {
+        "title": "7. Data Retention",
+        "content": {
+          "principle": "We retain your personal data only for as long as necessary to fulfill the purposes for which we collected it, including to satisfy legal, accounting or reporting requirements.",
+          "factors": "To determine the appropriate retention period for personal data, we consider the amount, nature and sensitivity of the personal data, the potential risk of harm from unauthorized use or disclosure, the purposes for which we process your personal data and whether we can achieve those purposes through other means, as well as applicable legal requirements.",
+          "anonymization": "In some circumstances, we may anonymize your personal data (so that it can no longer be associated with you) for research or statistical purposes, in which case we may use this information indefinitely without further notice."
+        }
+      },
+      "dataSharing": {
+        "title": "8. Data Sharing",
+        "description": "We may share your personal data with the following categories of third parties:",
+        "categories": {
+          "serviceProviders": "Service Providers: Third parties that help us provide our Application, such as hosting providers (Supabase), payment processors (Stripe) and analytics services.",
+          "authorities": "Public Authorities: When required by law, court order or regulation.",
+          "business": "Business Partners: In the event of a merger, acquisition or asset sale, your personal data may be transferred to the acquiring company."
+        },
+        "note": "We require all third parties to respect the security of your personal data and treat it in accordance with the law. We do not allow our third-party service providers to use your personal data for their own purposes."
+      },
+      "internationalTransfers": {
+        "title": "9. International Transfers",
+        "content": "Your personal data may be transferred to, and processed in, countries outside Brazil or the European Union. In such cases, we will take measures to ensure that your personal data receives an adequate level of protection, including implementation of standard contractual clauses approved by the European Commission or approved certification mechanisms."
+      },
+      "dataSecurity": {
+        "title": "10. Data Security",
+        "description": "We implement appropriate technical and organizational security measures to protect your personal data against unauthorized or unlawful processing and against accidental loss, destruction or damage. These measures include:",
+        "measures": {
+          "encryption": "Data encryption;",
+          "authentication": "Secure authentication for account access;",
+          "monitoring": "Regular monitoring and testing of our security systems;",
+          "access": "Restricted access to your personal data by our employees on a need-to-know basis."
+        }
+      },
+      "yourRights": {
+        "title": "11. Your Rights",
+        "description": "Under applicable data protection laws, you have the following rights regarding your personal data:",
+        "rights": {
+          "access": "Right of Access: You have the right to request access to your personal data that we collect;",
+          "rectification": "Right of Rectification: You may request correction of inaccurate or incomplete personal data;",
+          "erasure": "Right to be Forgotten: In certain circumstances, you may request deletion of your personal data;",
+          "restriction": "Right to Restriction of Processing: You may request that we restrict the processing of your personal data;",
+          "portability": "Right to Data Portability: You may request a copy of your personal data in a structured, machine-readable format;",
+          "objection": "Right to Object: You may object to the processing of your personal data in certain circumstances;",
+          "withdraw": "Right to Withdraw Consent: When processing is based on consent, you may withdraw your consent at any time;",
+          "automated": "Right Not to be Subject to Automated Decision-Making: You have the right not to be subject to decisions based solely on automated processing that produce legal effects."
+        },
+        "exercise": "To exercise any of the above rights, contact us at privacy@ederin.net. We will respond to your request within 15 days."
+      },
+      "contact": {
+        "title": "19. How to Contact Us",
+        "description": "If you have any questions or concerns about this Privacy Policy or about the processing of your personal data, contact us:",
+        "contacts": {
+          "main": "Main Email: privacy@ederin.net",
+          "dpo": "Data Protection Officer: privacy@ederin.net",
+          "support": "General Support: privacy@ederin.net"
+        },
+        "complaint": "You also have the right to file a complaint with a data protection authority if you are not satisfied with how we process your personal data:",
+        "authorities": {
+          "brazil": "Brazil: National Data Protection Authority (ANPD) - anpd.gov.br",
+          "eu": "European Union: Supervisory authority of your country of residence"
+        }
+      }
+    }
+  },
+  "termsOfService": {
+    "title": "Kot-space Terms of Service",
+    "lastUpdated": "Last updated: June 3, 2025",
+    "backToLogin": "Back to login",
+    "sections": {
+      "acceptance": {
+        "title": "1. Acceptance of Terms",
+        "content": {
+          "welcome": "Welcome to Kot-space. These Terms of Service (\"Terms\") govern the use of the Kot-space application (\"Application\", \"Service\") operated by us (\"we\", \"our\" or \"us\").",
+          "agreement": "By accessing or using our Application, you agree to be bound by these Terms. If you disagree with any part of these terms, then you may not access the Application.",
+          "application": "These Terms apply to all visitors, users and other persons who access or use the Application."
+        }
+      },
+      "serviceDescription": {
+        "title": "2. Service Description",
+        "content": {
+          "description": "Kot-space is a productivity application that allows users to:",
+          "features": [
+            "Create, edit and organize personal notes",
+            "Manage calendars and events",
+            "Customize the interface with themes and settings",
+            "Synchronize data across different devices",
+            "Access advanced productivity features"
+          ]
+        }
+      },
+      "eligibility": {
+        "title": "3. Eligibility and Registration",
+        "content": {
+          "description": "To use Kot-space, you must:",
+          "requirements": [
+            "Be at least 13 years old",
+            "Provide accurate and complete information during registration",
+            "Maintain the security of your account and password",
+            "Notify us immediately of any unauthorized use of your account"
+          ],
+          "responsibility": "You are responsible for all activities that occur under your account and must keep your password confidential and secure."
+        }
+      },
+      "acceptableUse": {
+        "title": "4. Acceptable Use",
+        "content": {
+          "description": "By using Kot-space, you agree NOT to:",
+          "restrictions": [
+            "Use the Application for any illegal or unauthorized purpose",
+            "Create, store or share content that is:",
+            "Interfere with or disrupt the Application or connected servers",
+            "Attempt to gain unauthorized access to accounts, systems or networks",
+            "Use bots, scripts or other automated means to access the Application",
+            "Reverse engineer, decompile or disassemble the Application",
+            "Sell, license or commercially exploit the Application without permission"
+          ],
+          "contentRestrictions": [
+            "Illegal, harmful, threatening, abusive, defamatory or obscene",
+            "Discriminatory based on race, gender, religion, sexual orientation",
+            "Violating third-party intellectual property rights",
+            "Containing viruses, malware or malicious code",
+            "Spam or unsolicited promotional content"
+          ]
+        }
+      },
+      "userContent": {
+        "title": "5. User Content",
+        "content": {
+          "description": "Our Application may allow you to post, upload, share or store content (\"User Content\"). You retain all rights to your User Content.",
+          "license": "By posting User Content, you grant us a worldwide, non-exclusive, royalty-free license to use, reproduce and display that content solely to provide and improve our Application.",
+          "representations": "You represent and warrant that:",
+          "warranties": [
+            "You own all necessary rights to your User Content",
+            "Your content does not violate these Terms or any applicable law",
+            "Your content does not infringe third party rights"
+          ]
+        }
+      },
+      "intellectualProperty": {
+        "title": "6. Intellectual Property",
+        "content": {
+          "ownership": "The Application and its original content, features and functionality are and will remain the exclusive property of Kot-space and its licensors.",
+          "protection": "The Application is protected by copyright, trademarks, patents, trade secrets and other intellectual property laws."
+        }
+      },
+      "subscriptions": {
+        "title": "7. Subscriptions and Payments",
+        "content": {
+          "description": "Some parts of the Application are offered for payment (\"Paid Services\").",
+          "terms": "For Paid Services:",
+          "conditions": [
+            "You will be charged in advance on a recurring basis",
+            "Subscription fees are non-refundable, except as required by law",
+            "You may cancel your subscription at any time",
+            "Cancellation will take effect at the end of the current billing period",
+            "We reserve the right to change prices with prior notice"
+          ]
+        }
+      },
+      "cancellation": {
+        "title": "8. Cancellation and Refund Policy",
+        "content": {
+          "cancellation": "You may cancel your subscription at any time through your account settings or by contacting us.",
+          "refunds": "Refunds are offered only under the following circumstances:",
+          "conditions": [
+            "Critical technical issues that prevent use of the Application",
+            "Duplicate billing or processing error",
+            "Cancellation within 7 days of first subscription (trial period)"
+          ]
+        }
+      },
+      "termination": {
+        "title": "9. Suspension and Termination",
+        "content": {
+          "suspension": "We may terminate or suspend your account immediately, without prior notice, for any reason whatsoever, including without limitation if you breach the Terms.",
+          "userTermination": "You may terminate your account at any time by deleting it through the settings or by contacting us.",
+          "afterTermination": "Upon termination, your right to use the Application will cease immediately. If you wish to delete your account, please email us."
+        }
+      },
+      "disclaimers": {
+        "title": "10. Disclaimers",
+        "content": {
+          "asIs": "The information in this Application is provided \"as is\". To the maximum extent permitted by law, we disclaim all warranties, express or implied, including warranties of merchantability, fitness for a particular purpose and non-infringement.",
+          "noGuarantee": "We do not warrant that:",
+          "conditions": [
+            "The Application will meet your requirements",
+            "The Application will be uninterrupted, timely, secure or error-free",
+            "The results obtained from using the Application will be accurate or reliable",
+            "Any errors in the Application will be corrected"
+          ]
+        }
+      },
+      "limitation": {
+        "title": "11. Limitation of Liability",
+        "content": {
+          "limitation": "In no event shall we be liable for any direct, indirect, incidental, special, consequential or punitive damages, including without limitation, loss of profits, data, use, goodwill or other intangible losses, resulting from:",
+          "scenarios": [
+            "Your access to or use of or inability to access or use the Application",
+            "Any conduct or content of any third party on the Application",
+            "Any content obtained from the Application",
+            "Unauthorized access, use or alteration of your transmissions or content"
+          ]
+        }
+      },
+      "indemnification": {
+        "title": "12. Indemnification",
+        "content": {
+          "agreement": "You agree to defend, indemnify and hold us harmless from and against any claims, damages, obligations, losses, liabilities, costs or debt and expenses (including attorney fees), resulting from:",
+          "scenarios": [
+            "Your use of and access to the Application",
+            "Your violation of these Terms",
+            "Your violation of any third party right"
+          ]
+        }
+      },
+      "governingLaw": {
+        "title": "13. Governing Law",
+        "content": {
+          "law": "These Terms shall be interpreted and governed in accordance with the laws of Brazil, without regard to its conflict of law principles.",
+          "enforcement": "Our failure to enforce any right or provision of these Terms will not be considered a waiver of those rights."
+        }
+      },
+      "disputes": {
+        "title": "14. Dispute Resolution",
+        "content": {
+          "arbitration": "Any dispute relating to these Terms will be resolved through binding arbitration in accordance with the rules of the competent Arbitration Chamber.",
+          "informal": "You agree to first attempt to resolve any dispute with us informally for at least 30 days before initiating any arbitration."
+        }
+      },
+      "changes": {
+        "title": "15. Changes to Terms",
+        "content": {
+          "right": "We reserve the right, at our sole discretion, to modify or replace these Terms at any time. If a revision is material, we will try to provide at least 30 days notice prior to any new terms taking effect.",
+          "determination": "What constitutes a material change will be determined at our sole discretion.",
+          "continuedUse": "By continuing to access or use our Application after those revisions become effective, you agree to be bound by the revised terms."
+        }
+      },
+      "general": {
+        "title": "16. General Provisions",
+        "content": {
+          "severability": "Severability: If any provision of these Terms is held to be unenforceable, the remainder will remain in full force and effect.",
+          "waiver": "Waiver: Our failure to exercise or enforce any right or provision of these Terms will not constitute a waiver of such right.",
+          "entireAgreement": "Entire Agreement: These Terms constitute the entire agreement between you and us regarding our Application."
+        }
+      },
+      "contact": {
+        "title": "17. Contact Information",
+        "content": {
+          "description": "If you have any questions about these Terms of Service, please contact us:",
+          "methods": [
+            "By email: privacy@ederin.net",
+            "Through the support link in our application"
+          ],
+          "response": "We will do our best to respond to your questions and resolve any concerns you may have."
+        }
+      },
+      "important": {
+        "title": "Important",
+        "content": "By using Kot-space, you acknowledge that you have read, understood and agree to be bound by these Terms of Service. We recommend that you also read our Privacy Policy to understand how we treat your personal information."
+      }
+    }
   }
 }

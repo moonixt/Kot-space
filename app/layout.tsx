@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Sidebox from "./components/sidebox";
+// import Sidebox from "./components/sidebox";
 import { AuthProvider } from "../context/AuthContext";
 import { ThemeProvider } from "../context/ThemeContext";
 import ServiceWorkerRegistration from "./components/ServiceWorkerRegistration";
@@ -127,13 +127,13 @@ export default async function RootLayout({
               <ThemeProvider>
                 <CookieConsentProvider>
                   <ClientLayout>
-                    <div className="flex flex-col md:flex-row min-h-screen  ">
+                    <div className="flex  flex-col 2xl:flex-row min-h-screen  ">
                       <div className="flex-1  flex flex-col ">
                         {/* <Profile /> */}
                         {children}
                       </div>
 
-                      <Sidebox />
+                      {/* <Sidebox /> */}
                     </div>
                   </ClientLayout>
                   <CookieConsent />

@@ -6,7 +6,7 @@ function createWindow() {
   // Cria a janela de splash
   const splash = new BrowserWindow({
     width: 1200,
-    height: 800,
+    height: 720,
     frame: false,
     alwaysOnTop: true,
     transparent: true,
@@ -19,15 +19,16 @@ function createWindow() {
 
   // Cria a janela principal, mas não mostra ainda
   const win = new BrowserWindow({
-    width: 1200,
-    height: 800,
+    width: 1280,
+    height: 720,
     minWidth: 436,
-    minHeight: 780,
+    minHeight: 720,
     autoHideMenuBar: true,
     menuBarVisible: false,
     frame: true,
     show: false, // Hide until ready
     backgroundColor: "#000",
+    fullscreen: false,
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,

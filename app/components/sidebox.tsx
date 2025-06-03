@@ -378,7 +378,7 @@ const toggleFullscreen = () => {
 
       {/* Sidebar */}
       <aside
-        className={`fixed inset-y-0 right-0 w-72 bg-[var(--background)]/85 backdrop-blur text-[var(--text-color)] shadow-xl transition-transform duration-300 ease-in-out z-40 
+        className={`fixed inset-y-0 right-0 w-72  bg-[var(--background)]/85 backdrop-blur text-[var(--text-color)] shadow-xl transition-transform duration-300 ease-in-out z-40 
         ${isMobileOpen ? "translate-x-0" : "translate-x-full"}`}
       >
         <div className="flex flex-col h-full">

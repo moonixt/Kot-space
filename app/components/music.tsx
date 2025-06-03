@@ -341,7 +341,7 @@ export default function MusicPlayer({ onVisibilityChange }: MusicPlayerProps) {
 
           {/* Current Track Info */}
           {audioFile && (
-            <div className="mb-6 p-4 bg-white/5 rounded-lg">
+            <div className="mb-6 p-2 bg-white/5 rounded-lg">
               <div className="text-center">
                 {/* Album Art */}
                 <div className="mb-4 flex justify-center">

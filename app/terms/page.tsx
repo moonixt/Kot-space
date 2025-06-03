@@ -1,34 +1,238 @@
+"use client";
+
+import React from "react";
 import Link from "next/link";
+import { useTranslation } from "react-i18next";
+import LanguageSwitcher from "../../components/LanguageSwitcher";
 
 export default function TermsPage() {
+    const { t } = useTranslation();
+
     return (
-        <div className="flex justify-center min-h-screen p-4 ">
-            <Link href="/">
-            <p>
-                Back
-            </p>
-            </Link>
-        <div className="max-w-7xl ">
-            <div className="text-4xl text-[var(--foreground)] bg-[var(--theme)] mt-5 mb-2 ">
-            Terms of Service
+        <div className="min-h-screen bg-[var(--background)] p-4 md:p-8 lg:p-12">
+            <div className="pb-10 flex justify-between items-center">
+                <Link
+                    href="/"
+                    className="text-[var(--foreground)] text-sm font-semibold"
+                >
+                    {t('termsOfService.backToLogin')}
+                </Link>
+                <LanguageSwitcher />
+            </div>            <div className="max-w-4xl mx-auto prose prose-invert">
+                <h1 className="text-3xl font-bold text-[var(--foreground)] mb-6">
+                    {t('termsOfService.title')}
+                </h1>
+                <p className="text-lg text-[var(--foreground)] mb-4">
+                    {t('termsOfService.lastUpdated')}
+                </p>
+
+                <div className="my-8 text-[var(--foreground)]">
+                    <h2 className="text-2xl font-semibold mb-4">{t('termsOfService.sections.acceptance.title')}</h2>
+                    <p className="mb-4">
+                        {t('termsOfService.sections.acceptance.content.welcome')}
+                    </p>
+                    <p className="mb-4">
+                        {t('termsOfService.sections.acceptance.content.agreement')}
+                    </p>
+                    <p className="mb-4">
+                        {t('termsOfService.sections.acceptance.content.application')}
+                    </p>
+
+                    <h2 className="text-2xl font-semibold mt-8 mb-4">{t('termsOfService.sections.serviceDescription.title')}</h2>
+                    <p className="mb-4">
+                        {t('termsOfService.sections.serviceDescription.content.description')}
+                    </p>
+                    <ul className="list-disc pl-6 mb-4">
+                        {t('termsOfService.sections.serviceDescription.content.features', { returnObjects: true }).map((feature: string, index: number) => (
+                            <li key={index}>{feature}</li>
+                        ))}
+                    </ul>
+
+                    <h2 className="text-2xl font-semibold mt-8 mb-4">{t('termsOfService.sections.eligibility.title')}</h2>
+                    <p className="mb-4">
+                        {t('termsOfService.sections.eligibility.content.description')}
+                    </p>
+                    <ul className="list-disc pl-6 mb-4">
+                        {t('termsOfService.sections.eligibility.content.requirements', { returnObjects: true }).map((requirement: string, index: number) => (
+                            <li key={index}>{requirement}</li>
+                        ))}
+                    </ul>
+                    <p className="mb-4">
+                        {t('termsOfService.sections.eligibility.content.responsibility')}
+                    </p>
+
+                    <h2 className="text-2xl font-semibold mt-8 mb-4">{t('termsOfService.sections.acceptableUse.title')}</h2>
+                    <p className="mb-4">
+                        {t('termsOfService.sections.acceptableUse.content.description')}
+                    </p>
+                    <ul className="list-disc pl-6 mb-4">
+                        {t('termsOfService.sections.acceptableUse.content.restrictions', { returnObjects: true }).slice(0, 2).map((restriction: string, index: number) => (
+                            <li key={index}>{restriction}</li>
+                        ))}
+                        <li>{t('termsOfService.sections.acceptableUse.content.restrictions', { returnObjects: true })[2]}</li>
+                        <ul className="list-disc pl-6 ml-4 mb-2">
+                            {t('termsOfService.sections.acceptableUse.content.contentRestrictions', { returnObjects: true }).map((restriction: string, index: number) => (
+                                <li key={index}>{restriction}</li>
+                            ))}
+                        </ul>
+                        {t('termsOfService.sections.acceptableUse.content.restrictions', { returnObjects: true }).slice(3).map((restriction: string, index: number) => (
+                            <li key={index + 3}>{restriction}</li>
+                        ))}
+                    </ul>
+
+                    <h2 className="text-2xl font-semibold mt-8 mb-4">{t('termsOfService.sections.userContent.title')}</h2>
+                    <p className="mb-4">
+                        {t('termsOfService.sections.userContent.content.description')}
+                    </p>
+                    <p className="mb-4">
+                        {t('termsOfService.sections.userContent.content.license')}
+                    </p>
+                    <p className="mb-4">
+                        {t('termsOfService.sections.userContent.content.representations')}
+                    </p>
+                    <ul className="list-disc pl-6 mb-4">
+                        {t('termsOfService.sections.userContent.content.warranties', { returnObjects: true }).map((warranty: string, index: number) => (
+                            <li key={index}>{warranty}</li>
+                        ))}
+                    </ul>
+
+                    <h2 className="text-2xl font-semibold mt-8 mb-4">{t('termsOfService.sections.intellectualProperty.title')}</h2>
+                    <p className="mb-4">
+                        {t('termsOfService.sections.intellectualProperty.content.ownership')}
+                    </p>
+                    <p className="mb-4">
+                        {t('termsOfService.sections.intellectualProperty.content.protection')}
+                    </p>
+
+                    <h2 className="text-2xl font-semibold mt-8 mb-4">{t('termsOfService.sections.subscriptions.title')}</h2>
+                    <p className="mb-4">
+                        {t('termsOfService.sections.subscriptions.content.description')}
+                    </p>
+                    <p className="mb-4">
+                        {t('termsOfService.sections.subscriptions.content.terms')}
+                    </p>
+                    <ul className="list-disc pl-6 mb-4">
+                        {t('termsOfService.sections.subscriptions.content.conditions', { returnObjects: true }).map((condition: string, index: number) => (
+                            <li key={index}>{condition}</li>
+                        ))}
+                    </ul>
+
+                    <h2 className="text-2xl font-semibold mt-8 mb-4">{t('termsOfService.sections.cancellation.title')}</h2>
+                    <p className="mb-4">
+                        {t('termsOfService.sections.cancellation.content.cancellation')}
+                    </p>
+                    <p className="mb-4">
+                        {t('termsOfService.sections.cancellation.content.refunds')}
+                    </p>
+                    <ul className="list-disc pl-6 mb-4">
+                        {t('termsOfService.sections.cancellation.content.conditions', { returnObjects: true }).map((condition: string, index: number) => (
+                            <li key={index}>{condition}</li>
+                        ))}
+                    </ul>
+
+                    <h2 className="text-2xl font-semibold mt-8 mb-4">{t('termsOfService.sections.termination.title')}</h2>
+                    <p className="mb-4">
+                        {t('termsOfService.sections.termination.content.suspension')}
+                    </p>
+                    <p className="mb-4">
+                        {t('termsOfService.sections.termination.content.userTermination')}
+                    </p>
+                    <p className="mb-4">
+                        {t('termsOfService.sections.termination.content.afterTermination')}
+                    </p>
+
+                    <h2 className="text-2xl font-semibold mt-8 mb-4">{t('termsOfService.sections.disclaimers.title')}</h2>
+                    <p className="mb-4">
+                        {t('termsOfService.sections.disclaimers.content.asIs')}
+                    </p>
+                    <p className="mb-4">
+                        {t('termsOfService.sections.disclaimers.content.noGuarantee')}
+                    </p>
+                    <ul className="list-disc pl-6 mb-4">
+                        {t('termsOfService.sections.disclaimers.content.conditions', { returnObjects: true }).map((condition: string, index: number) => (
+                            <li key={index}>{condition}</li>
+                        ))}
+                    </ul>
+
+                    <h2 className="text-2xl font-semibold mt-8 mb-4">{t('termsOfService.sections.limitation.title')}</h2>
+                    <p className="mb-4">
+                        {t('termsOfService.sections.limitation.content.limitation')}
+                    </p>
+                    <ul className="list-disc pl-6 mb-4">
+                        {t('termsOfService.sections.limitation.content.scenarios', { returnObjects: true }).map((scenario: string, index: number) => (
+                            <li key={index}>{scenario}</li>
+                        ))}
+                    </ul>
+
+                    <h2 className="text-2xl font-semibold mt-8 mb-4">{t('termsOfService.sections.indemnification.title')}</h2>
+                    <p className="mb-4">
+                        {t('termsOfService.sections.indemnification.content.agreement')}
+                    </p>
+                    <ul className="list-disc pl-6 mb-4">
+                        {t('termsOfService.sections.indemnification.content.scenarios', { returnObjects: true }).map((scenario: string, index: number) => (
+                            <li key={index}>{scenario}</li>
+                        ))}
+                    </ul>
+
+                    <h2 className="text-2xl font-semibold mt-8 mb-4">{t('termsOfService.sections.governingLaw.title')}</h2>
+                    <p className="mb-4">
+                        {t('termsOfService.sections.governingLaw.content.law')}
+                    </p>
+                    <p className="mb-4">
+                        {t('termsOfService.sections.governingLaw.content.enforcement')}
+                    </p>
+
+                    <h2 className="text-2xl font-semibold mt-8 mb-4">{t('termsOfService.sections.disputes.title')}</h2>
+                    <p className="mb-4">
+                        {t('termsOfService.sections.disputes.content.arbitration')}
+                    </p>
+                    <p className="mb-4">
+                        {t('termsOfService.sections.disputes.content.informal')}
+                    </p>
+
+                    <h2 className="text-2xl font-semibold mt-8 mb-4">{t('termsOfService.sections.changes.title')}</h2>
+                    <p className="mb-4">
+                        {t('termsOfService.sections.changes.content.right')}
+                    </p>
+                    <p className="mb-4">
+                        {t('termsOfService.sections.changes.content.determination')}
+                    </p>
+                    <p className="mb-4">
+                        {t('termsOfService.sections.changes.content.continuedUse')}
+                    </p>
+
+                    <h2 className="text-2xl font-semibold mt-8 mb-4">{t('termsOfService.sections.general.title')}</h2>
+                    <p className="mb-4">
+                        <strong>Divisibilidade:</strong> {t('termsOfService.sections.general.content.severability').split(': ')[1]}
+                    </p>
+                    <p className="mb-4">
+                        <strong>Renúncia:</strong> {t('termsOfService.sections.general.content.waiver').split(': ')[1]}
+                    </p>
+                    <p className="mb-4">
+                        <strong>Acordo Integral:</strong> {t('termsOfService.sections.general.content.entireAgreement').split(': ')[1]}
+                    </p>
+
+                    <h2 className="text-2xl font-semibold mt-8 mb-4">{t('termsOfService.sections.contact.title')}</h2>
+                    <p className="mb-4">
+                        {t('termsOfService.sections.contact.content.description')}
+                    </p>
+                    <ul className="list-disc pl-6 mb-4">
+                        {t('termsOfService.sections.contact.content.methods', { returnObjects: true }).map((method: string, index: number) => (
+                            <li key={index}>{method}</li>
+                        ))}
+                    </ul>
+                    <p className="mb-4">
+                        {t('termsOfService.sections.contact.content.response')}
+                    </p>                    <div className="mt-8 p-4 bg-[var(--container)] rounded-lg">
+                        <p className="text-sm">
+                            <strong>{t('termsOfService.sections.important.title')}:</strong> {t('termsOfService.sections.important.content')}
+                            <Link href="/privacy" className="text-blue-500 underline ml-1">
+                                {t('privacyPolicy.title')}
+                            </Link>
+                        </p>
+                    </div>
+                </div>
             </div>
-            <div className="bg-[var(--container)] text-[var(--foreground)] rounded p-6 shadow">
-                <h2 className="text-xl font-bold mb-2">1. Aceitação dos Termos</h2>
-                <p className="mb-4">Ao acessar ou utilizar este aplicativo, você concorda com estes Termos de Uso. Caso não concorde, por favor, não utilize o serviço.</p>
-                <h2 className="text-xl font-bold mb-2">2. Uso Permitido</h2>
-                <p className="mb-4">É estritamente proibido utilizar o aplicativo para criar, armazenar, compartilhar ou divulgar conteúdo adulto, impróprio, ilegal, ofensivo, discriminatório ou que viole direitos de terceiros.</p>
-                <h2 className="text-xl font-bold mb-2">3. Responsabilidade do Usuário</h2>
-                <p className="mb-4">O usuário é o único responsável pelo conteúdo inserido, compartilhado ou armazenado no aplicativo. O uso inadequado pode resultar em suspensão ou exclusão da conta.</p>
-                <h2 className="text-xl font-bold mb-2">4. Limitação de Responsabilidade</h2>
-                <p className="mb-4">O aplicativo é fornecido como está. Não nos responsabilizamos por perdas, danos, prejuízos, indisponibilidade, falhas, exclusão de dados ou qualquer consequência decorrente do uso ou da impossibilidade de uso do aplicativo, incluindo conteúdos publicados por usuários.</p>
-                <h2 className="text-xl font-bold mb-2">5. Privacidade</h2>
-                <p className="mb-4">Seus dados serão tratados conforme nossa Política de Privacidade. Recomendamos a leitura atenta desse <Link href="/privacy" className="border-b text-blue-500">documento. </Link></p>
-                <h2 className="text-xl font-bold mb-2">6. Modificações dos Termos</h2>
-                <p className="mb-4">Reservamo-nos o direito de alterar estes Termos de Uso a qualquer momento, sem aviso prévio. As alterações entrarão em vigor a partir da publicação nesta página.</p>
-                <h2 className="text-xl font-bold mb-2">7. Contato</h2>
-                <p>Em caso de dúvidas, entre em contato pelo e-mail de suporte informado no aplicativo.</p>
-            </div>
-        </div>
         </div>
     );
 }
