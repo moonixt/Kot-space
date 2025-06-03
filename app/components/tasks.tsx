@@ -419,16 +419,30 @@ const Tasks = () => {
         </div>
       )}
 
-      {/* Task List - Stylish version */}
+      {/* Task List - Masonry layout */}
       {tasks.length > 0 ? (
-        <div className="space-y-2">
-          {currentTasks.map((task) => (
-            <div
-              key={task.id}
-              className={`p-3 bg-[var(--container)] hover:bg-opacity-90 transition-all rounded-md ${
-                task.is_completed ? "opacity-60" : ""
-              }`}
-            >
+        <div className="columns-1  sm:columns-2 md:columns-2 lg:columns-3 xl:columns-4 gap-4 space-y-4">
+          {currentTasks.map((task, index) => {
+            // Calculate dynamic height based on content and priority
+            const baseHeight = 120;
+            const contentHeight = (task.description?.length || 0) * 0.8;
+            const priorityHeight = task.priority === "high" ? 20 : task.priority === "medium" ? 10 : 0;
+            const varietyHeight = (index % 4) * 30; // Add variety to heights
+            
+            return (
+              <div
+                key={task.id}
+                className={`break-inside-avoid mb-4 p-4 bg-[var(--container)] hover:bg-[var(--container)]/80 hover:shadow-md transition-all duration-200 rounded-xl border border-[var(--foreground)]/30 hover:border-[var(--border-color)]/50 overflow-hidden backdrop-blur-sm ${
+                  task.is_completed ? "opacity-60" : ""
+                } ${
+                  task.priority === "high" ? "border-r-4 border-r-red-300" :
+                  task.priority === "medium" ? "border-r-4 border-r-yellow-400" :
+                  task.priority === "low" ? "border-r-4 border-r-green-400" : ""
+                }`}
+                style={{
+                  minHeight: `${baseHeight + contentHeight + priorityHeight + varietyHeight}px`
+                }}
+              >
               <div className="flex items-start gap-2">
                 <button
                   onClick={() =>
@@ -463,21 +477,21 @@ const Tasks = () => {
                     )}
                   </div>
                 </button>
-                <div className="flex-grow">
+                <div className="flex-grow break-words overflow-hidden">
                   <span
-                    className={
+                    className={`${
                       task.is_completed ? "line-through opacity-70" : ""
-                    }
+                    }`}
                   >
                     <span
-                      className="font-medium cursor-pointer hover:underline"
+                      className="font-medium cursor-pointer hover:underline break-words"
                       onClick={() => setEditingTask(task)}
                     >
                       {task.title}
                     </span>
                   </span>
                   {task.description && (
-                    <div className="text-xs mt-1.5 text-[var(--foreground)] opacity-80">
+                    <div className="text-xs mt-1.5 text-[var(--foreground)] opacity-80 break-words overflow-hidden">
                       {task.description}
                     </div>
                   )}
@@ -517,12 +531,12 @@ const Tasks = () => {
                     )}
                     {task.priority && (
                       <span
-                        className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs ${
+                        className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border ${
                           task.priority === "high"
-                            ? "bg-red-100 text-red-700"
+                            ? "bg-red-50 text-red-700 border-red-200"
                             : task.priority === "low"
-                              ? "bg-green-100 text-green-700"
-                              : "bg-yellow-100 text-yellow-700"
+                              ? "bg-green-50 text-green-700 border-green-200"
+                              : "bg-yellow-50 text-yellow-700 border-yellow-200"
                         }`}
                       >
                         {task.priority === "high"
@@ -652,7 +666,8 @@ const Tasks = () => {
                 </div>
               </div>
             </div>
-          ))}
+          );
+          })}
         </div>
       ) : (
         <div className="p-6 border border-dashed border-[var(--border-color)] text-center rounded-lg">
@@ -688,12 +703,12 @@ const Tasks = () => {
 
       {/* Pagination Controls - Only show if there are 5 or more tasks */}
       {tasks.length >= 5 && (
-        <div className="items-center text-sm text-[var(--foreground)] opacity-70 mt-4">
-          <div className="flex">
+        <div className="flex flex-col sm:flex-row sm:justify-between items-center text-sm text-[var(--foreground)] opacity-70 mt-4 gap-3">
+          <div className="flex text-center sm:text-left">
             {t("tasks.page")} {currentPage} {t("tasks.of")}{" "}
             {Math.ceil(tasks.length / tasksPerPage)}
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-1 sm:gap-2 flex-wrap justify-center">
             <button
               onClick={() => setCurrentPage(1)}
               disabled={currentPage === 1}

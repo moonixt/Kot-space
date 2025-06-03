@@ -1,24 +1,33 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useAuth, SignUpResult } from "../../context/AuthContext";
 import Link from "next/link";
 import Image from "next/image";
 import { useTranslation, Trans } from "react-i18next";
 import i18n from "../../i18n";
 import { Turnstile } from "@marsidev/react-turnstile";
-import { useTurnstile } from "../../lib/useTurnstile";
 
-export default function SignUpPage() {  const [email, setEmail] = useState("");
+export default function SignUpPage() {
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [successResult, setSuccessResult] = useState<SignUpResult | null>(null);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const turnstileRef = useRef<any>(null);
   const { signUp } = useAuth();
   const { t } = useTranslation();
-  const { token: turnstileToken, onSuccess: onTurnstileSuccess, onError: onTurnstileError, reset: resetTurnstile } = useTurnstile();
+
+  // Função para resetar o Turnstile
+  const resetTurnstile = () => {
+    if (turnstileRef.current) {
+      turnstileRef.current.reset();
+    }
+    setTurnstileToken(null);
+  };
 
   // Initialize language detection based on browser language
   useEffect(() => {
@@ -195,11 +204,22 @@ export default function SignUpPage() {  const [email, setEmail] = useState("");
               </div>              {/* Turnstile Captcha */}
               <div className="mb-6 flex justify-center">
                 <Turnstile
+                  ref={turnstileRef}
                   siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || ""}
-                  onSuccess={onTurnstileSuccess}
-                  onError={() => onTurnstileError(t("login.captcha.error"))}
+                  onSuccess={(token) => {
+                    setTurnstileToken(token);
+                    setError(null);
+                  }}
+                  onError={() => {
+                    setError(t("login.captcha.error"));
+                    resetTurnstile();
+                  }}
+                  onExpire={() => {
+                    setError(t("login.captcha.error"));
+                    resetTurnstile();
+                  }}
                 />
-              </div>              <button
+              </div><button
                 type="submit"
                 disabled={loading || !agreedToTerms}
                 className={`w-full py-3 rounded-lg font-medium ${
