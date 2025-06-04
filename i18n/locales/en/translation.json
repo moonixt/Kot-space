@@ -485,6 +485,20 @@
       "settingsPreferences": "Settings & Preferences"
     }
   },
+  "deleteAccount": {
+    "title": "Request Account Deletion",
+    "manualProcess": {
+      "title": "Manual Deletion Process",
+      "description": "To ensure the security of your data, we have implemented a manual deletion process. Please send an email to our support team with the information below."
+    },
+    "suggestedMessage": "Suggested Message:",
+    "emailBody": "Hello,\n\nI would like to request the deletion of my Kot-space account.\n\nAccount ID: {{userId}}\nEmail: {{userEmail}}\n\nI understand that this action is permanent and will delete all my data.\n\nBest regards,\n[Your Name]",
+    "copyMessage": "Copy message",
+    "copied": "Copied!",
+    "sendEmail": "Send Email to {{supportEmail}}",
+    "backToSettings": "Back to Settings",
+    "processingTime": "Our team will process your request within 48 business hours. You will receive an email confirmation when the deletion is completed."
+  },
   "chatAssistent": {
     "welcome": "How can I help you?",
     "editor": "Editor",

@@ -310,6 +310,20 @@
       "settingsPreferences": "Einstellungen & Präferenzen"
     }
   },
+  "deleteAccount": {
+    "title": "Kontolöschung beantragen",
+    "manualProcess": {
+      "title": "Manueller Löschprozess",
+      "description": "Um die Sicherheit Ihrer Daten zu gewährleisten, haben wir einen manuellen Löschprozess implementiert. Bitte senden Sie eine E-Mail an unser Support-Team mit den unten stehenden Informationen."
+    },
+    "suggestedMessage": "Vorgeschlagene Nachricht:",
+    "emailBody": "Hallo,\n\nIch möchte die Löschung meines Kot-space-Kontos beantragen.\n\nKonto-ID: {{userId}}\nE-Mail: {{userEmail}}\n\nIch verstehe, dass diese Aktion dauerhaft ist und alle meine Daten löscht.\n\nMit freundlichen Grüßen,\n[Ihr Name]",
+    "copyMessage": "Nachricht kopieren",
+    "copied": "Kopiert!",
+    "sendEmail": "E-Mail an {{supportEmail}} senden",
+    "backToSettings": "Zurück zu den Einstellungen",
+    "processingTime": "Unser Team wird Ihre Anfrage innerhalb von 48 Werktagen bearbeiten. Sie erhalten eine E-Mail-Bestätigung, wenn die Löschung abgeschlossen ist."
+  },
   "chatAssistent": {
     "welcome": "Wie kann ich Ihnen helfen?",
     "editor": "Editor",

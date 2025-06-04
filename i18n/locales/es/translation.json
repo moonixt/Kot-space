@@ -310,6 +310,20 @@
       "settingsPreferences": "Configuración y Preferencias"
     }
   },
+  "deleteAccount": {
+    "title": "Solicitar Eliminación de Cuenta",
+    "manualProcess": {
+      "title": "Proceso Manual de Eliminación",
+      "description": "Para garantizar la seguridad de sus datos, hemos implementado un proceso de eliminación manual. Por favor, envíe un correo electrónico a nuestro equipo de soporte con la información que se muestra a continuación."
+    },
+    "suggestedMessage": "Mensaje Sugerido:",
+    "emailBody": "Hola,\n\nMe gustaría solicitar la eliminación de mi cuenta de Kot-space.\n\nID de cuenta: {{userId}}\nCorreo electrónico: {{userEmail}}\n\nEntiendo que esta acción es permanente y eliminará todos mis datos.\n\nSaludos cordiales,\n[Su Nombre]",
+    "copyMessage": "Copiar mensaje",
+    "copied": "¡Copiado!",
+    "sendEmail": "Enviar Correo a {{supportEmail}}",
+    "backToSettings": "Volver a Configuración",
+    "processingTime": "Nuestro equipo procesará su solicitud en un plazo de 48 horas hábiles. Recibirá una confirmación por correo electrónico cuando se complete la eliminación."
+  },
   "chatAssistent": {
     "welcome": "¿En qué puedo ayudarte?",
     "editor": "Editor",

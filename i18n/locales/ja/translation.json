@@ -488,6 +488,20 @@
       "settingsPreferences": "設定と環境設定"
     }
   },
+  "deleteAccount": {
+    "title": "アカウント削除の申請",
+    "manualProcess": {
+      "title": "手動削除プロセス",
+      "description": "データのセキュリティを確保するため、手動削除プロセスを実装しています。以下の情報を記載したメールをサポートチームにお送りください。"
+    },
+    "suggestedMessage": "推奨メッセージ：",
+    "emailBody": "お疲れ様です。\n\nKot-spaceのアカウント削除をお願いしたく、ご連絡いたします。\n\nアカウントID：{{userId}}\nメールアドレス：{{userEmail}}\n\nこの操作は永続的であり、すべてのデータが削除されることを理解しています。\n\nよろしくお願いいたします。\n[お名前]",
+    "copyMessage": "メッセージをコピー",
+    "copied": "コピーしました！",
+    "sendEmail": "{{supportEmail}}にメールを送信",
+    "backToSettings": "設定に戻る",
+    "processingTime": "私たちのチームは48営業時間以内にお客様のリクエストを処理いたします。削除が完了すると、メールで確認をお送りします。"
+  },
   "chatAssistent": {
     "welcome": "どのようにお手伝いできますか？",
     "editor": "エディター",

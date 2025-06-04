@@ -483,6 +483,20 @@
       "settingsPreferences": "Configurações & Preferências"
     }
   },
+  "deleteAccount": {
+    "title": "Solicitar Exclusão de Conta",
+    "manualProcess": {
+      "title": "Processo Manual de Exclusão",
+      "description": "Para garantir a segurança dos seus dados, implementamos um processo de exclusão manual. Por favor, envie um email para nossa equipe de suporte com as informações abaixo."
+    },
+    "suggestedMessage": "Mensagem Sugerida:",
+    "emailBody": "Olá,\n\nGostaria de solicitar a exclusão da minha conta do Kot-space.\n\nID da conta: {{userId}}\nEmail: {{userEmail}}\n\nEntendo que esta ação é permanente e irá excluir todos os meus dados.\n\nAtenciosamente,\n[Seu Nome]",
+    "copyMessage": "Copiar mensagem",
+    "copied": "Copiado!",
+    "sendEmail": "Enviar Email para {{supportEmail}}",
+    "backToSettings": "Voltar para Configurações",
+    "processingTime": "Nossa equipe processará sua solicitação em até 48 horas úteis. Você receberá uma confirmação por email quando a exclusão for concluída."
+  },
   "chatAssistent": {
     "welcome": "Como posso te ajudar?",
     "editor": "Editor",
