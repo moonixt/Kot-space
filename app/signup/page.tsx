@@ -198,7 +198,8 @@ export default function SignUpPage() {
                     href="/terms"
                     className="text-blue-400 hover:underline ml-1"
                   >
-                    Terms page
+                                                {t("login.termsOfUse")}
+
                   </Link>
                 </label>
               </div>              {/* Turnstile Captcha */}
@@ -257,6 +258,15 @@ export default function SignUpPage() {
                 {t("signup.signIn")}
               </Link>
             </div>
+             <div className="mt-4 text-center text-sm text-[var(--foreground)]">
+                          <Link href="/terms" className="text-blue-400 hover:underline">
+                            {t("login.termsOfUse")}
+                          </Link>
+                          {" • "}
+                          <Link href="/privacy" className="text-blue-400 hover:underline">
+                            {t("login.privacyPolicy")}
+                          </Link>
+                        </div>
           </div>
         </div>
       </div>

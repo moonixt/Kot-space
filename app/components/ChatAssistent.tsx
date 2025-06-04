@@ -4,6 +4,7 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import { useTranslation } from "next-i18next";
+import Link from "next/link";
 
 const Ia = () => {
   const { t } = useTranslation("translation");
@@ -220,17 +221,18 @@ const Ia = () => {
                 </div>
                 
                 <div className="space-y-4 max-w-md mx-auto">
+                  <Link href="/terms">
                   <div className="bg-[var(--background)] hover:bg-[var(--button-bg2)]/10 border border-[var(--border-color)] rounded-lg p-3 cursor-pointer transition-all">
                     <p className="text-[var(--foreground)]">{t('chatAssistent.support', 'How do I contact the support?')}</p>
                   </div>
-                  
-                  <div className="bg-[var(--background)] hover:bg-[var(--button-bg2)]/10 border border-[var(--border-color)] rounded-lg p-3 cursor-pointer transition-all">
+                  </Link>
+                  {/* <div className="bg-[var(--background)] hover:bg-[var(--button-bg2)]/10 border border-[var(--border-color)] rounded-lg p-3 cursor-pointer transition-all">
                     <p className="text-[var(--foreground)]">{t('chatAssistent.editorHelp', 'What can I do with the editor?')}</p>
-                  </div>
+                  </div> */}
                   
-                  <div className="bg-[var(--background)] hover:bg-[var(--button-bg2)]/10 border border-[var(--border-color)] rounded-lg p-3 cursor-pointer transition-all">
+                  {/* <div className="bg-[var(--background)] hover:bg-[var(--button-bg2)]/10 border border-[var(--border-color)] rounded-lg p-3 cursor-pointer transition-all">
                     <p className="text-[var(--foreground)]">{t('chatAssistent.createNote', 'How do I create a new note?')}</p>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             )}
@@ -304,7 +306,7 @@ const Ia = () => {
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
                   onKeyDown={handleKeyDown}
-                  disabled={isLoading}
+                  disabled={true} //isloading when available
                   rows={1}
                   style={{
                     scrollbarWidth: 'thin',

@@ -45,6 +45,8 @@
     "createAccount": "Konto erstellen",
     "forgotPassword": "Passwort vergessen?",
     "resetPassword": "Passwort zurücksetzen",
+    "termsOfUse": "Nutzungsbedingungen",
+    "privacyPolicy": "Datenschutzrichtlinie",
     "backToOptions": "Zurück zu den Optionen"
   },
   "signup": {
@@ -161,7 +163,8 @@
       "noContent": "Kein Inhalt"
     },
     "bookmark": "Als Favorit markieren",
-    "unbookmark": "Favorit entfernen"
+    "unbookmark": "Favorit entfernen",
+    "freeTrialButton": "Kostenlose Testversion"
   },
   "tasks": {
     "addNew": "Neue Aufgabe hinzufügen",
@@ -344,12 +347,17 @@
     "decline": "Ablehnen",
     "preferences": "Cookie-Einstellungen",
     "acceptAll": "Alle akzeptieren",
+    "onlyEssentials": "Nur Wesentliche",
     "customize": "Anpassen",
     "back": "Zurück",
     "savePreferences": "Einstellungen speichern",
     "essential": {
       "title": "Wesentliche Cookies",
       "description": "Notwendig für die grundlegende Funktionsweise der Website"
+    },
+    "preference": {
+      "title": "Einstellungs-Cookies",
+      "description": "Ermöglichen es der Website, sich an Ihre Entscheidungen zu erinnern"
     },
     "analytics": {
       "title": "Analytische Cookies", 

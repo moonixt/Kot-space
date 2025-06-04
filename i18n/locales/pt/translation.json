@@ -13,6 +13,8 @@
     "createAccount": "Criar uma conta",
     "forgotPassword": "Esqueceu sua senha?",
     "resetPassword": "Redefinir Senha",
+    "termsOfUse": "Termos de Uso",
+    "privacyPolicy": "Política de Privacidade",
     "captcha": {
       "required": "Por favor, complete a verificação de segurança",
       "error": "Erro na verificação de segurança. Tente novamente",
@@ -168,7 +170,8 @@
     },
     "bookmark": "Favoritar",
     "unbookmark": "Remover favorito",
-    "info": "Ajuda e Informações"
+    "info": "Ajuda e Informações",
+    "freeTrialButton": "Teste Gratuito"
   },
   "tasks": {
     "addNew": "Adicionar uma nova tarefa",
@@ -517,12 +520,17 @@
     "decline": "Recusar",
     "preferences": "Preferências de Cookies",
     "acceptAll": "Aceitar Todos",
+    "onlyEssentials": "Apenas Essenciais",
     "customize": "Personalizar",
     "back": "Voltar",
     "savePreferences": "Salvar Preferências",
     "essential": {
       "title": "Cookies Essenciais",
       "description": "Necessários para o funcionamento básico do site"
+    },
+    "preference": {
+      "title": "Cookies de Preferências",
+      "description": "Permitem que o site lembre suas escolhas"
     },
     "analytics": {
       "title": "Cookies Analíticos", 
