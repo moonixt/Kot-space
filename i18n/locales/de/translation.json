@@ -229,7 +229,8 @@
       "positionTop": "Oben ausrichten",
       "positionCenter": "Zentrieren",
       "positionBottom": "Unten ausrichten"
-    }
+    },
+    "bioPlaceholder": "Halte deine Gedanken fest"
   },
   "theme": {
     "light": "Hell",

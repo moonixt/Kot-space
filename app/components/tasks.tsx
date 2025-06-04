@@ -421,7 +421,7 @@ const Tasks = () => {
 
       {/* Task List - Masonry layout */}
       {tasks.length > 0 ? (
-        <div className="columns-1  sm:columns-2 md:columns-2 lg:columns-3 xl:columns-4 gap-4 space-y-4">
+        <div className="columns-1  sm:columns-2 md:columns-2 lg:columns-3 xl:columns-3 gap-4 space-y-4">
           {currentTasks.map((task, index) => {
             // Calculate dynamic height based on content and priority
             const baseHeight = 120;

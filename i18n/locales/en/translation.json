@@ -419,7 +419,8 @@
       "positionTop": "Align top",
       "positionCenter": "Align center",
       "positionBottom": "Align bottom"
-    }
+    },
+    "bioPlaceholder": "Capture your thoughts"
   },
   "settings": {
     "subscription": {

@@ -407,7 +407,8 @@
       "positionTop": "上に揃える",
       "positionCenter": "中央揃え",
       "positionBottom": "下に揃える"
-    }
+    },
+    "bioPlaceholder": "あなたの思いを記録してください"
   },
   "theme": {
     "light": "ライト",

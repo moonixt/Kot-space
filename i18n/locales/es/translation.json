@@ -229,7 +229,8 @@
       "positionTop": "Alinear arriba",
       "positionCenter": "Centrar",
       "positionBottom": "Alinear abajo"
-    }
+    },
+    "bioPlaceholder": "Captura tus pensamientos"
   },
   "theme": {
     "light": "Claro",
