@@ -2,13 +2,19 @@
 
 <div align="center">
   
-![awdad](https://github.com/user-attachments/assets/5a16a488-2b4a-4050-94d7-17c3e7539cb7)
+![electron_8Y4CM0yrQL](https://github.com/user-attachments/assets/c3350501-f863-4037-af29-a136a0530b7a)
+
+
+
+
 
   <h1 align="center">Кot-space</h1>
 
   <p align="center">
       <strong>Кot-space is an elegant, modern Progressive Web App designed to elevate your note-taking experience. Combining powerful organization with minimalist design, it provides a seamless way to capture, develop, and organize your thoughts across all devices. With features like intuitive markdown support, tag-based organization, and encrypted storage, Кot-space gives you complete control over your digital notes while maintaining exceptional privacy. Transform how you document your ideas—elegantly, efficiently, securely.</strong>
   </p>
+
+![electron_CoZZu2Wg5R](https://github.com/user-attachments/assets/0008990b-0c9b-4da5-9a89-5da62be085e3)
 
 [![pt-BR](https://img.shields.io/badge/lang-pt--BR-green.svg)](./docs/README.pt-BR.md)
 [![en](https://img.shields.io/badge/lang-en-blue.svg)](./README.md)
@@ -26,6 +32,8 @@
 
 </div>
 
+![electron_H1Fe4rilVl](https://github.com/user-attachments/assets/d18572e1-410e-4b7c-8d82-448200591519)
+
 ## ✨ Features
 
 - **Clean & Modern UI**: Intuitive interface with dark mode and responsive design ✅
@@ -34,6 +42,8 @@
 - **Full-Text Search**: Quickly find the notes you need ✅
 - **Responsive Design**: Works beautifully on desktop and mobile ✅
 - **Export to Device**: Export to txt and pdf document available ✅
+
+![electron_PugWOzLy9i](https://github.com/user-attachments/assets/40e13266-0469-487a-abc7-df3c61c614a8)
 
 ## 🚀 Getting Started
 
