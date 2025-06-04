@@ -54,19 +54,17 @@ export default function CookieConsent() {
     <>
       {showPreferences ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
-          <div className="bg-[var(--background)] w-full max-w-lg rounded-xl shadow-xl p-6 max-h-[90vh] overflow-y-auto m-4">
-            <h2 className="text-xl font-bold mb-4 text-[var(--foreground)]">
-              Preferências de Cookies
+          <div className="bg-[var(--background)] w-full max-w-lg rounded-xl shadow-xl p-6 max-h-[90vh] overflow-y-auto m-4">            <h2 className="text-xl font-bold mb-4 text-[var(--foreground)]">
+              {t('cookies.preferences')}
             </h2>
             
             <div className="space-y-4 mb-6">
-              <div className="flex items-center justify-between p-3 bg-[var(--container)] rounded-lg">
-                <div className="flex-1">
+              <div className="flex items-center justify-between p-3 bg-[var(--container)] rounded-lg">                <div className="flex-1">
                   <h3 className="font-medium text-[var(--foreground)]">
-                    Cookies Essenciais
+                    {t('cookies.essential.title')}
                   </h3>
                   <p className="text-sm text-[var(--muted)]">
-                    Necessários para o funcionamento básico do site
+                    {t('cookies.essential.description')}
                   </p>
                 </div>
                 <input 
@@ -77,13 +75,12 @@ export default function CookieConsent() {
                 />
               </div>
               
-              <div className="flex items-center justify-between p-3 bg-[var(--container)] rounded-lg">
-                <div className="flex-1">
+              <div className="flex items-center justify-between p-3 bg-[var(--container)] rounded-lg">                <div className="flex-1">
                   <h3 className="font-medium text-[var(--foreground)]">
-                    Cookies de Preferências
+                    {t('cookies.preference.title')}
                   </h3>
                   <p className="text-sm text-[var(--muted)]">
-                    Permitem que o site lembre suas escolhas
+                    {t('cookies.preference.description')}
                   </p>
                 </div>
                 <input 
@@ -94,13 +91,12 @@ export default function CookieConsent() {
                 />
               </div>
               
-              <div className="flex items-center justify-between p-3 bg-[var(--container)] rounded-lg">
-                <div className="flex-1">
+              <div className="flex items-center justify-between p-3 bg-[var(--container)] rounded-lg">                <div className="flex-1">
                   <h3 className="font-medium text-[var(--foreground)]">
-                    Cookies Analíticos
+                    {t('cookies.analytics.title')}
                   </h3>
                   <p className="text-sm text-[var(--muted)]">
-                    Ajudam a entender como você usa o site
+                    {t('cookies.analytics.description')}
                   </p>
                 </div>
                 <input 
@@ -111,13 +107,12 @@ export default function CookieConsent() {
                 />
               </div>
               
-              <div className="flex items-center justify-between p-3 bg-[var(--container)] rounded-lg">
-                <div className="flex-1">
+              <div className="flex items-center justify-between p-3 bg-[var(--container)] rounded-lg">                <div className="flex-1">
                   <h3 className="font-medium text-[var(--foreground)]">
-                    Cookies de Marketing
+                    {t('cookies.marketing.title')}
                   </h3>
                   <p className="text-sm text-[var(--muted)]">
-                    Usados para exibir anúncios relevantes
+                    {t('cookies.marketing.description')}
                   </p>
                 </div>
                 <input 
@@ -129,18 +124,17 @@ export default function CookieConsent() {
               </div>
             </div>
             
-            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
-              <button
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">              <button
                 onClick={() => setShowPreferences(false)}
                 className="px-4 py-2 text-sm font-medium rounded-lg border border-[var(--border-color)] text-[var(--foreground)] hover:bg-[var(--highlight)] transition-colors"
               >
-                Voltar
+                {t('cookies.back')}
               </button>
               <button
                 onClick={handleSavePreferences}
                 className="px-4 py-2 text-sm font-medium rounded-lg bg-[var(--accent-color)] text-white hover:bg-opacity-90 transition-colors"
               >
-                Salvar Preferências
+                {t('cookies.savePreferences')}
               </button>
             </div>
           </div>
@@ -150,35 +144,33 @@ export default function CookieConsent() {
           <div className="container mx-auto max-w-6xl">
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
               <div className="flex-1">                <h3 className="text-lg font-semibold mb-2 text-[var(--foreground)]">
-                  {(t as any)('cookies.title') || 'Aviso de Cookies'}
+                  {t('cookies.title')}
                 </h3>
                 <p className="text-sm text-[var(--muted)]">
-                  {(t as any)('cookies.description') || 
-                    'Utilizamos cookies para melhorar sua experiência. Ao continuar navegando, você concorda com o uso de cookies de acordo com nossa'}
+                  {t('cookies.description')}
                   {' '}
                   <Link href="/privacy" className="text-blue-400 hover:underline">
-                    {t('footer.privacyPolicy') || 'Política de Privacidade'}
+                    {t('footer.privacyPolicy')}
                   </Link>.
                 </p>
               </div>
-              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 shrink-0 mt-2 md:mt-0">
-                <button
+              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 shrink-0 mt-2 md:mt-0">                <button
                   onClick={() => setShowPreferences(true)}
                   className="px-4 py-2 text-sm font-medium rounded-lg border border-[var(--border-color)] text-[var(--foreground)] hover:bg-[var(--highlight)] transition-colors"
                 >
-                  Personalizar
+                  {t('cookies.customize')}
                 </button>
                 <button
                   onClick={handleDeclineAll}
                   className="px-4 py-2 text-sm font-medium rounded-lg border border-[var(--border-color)] text-[var(--foreground)] hover:bg-[var(--highlight)] transition-colors"
                 >
-                  Apenas Essenciais
+                  {t('cookies.onlyEssentials')}
                 </button>
                 <button
                   onClick={handleAcceptAll}
                   className="px-4 py-2 text-sm font-medium rounded-lg bg-[var(--accent-color)] text-white hover:bg-opacity-90 transition-colors"
                 >
-                  Aceitar Todos
+                  {t('cookies.acceptAll')}
                 </button>
               </div>
             </div>

@@ -13,6 +13,7 @@ import { decrypt } from "../components/Encryption";
 import { useTranslation } from "react-i18next";
 // import Tables from "../components/tables";
 import { Eye, Star, Info } from "lucide-react";
+import { checkStripeSubscription } from "../../lib/checkStripeSubscription";
 
 // Bookmark
 import {
@@ -57,6 +58,7 @@ export default function DashboardPage() {
   const [notes, setNotes] = useState<Note[]>([]);
   const [loading, setLoading] = useState(true);
   const [notesLoaded, setNotesLoaded] = useState(false); // Controlar se já carregou as notas
+  const [hasActiveSubscription, setHasActiveSubscription] = useState<boolean | null>(null);
   const [showTasks, setShowTasks] = useState(() => {
     if (typeof window !== "undefined") {
       const savedShowTasks = localStorage.getItem("showTasks");
@@ -88,6 +90,20 @@ export default function DashboardPage() {
       console.error("Erro ao atualizar favorito:", error);
     }
   };
+  // Função para verificar se o usuário tem assinatura ativa do Stripe
+  const fetchSubscriptionStatus = async () => {
+    if (!user) return;
+    
+    try {
+      const hasSubscription = await checkStripeSubscription(user.id);
+      setHasActiveSubscription(hasSubscription);
+    } catch (error) {
+      console.error("Erro ao verificar status da assinatura:", error);
+      // Em caso de erro, considera como trial (mostra o botão)
+      setHasActiveSubscription(false);
+    }
+  };
+
   // Buscar notas do Supabase, favoritos primeiro
   const fetchNotes = async () => {
     if (!user || notesLoaded) return; // Não buscar se já carregou
@@ -134,15 +150,15 @@ export default function DashboardPage() {
       // localStorage.setItem("showTables", showTables.toString());
     }
   }, [showTasks]);  // showCalendar, showTables
-
   useEffect(() => {
     fetchNotes();
+    fetchSubscriptionStatus();
   }, [user]);
-
   // Resetar estado quando usuário mudar
   useEffect(() => {
     if (user?.id) {
       setNotesLoaded(false); // Resetar para novo usuário
+      setHasActiveSubscription(null); // Resetar status da assinatura para novo usuário
     }
   }, [user?.id]);
 
@@ -169,9 +185,17 @@ export default function DashboardPage() {
           {MemoizedProfile}
         </div>
 
-          
-        <div className="p-4   mx-auto max-w-screen  sm:max-w-2xl md:max-w-3xl lg:max-w-5xl xl:max-w-7xl 2xl:max-w-7xl ">
-    
+            <div className="p-4   mx-auto max-w-screen  sm:max-w-2xl md:max-w-3xl lg:max-w-5xl xl:max-w-7xl 2xl:max-w-7xl ">
+    {/* Renderização condicional do botão Free trial */}
+    {hasActiveSubscription === false && (
+      <div className="flex justify-end mb-4 ">        <button 
+          className=" px-2 py-2 flex justify-center sm:px-5 sm:py-2.5 rounded-md  text-base font-medium  bg-gradient-to-r from-grey-900 to-blue-300/40 border border-[var(--border-theme)]/30 text-[var(--foreground)]   hover:bg-opacity-60 transition-all hover:shadow-md transition-colors flex items-center gap-2"
+          onClick={() => router.push("/pricing")}
+        >
+        {t("dashboard.freeTrialButton")}
+        </button>
+      </div>
+    )}
           <div className="flex-1  gap-4">
             {/* New document button */}
             

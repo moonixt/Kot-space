@@ -45,6 +45,8 @@
     "createAccount": "Create an account",
     "forgotPassword": "Forgot your password?",
     "resetPassword": "Reset Password",
+    "termsOfUse": "Terms of Use",
+    "privacyPolicy": "Privacy Policy",
     "backToOptions": "Back to options",
     "captcha": {
       "required": "Please complete the security verification",
@@ -160,6 +162,7 @@
     "bookmark": "Bookmark",
     "unbookmark": "Remove bookmark",
     "info": "Help & Info",
+    "freeTrialButton": "Free Trial",
 
     "emptyState": {
       "title": "No notes found",
@@ -519,12 +522,17 @@
     "decline": "Decline",
     "preferences": "Cookie Preferences",
     "acceptAll": "Accept All",
+    "onlyEssentials": "Only Essentials",
     "customize": "Customize",
     "back": "Back",
     "savePreferences": "Save Preferences",
     "essential": {
       "title": "Essential Cookies",
       "description": "Necessary for the basic functioning of the site"
+    },
+    "preference": {
+      "title": "Preference Cookies",
+      "description": "Allow the site to remember your choices"
     },
     "analytics": {
       "title": "Analytics Cookies", 

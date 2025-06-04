@@ -193,7 +193,6 @@ function LoginForm() {
               ? t("login.loggingInWithGoogle")
               : t("login.signInWithGoogle")}
           </button>
-
           <div className="relative flex items-center my-6">
             <div className="flex-grow border-t border-slate-700"></div>
             <span className="flex-shrink mx-4 text-[var(--foreground)] text-sm">
@@ -299,6 +298,18 @@ function LoginForm() {
               {t("login.resetPassword")}
             </Link>
           </div>
+          
+            <div className="mt-4 text-center text-sm text-[var(--foreground)]">
+              <Link href="/terms" className="text-blue-400 hover:underline">
+                {t("login.termsOfUse")}
+              </Link>
+              {" • "}
+              <Link href="/privacy" className="text-blue-400 hover:underline">
+                {t("login.privacyPolicy")}
+              </Link>
+            </div>
+
+
         </div>
       </div>
     </>

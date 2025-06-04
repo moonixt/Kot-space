@@ -44,7 +44,9 @@
     "noAccount": "¿No tienes una cuenta?",
     "createAccount": "Crear una cuenta",
     "forgotPassword": "¿Olvidaste tu contraseña?",
-    "resetPassword": "Restablecer contraseña"
+    "resetPassword": "Restablecer contraseña",
+    "termsOfUse": "Términos de Uso",
+    "privacyPolicy": "Política de Privacidad"
   },
   "signup": {
     "title": "Crear cuenta de Кot-space",
@@ -161,7 +163,8 @@
     },
     "bookmark": "Marcar como favorito",
     "unbookmark": "Remover dos favoritos",
-    "info": "Ayuda e Información"
+    "info": "Ayuda e Información",
+    "freeTrialButton": "Prueba Gratuita"
   },
   "tasks": {
     "addNew": "Agregar una nueva tarea",
@@ -344,12 +347,17 @@
     "decline": "Rechazar",
     "preferences": "Preferencias de Cookies",
     "acceptAll": "Aceptar Todas",
+    "onlyEssentials": "Solo Esenciales",
     "customize": "Personalizar",
     "back": "Volver",
     "savePreferences": "Guardar Preferencias",
     "essential": {
       "title": "Cookies Esenciales",
       "description": "Necesarias para el funcionamiento básico del sitio"
+    },
+    "preference": {
+      "title": "Cookies de Preferencias",
+      "description": "Permiten que el sitio recuerde sus elecciones"
     },
     "analytics": {
       "title": "Cookies Analíticas", 

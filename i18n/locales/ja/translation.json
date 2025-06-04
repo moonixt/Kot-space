@@ -44,7 +44,9 @@
     "noAccount": "アカウントをお持ちでないですか？",
     "createAccount": "アカウント作成",
     "forgotPassword": "パスワードをお忘れですか？",
-    "resetPassword": "パスワードをリセット"
+    "resetPassword": "パスワードをリセット",
+    "termsOfUse": "利用規約",
+    "privacyPolicy": "プライバシーポリシー"
   },
   "signup": {
     "title": "Кot-spaceアカウントを作成",
@@ -161,7 +163,8 @@
     },
     "bookmark": "ブックマーク",
       "unbookmark": "ブックマークを外す",
-    "info": "ヘルプと情報"
+    "info": "ヘルプと情報",
+    "freeTrialButton": "無料トライアル"
   },
   "tasks": {
     "addNew": "新しいタスクを追加",
@@ -522,12 +525,17 @@
     "decline": "拒否する",
     "preferences": "Cookie設定",
     "acceptAll": "すべて同意",
+    "onlyEssentials": "必須のみ",
     "customize": "カスタマイズ",
     "back": "戻る",
     "savePreferences": "設定を保存",
     "essential": {
       "title": "必須Cookie",
       "description": "サイトの基本機能に必要です"
+    },
+    "preference": {
+      "title": "設定Cookie",
+      "description": "サイトがあなたの選択を記憶できるようにします"
     },
     "analytics": {
       "title": "分析Cookie", 
