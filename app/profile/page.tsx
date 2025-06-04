@@ -110,14 +110,13 @@ const Profile = memo(() => {
 
       if (error && error.code !== "PGRST116") throw error;
 
-      if (data?.bio) {
-        setBio(data.bio);
+      if (data?.bio) {      setBio(data.bio);
       } else {
-        setBio('"You are what you think"');
+        setBio(t('profile.bioPlaceholder'));
       }
     } catch (error) {
       console.error("Error fetching bio:", error);
-      setBio('"You are what you think"');
+      setBio(t('profile.bioPlaceholder'));
     } finally {
       setBioLoading(false);
     }
@@ -803,16 +802,15 @@ const Profile = memo(() => {
               suppressContentEditableWarning
               onBlur={(e) => {
                 const newBio = e.target.innerText;
-                if (newBio.length <= 50) {
-                  updateBio(newBio);
+                if (newBio.length <= 50) {                updateBio(newBio);
                 } else {
                   alert("Bio must be 50 characters or less.");
-                  e.target.innerText = bio || '"You are what you think"'; // Revert to the previous bio or use default
+                  e.target.innerText = bio || t('profile.bioPlaceholder'); // Revert to the previous bio or use default
                 }
               }}
               className="italic  text-[var(--foreground)] bg-[var(--container)]/30 backdrop-blur-sm max-w-[260px] overflow-wrap-anywhere"
             >
-              {bio || '"You are what you think"'}
+              {bio || t('profile.bioPlaceholder')}
             </div>
           )}
         </div>
