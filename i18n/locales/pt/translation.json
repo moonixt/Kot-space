@@ -1,7 +1,7 @@
 {
   "login": {
-    "title": "Entrar no Кot-space",
-    "logoAlt": "Logo Кot-space",
+    "title": "Entrar no Lynxky",
+    "logoAlt": "Logo Lynxky",
     "signInWithGoogle": "Entrar com Google",
     "loggingInWithGoogle": "Entrando...",
     "or": "ou",
@@ -22,8 +22,8 @@
     }
   },
   "signup": {
-    "title": "Criar sua Conta Кot-space",
-    "logoAlt": "Logo Кot-space",
+    "title": "Criar sua Conta Lynxky",
+    "logoAlt": "Logo Lynxky",
     "email": "E-mail",
     "password": "Senha",
     "confirmPassword": "Confirmar Senha",
@@ -52,7 +52,7 @@
   },
   "pricing": {
     "title": "Acesso ilimitado",
-    "subtitle": "Desbloqueie todo o potencial do Кot-space com nosso plano premium",
+    "subtitle": "Desbloqueie todo o potencial do Lynxky com nosso plano premium",
     "plan": {
       "name": "Plano PRO",
       "mostPopular": "Mais Popular",
@@ -84,7 +84,7 @@
   },
   "resetPassword": {
     "title": "Redefinir Senha",
-    "logoAlt": "Logo Кot-space",
+    "logoAlt": "Logo Lynxky",
     "email": "E-mail",
     "sending": "Enviando...",
     "sendResetEmail": "Enviar E-mail de Redefinição",
@@ -457,7 +457,7 @@
       "appearance": "Personalize sua experiência visual",
       "notifications": "Gerencie suas preferências de notificação",
       "legal": "Veja documentos legais e políticas",
-      "help": "Obtenha ajuda com o Kot-space"
+      "help": "Obtenha ajuda com o Lynxky"
     },
     "account": {
       "title": "Configurações da Conta",
@@ -490,7 +490,7 @@
       "description": "Para garantir a segurança dos seus dados, implementamos um processo de exclusão manual. Por favor, envie um email para nossa equipe de suporte com as informações abaixo."
     },
     "suggestedMessage": "Mensagem Sugerida:",
-    "emailBody": "Olá,\n\nGostaria de solicitar a exclusão da minha conta do Kot-space.\n\nID da conta: {{userId}}\nEmail: {{userEmail}}\n\nEntendo que esta ação é permanente e irá excluir todos os meus dados.\n\nAtenciosamente,\n[Seu Nome]",
+    "emailBody": "Olá,\n\nGostaria de solicitar a exclusão da minha conta do Lynxky.\n\nID da conta: {{userId}}\nEmail: {{userEmail}}\n\nEntendo que esta ação é permanente e irá excluir todos os meus dados.\n\nAtenciosamente,\n[Seu Nome]",
     "copyMessage": "Copiar mensagem",
     "copied": "Copiado!",
     "sendEmail": "Enviar Email para {{supportEmail}}",
@@ -557,7 +557,7 @@
     }
   },
   "privacyPolicy": {
-    "title": "Política de Privacidade do Kot-space",
+    "title": "Política de Privacidade do Lynxky",
     "lastUpdated": "Última atualização: 3 de junho de 2025",
     "version": "Versão 2.0 - Atualizada para conformidade com LGPD e GDPR",
     "backToLogin": "Voltar ao login",
@@ -572,7 +572,7 @@
       "introduction": {
         "title": "1. Introdução",
         "content": {
-          "welcome": "Bem-vindo à Política de Privacidade do Kot-space. Esta política descreve como coletamos, usamos, processamos e protegemos seus dados pessoais quando você utiliza nosso aplicativo Kot-space (\"Aplicativo\"). Respeitamos sua privacidade e estamos comprometidos com a proteção de seus dados pessoais.",
+          "welcome": "Bem-vindo à Política de Privacidade do Lynxky. Esta política descreve como coletamos, usamos, processamos e protegemos seus dados pessoais quando você utiliza nosso aplicativo Lynxky (\"Aplicativo\"). Respeitamos sua privacidade e estamos comprometidos com a proteção de seus dados pessoais.",
           "compliance": "Esta política foi elaborada em conformidade com a Lei Geral de Proteção de Dados (LGPD, Lei nº 13.709/2018) do Brasil e o Regulamento Geral de Proteção de Dados (GDPR, 2016/679) da União Europeia.",
           "agreement": "Ao usar nosso Aplicativo, você concorda com a coleta e uso de informações de acordo com esta política. As informações pessoais que coletamos são usadas para fornecer e melhorar o Aplicativo. Não usaremos ou compartilharemos suas informações com ninguém, exceto conforme descrito nesta Política de Privacidade."
         }
@@ -580,9 +580,9 @@
       "dataController": {
         "title": "2. Controlador de Dados",
         "content": {
-          "description": "Kot-space (\"nós\", \"nosso\" ou \"nossa\") é o controlador dos dados pessoais coletados através deste Aplicativo. Como controlador, somos responsáveis por determinar as finalidades e meios do processamento de seus dados pessoais.",
+          "description": "Lynxky (\"nós\", \"nosso\" ou \"nossa\") é o controlador dos dados pessoais coletados através deste Aplicativo. Como controlador, somos responsáveis por determinar as finalidades e meios do processamento de seus dados pessoais.",
           "contactInfo": "Informações de Contato do Controlador:",
-          "name": "Nome: Kot-space",
+          "name": "Nome: Lynxky",
           "email": "E-mail: privacy@ederin.net"
         }
       },
@@ -698,14 +698,14 @@
     }
   },
   "termsOfService": {
-    "title": "Termos de Serviço do Kot-space",
+    "title": "Termos de Serviço do Lynxky",
     "lastUpdated": "Última atualização: 3 de junho de 2025",
     "backToLogin": "Voltar ao login",
     "sections": {
       "acceptance": {
         "title": "1. Aceitação dos Termos",
         "content": {
-          "welcome": "Bem-vindo ao Kot-space. Estes Termos de Serviço (\"Termos\") regem o uso do aplicativo Kot-space (\"Aplicativo\", \"Serviço\") operado por nós (\"nós\", \"nosso\" ou \"nossa\").",
+          "welcome": "Bem-vindo ao Lynxky. Estes Termos de Serviço (\"Termos\") regem o uso do aplicativo Lynxky (\"Aplicativo\", \"Serviço\") operado por nós (\"nós\", \"nosso\" ou \"nossa\").",
           "agreement": "Ao acessar ou utilizar nosso Aplicativo, você concorda em ficar vinculado a estes Termos. Se você discordar de qualquer parte destes termos, então você não pode acessar o Aplicativo.",
           "application": "Estes Termos aplicam-se a todos os visitantes, usuários e outras pessoas que acessam ou usam o Aplicativo."
         }
@@ -713,7 +713,7 @@
       "serviceDescription": {
         "title": "2. Descrição do Serviço",
         "content": {
-          "description": "O Kot-space é um aplicativo de produtividade que permite aos usuários:",
+          "description": "O Lynxky é um aplicativo de produtividade que permite aos usuários:",
           "features": [
             "Criar, editar e organizar notas pessoais",
             "Gerenciar calendários e eventos",
@@ -726,7 +726,7 @@
       "eligibility": {
         "title": "3. Elegibilidade e Cadastro",
         "content": {
-          "description": "Para usar o Kot-space, você deve:",
+          "description": "Para usar o Lynxky, você deve:",
           "requirements": [
             "Ter pelo menos 13 anos de idade",
             "Fornecer informações precisas e completas durante o registro",
@@ -739,7 +739,7 @@
       "acceptableUse": {
         "title": "4. Uso Aceitável",
         "content": {
-          "description": "Ao usar o Kot-space, você concorda em NÃO:",
+          "description": "Ao usar o Lynxky, você concorda em NÃO:",
           "restrictions": [
             "Usar o Aplicativo para qualquer finalidade ilegal ou não autorizada",
             "Criar, armazenar ou compartilhar conteúdo que seja:",
@@ -774,7 +774,7 @@
       "intellectualProperty": {
         "title": "6. Propriedade Intelectual",
         "content": {
-          "ownership": "O Aplicativo e seu conteúdo original, recursos e funcionalidades são e permanecerão propriedade exclusiva do Kot-space e seus licenciadores.",
+          "ownership": "O Aplicativo e seu conteúdo original, recursos e funcionalidades são e permanecerão propriedade exclusiva do Lynxky e seus licenciadores.",
           "protection": "O Aplicativo é protegido por direitos autorais, marcas registradas, patentes, segredos comerciais e outras leis de propriedade intelectual."
         }
       },
@@ -891,7 +891,7 @@
       },
       "important": {
         "title": "Importante",
-        "content": "Ao usar o Kot-space, você reconhece que leu, compreendeu e concorda em ficar vinculado a estes Termos de Serviço. Recomendamos que você também leia nossa Política de Privacidade para entender como tratamos suas informações pessoais."
+        "content": "Ao usar o Lynxky, você reconhece que leu, compreendeu e concorda em ficar vinculado a estes Termos de Serviço. Recomendamos que você também leia nossa Política de Privacidade para entender como tratamos suas informações pessoais."
       }
     }
   }

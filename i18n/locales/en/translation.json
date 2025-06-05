@@ -1,7 +1,7 @@
 {
   "pricing": {
     "title": "Unlimited Access",
-    "subtitle": "Unlock Кot-space full potential with our premium plan",
+    "subtitle": "Unlock Lynxky full potential with our premium plan",
     "plan": {
       "name": "PRO Plan",
       "mostPopular": "Most Popular",
@@ -32,8 +32,8 @@
     }
   },
   "login": {
-    "title": "Sign In to Кot-space",
-    "logoAlt": "Logo Кot-space",
+    "title": "Sign In to Lynxky",
+    "logoAlt": "Logo Lynxky",
     "signInWithGoogle": "Sign in with Google",
     "loggingInWithGoogle": "Signing in...",
     "or": "or",
@@ -55,8 +55,8 @@
     }
   },
   "signup": {
-    "title": "Create your Кot-space Account",
-    "logoAlt": "Logo Кot-space",
+    "title": "Create your Lynxky Account",
+    "logoAlt": "Logo Lynxky",
     "email": "Email",
     "password": "Password",
     "confirmPassword": "Confirm Password",
@@ -85,7 +85,7 @@
   },
   "resetPassword": {
     "title": "Reset Password",
-    "logoAlt": "Logo Кot-space",
+    "logoAlt": "Logo Lynxky",
     "email": "Email",
     "sending": "Sending...",
     "sendResetEmail": "Send Reset Email",
@@ -459,7 +459,7 @@
       "appearance": "Customize your visual experience",
       "notifications": "Manage your notification preferences",
       "legal": "View legal documents and policies",
-      "help": "Get help with Kot-space"
+      "help": "Get help with Lynxky"
     },
     "account": {
       "title": "Account Settings",
@@ -492,7 +492,7 @@
       "description": "To ensure the security of your data, we have implemented a manual deletion process. Please send an email to our support team with the information below."
     },
     "suggestedMessage": "Suggested Message:",
-    "emailBody": "Hello,\n\nI would like to request the deletion of my Kot-space account.\n\nAccount ID: {{userId}}\nEmail: {{userEmail}}\n\nI understand that this action is permanent and will delete all my data.\n\nBest regards,\n[Your Name]",
+    "emailBody": "Hello,\n\nI would like to request the deletion of my Lynxky account.\n\nAccount ID: {{userId}}\nEmail: {{userEmail}}\n\nI understand that this action is permanent and will delete all my data.\n\nBest regards,\n[Your Name]",
     "copyMessage": "Copy message",
     "copied": "Copied!",
     "sendEmail": "Send Email to {{supportEmail}}",
@@ -559,7 +559,7 @@
     }
   },
   "privacyPolicy": {
-    "title": "Kot-space Privacy Policy",
+    "title": "Lynxky Privacy Policy",
     "lastUpdated": "Last updated: June 3, 2025",
     "version": "Version 2.0 - Updated for LGPD and GDPR compliance",
     "backToLogin": "Back to login",
@@ -574,7 +574,7 @@
       "introduction": {
         "title": "1. Introduction",
         "content": {
-          "welcome": "Welcome to the Kot-space Privacy Policy. This policy describes how we collect, use, process and protect your personal data when you use our Kot-space application (\"Application\"). We respect your privacy and are committed to protecting your personal data.",
+          "welcome": "Welcome to the Lynxky Privacy Policy. This policy describes how we collect, use, process and protect your personal data when you use our Lynxky application (\"Application\"). We respect your privacy and are committed to protecting your personal data.",
           "compliance": "This policy has been developed in compliance with Brazil's General Data Protection Law (LGPD, Law No. 13.709/2018) and the European Union's General Data Protection Regulation (GDPR, 2016/679).",
           "agreement": "By using our Application, you agree to the collection and use of information in accordance with this policy. The personal information we collect is used to provide and improve the Application. We will not use or share your information with anyone except as described in this Privacy Policy."
         }
@@ -582,9 +582,9 @@
       "dataController": {
         "title": "2. Data Controller",
         "content": {
-          "description": "Kot-space (\"we\", \"our\" or \"us\") is the controller of personal data collected through this Application. As controller, we are responsible for determining the purposes and means of processing your personal data.",
+          "description": "Lynxky (\"we\", \"our\" or \"us\") is the controller of personal data collected through this Application. As controller, we are responsible for determining the purposes and means of processing your personal data.",
           "contactInfo": "Controller Contact Information:",
-          "name": "Name: Kot-space",
+          "name": "Name: Lynxky",
           "email": "Email: privacy@ederin.net"
         }
       },
@@ -700,14 +700,14 @@
     }
   },
   "termsOfService": {
-    "title": "Kot-space Terms of Service",
+    "title": "Lynxky Terms of Service",
     "lastUpdated": "Last updated: June 3, 2025",
     "backToLogin": "Back to login",
     "sections": {
       "acceptance": {
         "title": "1. Acceptance of Terms",
         "content": {
-          "welcome": "Welcome to Kot-space. These Terms of Service (\"Terms\") govern the use of the Kot-space application (\"Application\", \"Service\") operated by us (\"we\", \"our\" or \"us\").",
+          "welcome": "Welcome to Lynxky. These Terms of Service (\"Terms\") govern the use of the Lynxky application (\"Application\", \"Service\") operated by us (\"we\", \"our\" or \"us\").",
           "agreement": "By accessing or using our Application, you agree to be bound by these Terms. If you disagree with any part of these terms, then you may not access the Application.",
           "application": "These Terms apply to all visitors, users and other persons who access or use the Application."
         }
@@ -715,7 +715,7 @@
       "serviceDescription": {
         "title": "2. Service Description",
         "content": {
-          "description": "Kot-space is a productivity application that allows users to:",
+          "description": "Lynxky is a productivity application that allows users to:",
           "features": [
             "Create, edit and organize personal notes",
             "Manage calendars and events",
@@ -728,7 +728,7 @@
       "eligibility": {
         "title": "3. Eligibility and Registration",
         "content": {
-          "description": "To use Kot-space, you must:",
+          "description": "To use Lynxky, you must:",
           "requirements": [
             "Be at least 13 years old",
             "Provide accurate and complete information during registration",
@@ -741,7 +741,7 @@
       "acceptableUse": {
         "title": "4. Acceptable Use",
         "content": {
-          "description": "By using Kot-space, you agree NOT to:",
+          "description": "By using Lynxky, you agree NOT to:",
           "restrictions": [
             "Use the Application for any illegal or unauthorized purpose",
             "Create, store or share content that is:",
@@ -776,7 +776,7 @@
       "intellectualProperty": {
         "title": "6. Intellectual Property",
         "content": {
-          "ownership": "The Application and its original content, features and functionality are and will remain the exclusive property of Kot-space and its licensors.",
+          "ownership": "The Application and its original content, features and functionality are and will remain the exclusive property of Lynxky and its licensors.",
           "protection": "The Application is protected by copyright, trademarks, patents, trade secrets and other intellectual property laws."
         }
       },
@@ -893,7 +893,7 @@
       },
       "important": {
         "title": "Important",
-        "content": "By using Kot-space, you acknowledge that you have read, understood and agree to be bound by these Terms of Service. We recommend that you also read our Privacy Policy to understand how we treat your personal information."
+        "content": "By using Lynxky, you acknowledge that you have read, understood and agree to be bound by these Terms of Service. We recommend that you also read our Privacy Policy to understand how we treat your personal information."
       }
     }
   }

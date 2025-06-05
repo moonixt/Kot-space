@@ -179,7 +179,7 @@ const Ia = () => {
         {/* Header */}
         <div className="border-b border-[var(--border-color)]/40 py-3">
           <div className="flex justify-center items-center text-xl font-medium">
-            <h1 className="tracking-wide">Kot-AI</h1>
+            <h1 className="tracking-wide">Lynxky-AI</h1>
           </div>
         </div>
 
@@ -335,9 +335,9 @@ const Ia = () => {
               </div>
               <div className="absolute bottom-[-24px] w-full text-center text-xs text-gray-500">
                 <div className="flex items-center justify-center gap-1">
-                  <span>Kot-AI</span>
+                  <span>Lynxky-AI</span>
                   <span className="mx-1">·</span>
-                  <span>Powered by Kot-space</span>
+                  <span>Powered by Lynxky</span>
                 </div>
               </div>
             </form>

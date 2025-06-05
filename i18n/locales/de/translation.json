@@ -1,7 +1,7 @@
 {
   "pricing": {
     "title": "Unbegrenzter PRO-Zugang",
-    "subtitle": "Schalten Sie das volle Potenzial von Кot-space mit unserem Premium-Plan frei",
+    "subtitle": "Schalten Sie das volle Potenzial von Lynxky mit unserem Premium-Plan frei",
     "plan": {
       "name": "PRO-Plan",
       "mostPopular": "Am beliebtesten",
@@ -32,8 +32,8 @@
     }
   },
   "login": {
-    "title": "Bei Кot-space anmelden",
-    "logoAlt": "Кot-space Logo",
+    "title": "Bei Lynxky anmelden",
+    "logoAlt": "Lynxky Logo",
     "signInWithGoogle": "Mit Google anmelden",
     "loggingInWithGoogle": "Anmeldung...",
     "or": "oder",
@@ -50,8 +50,8 @@
     "backToOptions": "Zurück zu den Optionen"
   },
   "signup": {
-    "title": "Кot-space-Konto erstellen",
-    "logoAlt": "Кot-space Logo",
+    "title": "Lynxky-Konto erstellen",
+    "logoAlt": "Lynxky Logo",
     "email": "E-Mail",
     "password": "Passwort",
     "confirmPassword": "Passwort bestätigen",
@@ -80,7 +80,7 @@
   },
   "resetPassword": {
     "title": "Passwort zurücksetzen",
-    "logoAlt": "Кot-space Logo",
+    "logoAlt": "Lynxky Logo",
     "email": "E-Mail",
     "sending": "Senden...",
     "sendResetEmail": "Reset-E-Mail senden",
@@ -284,7 +284,7 @@
       "appearance": "Passen Sie Ihr visuelles Erlebnis an",
       "notifications": "Verwalten Sie Ihre Benachrichtigungseinstellungen",
       "legal": "Zeigen Sie rechtliche Dokumente und Richtlinien an",
-      "help": "Erhalten Sie Hilfe zu Kot-space"
+      "help": "Erhalten Sie Hilfe zu Lynxky"
     },
     "account": {
       "title": "Kontoeinstellungen",
@@ -317,7 +317,7 @@
       "description": "Um die Sicherheit Ihrer Daten zu gewährleisten, haben wir einen manuellen Löschprozess implementiert. Bitte senden Sie eine E-Mail an unser Support-Team mit den unten stehenden Informationen."
     },
     "suggestedMessage": "Vorgeschlagene Nachricht:",
-    "emailBody": "Hallo,\n\nIch möchte die Löschung meines Kot-space-Kontos beantragen.\n\nKonto-ID: {{userId}}\nE-Mail: {{userEmail}}\n\nIch verstehe, dass diese Aktion dauerhaft ist und alle meine Daten löscht.\n\nMit freundlichen Grüßen,\n[Ihr Name]",
+    "emailBody": "Hallo,\n\nIch möchte die Löschung meines Lynxky-Kontos beantragen.\n\nKonto-ID: {{userId}}\nE-Mail: {{userEmail}}\n\nIch verstehe, dass diese Aktion dauerhaft ist und alle meine Daten löscht.\n\nMit freundlichen Grüßen,\n[Ihr Name]",
     "copyMessage": "Nachricht kopieren",
     "copied": "Kopiert!",
     "sendEmail": "E-Mail an {{supportEmail}} senden",
@@ -384,7 +384,7 @@
     }
   },
   "privacyPolicy": {
-    "title": "Kot-space Datenschutzrichtlinie",
+    "title": "Lynxky Datenschutzrichtlinie",
     "lastUpdated": "Zuletzt aktualisiert: 3. Juni 2025",
     "version": "Version 2.0 - Aktualisiert für LGPD- und GDPR-Konformität",
     "backToLogin": "Zurück zur Anmeldung",
@@ -399,7 +399,7 @@
       "introduction": {
         "title": "1. Einführung",
         "content": {
-          "welcome": "Willkommen bei der Kot-space Datenschutzrichtlinie. Diese Richtlinie beschreibt, wie wir Ihre personenbezogenen Daten sammeln, verwenden, verarbeiten und schützen, wenn Sie unsere Kot-space-Anwendung (\"Anwendung\") nutzen. Wir respektieren Ihre Privatsphäre und sind dem Schutz Ihrer personenbezogenen Daten verpflichtet.",
+          "welcome": "Willkommen bei der Lynxky Datenschutzrichtlinie. Diese Richtlinie beschreibt, wie wir Ihre personenbezogenen Daten sammeln, verwenden, verarbeiten und schützen, wenn Sie unsere Lynxky-Anwendung (\"Anwendung\") nutzen. Wir respektieren Ihre Privatsphäre und sind dem Schutz Ihrer personenbezogenen Daten verpflichtet.",
           "compliance": "Diese Richtlinie wurde in Übereinstimmung mit dem brasilianischen Allgemeinen Datenschutzgesetz (LGPD, Gesetz Nr. 13.709/2018) und der Datenschutz-Grundverordnung der Europäischen Union (DSGVO, 2016/679) entwickelt.",
           "agreement": "Durch die Nutzung unserer Anwendung stimmen Sie der Sammlung und Verwendung von Informationen gemäß dieser Richtlinie zu. Die von uns gesammelten persönlichen Informationen werden zur Bereitstellung und Verbesserung der Anwendung verwendet. Wir werden Ihre Informationen nicht verwenden oder mit Dritten teilen, außer wie in dieser Datenschutzrichtlinie beschrieben."
         }
@@ -407,9 +407,9 @@
       "dataController": {
         "title": "2. Datenverantwortlicher",
         "content": {
-          "description": "Kot-space (\"wir\", \"unser\" oder \"uns\") ist der Verantwortliche für die über diese Anwendung gesammelten personenbezogenen Daten. Als Verantwortlicher sind wir für die Bestimmung der Zwecke und Mittel der Verarbeitung Ihrer personenbezogenen Daten zuständig.",
+          "description": "Lynxky (\"wir\", \"unser\" oder \"uns\") ist der Verantwortliche für die über diese Anwendung gesammelten personenbezogenen Daten. Als Verantwortlicher sind wir für die Bestimmung der Zwecke und Mittel der Verarbeitung Ihrer personenbezogenen Daten zuständig.",
           "contactInfo": "Kontaktinformationen des Verantwortlichen:",
-          "name": "Name: Kot-space",
+          "name": "Name: Lynxky",
           "email": "E-Mail: privacy@ederin.net"
         }
       },
@@ -525,14 +525,14 @@
     }
   },
   "termsOfService": {
-    "title": "Kot-space Nutzungsbedingungen",
+    "title": "Lynxky Nutzungsbedingungen",
     "lastUpdated": "Letzte Aktualisierung: 3. Juni 2025",
     "backToLogin": "Zurück zum Login",
     "sections": {
       "acceptance": {
         "title": "1. Annahme der Bedingungen",
         "content": {
-          "welcome": "Willkommen bei Kot-space. Diese Nutzungsbedingungen (\"Bedingungen\") regeln die Nutzung der Kot-space-Anwendung (\"Anwendung\", \"Service\"), die von uns betrieben wird (\"wir\", \"unser\" oder \"uns\").",
+          "welcome": "Willkommen bei Lynxky. Diese Nutzungsbedingungen (\"Bedingungen\") regeln die Nutzung der Lynxky-Anwendung (\"Anwendung\", \"Service\"), die von uns betrieben wird (\"wir\", \"unser\" oder \"uns\").",
           "agreement": "Durch den Zugriff auf oder die Nutzung unserer Anwendung stimmen Sie zu, an diese Bedingungen gebunden zu sein. Wenn Sie mit einem Teil dieser Bedingungen nicht einverstanden sind, dürfen Sie nicht auf die Anwendung zugreifen.",
           "application": "Diese Bedingungen gelten für alle Besucher, Benutzer und andere Personen, die auf die Anwendung zugreifen oder sie nutzen."
         }
@@ -540,7 +540,7 @@
       "serviceDescription": {
         "title": "2. Service-Beschreibung",
         "content": {
-          "description": "Kot-space ist eine Produktivitätsanwendung, die Benutzern ermöglicht:",
+          "description": "Lynxky ist eine Produktivitätsanwendung, die Benutzern ermöglicht:",
           "features": [
             "Persönliche Notizen erstellen, bearbeiten und organisieren",
             "Kalender und Ereignisse verwalten",
@@ -553,7 +553,7 @@
       "eligibility": {
         "title": "3. Berechtigung und Registrierung",
         "content": {
-          "description": "Um Kot-space zu nutzen, müssen Sie:",
+          "description": "Um Lynxky zu nutzen, müssen Sie:",
           "requirements": [
             "Mindestens 13 Jahre alt sein",
             "Genaue und vollständige Informationen bei der Registrierung angeben",
@@ -566,7 +566,7 @@
       "acceptableUse": {
         "title": "4. Akzeptable Nutzung",
         "content": {
-          "description": "Durch die Nutzung von Kot-space stimmen Sie zu, NICHT:",
+          "description": "Durch die Nutzung von Lynxky stimmen Sie zu, NICHT:",
           "restrictions": [
             "Die Anwendung für illegale oder unbefugte Zwecke zu verwenden",
             "Inhalte zu erstellen, zu speichern oder zu teilen, die:",
@@ -601,7 +601,7 @@
       "intellectualProperty": {
         "title": "6. Geistiges Eigentum",
         "content": {
-          "ownership": "Die Anwendung und ihre ursprünglichen Inhalte, Funktionen und Funktionalitäten sind und bleiben das ausschließliche Eigentum von Kot-space und seinen Lizenzgebern.",
+          "ownership": "Die Anwendung und ihre ursprünglichen Inhalte, Funktionen und Funktionalitäten sind und bleiben das ausschließliche Eigentum von Lynxky und seinen Lizenzgebern.",
           "protection": "Die Anwendung ist durch Urheberrechte, Marken, Patente, Geschäftsgeheimnisse und andere Gesetze zum geistigen Eigentum geschützt."
         }
       },
@@ -718,7 +718,7 @@
       },
       "important": {
         "title": "Wichtig",
-        "content": "Durch die Nutzung von Kot-space bestätigen Sie, dass Sie diese Nutzungsbedingungen gelesen, verstanden haben und sich damit einverstanden erklären, daran gebunden zu sein. Wir empfehlen Ihnen auch, unsere Datenschutzrichtlinie zu lesen, um zu verstehen, wie wir Ihre persönlichen Informationen behandeln."
+        "content": "Durch die Nutzung von Lynxky bestätigen Sie, dass Sie diese Nutzungsbedingungen gelesen, verstanden haben und sich damit einverstanden erklären, daran gebunden zu sein. Wir empfehlen Ihnen auch, unsere Datenschutzrichtlinie zu lesen, um zu verstehen, wie wir Ihre persönlichen Informationen behandeln."
       }
     }
   }

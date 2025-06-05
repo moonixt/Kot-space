@@ -397,7 +397,7 @@ const toggleFullscreen = () => {
                     </span>
                   </Link>
                 ) : (                  <span className="text-[var(--foreground)] pl-2">
-                    Кot-space
+                    Lynxky
                   </span>
                 )}
               </h1>

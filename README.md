@@ -8,10 +8,10 @@
 
 
 
-  <h1 align="center">Кot-space</h1>
+  <h1 align="center">Lynxky</h1>
 
   <p align="center">
-      <strong>Кot-space is an elegant, modern Progressive Web App designed to elevate your note-taking experience. Combining powerful organization with minimalist design, it provides a seamless way to capture, develop, and organize your thoughts across all devices. With features like intuitive markdown support, tag-based organization, and encrypted storage, Кot-space gives you complete control over your digital notes while maintaining exceptional privacy. Transform how you document your ideas—elegantly, efficiently, securely.</strong>
+      <strong>Lynxky is an elegant, modern Progressive Web App designed to elevate your note-taking experience. Combining powerful organization with minimalist design, it provides a seamless way to capture, develop, and organize your thoughts across all devices. With features like intuitive markdown support, tag-based organization, and encrypted storage, Lynxky gives you complete control over your digital notes while maintaining exceptional privacy. Transform how you document your ideas—elegantly, efficiently, securely.</strong>
   </p>
 
 ![electron_CoZZu2Wg5R](https://github.com/user-attachments/assets/0008990b-0c9b-4da5-9a89-5da62be085e3)
