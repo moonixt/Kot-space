@@ -122,7 +122,7 @@ export default function Settings() {
     // { id: "appearance", name: t("settings.categories.appearance", "Appearance"), icon: <Moon className="mr-2 h-4 w-4" />, description: t("settings.descriptions.appearance", "Customize your visual experience") },
     // { id: "notifications", name: t("settings.categories.notifications", "Notifications"), icon: <BellRing className="mr-2 h-4 w-4" />, description: t("settings.descriptions.notifications", "Manage your notification preferences") },
     { id: "legal", name: t("settings.categories.legal", "Legal"), icon: <FileText className="mr-2 h-4 w-4" />, description: t("settings.descriptions.legal", "View legal documents and policies") },
-    // { id: "help", name: t("settings.categories.help", "Help & Support"), icon: <HelpCircle className="mr-2 h-4 w-4" />, description: t("settings.descriptions.help", "Get help with Kot-space") }
+    // { id: "help", name: t("settings.categories.help", "Help & Support"), icon: <HelpCircle className="mr-2 h-4 w-4" />, description: t("settings.descriptions.help", "Get help with Lynxky") }
   ];return (
     <AuthenticatedRoute>
       <Profile/>
@@ -492,7 +492,7 @@ export default function Settings() {
             <div className="bg-[var(--container)] rounded-lg p-6 shadow-sm">
               <h2 className="text-2xl font-bold text-[var(--foreground)] mb-4">Appearance</h2>
               <p className="text-[var(--foreground)] opacity-80 mb-6">
-                Customize how Kot-space looks for you
+                Customize how Lynxky looks for you
               </p>
               
               <div className="space-y-6">
@@ -628,9 +628,9 @@ export default function Settings() {
               </div>
               
               <div className="mt-6 p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
-                <h3 className="font-medium text-blue-400 mb-2">Kot-space Documentation</h3>
+                <h3 className="font-medium text-blue-400 mb-2">Lynxky Documentation</h3>
                 <p className="text-sm text-blue-400/80 mb-3">
-                  Explore our comprehensive documentation to get the most out of Kot-space
+                  Explore our comprehensive documentation to get the most out of Lynxky
                 </p>
                 <Button variant="outline" className="border-blue-500/30 text-blue-400 hover:bg-blue-500/20">
                   View Documentation

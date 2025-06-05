@@ -116,11 +116,11 @@ export default function SignUpPage() {
       <div className="w-full max-w-md">
         <div>
           <Image
-            src="/static/images/sg.png"
+            src="/static/images/knot.png"
             alt={t("login.logoAlt")}
             width={1000}
             height={100}
-            className=" h-60 md:h-80 object-cover object-center"
+            className=" h-60 md:h-80 object-cover object-top"
             priority
           />
         </div>
