@@ -29,6 +29,22 @@
     },
     "alerts": {
       "loginRequired": "購読するにはログインが必要です。"
+    },
+    "trustSection": {
+      "premiumPlan": "プレミアムプラン",
+      "security": {
+        "title": "完全なセキュリティ",
+        "description": "エンドツーエンド暗号化でデータを保護"
+      },
+      "speed": {
+        "title": "超高速",
+        "description": "デバイス間での瞬時同期"
+      },
+      "flexibility": {
+        "title": "縛りなし",
+        "description": "いつでもキャンセル可能、データは常にあなたのもの"
+      },
+      "testimonial": "アイデアを整理するため私たちのプラットフォームを信頼する何千ものユーザーに参加しましょう"
     }
   },
   "login": {

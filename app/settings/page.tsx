@@ -1,5 +1,6 @@
 "use client";
 
+import { Analytics } from "@vercel/analytics/next";
 import { AuthenticatedRoute } from "../components/AuthenticatedRoute";
 import Profile from "../profile/page";
 import Link from "next/link";
@@ -124,6 +125,7 @@ export default function Settings() {
     { id: "legal", name: t("settings.categories.legal", "Legal"), icon: <FileText className="mr-2 h-4 w-4" />, description: t("settings.descriptions.legal", "View legal documents and policies") },
     // { id: "help", name: t("settings.categories.help", "Help & Support"), icon: <HelpCircle className="mr-2 h-4 w-4" />, description: t("settings.descriptions.help", "Get help with Lynxky") }
   ];return (
+    <>
     <AuthenticatedRoute>
       <Profile/>
       <div className="flex flex-col md:flex-row justify-center min-h-screen p-4 gap-6">        {/* Mobile navigation header */}
@@ -640,5 +642,7 @@ export default function Settings() {
           )}
         </div>
       </div>    </AuthenticatedRoute>
+    <Analytics />
+    </>
   );
 }

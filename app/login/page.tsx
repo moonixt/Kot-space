@@ -1,5 +1,6 @@
 "use client";
 
+import { Analytics } from "@vercel/analytics/next"
 import { useState, Suspense, useEffect, useRef } from "react";
 import { useAuth } from "../../context/AuthContext";
 import Link from "next/link";
@@ -129,17 +130,6 @@ function LoginForm() {
 
   return (
     <>
-      {message && (
-        <div className="mb-4 p-4 bg-blue-500/20 border border-blue-500/30 rounded-lg text-blue-400">
-          {message}
-        </div>
-      )}
-
-      {error && (
-        <div className="mb-4 p-4 bg-red-500/20 border border-red-500/30 rounded-lg text-red-400">
-          {error}
-        </div>
-      )}
       <div className="flex justify-center ">
         <Image
           src="/static/images/knot.png"
@@ -193,6 +183,19 @@ function LoginForm() {
               ? t("login.loggingInWithGoogle")
               : t("login.signInWithGoogle")}
           </button>
+
+          {/* Error messages for Google login */}
+          {!showEmailForm && message && (
+            <div className="mb-4 p-4 bg-blue-500/20 border border-blue-500/30 rounded-lg text-blue-400 text-sm">
+              {message}
+            </div>
+          )}
+
+          {!showEmailForm && error && (
+            <div className="mb-4 p-4 bg-red-500/20 border border-red-500/30 rounded-lg text-red-400 text-sm">
+              {error}
+            </div>
+          )}
           <div className="relative flex items-center my-6">
             <div className="flex-grow border-t border-slate-700"></div>
             <span className="flex-shrink mx-4 text-[var(--foreground)] text-sm">
@@ -270,6 +273,18 @@ function LoginForm() {
                   {loading ? t("login.loggingIn") : t("login.signInWithEmail")}
                 </button>
                 
+                {/* Error and message display below login button */}
+                {message && (
+                  <div className="p-4 bg-blue-500/20 border border-blue-500/30 rounded-lg text-blue-400 text-sm">
+                    {message}
+                  </div>
+                )}
+
+                {error && (
+                  <div className="p-4 bg-red-500/20 border border-red-500/30 rounded-lg text-red-400 text-sm">
+                    {error}
+                  </div>
+                )}
                
               </div>
             </form>
@@ -341,12 +356,15 @@ function LoginFormLoading() {
 
 export default function LoginPage() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[var(--container)] p-4">
-      <div className="w-full max-w-md">
-        <Suspense fallback={<LoginFormLoading />}>
-          <LoginForm />
-        </Suspense>
+    <>
+      <div className="min-h-screen flex items-center justify-center bg-[var(--container)] p-4">
+        <div className="w-full max-w-md">
+          <Suspense fallback={<LoginFormLoading />}>
+            <LoginForm />
+          </Suspense>
+        </div>
       </div>
-    </div>
+      <Analytics />
+    </>
   );
 }

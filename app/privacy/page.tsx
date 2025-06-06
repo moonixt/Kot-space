@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "../../components/LanguageSwitcher";
+import { Analytics } from "@vercel/analytics/next";
 
 export default function PrivacyPolicy() {
   const { t } = useTranslation();
@@ -235,6 +236,7 @@ export default function PrivacyPolicy() {
           </ul>
         </div>
       </div>
+      <Analytics />
     </div>
   );
 }

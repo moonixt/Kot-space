@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { Analytics } from "@vercel/analytics/next";
 import { useAuth, SignUpResult } from "../../context/AuthContext";
 import Link from "next/link";
 import Image from "next/image";
@@ -109,9 +110,9 @@ export default function SignUpPage() {
       resetTurnstile();
     } finally {
       setLoading(false);
-    }
-  };
+    }  };
   return (
+    <>
     <div className="min-h-screen flex items-center justify-center bg-[var(--container)] p-4">
       <div className="w-full max-w-md">
         <div>
@@ -267,9 +268,10 @@ export default function SignUpPage() {
                             {t("login.privacyPolicy")}
                           </Link>
                         </div>
-          </div>
-        </div>
+          </div>        </div>
       </div>
     </div>
+      <Analytics />
+    </>
   );
 }

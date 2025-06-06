@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
+import { Analytics } from "@vercel/analytics/next";
 import { supabase } from "../../lib/supabase";
 import { useAuth } from "../../context/AuthContext";
 import Link from "next/link";
@@ -180,7 +181,9 @@ export default function DashboardPage() {
 
   const router = useRouter();
 
-  return (    <ProtectedRoute>      <div className="smooth overflow-y-auto max-h-screen scrollbar">
+  return (
+    <>
+    <ProtectedRoute>      <div className="smooth overflow-y-auto max-h-screen scrollbar">
         <div>
           {MemoizedProfile}
         </div>
@@ -450,9 +453,10 @@ export default function DashboardPage() {
                 </svg>
               </button>
             </div>
-          )}
-        </div>
+          )}        </div>
       </div>
     </ProtectedRoute>
+      <Analytics />
+    </>
   );
 }

@@ -29,6 +29,22 @@
     },
     "alerts": {
       "loginRequired": "Debes iniciar sesión para suscribirte."
+    },
+    "trustSection": {
+      "premiumPlan": "Plan Premium",
+      "security": {
+        "title": "Seguridad Total",
+        "description": "Tus datos protegidos con cifrado de extremo a extremo"
+      },
+      "speed": {
+        "title": "Ultra Rápido",
+        "description": "Sincronización instantánea entre dispositivos"
+      },
+      "flexibility": {
+        "title": "Sin Compromiso",
+        "description": "Cancela cuando quieras, tus datos siempre son tuyos"
+      },
+      "testimonial": "Únete a miles de usuarios que confían en nuestra plataforma para organizar sus ideas"
     }
   },
   "login": {
