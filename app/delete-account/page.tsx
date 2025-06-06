@@ -25,7 +25,7 @@ export default function DeleteAccountPage() {
     // analytics.pageview('/delete-account');
   }, []);
 
-  const supportEmail = "privacy@ederin.net";
+  const supportEmail = "privacy@lynxky.com";
   const emailSubject = t("deleteAccount.title");
   const emailBody = t("deleteAccount.emailBody", {
     userId: user?.id || "",

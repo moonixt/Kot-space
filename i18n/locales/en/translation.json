@@ -607,7 +607,7 @@
           "description": "Lynxky (\"we\", \"our\" or \"us\") is the controller of personal data collected through this Application. As controller, we are responsible for determining the purposes and means of processing your personal data.",
           "contactInfo": "Controller Contact Information:",
           "name": "Name: Lynxky",
-          "email": "Email: privacy@ederin.net"
+          "email": "Email:  privacy@lynxky.com"
         }
       },
       "dataTypes": {
@@ -703,15 +703,15 @@
           "withdraw": "Right to Withdraw Consent: When processing is based on consent, you may withdraw your consent at any time;",
           "automated": "Right Not to be Subject to Automated Decision-Making: You have the right not to be subject to decisions based solely on automated processing that produce legal effects."
         },
-        "exercise": "To exercise any of the above rights, contact us at privacy@ederin.net. We will respond to your request within 15 days."
+        "exercise": "To exercise any of the above rights, contact us at  privacy@lynxky.com. We will respond to your request within 15 days."
       },
       "contact": {
         "title": "19. How to Contact Us",
         "description": "If you have any questions or concerns about this Privacy Policy or about the processing of your personal data, contact us:",
         "contacts": {
-          "main": "Main Email: privacy@ederin.net",
-          "dpo": "Data Protection Officer: privacy@ederin.net",
-          "support": "General Support: privacy@ederin.net"
+          "main": "Main Email:  privacy@lynxky.com",
+          "dpo": "Data Protection Officer:  privacy@lynxky.com",
+          "support": "General Support:  privacy@lynxky.com"
         },
         "complaint": "You also have the right to file a complaint with a data protection authority if you are not satisfied with how we process your personal data:",
         "authorities": {
@@ -907,7 +907,7 @@
         "content": {
           "description": "If you have any questions about these Terms of Service, please contact us:",
           "methods": [
-            "By email: privacy@ederin.net",
+            "By email:  privacy@lynxky.com",
             "Through the support link in our application"
           ],
           "response": "We will do our best to respond to your questions and resolve any concerns you may have."
