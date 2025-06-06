@@ -80,6 +80,22 @@
     },
     "alerts": {
       "loginRequired": "Você precisa estar logado para fazer uma assinatura."
+    },
+    "trustSection": {
+      "premiumPlan": "Plano Premium",
+      "security": {
+        "title": "Segurança Total",
+        "description": "Seus dados protegidos com criptografia de ponta"
+      },
+      "speed": {
+        "title": "Ultra Rápido",
+        "description": "Sincronização instantânea entre dispositivos"
+      },
+      "flexibility": {
+        "title": "Sem Compromisso",
+        "description": "Cancele quando quiser, dados sempre seus"
+      },
+      "testimonial": "Junte-se a milhares de usuários que confiam em nossa plataforma para organizar suas ideias"
     }
   },
   "resetPassword": {
@@ -134,6 +150,8 @@
     "uncategorized": "Sem categoria",
     "noUncategorizedNotes": "Nenhuma nota sem categoria",
     "moveToFolder": "Mover para pasta",
+    "folderLimitReached": "Limite atingido! Você pode criar até 10 pastas no plano gratuito.",
+    "upgradeToPro": "Assinar Plano Premium",
 
     "dateFormat": {
       "today": "Hoje",
@@ -183,6 +201,8 @@
     "noTasksYet": "Nenhuma tarefa ainda. Adicione sua primeira tarefa!",
     "created": "Criada",
     "due": "Vencimento",
+    "limitReached": "Limite atingido! Você pode criar até 20 tarefas no período de teste gratuito.",
+    "upgradeToPro": "Faça upgrade para Premium e tenha tarefas ilimitadas",
     "myTasks": "Minhas Tarefas",
     "newTask": "Nova Tarefa",
     "whatNeedsToBeDone": "O que precisa ser feito?",
@@ -240,6 +260,8 @@
     "noteSaved": "Nota salva com sucesso!",
     "saveError": "Erro ao salvar nota. Tente novamente.",
     "imageUploadError": "Erro ao fazer upload da imagem. Tente novamente.",
+    "limitReached": "Limite atingido! Você pode salvar até 20 notas no período de teste gratuito.",
+    "upgradeToPro": "Faça upgrade para Premium e tenha notas ilimitadas",
     "cancel": "Cancelar",
     "delete": "Excluir",
     "confirmDelete": "Tem certeza que deseja excluir esta nota?",

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { Analytics } from "@vercel/analytics/next";
 import { supabase } from "../../lib/supabase";
 import { useTranslation } from "react-i18next";
 import i18n from "../../i18n";
@@ -93,6 +94,7 @@ export default function ResetPasswordPage() {
   };
 
   return (
+    <>
     <div className="min-h-screen flex items-center justify-center bg-[var(--container)] p-4">
       <div className="w-full max-w-md">
         <div>
@@ -183,5 +185,7 @@ export default function ResetPasswordPage() {
         </div>
       </div>
     </div>
+      <Analytics />
+    </>
   );
 }

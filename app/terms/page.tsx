@@ -4,11 +4,13 @@ import React from "react";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "../../components/LanguageSwitcher";
+import { Analytics } from "@vercel/analytics/next";
 
 export default function TermsPage() {
     const { t } = useTranslation();
 
     return (
+        <>
         <div className="min-h-screen bg-[var(--background)] p-4 md:p-8 lg:p-12">
             <div className="pb-10 flex justify-between items-center">
                 <Link
@@ -234,5 +236,7 @@ export default function TermsPage() {
                 </div>
             </div>
         </div>
+        <Analytics />
+        </>
     );
 }

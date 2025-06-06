@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "../../lib/supabase";
 import { useAuth } from "../../context/AuthContext";
+import { checkUserLimits } from "../../lib/checkUserLimits"; // Import the user limits checker
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useTranslation } from "react-i18next";
@@ -90,7 +91,38 @@ const Tasks = () => {
   const addTask = async () => {
     if (!newTask.trim()) return;
 
+    // Check user limits before adding task
+    if (!user) return;
+    
     try {
+      const userLimits = await checkUserLimits(user.id);
+      
+      if (!userLimits.canCreateTask) {
+        // Show limit reached notification with upgrade option
+        const notification = document.createElement("div");
+        notification.className =
+          "fixed bottom-4 right-4 bg-yellow-500 text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-500 flex items-center gap-2 max-w-md";
+        notification.innerHTML = `
+          <div class="flex flex-col gap-2">
+            <div class="flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+              </svg>
+              <span>${t("tasks.limitReached")}</span>
+            </div>
+            <button onclick="window.location.href='/pricing'" class="bg-white text-yellow-600 px-3 py-1 rounded text-sm font-medium hover:bg-gray-100 transition-colors">
+              ${t("tasks.upgradeToPro")}
+            </button>
+          </div>`;
+        document.body.appendChild(notification);
+
+        setTimeout(() => {
+          notification.style.opacity = "0";
+          setTimeout(() => notification.remove(), 500);
+        }, 5000);
+        return;
+      }
+
       const { error } = await supabase.from("tasks").insert({
         user_id: user?.id,
         title: encrypt(newTask),

@@ -3,7 +3,7 @@
     "title": "Unlimited Access",
     "subtitle": "Unlock Lynxky full potential with our premium plan",
     "plan": {
-      "name": "PRO Plan",
+      "name": "Premium Plan",
       "mostPopular": "Most Popular",
       "price": "$ 4,99",
       "period": "month",
@@ -29,6 +29,22 @@
     },
     "alerts": {
       "loginRequired": "You need to be logged in to subscribe."
+    },
+    "trustSection": {
+      "premiumPlan": "Premium Plan",
+      "security": {
+        "title": "Total Security",
+        "description": "Your data protected with end-to-end encryption"
+      },
+      "speed": {
+        "title": "Ultra Fast",
+        "description": "Instant synchronization across devices"
+      },
+      "flexibility": {
+        "title": "No Commitment",
+        "description": "Cancel anytime, your data is always yours"
+      },
+      "testimonial": "Join thousands of users who trust our platform to organize their ideas"
     }
   },
   "login": {
@@ -135,6 +151,8 @@
     "uncategorized": "Uncategorized",
     "moveToFolder": "Move to folder",
     "noUncategorizedNotes": "No uncategorized notes",
+    "folderLimitReached": "Limit reached! You can create up to 10 folders on the free trial.",
+    "upgradeToPro": "Upgrade to Premium for unlimited folders",
     "dateFormat": {
       "today": "Today",
       "yesterday": "Yesterday",
@@ -184,6 +202,8 @@
     "noTasksYet": "No tasks yet. Add your first task!",
     "created": "Created",
     "due": "Due",
+    "limitReached": "Limit reached! You can create up to 20 tasks on the free trial.",
+    "upgradeToPro": "Upgrade to Premium for unlimited tasks",
     "cancel": "Cancel",
     "newTask": "New Task",
     "myTasks": "My Tasks",
@@ -252,6 +272,8 @@
     "noteSaved": "Note saved successfully!",
     "saveError": "Error saving note. Try again.",
     "imageUploadError": "Error uploading image. Try again.",
+    "limitReached": "Limit reached! You can save up to 20 notes on the free trial.",
+    "upgradeToPro": "Upgrade to Premium for unlimited notes",
     "cancel": "Cancel",
     "delete": "Delete",
     "confirmDelete": "Are you sure you want to delete this note?",

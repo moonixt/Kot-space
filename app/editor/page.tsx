@@ -1,4 +1,5 @@
 "use client";
+import { Analytics } from "@vercel/analytics/next";
 import Editor from "../components/editor";
 import { ProtectedRoute } from "../components/ProtectedRoute";
 import { ArrowLeft } from "lucide-react";
@@ -8,6 +9,7 @@ import { useTranslation } from "next-i18next";
 export default function EditorPage() {
   const { t } = useTranslation();
   return (
+    <>
     <ProtectedRoute>
       <div className="h-screen bg-[var(--background)] overflow-y-auto scrollbar flex flex-col">
         <div className="sticky top-0 bg-[var(--background)]/60 bg-opacity-90 backdrop-blur-sm z-10 py-3 px-4   flex items-center">
@@ -28,5 +30,7 @@ export default function EditorPage() {
         </div>
       </div>
     </ProtectedRoute>
+      <Analytics />
+    </>
   );
 }

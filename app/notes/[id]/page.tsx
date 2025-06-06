@@ -1,6 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useState, useRef } from "react";
+import React, { useCallback, useEffect, useState, useRef } from "react";
+import { Analytics } from "@vercel/analytics/next";
 import { useRouter, useParams } from "next/navigation";
 import { supabase } from "../../../lib/supabase";
 import { useAuth } from "../../../context/AuthContext";
@@ -340,7 +341,7 @@ export default function NotePage() {
 
     const icon =
       type === "success"
-        ? '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 00-1.414 1.414l2 2a1 1 001.414 0l4-4z" clip-rule="evenodd" /></svg>'
+        ? '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 00-1.414 1.414l2 2a1 1001.414 0l4-4z" clip-rule="evenodd" /></svg>'
         : '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 101.414 1.414L10 11.414l1.293-1.293a1 1 00-1.414-1.414L11.414 10l1.293-1.293a1 1 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" /></svg>';
 
     toast.innerHTML = icon + message;
@@ -497,370 +498,373 @@ export default function NotePage() {
   );
 
   return (
-    <ProtectedRoute>
-      <div className="sticky top-0 bg-[var(--background)]/60 bg-opacity-90 backdrop-blur-sm z-10 py-3 px-4 flex items-center">
-        <Link
-          href="/dashboard"
-          className="p-2 rounded-full hover:bg-[var(--container)] transition-colors mr-2"
-          title={t("notes.backToNotes")}
-        >
-          <ArrowLeft size={20} className="text-[var(--foreground)]" />
-        </Link>
-        <h1 className="text-xl font-semibold text-[var(--foreground)]">
-          {note.title}
-        </h1>
-      </div>
-      <Profile />
-      <div className="min-h-screen  flex justify-center ">
-        <div className="w-full max-w-7xl bg-[var(--background)] min-h-screen  flex flex-col">
-          {/* Barra de navegação superior */}
-          <div className="bg-opacity-10 px-4 py-2 text-[var(--foreground)] flex justify-between items-center">
-            <Link
-              href="/dashboard"
-              className="flex items-center gap-2 text-[var(--foreground)] hover:text-[var(--foreground-light)] transition-colors"
-            >
-              <ArrowLeft size={18} />
-              <span>{t("notes.backToNotes")}</span>
-            </Link>
+    <>
+      <ProtectedRoute>
+        <div className="sticky top-0 bg-[var(--background)]/60 bg-opacity-90 backdrop-blur-sm z-10 py-3 px-4 flex items-center">
+          <Link
+            href="/dashboard"
+            className="p-2 rounded-full hover:bg-[var(--container)] transition-colors mr-2"
+            title={t("notes.backToNotes")}
+          >
+            <ArrowLeft size={20} className="text-[var(--foreground)]" />
+          </Link>
+          <h1 className="text-xl font-semibold text-[var(--foreground)]">
+            {note.title}
+          </h1>
+        </div>
+        <Profile />
+        <div className="min-h-screen  flex justify-center ">
+          <div className="w-full max-w-7xl bg-[var(--background)] min-h-screen  flex flex-col">
+            {/* Barra de navegação superior */}
+            <div className="bg-opacity-10 px-4 py-2 text-[var(--foreground)] flex justify-between items-center">
+              <Link
+                href="/dashboard"
+                className="flex items-center gap-2 text-[var(--foreground)] hover:text-[var(--foreground-light)] transition-colors"
+              >
+                <ArrowLeft size={18} />
+                <span>{t("notes.backToNotes")}</span>
+              </Link>
 
-            <div className="flex items-center gap-2 pr-10">
-              {editMode ? (
-                <>
+              <div className="flex items-center gap-2 pr-10">
+                {editMode ? (
+                  <>
+                    <button
+                      className="rounded  transition-colors px-2 py-1 flex items-center gap-1"
+                      title={t("editor.save")}
+                      onClick={handleSave}
+                      disabled={saving}
+                    >
+                      {saving ? (
+                        <div className="w-4 h-4 border-2 border-green-300 border-t-transparent rounded-full animate-spin"></div>
+                      ) : (
+                        <>
+                          <Save size={16} /> {t("editor.save")}
+                        </>
+                      )}
+                    </button>
+                    <button
+                      className="rounded hover:bg-red-400 transition-colors px-2 py-1 flex items-center gap-1"
+                      title={t("editor.cancel")}
+                      onClick={cancelEdit}
+                    >
+                      <X size={16} /> {t("editor.cancel")}
+                    </button>
+                  </>
+                ) : (
                   <button
                     className="rounded  transition-colors px-2 py-1 flex items-center gap-1"
-                    title={t("editor.save")}
-                    onClick={handleSave}
-                    disabled={saving}
+                    title={t("editor.edit")}
+                    onClick={() => setEditMode(true)}
                   >
-                    {saving ? (
-                      <div className="w-4 h-4 border-2 border-green-300 border-t-transparent rounded-full animate-spin"></div>
-                    ) : (
-                      <>
-                        <Save size={16} /> {t("editor.save")}
-                      </>
-                    )}
+                    <Edit size={16} /> {t("editor.edit")}
                   </button>
-                  <button
-                    className="rounded hover:bg-red-400 transition-colors px-2 py-1 flex items-center gap-1"
-                    title={t("editor.cancel")}
-                    onClick={cancelEdit}
-                  >
-                    <X size={16} /> {t("editor.cancel")}
-                  </button>
-                </>
-              ) : (
-                <button
-                  className="rounded  transition-colors px-2 py-1 flex items-center gap-1"
-                  title={t("editor.edit")}
-                  onClick={() => setEditMode(true)}
-                >
-                  <Edit size={16} /> {t("editor.edit")}
-                </button>
-              )}
-            </div>
-          </div>
-
-          {/* Área do título */}
-          <div className="p-4 border-b border-[var(--border-color)]">
-            {editMode ? (
-              <div className="flex items-center gap-3 relative">
-                <button
-                  onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-                  className="p-2 text-[var(--foreground)] hover:bg-[var(--container)] rounded-full transition-all duration-200"
-                  title="Adicionar emoji"
-                >
-                  <SmilePlus size={22} />
-                </button>
-                <input
-                  type="text"
-                  value={editTitle}
-                  onChange={(e) => setEditTitle(e.target.value)}
-                  placeholder={t("editor.noteTitle")}
-                  className="w-full text-xl sm:text-2xl font-bold bg-transparent focus:outline-none text-[var(--foreground)]"
-                />
-                {showEmojiPicker && (
-                  <div className="absolute z-50 top-14 left-4 shadow-xl rounded-lg overflow-hidden">
-                    <EmojiPicker
-                      onEmojiClick={handleEmojiSelect}
-                      skinTonesDisabled
-                      width={300}
-                      height={400}
-                      previewConfig={{ showPreview: false }}
-                      theme={Theme.DARK}
-                    />
-                  </div>
                 )}
               </div>
-            ) : (
-              <h1 className="text-xl sm:text-2xl font-bold text-[var(--foreground)]">
-                {note.title || t("sidebar.untitled")}
-              </h1>
-            )}
-
-            <div className="flex items-center gap-2 text-sm text-[var(--foreground)] mt-2">
-              <Calendar size={14} />
-              <span>{formattedDate}</span>
             </div>
-          </div>
 
-          {/* Barra de ferramentas de formatação - aparece apenas no modo de edição */}
-          {editMode && (
-            <>
-              <div className="bg-[var(--container)] bg-opacity-30 border-b border-[var(--border-color)] text-sm px-2 sm:px-4 py-2 text-[var(--foreground)] flex flex-wrap items-center gap-2">
-                <div className="flex items-center space-x-1 mr-2">
+            {/* Área do título */}
+            <div className="p-4 border-b border-[var(--border-color)]">
+              {editMode ? (
+                <div className="flex items-center gap-3 relative">
                   <button
-                    className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors font-bold"
-                    onClick={() => insertMarkdown("bold")}
-                    title={t("editor.bold")}
-                  >
-                    B
-                  </button>
-                  <button
-                    className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors italic"
-                    onClick={() => insertMarkdown("italic")}
-                    title={t("editor.italic")}
-                  >
-                    I
-                  </button>
-                  <button
-                    className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors"
-                    onClick={() => insertMarkdown("link")}
-                    title={t("editor.link")}
-                  >
-                    🔗
-                  </button>
-                </div>
-
-                <div className="flex items-center space-x-1 mr-2">
-                  <button
-                    className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors"
-                    onClick={() => insertMarkdown("heading1")}
-                    title={t("editor.heading1")}
-                  >
-                    H1
-                  </button>
-                  <button
-                    className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors"
-                    onClick={() => insertMarkdown("heading2")}
-                    title={t("editor.heading2")}
-                  >
-                    H2
-                  </button>
-                </div>
-
-                <div className="flex items-center space-x-1 mr-2">
-                  <button
-                    className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors"
-                    onClick={() => insertMarkdown("code")}
-                    title={t("editor.code")}
-                  >
-                    &lt;/&gt;
-                  </button>
-                  <button
-                    className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors flex items-center justify-center relative"
-                    onClick={() => {
-                      if (imageUploadLoading) return;
-                      if (fileInputRef.current) {
-                        fileInputRef.current.click();
-                      } else {
-                        insertMarkdown("image");
-                      }
-                    }}
-                    title="Inserir Imagem"
-                  >
-                    <Image size={16} />
-                    {imageUploadLoading && (
-                      <div className="absolute inset-0 flex items-center justify-center bg-[var(--accent-color)] bg-opacity-70 rounded-md">
-                        <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                      </div>
-                    )}
-                  </button>
-                  <input
-                    type="file"
-                    ref={fileInputRef}
-                    onChange={handleImageUpload}
-                    accept="image/*"
-                    style={{ display: "none" }}
-                  />
-                </div>
-
-                <div className="flex items-center space-x-1 mr-2">
-                  <button
-                    className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors flex items-center justify-center"
-                    onClick={() => insertMarkdown("orderedList")}
-                    title="Lista Numerada"
-                  >
-                    <ListOrdered size={16} />
-                  </button>
-                  <button
-                    className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors flex items-center justify-center"
-                    onClick={() => insertMarkdown("unorderedList")}
-                    title="Lista com Marcadores"
-                  >
-                    <LayoutList size={16} />
-                  </button>
-                  <button
-                    onClick={() =>
-                      setShowEmojiPickerContent(!showEmojiPickerContent)
-                    }
-                    className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors"
+                    onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                    className="p-2 text-[var(--foreground)] hover:bg-[var(--container)] rounded-full transition-all duration-200"
                     title="Adicionar emoji"
                   >
-                    <SmilePlus size={16} />
+                    <SmilePlus size={22} />
                   </button>
-                  {showEmojiPickerContent && (
-                    <div className="absolute z-50 mt-28 shadow-xl rounded-lg overflow-hidden">
+                  <input
+                    type="text"
+                    value={editTitle}
+                    onChange={(e) => setEditTitle(e.target.value)}
+                    placeholder={t("editor.noteTitle")}
+                    className="w-full text-xl sm:text-2xl font-bold bg-transparent focus:outline-none text-[var(--foreground)]"
+                  />
+                  {showEmojiPicker && (
+                    <div className="absolute z-50 top-14 left-4 shadow-xl rounded-lg overflow-hidden">
                       <EmojiPicker
-                        onEmojiClick={handleEmojiSelectContent}
+                        onEmojiClick={handleEmojiSelect}
                         skinTonesDisabled
-                        width={280}
-                        height={350}
+                        width={300}
+                        height={400}
                         previewConfig={{ showPreview: false }}
                         theme={Theme.DARK}
                       />
                     </div>
                   )}
                 </div>
+              ) : (
+                <h1 className="text-xl sm:text-2xl font-bold text-[var(--foreground)]">
+                  {note.title || t("sidebar.untitled")}
+                </h1>
+              )}
 
-                <div className="ml-auto flex items-center gap-2">
-                  <button
-                    className={`rounded-md px-3 py-1.5 transition-all duration-200 flex items-center gap-1.5 ${
-                      isPreviewMode
-                        ? "bg-transparent text-[var(--foreground)] border border-[var(--border-color)]"
-                        : "bg-[var(--button-bg1)] text-[var(--background)]"
-                    }`}
-                    onClick={() => setIsPreviewMode(false)}
-                    disabled={!isPreviewMode}
-                  >
-                    <Edit size={16} /> Editar
-                  </button>
-                  <button
-                    className={`rounded-md px-3 py-1.5 transition-all duration-200 flex items-center gap-1.5 ${
-                      !isPreviewMode
-                        ? "bg-transparent text-[var(--foreground)] border border-[var(--border-color)]"
-                        : "bg-[var(--button-bg1)] text-[var(--background)]"
-                    }`}
-                    onClick={() => setIsPreviewMode(true)}
-                    disabled={isPreviewMode}
-                  >
-                    <Eye size={16} /> Visualizar
-                  </button>
-                </div>
+              <div className="flex items-center gap-2 text-sm text-[var(--foreground)] mt-2">
+                <Calendar size={14} />
+                <span>{formattedDate}</span>
               </div>
-            </>
-          )}
+            </div>
 
-          {/* Área de conteúdo */}
-          <div className="flex-grow overflow-auto p-4">
-            {editMode ? (
+            {/* Barra de ferramentas de formatação - aparece apenas no modo de edição */}
+            {editMode && (
               <>
-                {!isPreviewMode ? (
-                  <div className="h-full">
-                    <div className="mb-4 text-xs bg-[var(--container)] bg-opacity-50 p-2 rounded flex items-center gap-2 text-[var(--foreground)]">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-4 w-4"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                        />
-                      </svg>
-                      <span>{t("editor.markdownSupport")}</span>
-                    </div>
-                    <textarea
-                      value={editContent}
-                      onChange={(e) => setEditContent(e.target.value)}
-                      placeholder={t("editor.noteContent")}
-                      className="w-full h-full min-h-[300px] text-lg bg-transparent focus:outline-none resize-none text-[var(--foreground)] p-2"
-                      style={{ fontSize: "18px", lineHeight: "1.7" }}
+                <div className="bg-[var(--container)] bg-opacity-30 border-b border-[var(--border-color)] text-sm px-2 sm:px-4 py-2 text-[var(--foreground)] flex flex-wrap items-center gap-2">
+                  <div className="flex items-center space-x-1 mr-2">
+                    <button
+                      className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors font-bold"
+                      onClick={() => insertMarkdown("bold")}
+                      title={t("editor.bold")}
+                    >
+                      B
+                    </button>
+                    <button
+                      className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors italic"
+                      onClick={() => insertMarkdown("italic")}
+                      title={t("editor.italic")}
+                    >
+                      I
+                    </button>
+                    <button
+                      className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors"
+                      onClick={() => insertMarkdown("link")}
+                      title={t("editor.link")}
+                    >
+                      🔗
+                    </button>
+                  </div>
+
+                  <div className="flex items-center space-x-1 mr-2">
+                    <button
+                      className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors"
+                      onClick={() => insertMarkdown("heading1")}
+                      title={t("editor.heading1")}
+                    >
+                      H1
+                    </button>
+                    <button
+                      className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors"
+                      onClick={() => insertMarkdown("heading2")}
+                      title={t("editor.heading2")}
+                    >
+                      H2
+                    </button>
+                  </div>
+
+                  <div className="flex items-center space-x-1 mr-2">
+                    <button
+                      className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors"
+                      onClick={() => insertMarkdown("code")}
+                      title={t("editor.code")}
+                    >
+                      &lt;/&gt;
+                    </button>
+                    <button
+                      className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors flex items-center justify-center relative"
+                      onClick={() => {
+                        if (imageUploadLoading) return;
+                        if (fileInputRef.current) {
+                          fileInputRef.current.click();
+                        } else {
+                          insertMarkdown("image");
+                        }
+                      }}
+                      title="Inserir Imagem"
+                    >
+                      <Image size={16} />
+                      {imageUploadLoading && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-[var(--accent-color)] bg-opacity-70 rounded-md">
+                          <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        </div>
+                      )}
+                    </button>
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      onChange={handleImageUpload}
+                      accept="image/*"
+                      style={{ display: "none" }}
                     />
                   </div>
-                ) : (
-                  <div className="markdown-content p-5 w-full bg-transparent text-[var(--foreground)] min-h-[300px] h-full text-lg overflow-auto  rounded-md">
-                    {editContent ? (
-                      <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                        {editContent}
-                      </ReactMarkdown>
-                    ) : (
-                      <p className="text-[var(--foreground)] opacity-60 italic">
-                        {t("editor.noPreviewContent")}
-                      </p>
+
+                  <div className="flex items-center space-x-1 mr-2">
+                    <button
+                      className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors flex items-center justify-center"
+                      onClick={() => insertMarkdown("orderedList")}
+                      title="Lista Numerada"
+                    >
+                      <ListOrdered size={16} />
+                    </button>
+                    <button
+                      className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors flex items-center justify-center"
+                      onClick={() => insertMarkdown("unorderedList")}
+                      title="Lista com Marcadores"
+                    >
+                      <LayoutList size={16} />
+                    </button>
+                    <button
+                      onClick={() =>
+                        setShowEmojiPickerContent(!showEmojiPickerContent)
+                      }
+                      className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors"
+                      title="Adicionar emoji"
+                    >
+                      <SmilePlus size={16} />
+                    </button>
+                    {showEmojiPickerContent && (
+                      <div className="absolute z-50 mt-28 shadow-xl rounded-lg overflow-hidden">
+                        <EmojiPicker
+                          onEmojiClick={handleEmojiSelectContent}
+                          skinTonesDisabled
+                          width={280}
+                          height={350}
+                          previewConfig={{ showPreview: false }}
+                          theme={Theme.DARK}
+                        />
+                      </div>
                     )}
                   </div>
-                )}
-              </>
-            ) : (
-              <div className="h-full overflow-auto pr-2">
-                <div className="prose prose-invert prose-lg w-full break-words text-lg text-[var(--foreground)] leading-relaxed markdown-content">
-                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                    {note.content}
-                  </ReactMarkdown>
+
+                  <div className="ml-auto flex items-center gap-2">
+                    <button
+                      className={`rounded-md px-3 py-1.5 transition-all duration-200 flex items-center gap-1.5 ${
+                        isPreviewMode
+                          ? "bg-transparent text-[var(--foreground)] border border-[var(--border-color)]"
+                          : "bg-[var(--button-bg1)] text-[var(--background)]"
+                      }`}
+                      onClick={() => setIsPreviewMode(false)}
+                      disabled={!isPreviewMode}
+                    >
+                      <Edit size={16} /> Editar
+                    </button>
+                    <button
+                      className={`rounded-md px-3 py-1.5 transition-all duration-200 flex items-center gap-1.5 ${
+                        !isPreviewMode
+                          ? "bg-transparent text-[var(--foreground)] border border-[var(--border-color)]"
+                          : "bg-[var(--button-bg1)] text-[var(--background)]"
+                      }`}
+                      onClick={() => setIsPreviewMode(true)}
+                      disabled={isPreviewMode}
+                    >
+                      <Eye size={16} /> Visualizar
+                    </button>
+                  </div>
                 </div>
-              </div>
+              </>
             )}
-          </div>
 
-          <div className=" p-6  items-center">
-            <div className="text-sm text-[var(--foreground)]">
-              ID: {note.id.slice(0, 8)}...
+            {/* Área de conteúdo */}
+            <div className="flex-grow overflow-auto p-4">
+              {editMode ? (
+                <>
+                  {!isPreviewMode ? (
+                    <div className="h-full">
+                      <div className="mb-4 text-xs bg-[var(--container)] bg-opacity-50 p-2 rounded flex items-center gap-2 text-[var(--foreground)]">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-4 w-4"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                          />
+                        </svg>
+                        <span>{t("editor.markdownSupport")}</span>
+                      </div>
+                      <textarea
+                        value={editContent}
+                        onChange={(e) => setEditContent(e.target.value)}
+                        placeholder={t("editor.noteContent")}
+                        className="w-full h-full min-h-[300px] text-lg bg-transparent focus:outline-none resize-none text-[var(--foreground)] p-2"
+                        style={{ fontSize: "18px", lineHeight: "1.7" }}
+                      />
+                    </div>
+                  ) : (
+                    <div className="markdown-content p-5 w-full bg-transparent text-[var(--foreground)] min-h-[300px] h-full text-lg overflow-auto  rounded-md">
+                      {editContent ? (
+                        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                          {editContent}
+                        </ReactMarkdown>
+                      ) : (
+                        <p className="text-[var(--foreground)] opacity-60 italic">
+                          {t("editor.noPreviewContent")}
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div className="h-full overflow-auto pr-2">
+                  <div className="prose prose-invert prose-lg w-full break-words text-lg text-[var(--foreground)] leading-relaxed markdown-content">
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                      {note.content}
+                    </ReactMarkdown>
+                  </div>
+                </div>
+              )}
             </div>
-            {/* <div className="text-sm text-[var(--foreground)]">
-              #
-              {note.tags
-                ? note.tags.replace(/[\[\]"]/g, "").replace(/,/g, " #")
-                : ""}
-            </div> */}
 
-            <div className="flex gap-2">
-              <button
-                onClick={handleExportTxt}
-                disabled={!note}
-                className="flex items-center gap-2 px-3 py-2 rounded-lg  hover:bg-blue-500/20 transition-colors"
-                title={t("editor.exportAsTXT")}
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-                <span>TXT</span>
-              </button>
+            <div className=" p-6  items-center">
+              <div className="text-sm text-[var(--foreground)]">
+                ID: {note.id.slice(0, 8)}...
+              </div>
+              {/* <div className="text-sm text-[var(--foreground)]">
+                #
+                {note.tags
+                  ? note.tags.replace(/[\[\]"]/g, "").replace(/,/g, " #")
+                  : ""}
+              </div> */}
 
-              <button
-                onClick={handleExportPdf}
-                disabled={!note}
-                className="flex items-center gap-2 px-3 py-2 rounded-lg  hover:bg-purple-500/20 transition-colors"
-                title={t("editor.exportAsPDF")}
-              >
-                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-                <span>PDF</span>
-              </button>
+              <div className="flex gap-2">
+                <button
+                  onClick={handleExportTxt}
+                  disabled={!note}
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg  hover:bg-blue-500/20 transition-colors"
+                  title={t("editor.exportAsTXT")}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                  <span>TXT</span>
+                </button>
 
-              <button
-                onClick={handleDelete}
-                disabled={deleting || editMode}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
-                  deleting || editMode
-                    ? "bg-slate-700 text-slate-400 cursor-not-allowed"
-                    : " hover:bg-red-500/20"
-                }`}
-                title={t("editor.deleteNote")}
-              >
-                {deleting ? (
-                  <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                ) : (
-                  <>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                <button
+                  onClick={handleExportPdf}
+                  disabled={!note}
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg  hover:bg-purple-500/20 transition-colors"
+                  title={t("editor.exportAsPDF")}
+                >
+                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                  <span>PDF</span>
+                </button>
+
+                <button
+                  onClick={handleDelete}
+                  disabled={deleting || editMode}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+                    deleting || editMode
+                      ? "bg-slate-700 text-slate-400 cursor-not-allowed"
+                      : " hover:bg-red-500/20"
+                  }`}
+                  title={t("editor.deleteNote")}
+                >
+                  {deleting ? (
+                    <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  ) : (
+                    <>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
                     <span>{t("editor.delete")}</span>
                   </>
                 )}
-              </button>
+                </button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </ProtectedRoute>
+      </ProtectedRoute>
+      <Analytics />
+    </>
   );
 }

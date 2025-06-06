@@ -10,6 +10,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { decrypt } from "../components/Encryption";
 import { useTranslation } from "react-i18next";
+import { Analytics } from "@vercel/analytics/next";
 
 const Profile = memo(() => {
   const { t } = useTranslation();
@@ -513,6 +514,7 @@ const Profile = memo(() => {
   };
 
   return (
+    <>
     <div className="flex justify-center ">
       <div className="bg-[var(--background)] text-[var(--background]">
         <div className="relative">
@@ -824,6 +826,8 @@ const Profile = memo(() => {
         />
       </div>
     </div>
+    <Analytics />
+    </>
   );
 });
 

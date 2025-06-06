@@ -127,18 +127,32 @@ export default async function RootLayout({
         {/* WhatsApp specific meta tags */}
         <meta property="og:image:type" content="image/png" />
         <meta name="format-detection" content="telephone=no" />
-        {/* Schema.org / Microdata for better WhatsApp and messaging app compatibility */}
-        <div itemScope itemType="https://schema.org/WebApplication">
-          <meta itemProp="name" content="Lynxky" />
-          <meta
-            itemProp="description"
-            content="Capture inspiration, craft ideas, and let your notes shine."
-          />
-          <meta itemProp="image" content="/static/images/og.png" />
-          <meta itemProp="url" content="/" />
-          <meta itemProp="applicationCategory" content="ProductivityApplication" />
-          <meta itemProp="operatingSystem" content="Web" />
-        </div>
+        {/* Schema.org structured data for better search engine and messaging app compatibility */}
+        <meta name="application-name" content="Lynxky" />
+        <meta name="generator" content="Next.js" />
+        <meta name="keywords" content="notes, productivity, writing, ideas, inspiration" />
+        <meta name="author" content="Lynxky" />
+        <meta name="creator" content="Lynxky" />
+        <meta name="publisher" content="Lynxky" />
+        <meta name="robots" content="index, follow" />
+        <meta name="googlebot" content="index, follow" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebApplication",
+              "name": "Lynxky",
+              "description": "Capture inspiration, craft ideas, and let your notes shine.",
+              "image": "/static/images/og.png",
+              "url": "/",
+              "applicationCategory": "ProductivityApplication",
+              "operatingSystem": "Web",
+              "browserRequirements": "Requires JavaScript. Requires HTML5.",
+              "permissions": "none"
+            })
+          }}
+        />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[var(--background)] text-[var(--foreground)] no-scrollbar circularcursor

@@ -29,6 +29,22 @@
     },
     "alerts": {
       "loginRequired": "Sie müssen angemeldet sein, um ein Abonnement abzuschließen."
+    },
+    "trustSection": {
+      "premiumPlan": "Premium-Plan",
+      "security": {
+        "title": "Vollständige Sicherheit",
+        "description": "Ihre Daten sind mit Ende-zu-Ende-Verschlüsselung geschützt"
+      },
+      "speed": {
+        "title": "Ultraschnell",
+        "description": "Sofortige Synchronisierung zwischen Geräten"
+      },
+      "flexibility": {
+        "title": "Keine Verpflichtung",
+        "description": "Jederzeit kündbar, Ihre Daten bleiben immer Ihnen"
+      },
+      "testimonial": "Schließen Sie sich Tausenden von Benutzern an, die unserer Plattform vertrauen, um ihre Ideen zu organisieren"
     }
   },
   "login": {

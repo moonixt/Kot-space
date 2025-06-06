@@ -12,6 +12,7 @@ import { useAuth } from "../../context/AuthContext";
 import Link from "next/link";
 import { ArrowLeft, Copy, Mail } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { Analytics } from "@vercel/analytics/next";
 
 export default function DeleteAccountPage() {
   const { t } = useTranslation();
@@ -49,6 +50,7 @@ export default function DeleteAccountPage() {
   };
 
   return (
+    <>
     <div className="min-h-screen flex items-center justify-center bg-[var(--background)] p-4">
       <div className="w-full max-w-md">        <div className="bg-[var(--container)] rounded-xl overflow-hidden shadow-lg">
           <div className="p-8">
@@ -107,5 +109,7 @@ export default function DeleteAccountPage() {
         </div>
       </div>
     </div>
+    <Analytics />
+    </>
   );
 }
