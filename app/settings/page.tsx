@@ -1,5 +1,6 @@
 "use client";
 
+
 import { Analytics } from "@vercel/analytics/next";
 import { AuthenticatedRoute } from "../components/AuthenticatedRoute";
 import Profile from "../profile/page";
@@ -89,7 +90,7 @@ export default function Settings() {
       
       if (error) {
         console.error('Erro ao acessar o portal:', error);
-        alert('Não foi possível acessar o portal de assinatura. Por favor, tente novamente mais tarde.');
+        alert('You don\'t have an active subscription or is on trial period.');
         return;
       }
       
