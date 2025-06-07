@@ -604,7 +604,7 @@
           "description": "Lynxky（「弊社」、「当社」または「私たち」）は、このアプリケーションを通じて収集される個人データの管理者です。管理者として、弊社はお客様の個人データの処理の目的と手段を決定する責任があります。",
           "contactInfo": "管理者の連絡先情報：",
           "name": "名前：Lynxky",
-          "email": "メール：privacy@ederin.net"
+          "email": "メール： privacy@lynxky.com"
         }
       },
       "dataTypes": {
@@ -700,15 +700,15 @@
           "withdraw": "同意撤回権：処理が同意に基づく場合、いつでも同意を撤回できる権利；",
           "automated": "自動化された意思決定に服さない権利：法的効果を生じる自動化された処理のみに基づく決定に服さない権利。"
         },
-        "exercise": "上記の権利のいずれかを行使するには、privacy@ederin.netまでご連絡ください。15日以内にお客様のご要求にお応えいたします。"
+        "exercise": "上記の権利のいずれかを行使するには、 privacy@lynxky.comまでご連絡ください。15日以内にお客様のご要求にお応えいたします。"
       },
       "contact": {
         "title": "19. お問い合わせ方法",
         "description": "このプライバシーポリシーまたはお客様の個人データの処理についてご質問やご懸念がございましたら、以下までご連絡ください：",
         "contacts": {
-          "main": "メインメール：privacy@ederin.net",
-          "dpo": "データ保護責任者：privacy@ederin.net",
-          "support": "一般サポート：privacy@ederin.net"
+          "main": "メインメール： privacy@lynxky.com",
+          "dpo": "データ保護責任者： privacy@lynxky.com",
+          "support": "一般サポート： privacy@lynxky.com"
         },
         "complaint": "弊社によるお客様の個人データの処理方法にご満足いただけない場合は、データ保護機関に苦情を申し立てる権利もございます：",
         "authorities": {
@@ -904,7 +904,7 @@
         "content": {
           "description": "これらの利用規約についてご質問がある場合は、以下の方法でお問い合わせください：",
           "methods": [
-            "メール：privacy@ederin.net",
+            "メール： privacy@lynxky.com",
             "弊社のアプリケーション内のサポートリンクから"
           ],
           "response": "お客様のご質問にお答えし、ご懸念を解決するため最善を尽くします。"
