@@ -13,7 +13,8 @@ import Tasks from "../components/tasks";
 import { decrypt } from "../components/Encryption";
 import { useTranslation } from "react-i18next";
 // import Tables from "../components/tables";
-import { Eye, Star, Info } from "lucide-react";
+import { Eye, Star } from "lucide-react";
+//Info
 import { checkStripeSubscription } from "../../lib/checkStripeSubscription";
 
 // Bookmark
@@ -310,12 +311,12 @@ export default function DashboardPage() {
                   </DropdownMenuCheckboxItem>
                   {/* Info/help item */}
                   <DropdownMenuSeparator />
-                  <Link href="/chat" passHref legacyBehavior>
+                  {/* <Link href="/chat" passHref legacyBehavior>
                     <a className="flex items-center gap-2 px-2 py-2 rounded-md text-[var(--text-color)] hover:bg-[var(--container)] transition-colors" title="Help & Info">
                       <Info className="h-4 w-4" />
                       <span>{t("dashboard.info", "Help") || "Help & Info"}</span>
                     </a>
-                  </Link>
+                  </Link> */}
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
