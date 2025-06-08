@@ -191,7 +191,7 @@ function Editor() {
             .join("\n");
         } else {
           // if not add a basic template
-          newText = "1. Primeiro item\n2. Segundo item\n3. Terceiro item";
+          newText = "1. \n2. \n3. ";
         }
         break;
       case "unorderedList":
@@ -201,7 +201,7 @@ function Editor() {
           newText = lines.map((line) => `- ${line}`).join("\n");
         } else {
           // Se não tiver, adicionar um template
-          newText = "- Primeiro item\n- Segundo item\n- Terceiro item";
+          newText = "- \n- \n- ";
         }
         break;
       case "link":
