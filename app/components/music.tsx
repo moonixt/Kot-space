@@ -222,7 +222,7 @@ export default function MusicPlayer({ isVisible = false, onVisibilityChange }: M
           position: "fixed",
           right: "0",
           top: 0,
-          bottom: "50px", // Leave space for bottom bar
+          bottom: "60px", // Leave space for bottom bar
           width: isMobile ? "280px" : "320px",
           zIndex: 50,
           padding: "5px",

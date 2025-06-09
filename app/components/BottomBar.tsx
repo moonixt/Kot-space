@@ -23,11 +23,11 @@ export default function BottomBar({
 }: BottomBarProps) {
   const { t } = useTranslation();
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-[50] bg-black/85 backdrop-blur border-t border-[var(--container)] shadow-lg">
+    <div className="fixed bottom-0 left-0 right-0 z-[50] bg-black/85 backdrop-blur  shadow-lg">
       <div className="flex items-center justify-center gap-4 px-4 py-2">
         {/* Sidebar toggle */}        <button
           onClick={onSidebarToggle}
-          className="flex items-center justify-center w-10 h-10 rounded-full bg-[var(--container)] text-[var(--foreground)] hover:bg-[var(--container)]/80 transition-all duration-200 shadow-md"
+          className="flex items-center justify-center w-10 h-10 rounded-full bg-black text-white hover:bg-[var(--container)]/80 transition-all duration-200 shadow-md"
           aria-label={
             isSidebarVisible ? t("sidebar.closeMenu") : t("sidebar.openMenu")
           }
