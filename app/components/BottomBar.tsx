@@ -27,7 +27,7 @@ export default function BottomBar({
       <div className="flex items-center justify-center gap-4 px-4 py-2">
         {/* Sidebar toggle */}        <button
           onClick={onSidebarToggle}
-          className="flex items-center justify-center w-10 h-10 rounded-full bg-[var(--container)] text-[var(--foreground)] hover:bg-[var(--container)]/80 transition-all duration-200 shadow-md"
+          className="flex items-center justify-center w-10 h-10 rounded-full bg-black text-white hover:bg-[var(--container)]/80 transition-all duration-200 shadow-md"
           aria-label={
             isSidebarVisible ? t("sidebar.closeMenu") : t("sidebar.openMenu")
           }
