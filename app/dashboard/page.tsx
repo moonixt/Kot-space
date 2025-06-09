@@ -189,7 +189,7 @@ export default function DashboardPage() {
           {MemoizedProfile}
         </div>
 
-            <div className="p-4   mx-auto max-w-screen  sm:max-w-2xl md:max-w-3xl lg:max-w-5xl xl:max-w-7xl 2xl:max-w-7xl ">
+            <div className="p-4 sm:p-0  mx-auto max-w-screen  sm:max-w-2xl md:max-w-3xl lg:max-w-5xl xl:max-w-7xl 2xl:max-w-7xl ">
     {/* Renderização condicional do botão Free trial */}
     {hasActiveSubscription === false && (
       <div className="flex justify-end mb-4 ">        <button 
