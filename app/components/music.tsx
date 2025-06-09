@@ -4,14 +4,15 @@ import React, { useState, useEffect } from "react";
 import { useMusicPlayer } from "../../context/MusicPlayerContext";
 import { useTranslation } from "react-i18next";
 import {
-  Headphones, ListMusic,
+   ListMusic,
 } from "lucide-react";
 
 interface MusicPlayerProps {
+  isVisible?: boolean;
   onVisibilityChange?: (visible: boolean) => void;
 }
 
-export default function MusicPlayer({ onVisibilityChange }: MusicPlayerProps) {
+export default function MusicPlayer({ isVisible = false, onVisibilityChange }: MusicPlayerProps) {
   const { t } = useTranslation();
   const {
     audioFile,
@@ -30,7 +31,6 @@ export default function MusicPlayer({ onVisibilityChange }: MusicPlayerProps) {
     loadSavedTracks,
   } = useMusicPlayer();
 
-  const [isVisible, setIsVisible] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -57,20 +57,6 @@ export default function MusicPlayer({ onVisibilityChange }: MusicPlayerProps) {
   useEffect(() => {
     localStorage.setItem('musicPlayerVolume', volume.toString());
   }, [volume]);
-
-  // Load saved player visibility state
-  useEffect(() => {
-    const savedVisibility = localStorage.getItem('musicPlayerVisible');
-    if (savedVisibility === 'true' && audioFiles.length > 0) {
-      setIsVisible(true);
-      onVisibilityChange?.(true);
-    }
-  }, [audioFiles.length, onVisibilityChange]);
-
-  // Save player visibility state
-  useEffect(() => {
-    localStorage.setItem('musicPlayerVisible', isVisible.toString());
-  }, [isVisible]);
 
   // Check for saved tracks on component mount
   useEffect(() => {
@@ -128,8 +114,7 @@ export default function MusicPlayer({ onVisibilityChange }: MusicPlayerProps) {
     if (e.target.files && e.target.files.length > 0) {
       // Send all files to context
       setAudioFiles(e.target.files);
-      // Auto-show player when files are selected
-      setIsVisible(true);
+      // Notify parent that music player should be visible
       onVisibilityChange?.(true);
 
       // Hide the multi-file hint if files were loaded
@@ -139,12 +124,6 @@ export default function MusicPlayer({ onVisibilityChange }: MusicPlayerProps) {
 
   const showHint = () => setShowMultiFileHint(true);
   const hideHint = () => setShowMultiFileHint(false);
-
-  const toggleVisibility = () => {
-    const newVisibility = !isVisible;
-    setIsVisible(newVisibility);
-    onVisibilityChange?.(newVisibility);
-  };
 
   // Format time in minutes:seconds
   const formatTime = (time: number) => {
@@ -234,55 +213,25 @@ export default function MusicPlayer({ onVisibilityChange }: MusicPlayerProps) {
 
   return (
     <>
-      {/* Toggle button - positioned in bottom-left for sidebar */}
-      <button
-        onClick={toggleVisibility}
-        aria-label={isVisible ? t('musicPlayer.hidePlayer') : t('musicPlayer.showPlayer')}
-        className="fixed z-[60] flex items-center justify-center w-10 h-10 rounded-full bg-black/50 backdrop-blur hover:bg-black/30 text-white/80 transition-all duration-300"
-        style={{
-          left: isVisible ? (isMobile ? "260px" : "320px") : "16px",
-          bottom: "16px",
-        }}
-      >
-        <span>
-          {isVisible ? (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="m15 18-6-6 6-6"/>
-            </svg>
-          ) : (
-            <Headphones size={20}/>
-          )}
-        </span>
-      </button>
-
       {/* Sidebar Player container */}
       <div
-        className={`backdrop-blur bg-black/80 shadow-2xl flex flex-col transition-all duration-300 border-r border-white/10`}
+        className={`backdrop-blur bg-black/80 shadow-2xl flex flex-col transition-all duration-300 border-l border-white/10 ${
+          isVisible ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'
+        }`}
         style={{
           position: "fixed",
-          left: isVisible ? "0" : (isMobile ? "-280px" : "-340px"),
+          right: "0",
           top: 0,
-          bottom: 0,
+          bottom: "50px", // Leave space for bottom bar
           width: isMobile ? "280px" : "320px",
           zIndex: 50,
           padding: "5px",
-          paddingTop: "10px", // Space for toggle button
+          paddingTop: "10px",
+          pointerEvents: isVisible ? 'auto' : 'none', // Disable interactions when hidden
         }}
       >
         {/* Player content */}
-        <div
-          className={`flex flex-col w-full h-full transition-opacity duration-300 ${isVisible ? "opacity-100" : "opacity-0"}`}
-        >
+        <div className="flex flex-col w-full h-full opacity-100">
           {/* File Upload Section */}
           <div className="mb-6">
             <label

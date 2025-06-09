@@ -6,7 +6,6 @@ import {
   Search,
   Fullscreen,
   Clock as ClockIcon,
-  Menu,
   X,
   BookOpen,
   BookOpenText,
@@ -44,10 +43,11 @@ import {
 import { checkUserLimits } from "../../lib/checkUserLimits";
 
 interface SideboxProps {
+  isVisible?: boolean;
   onVisibilityChange?: (isVisible: boolean) => void;
 }
 
-export default function Sidebox({ onVisibilityChange }: SideboxProps = {}) {
+export default function Sidebox({ isVisible = false, onVisibilityChange }: SideboxProps) {
   interface Note {
     id: string;
     title: string;
@@ -61,16 +61,15 @@ export default function Sidebox({ onVisibilityChange }: SideboxProps = {}) {
     name: string;
     expanded: boolean;
   }
-
   const [notes, setNotes] = useState<Note[]>([]);
   const [folders, setFolders] = useState<Folder[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-  const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [newFolderName, setNewFolderName] = useState("");
   const [isAddingFolder, setIsAddingFolder] = useState(false);
   const [isFolderCreating, setIsFolderCreating] = useState(false);
   const [showFoldersTab, setShowFoldersTab] = useState(false);  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const router = useRouter();
   const { user } = useAuth();
   const [, setError] = useState<string | null>(null);
@@ -107,12 +106,26 @@ export default function Sidebox({ onVisibilityChange }: SideboxProps = {}) {
       langToSet = "de";
     } else if (browserLang && browserLang.startsWith("es")) {
       langToSet = "es";
-    }
-
-    i18n.changeLanguage(langToSet);
+    }    i18n.changeLanguage(langToSet);
     if (typeof window !== "undefined") {
       localStorage.setItem("i18nextLng", langToSet);
     }
+  }, []);
+
+  // Check for mobile screen size
+  useEffect(() => {
+    const checkIfMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    // Initial check
+    checkIfMobile();
+
+    // Listen for window resize
+    window.addEventListener("resize", checkIfMobile);
+
+    // Clean up
+    return () => window.removeEventListener("resize", checkIfMobile);
   }, []);
 
   const fetchNotes = async () => {
@@ -234,21 +247,13 @@ export default function Sidebox({ onVisibilityChange }: SideboxProps = {}) {
       );
     }
   }  const toggleMobileSidebar = () => {
-    const newState = !isMobileOpen;
-    setIsMobileOpen(newState);
-    
-    // Notificar o componente pai sobre a mudança de visibilidade
-    if (onVisibilityChange) {
-      onVisibilityChange(newState);
+    // Only close sidebar on mobile devices, not on desktop
+    if (isMobile && onVisibilityChange) {
+      onVisibilityChange(false);
     }
   };
 
-  // Adicione um useEffect para notificar mudanças de visibilidade
-  useEffect(() => {
-    if (onVisibilityChange) {
-      onVisibilityChange(isMobileOpen);
-    }
-  }, [isMobileOpen, onVisibilityChange]);
+  // Remove the useEffect that was managing isMobileOpen since it's no longer needed
 
   const toggleFolder = (folderId: string) => {
     setFolders(
@@ -381,45 +386,35 @@ const toggleFullscreen = () => {
         notes.map((note) =>
           note.id === noteId ? { ...note, folder_id: folderId } : note,
         ),
-      );
-    } catch (error) {
+      );    } catch (error) {
       console.error("Erro ao mover nota:", error);
     }
-
-    
-
-
   };
-
   return (
-    <div className="z-50 md:h-screen md:fixed md:right-0 md:top-0 overflow-y-auto scrollbar">
-      {/* Mobile toggle button */}
-      <button
-        onClick={toggleMobileSidebar}
-        className="fixed top-4 right-4 z-50 p-2 rounded-full bg-[var(--container)] text-[var(--foreground)] shadow-lg"
-        aria-label={
-          isMobileOpen ? t("sidebar.closeMenu") : t("sidebar.openMenu")
-        }
-      >
-        {isMobileOpen ? <X size={20} /> : <Menu size={20} />}
-      </button>
-
-      {/* Sidebar */}
+    <div 
+      className={`w-80 h-screen fixed left-0 top-0 z-50 transition-all duration-300 ease-in-out ${
+        isVisible ? 'translate-x-0' : '-translate-x-full'
+      }`}
+      style={{
+        pointerEvents: isVisible ? 'auto' : 'none'
+      }}
+    >      {/* Sidebar */}
       <aside
-        className={`fixed inset-y-0 right-0 w-72  bg-[var(--background)]/85 backdrop-blur text-[var(--text-color)] shadow-xl transition-transform duration-300 ease-in-out z-40 
-        ${isMobileOpen ? "translate-x-0" : "translate-x-full"}`}
+        className="w-full h-full bg-[var(--background)]/85 backdrop-blur text-[var(--text-color)] shadow-xl overflow-y-auto scrollbar"
+        style={{
+          paddingBottom: "50px" // Leave space for bottom bar
+        }}
       >
         <div className="flex flex-col h-full">
           {/* Header */}
           <div className="p-4">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-center">
               <h1 className="text-xl font-bold flex items-center">
                 <BookOpen size={20} className="text-[var(--foreground)]" />
                 {user ? (
-                  <Link href={"/dashboard"}>
-                    <span
+                  <Link href={"/dashboard"}>                    <span
                       className="text-[var(--foreground)] px-2 py-1 rounded-lg transition-colors duration-200 hover:bg-[var(--container)] hover:shadow-sm font-medium"
-                      onClick={() => setIsMobileOpen(false)}
+                      onClick={() => toggleMobileSidebar()}
                     >
                       {t("sidebar.myWorkspace")}
                     </span>
@@ -432,10 +427,9 @@ const toggleFullscreen = () => {
 
               {/* <div className="flex items-center space-x-2">
                 <Link href="/reader">
-                  <div
-                    className="p-2 rounded-full hover:bg-[var(--container)] transition-colors"
+                  <div                    className="p-2 rounded-full hover:bg-[var(--container)] transition-colors"
                     title="Ebook Reader"
-                    onClick={() => setIsMobileOpen(false)}
+                    onClick={() => toggleMobileSidebar()}
                   >
                     <Book size={20} className="text-[var(--foreground)]" />
                   </div>
@@ -609,11 +603,10 @@ const toggleFullscreen = () => {
                       <div className="ml-7 space-y-0.5 mt-0.5 mb-2 bg-[var(--container)] bg-opacity-20 rounded-md py-1">
                         {notes
                           .filter((note) => note.folder_id === folder.id)
-                          .map((note) => (
-                            <Link
+                          .map((note) => (                            <Link
                               href={`/notes/${note.id}`}
                               key={note.id}
-                              onClick={() => setIsMobileOpen(false)}
+                              onClick={() => toggleMobileSidebar()}
                             >
                               <div className="px-3 py-1.5 hover:bg-[var(--container)] cursor-pointer transition-colors text-sm flex items-center justify-between group rounded-md mx-1">
                                 <div className="flex items-center overflow-hidden">
@@ -661,16 +654,14 @@ const toggleFullscreen = () => {
               <h3 className="text-sm font-medium text-[var(--foreground)]">
                 {t("sidebar.unfiled")}
               </h3>
-            </div>
-
-            <div className="px-2 py-2">
+            </div>            <div className="px-2 py-2">
               {notes
                 .filter((note) => note.folder_id === null)
                 .map((note) => (
                   <div key={note.id} className="relative group">
                     <Link
                       href={`/notes/${note.id}`}
-                      onClick={() => setIsMobileOpen(false)}
+                      onClick={() => toggleMobileSidebar()}
                     >
                       <div className="p-2 rounded-md hover:bg-[var(--container)] cursor-pointer transition-colors mb-1 flex items-start">
                         <div className="flex-1 min-w-0">
@@ -766,12 +757,11 @@ const toggleFullscreen = () => {
               <div className="flex justify-center py-8">
                 <div className="w-8 h-8 border-2 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
               </div>
-            ) : filteredNotes.length > 0 ? (
-              filteredNotes.map((note) => (
+            ) : filteredNotes.length > 0 ? (              filteredNotes.map((note) => (
                 <div key={note.id} className="relative group">
                   <Link
                     href={`/notes/${note.id}`}
-                    onClick={() => setIsMobileOpen(false)}
+                    onClick={() => toggleMobileSidebar()}
                   >
                     <div className="p-3 rounded-lg hover:bg-[var(--container)] cursor-pointer transition-colors border border-transparent hover:border-slate-700">
                       <div className="flex items-start space-x-3">
