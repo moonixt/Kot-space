@@ -23,7 +23,7 @@ export default function BottomBar({
 }: BottomBarProps) {
   const { t } = useTranslation();
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-[50] bg-black/85 backdrop-blur border-t border-[var(--container)] shadow-lg">
+    <div className="fixed bottom-0 left-0 right-0 z-[50] bg-black/85 backdrop-blur  shadow-lg">
       <div className="flex items-center justify-center gap-4 px-4 py-2">
         {/* Sidebar toggle */}        <button
           onClick={onSidebarToggle}
