@@ -402,7 +402,7 @@ const toggleFullscreen = () => {
       <aside
         className="w-full h-full bg-[var(--background)]/85 backdrop-blur text-[var(--text-color)] shadow-xl overflow-y-auto scrollbar"
         style={{
-          paddingBottom: "50px" // Leave space for bottom bar
+          paddingBottom: "60px" // Leave space for bottom bar
         }}
       >
         <div className="flex flex-col h-full">
