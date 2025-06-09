@@ -203,7 +203,7 @@ export default function DashboardPage() {
           <div className="flex-1  gap-4">
             {/* New document button */}
             
-            <div className="flex justify-center">
+            {/* <div className="flex justify-center">
             <button
               className="px-4 py-2 flex justify-center sm:px-5 sm:py-2.5 sm:w-96 w-60 rounded-md  text-base font-medium  bg-gradient-to-r from-[var(--button-theme)] to-[var(--theme2)]/40 border border-[var(--border-theme)]/30 text-[var(--text-theme)]   hover:bg-opacity-60 transition-all hover:shadow-md transition-colors flex items-center gap-2"
               onClick={() => router.push("/editor")}
@@ -225,7 +225,7 @@ export default function DashboardPage() {
              
             </button>
            
-            </div>
+            </div> */}
 
          
 

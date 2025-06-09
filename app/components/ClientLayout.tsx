@@ -8,6 +8,8 @@ import { useAuth } from "../../context/AuthContext";
 import { useState, useRef, useEffect } from "react";
 // import IA from "./ChatAssistent";
 import Sidebox from "./sidebox";
+import BottomBar from "./BottomBar";
+import { useRouter } from "next/navigation";
 
 export default function ClientLayout({
   children,
@@ -20,6 +22,7 @@ export default function ClientLayout({
   const [isMobile, setIsMobile] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
   const { user } = useAuth(); // Obter o usuário logado
+  const router = useRouter();
 
   // Check for mobile screen size
   useEffect(() => {
@@ -60,28 +63,64 @@ export default function ClientLayout({
     }
   }, [isModalOpen]);
 
+  const toggleSidebar = () => {
+    // If on mobile and sidebar is being opened, close music player
+    if (isMobile && !isSidebarVisible && isMusicPlayerVisible) {
+      setIsMusicPlayerVisible(false);
+    }
+    setIsSidebarVisible(!isSidebarVisible);
+  };
+
+  const toggleMusicPlayer = () => {
+    // If on mobile and music player is being opened, close sidebar
+    if (isMobile && !isMusicPlayerVisible && isSidebarVisible) {
+      setIsSidebarVisible(false);
+    }
+    setIsMusicPlayerVisible(!isMusicPlayerVisible);
+  };
+
+  const handleNewNote = () => {
+    router.push("/editor");
+  };
+
   return (
     <MusicPlayerProvider>
       <div 
         className={`transition-all duration-300`}
         style={{
-          paddingLeft: user && isMusicPlayerVisible ? 
+          paddingLeft: isSidebarVisible ? 
             (isMobile ? '0' : '320px') : '0',
-          paddingRight: isSidebarVisible ? 
-            (isMobile ? '0' : '288px') : '0' // 288px = w-72 (18rem)
+          paddingRight: user && isMusicPlayerVisible ? 
+            (isMobile ? '0' : '320px') : '0',
+          paddingBottom: '70px' // Space for bottom bar
         }}
       >
         {children}
       </div>
-      {/* Music player sidebar - only for logged users */}
+      
+      {/* Music player sidebar - always rendered for logged users */}
       {user && (
         <MusicPlayer 
+          isVisible={isMusicPlayerVisible}
           onVisibilityChange={setIsMusicPlayerVisible}
         />
       )}
       
-      {/* Sidebar */}
-      <Sidebox onVisibilityChange={setIsSidebarVisible} />
+      {/* Sidebar - always rendered */}
+      <Sidebox 
+        isVisible={isSidebarVisible}
+        onVisibilityChange={setIsSidebarVisible} 
+      />
+      
+      {/* Bottom Bar */}
+      <BottomBar
+        isSidebarVisible={isSidebarVisible}
+        isMusicPlayerVisible={isMusicPlayerVisible}
+        onSidebarToggle={toggleSidebar}
+        onMusicPlayerToggle={toggleMusicPlayer}
+        onNewNote={handleNewNote}
+        isUserLoggedIn={!!user}
+      />
       
       {/* <div id="Chatbot">
         <button

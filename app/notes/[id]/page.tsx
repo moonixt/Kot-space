@@ -500,7 +500,7 @@ export default function NotePage() {
   return (
     <>
       <ProtectedRoute>
-        <div className="sticky top-0 bg-[var(--background)]/60 bg-opacity-90 backdrop-blur-sm z-10 py-3 px-4 flex items-center">
+        <div className=" top-0 bg-[var(--background)]/60 bg-opacity-90 backdrop-blur-sm z-10 py-3 px-4 flex items-center">
           <Link
             href="/dashboard"
             className="p-2 rounded-full hover:bg-[var(--container)] transition-colors mr-2"
