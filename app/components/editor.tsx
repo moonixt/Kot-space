@@ -9,7 +9,7 @@ import { supabase } from "../../lib/supabase"; //import the supabase client to c
 import eventEmitter from "../../lib/eventEmitter"; // Import do event emitter
 import { checkUserLimits } from "../../lib/checkUserLimits"; // Import the user limits checker
 import {
-  Save,
+
   Eye,
   Edit,
   ListOrdered,
@@ -516,29 +516,7 @@ function Editor() {
       <Profile />
       <div className="mx-auto max-w-7xl w-full h-full flex flex-col flex-grow">
         <div className="bg-[var(--background)] overflow-hidden flex flex-col flex-grow h-full  transition-all duration-300">
-          <div className="flex justify-center pt-5 ">
-            <button
-            className={`flex flex justify-center  gap-2 px-4 py-2 sm:px-5 sm:py-2.5 w-46 rounded-md text-sm sm:text-base font-medium transition-all duration-300 ${
-              saving
-                ? "bg-[var(--container)] text-[var(--foreground)] opacity-70"
-                : "bg-gradient-to-r from-[var(--button-theme)] to-[var(--theme2)]/40 border border-[var(--border-theme)]/30 text-[var(--text-theme)]"
-            }`}
-            onClick={saveNote}
-            disabled={saving || (!title.trim() && !content.trim())}
-          >
-            {saving ? (
-              <>
-                <div className="w-4 h-4 border-2 border-[var(--foreground)] border-t-transparent rounded-full animate-spin"></div>
-                <span>{t("editor.saving")}</span>
-              </>
-            ) : (
-              <>
-                <Save size={18} />
-                <span>{t("editor.save")}</span>
-              </>
-            )}
-          </button>
-          </div>
+       
           {/* Title Section */}
           <div className="p-5 sm:p-6 relative">
             <div className="flex items-center gap-3">
@@ -757,6 +735,7 @@ function Editor() {
             </div>
 
             <div className="flex items-center gap-2">
+             
               <button
                 className={`rounded-md px-3 py-1.5 transition-all duration-200 flex items-center gap-1.5 ${
                   isPreviewMode
@@ -1039,13 +1018,34 @@ function Editor() {
           </div> */}
 
           {/* Footer Section */}
-
-          <div className="flex justify-between items-center p-4 sm:p-5  bg-[var(--container)]">
+            <div className="flex justify-between items-center p-4 sm:p-5 bg-[var(--container)]">
             <div className="text-xs sm:text-sm text-[var(--foreground)] opacity-70">
               <span className="font-medium">{content.length}</span> / 15000{" "}
               {t("editor.characters")}
             </div>
-          </div>
+            <button
+              className={`flex items-center justify-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 w-46 rounded-md text-sm sm:text-base font-medium transition-all duration-300 ${
+              saving
+                ? "bg-[var(--container)] text-[var(--foreground)] opacity-70"
+                : "bg-gradient-to-r from-[var(--button-theme)] to-[var(--theme2)]/40 border border-[var(--border-theme)]/30 text-[var(--text-theme)]"
+              }`}
+              onClick={saveNote}
+              disabled={saving || (!title.trim() && !content.trim())}
+            >
+              {saving ? (
+              <>
+                <div className="w-4 h-4 border-2 border-[var(--foreground)] border-t-transparent rounded-full animate-spin"></div>
+                <span>{t("editor.saving")}</span>
+              </>
+              ) : (
+              <>
+            
+                <span>{t("editor.save")}</span>
+              </>
+              )}
+            </button>
+            </div>
+         
         </div>
       </div>
     </div>
