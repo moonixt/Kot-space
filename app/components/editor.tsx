@@ -231,11 +231,10 @@ function Editor() {
 
     // Verify if the user is verified
     if (!user) {
-      //if the user is not verified
-      // Show the notification error
+      //if the user is not verified      // Show the notification error
       const notification = document.createElement("div");
       notification.className =
-        "fixed bottom-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-500 flex items-center gap-2";
+        "fixed bottom-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-500 flex items-center gap-2 z-[60]";
       notification.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 101.414 1.414L10 11.414l1.293-1.293a1 1 00-1.414-1.414L11.414 10l1.293-1.293a1 1 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
       </svg>${t("editor.loginRequired")}`;
@@ -253,11 +252,10 @@ function Editor() {
       // Check user limits before saving
       const userLimits = await checkUserLimits(user.id);
       
-      if (!userLimits.canCreateNote) {
-        // Show limit reached notification with upgrade option
+      if (!userLimits.canCreateNote) {        // Show limit reached notification with upgrade option
         const notification = document.createElement("div");
         notification.className =
-          "fixed bottom-4 right-4 bg-yellow-500 text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-500 flex items-center gap-2 max-w-md";
+          "fixed bottom-4 right-4 bg-yellow-500 text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-500 flex items-center gap-2 max-w-md z-[60]";
         notification.innerHTML = `
           <div class="flex flex-col gap-2">
             <div class="flex items-center gap-2">
@@ -320,12 +318,10 @@ function Editor() {
       fetchFolders();
 
       // Emit event to notify other components
-      eventEmitter.emit("noteSaved");
-
-      // Notification toast for the success
+      eventEmitter.emit("noteSaved");      // Notification toast for the success
       const notification = document.createElement("div");
       notification.className =
-        "fixed bottom-4 left-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-500 flex items-center gap-2";
+        "fixed bottom-4 left-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-500 flex items-center gap-2 z-[60]";
       notification.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 00-1.414-1.414L9 10.586 7.707 9.293a1 1 00-1.414 1.414l2 2a1 1 001.414 0l4-4z" clip-rule="evenodd" />
       </svg>${t("editor.noteSaved")}`;
@@ -337,12 +333,10 @@ function Editor() {
         setTimeout(() => notification.remove(), 500);
       }, 3000);
     } catch (error) {
-      console.error("Erro ao salvar nota:", error); //error logged in the console
-
-      // Notification toast for erro
+      console.error("Erro ao salvar nota:", error); //error logged in the console      // Notification toast for erro
       const notification = document.createElement("div");
       notification.className =
-        "fixed bottom-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-500 flex items-center gap-2";
+        "fixed bottom-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-500 flex items-center gap-2 z-[60]";
       notification.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 101.414 1.414L10 11.414l1.293-1.293a1 1 00-1.414-1.414L11.414 10l1.293-1.293a1 1 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
       </svg>${t("editor.saveError")}`;
@@ -519,6 +513,29 @@ function Editor() {
        
           {/* Title Section */}
           <div className="p-5 sm:p-6 relative">
+                <div className="flex justify-center">
+                  <button
+                    className={`flex items-center justify-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 w-46 rounded-md text-sm sm:text-base font-medium transition-all duration-300 ${
+                    saving
+                      ? "bg-[var(--container)] text-[var(--foreground)] opacity-70"
+                      : "bg-gradient-to-r from-[var(--button-theme)] to-[var(--theme2)]/40 border border-[var(--border-theme)]/30 text-[var(--text-theme)]"
+                    }`}
+                    onClick={saveNote}
+                    disabled={saving || (!title.trim() && !content.trim())}
+                  >
+                    {saving ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-[var(--foreground)] border-t-transparent rounded-full animate-spin"></div>
+                      <span>{t("editor.saving")}</span>
+                    </>
+                    ) : (
+                    <>
+                  
+                      <span>{t("editor.save")}</span>
+                    </>
+                    )}
+                  </button>
+                </div>
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setShowEmojiPicker(!showEmojiPicker)}
@@ -547,7 +564,7 @@ function Editor() {
                 </div>
               )}
 
-              {/* Add folder selection dropdown */}
+              {/* Add folder selection dropdown */} 
               <div className="relative" ref={folderDropdownRef}>
                 <button
                   onClick={() => setShowFolderDropdown(!showFolderDropdown)}
@@ -1023,27 +1040,7 @@ function Editor() {
               <span className="font-medium">{content.length}</span> / 15000{" "}
               {t("editor.characters")}
             </div>
-            <button
-              className={`flex items-center justify-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 w-46 rounded-md text-sm sm:text-base font-medium transition-all duration-300 ${
-              saving
-                ? "bg-[var(--container)] text-[var(--foreground)] opacity-70"
-                : "bg-gradient-to-r from-[var(--button-theme)] to-[var(--theme2)]/40 border border-[var(--border-theme)]/30 text-[var(--text-theme)]"
-              }`}
-              onClick={saveNote}
-              disabled={saving || (!title.trim() && !content.trim())}
-            >
-              {saving ? (
-              <>
-                <div className="w-4 h-4 border-2 border-[var(--foreground)] border-t-transparent rounded-full animate-spin"></div>
-                <span>{t("editor.saving")}</span>
-              </>
-              ) : (
-              <>
-            
-                <span>{t("editor.save")}</span>
-              </>
-              )}
-            </button>
+       
             </div>
          
         </div>
