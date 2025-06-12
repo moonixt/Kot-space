@@ -8,9 +8,9 @@
   --button-bg2: #0000008d;
   --text-color: #0d1117;
   --theme: #f6f8fa;
-  --button-theme: rgb(22 101 52);
-  --theme2:  rgb(6 95 70);
-  --text-theme: rgb(134 239 172);
+    --button-theme: rgb(0, 0, 0);
+  --theme2:  rgb(0, 0, 0);
+  --text-theme: rgb(255, 255, 255);
   --border-theme: rgb(21 128 61);
   --button-bg: #f8f8f845;
   --hover-color: oklch(80.9% 0.105 251.813);
@@ -121,9 +121,9 @@ html {
   --background: #000000;
   --foreground: #ffffff;
   --text-color: #ffffff;
-  --theme: #010409;
-    --theme2:  rgb(6 95 70);
-  --text-theme: rgb(134 239 172);
+    --button-theme: rgb(255, 255, 255);
+  --theme2:  rgb(255, 255, 255);
+  --text-theme: rgb(0, 0, 0);
   --button-bg: #f5f5f5;
   --button-bg1: #ffffff;
   --button-bg2: #f8f8f845;
@@ -146,9 +146,9 @@ html {
   --foreground: #f1f1f3;
   --text-color: #f1f1f3;
   --theme: #1a1b20;
-  --button-theme: rgb(22 101 52);
-  --theme2:  rgb(6 95 70);
-  --text-theme: rgb(134 239 172);
+  --button-theme: rgb(255, 255, 255);
+  --theme2:  rgb(255, 255, 255);
+  --text-theme: rgb(0, 0, 0);
   --border-theme: rgb(21 128 61);
   --button-bg: #313239;
   --button-bg1: #2a2b33;
