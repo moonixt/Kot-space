@@ -53,17 +53,17 @@ export default function CookieConsent() {
   if (!showBanner && !showPreferences) return null;  return (
     <>
       {showPreferences ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 ">
           <div className="bg-[var(--background)] w-full max-w-lg rounded-xl shadow-xl p-6 max-h-[90vh] overflow-y-auto m-4">            <h2 className="text-xl font-bold mb-4 text-[var(--foreground)]">
               {t('cookies.preferences')}
             </h2>
             
-            <div className="space-y-4 mb-6">
+            <div className="space-y-4 mb-6 ">
               <div className="flex items-center justify-between p-3 bg-[var(--container)] rounded-lg">                <div className="flex-1">
                   <h3 className="font-medium text-[var(--foreground)]">
                     {t('cookies.essential.title')}
                   </h3>
-                  <p className="text-sm text-[var(--muted)]">
+                  <p className="text-sm text-[var(--foreground)]">
                     {t('cookies.essential.description')}
                   </p>
                 </div>
@@ -78,8 +78,7 @@ export default function CookieConsent() {
               <div className="flex items-center justify-between p-3 bg-[var(--container)] rounded-lg">                <div className="flex-1">
                   <h3 className="font-medium text-[var(--foreground)]">
                     {t('cookies.preference.title')}
-                  </h3>
-                  <p className="text-sm text-[var(--muted)]">
+                  </h3>                  <p className="text-sm text-[var(--foreground)]">
                     {t('cookies.preference.description')}
                   </p>
                 </div>
@@ -94,8 +93,7 @@ export default function CookieConsent() {
               <div className="flex items-center justify-between p-3 bg-[var(--container)] rounded-lg">                <div className="flex-1">
                   <h3 className="font-medium text-[var(--foreground)]">
                     {t('cookies.analytics.title')}
-                  </h3>
-                  <p className="text-sm text-[var(--muted)]">
+                  </h3>                  <p className="text-sm text-[var(--foreground)]">
                     {t('cookies.analytics.description')}
                   </p>
                 </div>
@@ -110,8 +108,7 @@ export default function CookieConsent() {
               <div className="flex items-center justify-between p-3 bg-[var(--container)] rounded-lg">                <div className="flex-1">
                   <h3 className="font-medium text-[var(--foreground)]">
                     {t('cookies.marketing.title')}
-                  </h3>
-                  <p className="text-sm text-[var(--muted)]">
+                  </h3>                  <p className="text-sm text-[var(--foreground)]">
                     {t('cookies.marketing.description')}
                   </p>
                 </div>
@@ -145,8 +142,7 @@ export default function CookieConsent() {
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
               <div className="flex-1">                <h3 className="text-lg font-semibold mb-2 text-[var(--foreground)]">
                   {t('cookies.title')}
-                </h3>
-                <p className="text-sm text-[var(--muted)]">
+                </h3>                <p className="text-sm text-[var(--foreground)]">
                   {t('cookies.description')}
                   {' '}
                   <Link href="/privacy" className="text-blue-400 hover:underline">
