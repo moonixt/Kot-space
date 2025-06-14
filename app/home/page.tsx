@@ -143,42 +143,26 @@ export default function HomePage() {
             ))}
           </div>
         </div>
-      </section>
-
-      {/* Benefits Section */}
+      </section>      {/* Benefits Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">            <div>
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl font-bold text-[var(--foreground)] mb-6">
                 {t('homepage.benefits.title')}
               </h2>
               <p className="text-lg text-[var(--foreground)] mb-8">
                 {t('homepage.benefits.subtitle')}
               </p>
-              <ul className="space-y-4">
-                {benefits.map((benefit, index) => (
-                  <li key={index} className="flex items-center">
-                    <CheckCircle className="w-6 h-6 text-green-500 mr-3 flex-shrink-0" />
-                    <span className="text-[var(--foreground)]">{benefit}</span>
-                  </li>
-                ))}
-              </ul>
             </div>
-            <div className="relative">
-              <div className="bg-[var(--container)] p-8 rounded-2xl shadow-lg border border-[var(--border-color)]">                <div className="flex items-center mb-4">
-                  <div className="flex">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <Star key={star} className="w-5 h-5 text-yellow-400 fill-current" />
-                    ))}
-                  </div>
-                  <span className="ml-2 text-[var(--foreground)]">{t('homepage.benefits.testimonial.rating')}</span>
-                </div>
-                <blockquote className="text-[var(--foreground)] text-lg mb-4">
-                  {t('homepage.benefits.testimonial.text')}
-                </blockquote>
-                <cite className="text-[var(--foreground)]">{t('homepage.benefits.testimonial.author')}</cite>
-              </div>
-            </div>
+            <ul className="space-y-4  text-2xl">
+              {benefits.map((benefit, index) => (
+                <li key={index} className="flex items-center">
+                  <CheckCircle className="w-6 h-6 text-green-500 mr-3 flex-shrink-0" />
+                  <span className="text-[var(--foreground)]">{benefit}</span>
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
       </section>
