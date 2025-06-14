@@ -562,7 +562,7 @@
             "Kalender und Ereignisse verwalten",
             "Die Benutzeroberfläche mit Themen und Einstellungen anpassen",
             "Daten zwischen verschiedenen Geräten synchronisieren",
-            "Auf erweiterte Produktivitätsfunktionen zugreifen"
+            "Auf erweiterte Produktivitätsfunktionen zuzugreifen"
           ]
         }
       },
@@ -736,6 +736,86 @@
         "title": "Wichtig",
         "content": "Durch die Nutzung von Lynxky bestätigen Sie, dass Sie diese Nutzungsbedingungen gelesen, verstanden haben und sich damit einverstanden erklären, daran gebunden zu sein. Wir empfehlen Ihnen auch, unsere Datenschutzrichtlinie zu lesen, um zu verstehen, wie wir Ihre persönlichen Informationen behandeln."
       }
+    }
+  },
+  "homepage": {
+    "header": {
+      "signIn": "Anmelden",
+      "getStarted": "Loslegen"
+    },
+    "hero": {
+      "title": "Erfassen Sie Ihre Gedanken, organisieren Sie Ihr Leben",
+      "subtitle": "Lynxky ist die ultimative Produktivitäts-App, die Notizen, Aufgabenverwaltung und Fokus-Tools in einer schönen, sicheren Plattform vereint. Organisieren Sie Ihre Gedanken, verwalten Sie Ihre Zeit und steigern Sie Ihre Produktivität.",
+      "startFreeTrial": "Kostenlos testen",
+      "signIn": "Anmelden"
+    },
+    "features": {
+      "title": "Alles was Sie brauchen, um produktiv zu bleiben",
+      "subtitle": "Lynxky kombiniert leistungsstarke Funktionen in einer intuitiven Benutzeroberfläche, um Ihnen zu helfen, Ideen festzuhalten, Gedanken zu organisieren und mehr zu erreichen.",
+      "smartNotes": {
+        "title": "Intelligente Notizen",
+        "description": "Erstellen, organisieren und formatieren Sie Ihre Notizen mit unserem leistungsstarken Markdown-Editor. Halten Sie Ihre Gedanken mit Ordnern und Tags organisiert."
+      },
+      "taskManagement": {
+        "title": "Aufgabenverwaltung",
+        "description": "Bleiben Sie produktiv mit integriertem Kalender und Aufgabenverwaltung. Verpassen Sie keine Deadline mit intelligenten Erinnerungen und Terminplanung."
+      },
+      "focusMusic": {
+        "title": "Fokus-Musik",
+        "description": "Integrierter Musikplayer mit fokussierenden Soundtracks, um Ihre Produktivität während der Arbeit zu steigern."
+      },
+      "privacyFirst": {
+        "title": "Datenschutz zuerst",
+        "description": "Ihre Daten sind verschlüsselt und sicher. Wir priorisieren Ihren Datenschutz mit branchenüblichen Sicherheitsmaßnahmen."
+      },
+      "multiLanguage": {
+        "title": "Mehrsprachig",
+        "description": "Verfügbar auf Englisch, Portugiesisch, Spanisch, Deutsch und Japanisch. Verwenden Sie Lynxky in Ihrer bevorzugten Sprache."
+      }
+    },
+    "benefits": {
+      "title": "Warum Lynxky wählen?",
+      "subtitle": "Mit moderner Technologie entwickelt und für Ihre Arbeitsweise konzipiert. Lynxky passt sich Ihrem Workflow an, nicht umgekehrt.",
+      "items": {
+        "seamlessSync": "Nahtlose Synchronisation auf allen Ihren Geräten",
+        "export": "Exportieren Sie Ihre Notizen als PDF oder TXT",
+        "customizable": "Anpassbare Themes und Layouts",
+        "collaboration": "Echtzeit-Kollaborationsfunktionen",
+        "search": "Erweiterte Such- und Filterfunktionen"
+      },
+      "testimonial": {
+        "rating": "5.0 von Nutzern",
+        "text": "Lynxky hat völlig verändert, wie ich meine Arbeit und persönlichen Projekte organisiere. Die nahtlose Integration zwischen Notizen und Aufgaben ist brillant.",
+        "author": "— Sarah Chen, Produktdesignerin"
+      }
+    },
+    "platforms": {
+      "title": "Überall verfügbar, wo Sie arbeiten",
+      "subtitle": "Greifen Sie von jedem Gerät auf Ihre Notizen und Aufgaben zu. Lynxky synchronisiert nahtlos über Web-, Desktop- und mobile Plattformen.",
+      "webApp": "Web-App",
+      "mobileApp": "Mobile App",
+      "desktopApp": "Desktop-App"
+    },
+    "cta": {
+      "title": "Bereit, sich zu organisieren?",
+      "subtitle": "Schließen Sie sich Tausenden von Nutzern an, die Lynxky vertrauen, ihre Ideen zu organisieren. Jederzeit kündbar, Ihre Daten gehören immer Ihnen.",
+      "startTrial": "Starten Sie Ihre kostenlose Testversion",
+      "disclaimer": "Keine Kreditkarte erforderlich • 3-tägige kostenlose Testversion • Jederzeit kündbar"
+    },
+    "footer": {
+      "description": "Ihre Notizen, auf Ihre Art. Die ultimative Produktivitätsplattform für moderne Profis.",
+      "product": "Produkt",
+      "features": "Funktionen",
+      "pricing": "Preise",
+      "security": "Sicherheit",
+      "support": "Support",
+      "helpCenter": "Hilfe-Center",
+      "contactUs": "Kontakt",
+      "deleteAccount": "Konto löschen",
+      "legal": "Rechtliches",
+      "privacyPolicy": "Datenschutzrichtlinie",
+      "termsOfService": "Nutzungsbedingungen",
+      "allRightsReserved": "Alle Rechte vorbehalten."
     }
   }
 }

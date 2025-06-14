@@ -916,5 +916,85 @@
         "content": "Ao usar o Lynxky, você reconhece que leu, compreendeu e concorda em ficar vinculado a estes Termos de Serviço. Recomendamos que você também leia nossa Política de Privacidade para entender como tratamos suas informações pessoais."
       }
     }
+  },
+  "homepage": {
+    "header": {
+      "signIn": "Entrar",
+      "getStarted": "Começar"
+    },
+    "hero": {
+      "title": "Capture seus pensamentos, organize sua vida",
+      "subtitle": "Lynxky é o aplicativo de produtividade definitivo que combina anotações, gerenciamento de tarefas e ferramentas de foco em uma plataforma bonita e segura. Organize seus pensamentos, gerencie seu tempo e aumente sua produtividade.",
+      "startFreeTrial": "Iniciar Teste Gratuito",
+      "signIn": "Entrar"
+    },
+    "features": {
+      "title": "Tudo o Que Você Precisa Para Ser Produtivo",
+      "subtitle": "Lynxky combina recursos poderosos em uma interface intuitiva, projetada para ajudá-lo a capturar ideias, organizar pensamentos e realizar mais.",
+      "smartNotes": {
+        "title": "Anotações Inteligentes",
+        "description": "Crie, organize e formate suas anotações com nosso poderoso editor markdown. Mantenha seus pensamentos organizados com pastas e tags."
+      },
+      "taskManagement": {
+        "title": "Gerenciamento de Tarefas",
+        "description": "Seja produtivo com calendário integrado e gerenciamento de tarefas. Nunca perca um prazo com lembretes inteligentes e agendamento."
+      },
+      "focusMusic": {
+        "title": "Música de Foco",
+        "description": "Player de música integrado com trilhas sonoras que melhoram o foco para aumentar sua produtividade enquanto trabalha."
+      },
+      "privacyFirst": {
+        "title": "Privacidade em Primeiro Lugar",
+        "description": "Seus dados são criptografados e seguros. Priorizamos sua privacidade com medidas de segurança padrão da indústria."
+      },
+      "multiLanguage": {
+        "title": "Multi-Idioma",
+        "description": "Disponível em inglês, português, espanhol, alemão e japonês. Use Lynxky no seu idioma preferido."
+      }
+    },
+    "benefits": {
+      "title": "Por Que Escolher Lynxky?",
+      "subtitle": "Construído com tecnologia moderna e projetado para a forma como você trabalha. Lynxky se adapta ao seu fluxo de trabalho, não o contrário.",
+      "items": {
+        "seamlessSync": "Sincronização perfeita em todos os seus dispositivos",
+        "export": "Exporte suas anotações como PDF ou TXT",
+        "customizable": "Temas e layouts personalizáveis",
+        "collaboration": "Recursos de colaboração em tempo real",
+        "search": "Busca e filtragem avançadas"
+      },
+      "testimonial": {
+        "rating": "5.0 dos usuários",
+        "text": "Lynxky transformou completamente como eu organizo meu trabalho e projetos pessoais. A integração perfeita entre anotações e tarefas é brilhante.",
+        "author": "— Sarah Chen, Product Designer"
+      }
+    },
+    "platforms": {
+      "title": "Disponível em Qualquer Lugar Que Você Trabalhe",
+      "subtitle": "Acesse suas anotações e tarefas de qualquer dispositivo. Lynxky sincroniza perfeitamente em plataformas web, desktop e mobile.",
+      "webApp": "App Web",
+      "mobileApp": "App Mobile",
+      "desktopApp": "App Desktop"
+    },
+    "cta": {
+      "title": "Pronto Para Se Organizar?",
+      "subtitle": "Junte-se a milhares de usuários que confiam no Lynxky para organizar suas ideias. Cancele a qualquer momento, seus dados são sempre seus.",
+      "startTrial": "Inicie Seu Teste Gratuito",
+      "disclaimer": "Não é necessário cartão de crédito • Teste gratuito de 3 dias • Cancele a qualquer momento"
+    },
+    "footer": {
+      "description": "Suas anotações, do seu jeito. A plataforma de produtividade definitiva para profissionais modernos.",
+      "product": "Produto",
+      "features": "Recursos",
+      "pricing": "Preços",
+      "security": "Segurança",
+      "support": "Suporte",
+      "helpCenter": "Central de Ajuda",
+      "contactUs": "Fale Conosco",
+      "deleteAccount": "Excluir Conta",
+      "legal": "Legal",
+      "privacyPolicy": "Política de Privacidade",
+      "termsOfService": "Termos de Serviço",
+      "allRightsReserved": "Todos os direitos reservados."
+    }
   }
 }
