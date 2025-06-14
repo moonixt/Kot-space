@@ -737,5 +737,85 @@
         "content": "Al usar Lynxky, usted reconoce que ha leído, entendido y acepta estar sujeto a estos Términos de Servicio. Recomendamos que también lea nuestra Política de Privacidad para entender cómo tratamos su información personal."
       }
     }
+  },
+  "homepage": {
+    "header": {
+      "signIn": "Iniciar Sesión",
+      "getStarted": "Comenzar"
+    },
+    "hero": {
+      "title": "Captura tus pensamientos, organiza tu vida",
+      "subtitle": "Lynxky es la aplicación de productividad definitiva que combina toma de notas, gestión de tareas y herramientas de enfoque en una plataforma hermosa y segura. Organiza tus pensamientos, gestiona tu tiempo y aumenta tu productividad.",
+      "startFreeTrial": "Comenzar Prueba Gratuita",
+      "signIn": "Iniciar Sesión"
+    },
+    "features": {
+      "title": "Todo Lo Que Necesitas Para Ser Productivo",
+      "subtitle": "Lynxky combina características poderosas en una interfaz intuitiva, diseñada para ayudarte a capturar ideas, organizar pensamientos y lograr más.",
+      "smartNotes": {
+        "title": "Notas Inteligentes",
+        "description": "Crea, organiza y formatea tus notas con nuestro poderoso editor markdown. Mantén tus pensamientos organizados con carpetas y etiquetas."
+      },
+      "taskManagement": {
+        "title": "Gestión de Tareas",
+        "description": "Mantente productivo con calendario integrado y gestión de tareas. Nunca pierdas una fecha límite con recordatorios inteligentes y programación."
+      },
+      "focusMusic": {
+        "title": "Música de Concentración",
+        "description": "Reproductor de música integrado con bandas sonoras que mejoran la concentración para aumentar tu productividad mientras trabajas."
+      },
+      "privacyFirst": {
+        "title": "Privacidad Primero",
+        "description": "Tus datos están encriptados y seguros. Priorizamos tu privacidad con medidas de seguridad estándar de la industria."
+      },
+      "multiLanguage": {
+        "title": "Multi-Idioma",
+        "description": "Disponible en inglés, portugués, español, alemán y japonés. Usa Lynxky en tu idioma preferido."
+      }
+    },
+    "benefits": {
+      "title": "¿Por Qué Elegir Lynxky?",
+      "subtitle": "Construido con tecnología moderna y diseñado para la forma en que trabajas. Lynxky se adapta a tu flujo de trabajo, no al revés.",
+      "items": {
+        "seamlessSync": "Sincronización perfecta en todos tus dispositivos",
+        "export": "Exporta tus notas como PDF o TXT",
+        "customizable": "Temas y diseños personalizables",
+        "collaboration": "Características de colaboración en tiempo real",
+        "search": "Búsqueda y filtrado avanzados"
+      },
+      "testimonial": {
+        "rating": "5.0 de los usuarios",
+        "text": "Lynxky ha transformado completamente cómo organizo mi trabajo y proyectos personales. La integración perfecta entre notas y tareas es brillante.",
+        "author": "— Sarah Chen, Diseñadora de Productos"
+      }
+    },
+    "platforms": {
+      "title": "Disponible Donde Sea Que Trabajes",
+      "subtitle": "Accede a tus notas y tareas desde cualquier dispositivo. Lynxky sincroniza perfectamente entre plataformas web, escritorio y móvil.",
+      "webApp": "App Web",
+      "mobileApp": "App Móvil",
+      "desktopApp": "App de Escritorio"
+    },
+    "cta": {
+      "title": "¿Listo Para Organizarte?",
+      "subtitle": "Únete a miles de usuarios que confían en Lynxky para organizar sus ideas. Cancela en cualquier momento, tus datos siempre son tuyos.",
+      "startTrial": "Comienza Tu Prueba Gratuita",
+      "disclaimer": "No se requiere tarjeta de crédito • Prueba gratuita de 3 días • Cancela en cualquier momento"
+    },
+    "footer": {
+      "description": "Tus notas, a tu manera. La plataforma de productividad definitiva para profesionales modernos.",
+      "product": "Producto",
+      "features": "Características",
+      "pricing": "Precios",
+      "security": "Seguridad",
+      "support": "Soporte",
+      "helpCenter": "Centro de Ayuda",
+      "contactUs": "Contáctanos",
+      "deleteAccount": "Eliminar Cuenta",
+      "legal": "Legal",
+      "privacyPolicy": "Política de Privacidad",
+      "termsOfService": "Términos de Servicio",
+      "allRightsReserved": "Todos los derechos reservados."
+    }
   }
 }

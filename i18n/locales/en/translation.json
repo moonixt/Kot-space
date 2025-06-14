@@ -918,5 +918,85 @@
         "content": "By using Lynxky, you acknowledge that you have read, understood and agree to be bound by these Terms of Service. We recommend that you also read our Privacy Policy to understand how we treat your personal information."
       }
     }
+  },
+  "homepage": {
+    "header": {
+      "signIn": "Sign In",
+      "getStarted": "Get Started"
+    },
+    "hero": {
+      "title": "Capture your thoughts, organize your life",
+      "subtitle": "Lynxky is the ultimate productivity app that combines note-taking, task management, and focus tools in one beautiful, secure platform. Organize your thoughts, manage your time, and boost your productivity.",
+      "startFreeTrial": "Start Free Trial",
+      "signIn": "Sign In"
+    },
+    "features": {
+      "title": "Everything You Need to Stay Productive",
+      "subtitle": "Lynxky combines powerful features in an intuitive interface, designed to help you capture ideas, organize thoughts, and accomplish more.",
+      "smartNotes": {
+        "title": "Smart Note-Taking",
+        "description": "Create, organize, and format your notes with our powerful markdown editor. Keep your thoughts organized with folders and tags."
+      },
+      "taskManagement": {
+        "title": "Task Management",
+        "description": "Stay productive with integrated calendar and task management. Never miss a deadline with smart reminders and scheduling."
+      },
+      "focusMusic": {
+        "title": "Focus Music",
+        "description": "Built-in music player with focus-enhancing soundtracks to boost your productivity while you work."
+      },
+      "privacyFirst": {
+        "title": "Privacy First",
+        "description": "Your data is encrypted and secure. We prioritize your privacy with industry-standard security measures."
+      },
+      "multiLanguage": {
+        "title": "Multi-Language",
+        "description": "Available in English, Portuguese, Spanish, German, and Japanese. Use Lynxky in your preferred language."
+      }
+    },
+    "benefits": {
+      "title": "Why Choose Lynxky?",
+      "subtitle": "Built with modern technology and designed for the way you work. Lynxky adapts to your workflow, not the other way around.",
+      "items": {
+        "seamlessSync": "Seamless sync across all your devices",
+        "export": "Export your notes as PDF or TXT",
+        "customizable": "Customizable themes and layouts",
+        "collaboration": "Real-time collaboration features",
+        "search": "Advanced search and filtering"
+      },
+      "testimonial": {
+        "rating": "5.0 from users",
+        "text": "Lynxky has completely transformed how I organize my work and personal projects. The seamless integration between notes and tasks is brilliant.",
+        "author": "— Sarah Chen, Product Designer"
+      }
+    },
+    "platforms": {
+      "title": "Available Everywhere You Work",
+      "subtitle": "Access your notes and tasks from any device. Lynxky syncs seamlessly across web, desktop, and mobile platforms.",
+      "webApp": "Web App",
+      "mobileApp": "Mobile App",
+      "desktopApp": "Desktop App"
+    },
+    "cta": {
+      "title": "Ready to Get Organized?",
+      "subtitle": "Join thousands of users who trust Lynxky to organize their ideas. Cancel anytime, your data is always yours.",
+      "startTrial": "Start Your Free Trial",
+      "disclaimer": "No credit card required • 3-day free trial • Cancel anytime"
+    },
+    "footer": {
+      "description": "Your notes, your way. The ultimate productivity platform for modern professionals.",
+      "product": "Product",
+      "features": "Features",
+      "pricing": "Pricing",
+      "security": "Security",
+      "support": "Support",
+      "helpCenter": "Help Center",
+      "contactUs": "Contact Us",
+      "deleteAccount": "Delete Account",
+      "legal": "Legal",
+      "privacyPolicy": "Privacy Policy",
+      "termsOfService": "Terms of Service",
+      "allRightsReserved": "All rights reserved."
+    }
   }
 }
