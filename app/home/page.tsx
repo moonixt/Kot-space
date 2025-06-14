@@ -12,7 +12,6 @@ import {
   Globe, 
   CheckCircle,
   ArrowRight,
-  Star
 } from "lucide-react";
 
 export default function HomePage() {
