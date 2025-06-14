@@ -1,0 +1,11 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.lynxky.www.twa",
+      "sha256_cert_fingerprints":
+        ["A6:2F:95:3A:FF:A7:5D:91:24:D1:85:3F:4D:5B:72:39:3F:5F:A9:06:11:20:72:77:7D:62:4E:86:95:E5:77:1A"]
+    }
+  }
+]
