@@ -40,7 +40,7 @@ export default function PricingPage() {
     }
     // Create URL with query parameters
     const checkoutUrl = new URL(
-      "https://buy.stripe.com/6oU14pe7x6tCc1h9oWds403",
+      "https://buy.stripe.com/6oUbJ3e7x6tCd5lfNkds404",
     );
     checkoutUrl.searchParams.append("client_reference_id", user.id);
     // Open in new tab
