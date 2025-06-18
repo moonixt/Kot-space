@@ -10,7 +10,7 @@ export default function EditorPage() {
   const { t } = useTranslation();
   return (
     <>
-    <ProtectedRoute>
+    <ProtectedRoute allowReadOnly={false}>
       <div className="h-screen bg-[var(--background)] overflow-y-auto scrollbar flex flex-col">
         <div className="sticky top-0 bg-[var(--background)]/60 bg-opacity-90 backdrop-blur-sm z-10 py-3 px-4   flex items-center">
           <Link
