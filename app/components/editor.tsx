@@ -5,7 +5,6 @@
 // import Papa from "papaparse";
 // import * as XLSX from "xlsx";
 import { useState, useRef, useEffect } from "react"; //import Usestate, the hook to managge state in react
-import { useRouter } from "next/navigation"; // Import useRouter for navigation
 import { supabase } from "../../lib/supabase"; //import the supabase client to connect to the database
 import eventEmitter from "../../lib/eventEmitter"; // Import do event emitter
 import { checkUserLimits } from "../../lib/checkUserLimits"; // Import the user limits checker
@@ -37,7 +36,6 @@ function Editor() {
   const [content, setContent] = useState(""); //state for the content of the note, initialized as empty string
   const [saving, setSaving] = useState(false); //state for the saving process, inatilized as false
   const { user } = useAuth(); // get the user method for the context auth, to get the user data from the context
-  const router = useRouter(); // Initialize router for navigation
   const [selectedTags, setSelectedTags] = useState<string[]>([]); // state for the selected tags, initialized as empty array of strings
   const [isPreviewMode, setIsPreviewMode] = useState(false); // state for preview mode, start as a false, and are active when the user click on preview button
   const [showEmojiPicker, setShowEmojiPicker] = useState(false); // state for the emoji picker
@@ -46,8 +44,8 @@ function Editor() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   // const [tagSearchTerm, setTagSearchTerm] = useState("");
   const { t } = useTranslation(); // Add the translation hook to access translations  // Add subscription status state
-  const [canCreateNotes, setCanCreateNotes] = useState(true);
-  const [hasReadOnlyAccess, setHasReadOnlyAccess] = useState(false);
+  const [, setCanCreateNotes] = useState(true);
+  const [, setHasReadOnlyAccess] = useState(false);
 
   // Add state for folders and folder selection
   const [folders, setFolders] = useState<Array<{ id: string; name: string }>>(
