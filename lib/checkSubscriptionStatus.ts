@@ -18,15 +18,24 @@ export const checkSubscriptionStatus = async (userId: string) => {
   const subscriptionEndDate = new Date(subscription_end_date);
   const subscriptionExpired = subscriptionEndDate < now;
 
-  // Se a assinatura foi cancelada mas ainda não expirou, o usuário ainda deve ter acesso
-  const hasAccess = (is_subscription_active || 
-                    (subscription_status === "canceled" && !subscriptionExpired));
+  // Se a assinatura foi cancelada mas ainda não expirou, o usuário ainda deve ter acesso completo
+  const hasFullAccess = (is_subscription_active || 
+                        (subscription_status === "canceled" && !subscriptionExpired));
+
+  // Usuários com trial expirado podem ler mas não editar
+  const hasReadOnlyAccess = subscriptionExpired && !is_subscription_active;
 
   return {
-    isSubscriptionActive: hasAccess,
+    isSubscriptionActive: hasFullAccess,
     subscriptionExpired: subscriptionExpired,
     subscriptionStatus: subscription_status,
     subscriptionEndDate: subscription_end_date,
+    hasFullAccess: hasFullAccess,
+    hasReadOnlyAccess: hasReadOnlyAccess,
+    canEdit: hasFullAccess,
+    canSave: hasFullAccess,
+    canCreate: hasFullAccess,
+    canRead: hasFullAccess || hasReadOnlyAccess, // Users can read if they have full access OR read-only access
   };
 };
 

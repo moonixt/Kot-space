@@ -28,6 +28,7 @@ import remarkGfm from "remark-gfm";
 import jsPDF from "jspdf";
 import { ProtectedRoute } from "../../components/ProtectedRoute";
 import eventEmitter from "../../../lib/eventEmitter";
+import { checkSubscriptionStatus } from "../../../lib/checkSubscriptionStatus";
 
 interface Note {
   id: string;
@@ -55,6 +56,11 @@ export default function NotePage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [showEmojiPickerContent, setShowEmojiPickerContent] = useState(false);
   const [deleting, setDeleting] = useState(false);
+
+  // Add subscription status states
+  const [canEdit, setCanEdit] = useState(true);
+  const [canSave, setCanSave] = useState(true);
+  const [hasReadOnlyAccess, setHasReadOnlyAccess] = useState(false);
 
   const noteId =
     typeof params.id === "string"
@@ -104,6 +110,12 @@ export default function NotePage() {
   const handleSave = async () => {
     if (!user || !noteId) return;
 
+    // Check if user can save before proceeding
+    if (!canSave) {
+      showToast("You can only read this note. Upgrade to edit.", "error");
+      return;
+    }
+
     setSaving(true);
     try {
       const encryptedTitle = encrypt(editTitle || "Untitled");
@@ -147,6 +159,12 @@ export default function NotePage() {
 
   const handleDelete = async () => {
     if (!user || !noteId) return;
+
+    // Check if user can delete before proceeding
+    if (!canEdit) {
+      showToast("You can only read this note. Upgrade to delete.", "error");
+      return;
+    }
 
     const confirmed = window.confirm(t("editor.confirmDelete"));
     if (!confirmed) return;
@@ -444,6 +462,23 @@ export default function NotePage() {
     }
   }
 
+  useEffect(() => {
+    const checkSubscription = async () => {
+      if (!user) return;
+
+      try {
+        const status = await checkSubscriptionStatus(user.id);
+        setCanEdit(status.canEdit);
+        setCanSave(status.canSave);
+        setHasReadOnlyAccess(status.hasReadOnlyAccess);
+      } catch (error) {
+        console.error("Error checking subscription status:", error);
+      }
+    };
+
+    checkSubscription();
+  }, [user]);
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen text-[var(--foreground)]">
@@ -500,6 +535,19 @@ export default function NotePage() {
   return (
     <>
       <ProtectedRoute>
+        {/* Read-only mode banner */}
+        {hasReadOnlyAccess && !canEdit && (
+          <div className="bg-amber-500/20 border-l-4 border-amber-500 p-3 text-amber-200 text-sm flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.864-.833-2.633 0L4.168 16.5c-.77.833.192 2.5 1.732 2.5z" />
+            </svg>
+            <span>
+              You are viewing this note in read-only mode. Your trial has expired. 
+              <a href="/pricing" className="underline ml-1 hover:text-amber-100">Upgrade to edit</a>
+            </span>
+          </div>
+        )}
+        
         <div className=" sticky top-0 bg-[var(--background)]/60 bg-opacity-90 backdrop-blur-sm z-10 py-3 px-4 flex items-center">
           <Link
             href="/dashboard"
@@ -529,10 +577,12 @@ export default function NotePage() {
                 {editMode ? (
                   <>
                     <button
-                      className="rounded  transition-colors px-2 py-1 flex items-center gap-1"
+                      className={`rounded transition-colors px-2 py-1 flex items-center gap-1 ${
+                        !canSave ? "opacity-50 cursor-not-allowed" : ""
+                      }`}
                       title={t("editor.save")}
                       onClick={handleSave}
-                      disabled={saving}
+                      disabled={saving || !canSave}
                     >
                       {saving ? (
                         <div className="w-4 h-4 border-2 border-green-300 border-t-transparent rounded-full animate-spin"></div>
@@ -552,9 +602,20 @@ export default function NotePage() {
                   </>
                 ) : (
                   <button
-                    className="rounded  transition-colors px-2 py-1 flex items-center gap-1"
-                    title={t("editor.edit")}
-                    onClick={() => setEditMode(true)}
+                    className={`rounded transition-colors px-2 py-1 flex items-center gap-1 ${
+                      !canEdit 
+                        ? "opacity-50 cursor-not-allowed" 
+                        : "hover:bg-[var(--accent-color)]"
+                    }`}
+                    title={!canEdit ? "Read-only mode - Upgrade to edit" : t("editor.edit")}
+                    onClick={() => {
+                      if (canEdit) {
+                        setEditMode(true);
+                      } else {
+                        showToast("You can only read this note. Upgrade to edit.", "error");
+                      }
+                    }}
+                    disabled={!canEdit}
                   >
                     <Edit size={16} /> {t("editor.edit")}
                   </button>
@@ -578,7 +639,9 @@ export default function NotePage() {
                     value={editTitle}
                     onChange={(e) => setEditTitle(e.target.value)}
                     placeholder={t("editor.noteTitle")}
-                    className="w-full text-xl sm:text-2xl font-bold bg-transparent focus:outline-none text-[var(--foreground)]"
+                    className={`w-full text-xl sm:text-2xl font-bold bg-transparent focus:outline-none text-[var(--foreground)] ${!canEdit ? 'opacity-60 cursor-not-allowed' : ''}`}
+                    disabled={!canEdit}
+                    readOnly={!canEdit}
                   />
                   {showEmojiPicker && (
                     <div className="absolute z-50 top-14 left-4 shadow-xl rounded-lg overflow-hidden">
@@ -606,7 +669,7 @@ export default function NotePage() {
             </div>
 
             {/* Barra de ferramentas de formatação - aparece apenas no modo de edição */}
-            {editMode && (
+            {editMode && canEdit && (
               <>
                 <div className="bg-[var(--container)] bg-opacity-30 border-b border-[var(--border-color)] text-sm px-2 sm:px-4 py-2 text-[var(--foreground)] flex flex-wrap items-center gap-2">
                   <div className="flex items-center space-x-1 mr-2">
@@ -779,8 +842,10 @@ export default function NotePage() {
                         value={editContent}
                         onChange={(e) => setEditContent(e.target.value)}
                         placeholder={t("editor.noteContent")}
-                        className="w-full h-full min-h-[300px] text-lg bg-transparent focus:outline-none resize-none text-[var(--foreground)] p-2"
+                        className={`w-full h-full min-h-[300px] text-lg bg-transparent focus:outline-none resize-none text-[var(--foreground)] p-2 ${!canEdit ? 'opacity-60 cursor-not-allowed' : ''}`}
                         style={{ fontSize: "18px", lineHeight: "1.7" }}
+                        disabled={!canEdit}
+                        readOnly={!canEdit}
                       />
                     </div>
                   ) : (
@@ -842,13 +907,13 @@ export default function NotePage() {
 
                 <button
                   onClick={handleDelete}
-                  disabled={deleting || editMode}
+                  disabled={deleting || editMode || !canEdit}
                   className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
-                    deleting || editMode
+                    deleting || editMode || !canEdit
                       ? "bg-slate-700 text-slate-400 cursor-not-allowed"
                       : " hover:bg-red-500/20"
                   }`}
-                  title={t("editor.deleteNote")}
+                  title={!canEdit ? "Read-only mode - Cannot delete" : t("editor.deleteNote")}
                 >
                   {deleting ? (
                     <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>

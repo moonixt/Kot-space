@@ -8,6 +8,7 @@ import { useState, useRef, useEffect } from "react"; //import Usestate, the hook
 import { supabase } from "../../lib/supabase"; //import the supabase client to connect to the database
 import eventEmitter from "../../lib/eventEmitter"; // Import do event emitter
 import { checkUserLimits } from "../../lib/checkUserLimits"; // Import the user limits checker
+import { checkSubscriptionStatus } from "../../lib/checkSubscriptionStatus"; // Import subscription checker
 import {
 
   Eye,
@@ -42,7 +43,9 @@ function Editor() {
   const [imageUploadLoading, setImageUploadLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   // const [tagSearchTerm, setTagSearchTerm] = useState("");
-  const { t } = useTranslation(); // Add the translation hook to access translations
+  const { t } = useTranslation(); // Add the translation hook to access translations  // Add subscription status state
+  const [, setCanCreateNotes] = useState(true);
+  const [, setHasReadOnlyAccess] = useState(false);
 
   // Add state for folders and folder selection
   const [folders, setFolders] = useState<Array<{ id: string; name: string }>>(
@@ -77,7 +80,24 @@ function Editor() {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [showFolderDropdown]);
+  }, [showFolderDropdown]);  // Check subscription status when user changes
+  useEffect(() => {
+    const checkSubscription = async () => {
+      if (user) {
+        try {
+          const subscriptionStatus = await checkSubscriptionStatus(user.id);
+          setCanCreateNotes(subscriptionStatus.canCreate);
+          setHasReadOnlyAccess(subscriptionStatus.hasReadOnlyAccess);
+        } catch (error) {
+          console.error("Error checking subscription status:", error);
+          setCanCreateNotes(false);
+          setHasReadOnlyAccess(true);
+        }
+      }
+    };
+
+    checkSubscription();
+  }, [user]);
 
   // Carregar dados do localStorage quando o componente montar
   useEffect(() => {
@@ -272,8 +292,7 @@ function Editor() {
 
         setTimeout(() => {
           notification.style.opacity = "0";
-          setTimeout(() => notification.remove(), 500);
-        }, 5000);
+          setTimeout(() => notification.remove(), 500);        }, 5000);
         return;
       }
 
@@ -499,8 +518,7 @@ function Editor() {
       // This is just to trigger any event listeners that might be monitoring for changes
     } catch (error) {
       console.error("Erro ao buscar notas:", error);
-    }
-  };
+    }  };
 
   return (
     <div
@@ -513,8 +531,7 @@ function Editor() {
        
           {/* Title Section */}
           <div className="p-5 sm:p-6 relative">
-                <div className="flex justify-center">
-                  <button
+                <div className="flex justify-center">                  <button
                     className={`flex items-center justify-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 w-46 rounded-md text-sm sm:text-base font-medium transition-all duration-300 ${
                     saving
                       ? "bg-[var(--container)] text-[var(--foreground)] opacity-70"
@@ -528,23 +545,20 @@ function Editor() {
                       <div className="w-4 h-4 border-2 border-[var(--foreground)] border-t-transparent rounded-full animate-spin"></div>
                       <span>{t("editor.saving")}</span>
                     </>
-                    ) : (
-                    <>
+                    ) : (                    <>
                   
                       <span>{t("editor.save")}</span>
                     </>
                     )}
                   </button>
                 </div>
-            <div className="flex items-center gap-3">
-              <button
+            <div className="flex items-center gap-3">              <button
                 onClick={() => setShowEmojiPicker(!showEmojiPicker)}
                 className="p-2 text-[var(--foreground)] hover:bg-[var(--container)] rounded-full transition-all duration-200"
                 title={t("editor.addEmoji")}
               >
                 <SmilePlus size={22} />
-              </button>
-              <input
+              </button>              <input
                 className="bg-transparent text-[var(--foreground)] focus:outline-none focus:ring-0 border-none w-full text-xl sm:text-2xl font-medium placeholder-opacity-60 placeholder-[var(--foreground)]"
                 placeholder={t("editor.titlePlaceholder")}
                 maxLength={40}
@@ -820,8 +834,7 @@ function Editor() {
           {/* Content Area */}
           <div className=" scrollbar bg-[var(--background)] relative">
             {!isPreviewMode ? (
-              <div className="h-full relative">
-                <textarea
+              <div className="h-full relative">                <textarea
                   className="p-5 sm:p-6 w-full bg-transparent text-[var(--foreground)] resize-none focus:outline-none min-h-[270px] sm:min-h-[370px] h-full text-base sm:text-lg overflow-auto transition-all duration-300"
                   placeholder={t("editor.contentPlaceholder")}
                   maxLength={15000}
