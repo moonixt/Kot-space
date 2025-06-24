@@ -23,7 +23,7 @@ export function ProtectedRoute({
   useEffect(() => {
     // Handle authentication check
     if (!isLoading && !user && !isRedirecting) {
-      console.log("Usuário não autenticado, redirecionando para login");
+      // console.log("Usuário não autenticado, redirecionando para login");
       setIsRedirecting(true);
       router.push("/login");
       return; // Stop execution here to prevent further checks
@@ -40,12 +40,12 @@ export function ProtectedRoute({
             subscriptionEndDate 
           } = await checkSubscriptionStatus(user.id);
           
-          console.log("Status da assinatura:", {
-            hasFullAccess: hasFullAccess,
-            hasReadOnlyAccess: readOnlyAccess,
-            status: subscriptionStatus,
-            endDate: subscriptionEndDate
-          });
+          // console.log("Status da assinatura:", {
+          //   hasFullAccess: hasFullAccess,
+          //   hasReadOnlyAccess: readOnlyAccess,
+          //   status: subscriptionStatus,
+          //   endDate: subscriptionEndDate
+          // });
             if (!hasFullAccess && (!readOnlyAccess || !allowReadOnly)) {
             console.log("Sem acesso, redirecionando para pricing");
             setIsRedirecting(true);

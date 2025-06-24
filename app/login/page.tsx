@@ -80,9 +80,9 @@ function LoginForm() {
         return;
       }
 
-      console.log("Tentando fazer login na página de login");
+      // console.log("Tentando fazer login na página de login");
       await signIn(email, password);
-      console.log("Login realizado com sucesso");
+      // console.log("Login realizado com sucesso");
       router.push("/"); // Consertado Bug de redirecionamento, Authcontext linha 37
     } catch (error) {
       if (error instanceof Error) {

@@ -56,7 +56,7 @@ export default function ServiceWorkerRegistration() {
     };
 
     const handleFocus = () => {
-      console.log("Janela recebeu foco");
+      // console.log("Janela recebeu foco");
       // NÃO fazer verificações que possam causar reload
     };
 

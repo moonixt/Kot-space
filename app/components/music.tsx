@@ -62,7 +62,7 @@ export default function MusicPlayer({ isVisible = false, onVisibilityChange }: M
   useEffect(() => {
     const checkSavedTracks = async () => {
       const savedTracksData = localStorage.getItem('musicPlayerTracks');
-      console.log('Music component mounted, checking for saved tracks...', !!savedTracksData);
+      // console.log('Music component mounted, checking for saved tracks...', !!savedTracksData);
       
       if (savedTracksData && audioFiles.length === 0) {
         console.log('Found saved tracks, loading automatically...');
