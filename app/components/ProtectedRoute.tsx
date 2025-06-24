@@ -36,8 +36,8 @@ export function ProtectedRoute({
           const { 
             hasFullAccess, 
             hasReadOnlyAccess: readOnlyAccess, 
-            subscriptionStatus, 
-            subscriptionEndDate 
+            // subscriptionStatus, 
+            // subscriptionEndDate 
           } = await checkSubscriptionStatus(user.id);
           
           // console.log("Status da assinatura:", {
