@@ -21,7 +21,7 @@ export async function POST(request: Request) {
     if (!userId) {
       return NextResponse.json(
         { error: "User ID is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -36,7 +36,7 @@ export async function POST(request: Request) {
       console.error("Erro ao buscar informações do usuário:", userError);
       return NextResponse.json(
         { error: "Customer not found" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -54,7 +54,7 @@ export async function POST(request: Request) {
     console.error("Erro ao criar sessão do portal de clientes:", error);
     return NextResponse.json(
       { error: "Failed to create customer portal session" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

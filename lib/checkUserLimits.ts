@@ -23,7 +23,7 @@ export const checkUserLimits = async (userId: string): Promise<UserLimits> => {
   try {
     // Verificar se tem subscription ativa
     const hasActiveSubscription = await checkStripeSubscription(userId);
-    
+
     // Definir limites baseado na subscription
     const maxNotes = hasActiveSubscription ? Infinity : 20;
     const maxTasks = hasActiveSubscription ? Infinity : 20;
@@ -76,7 +76,8 @@ export const checkUserLimits = async (userId: string): Promise<UserLimits> => {
       hasActiveSubscription,
       canCreateNote: hasActiveSubscription || currentNotesCount < maxNotes,
       canCreateTask: hasActiveSubscription || currentTasksCount < maxTasks,
-      canCreateFolder: hasActiveSubscription || currentFoldersCount < maxFolders,
+      canCreateFolder:
+        hasActiveSubscription || currentFoldersCount < maxFolders,
     };
   } catch (error) {
     console.error("Erro ao verificar limites do usuário:", error);

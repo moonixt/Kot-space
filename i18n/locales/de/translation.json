@@ -391,7 +391,7 @@
       "description": "Ermöglichen es der Website, sich an Ihre Entscheidungen zu erinnern"
     },
     "analytics": {
-      "title": "Analytische Cookies", 
+      "title": "Analytische Cookies",
       "description": "Helfen zu verstehen, wie Sie die Website nutzen"
     },
     "marketing": {
@@ -406,7 +406,7 @@
     "backToLogin": "Zurück zur Anmeldung",
     "languageSwitcher": {
       "pt": "PT",
-      "en": "EN", 
+      "en": "EN",
       "de": "DE",
       "es": "ES",
       "ja": "JA"

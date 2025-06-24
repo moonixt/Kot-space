@@ -85,33 +85,32 @@ export default function ClientLayout({
 
   return (
     <MusicPlayerProvider>
-      <div 
+      <div
         className={`transition-all duration-300`}
         style={{
-          paddingLeft: isSidebarVisible ? 
-            (isMobile ? '0' : '320px') : '0',
-          paddingRight: user && isMusicPlayerVisible ? 
-            (isMobile ? '0' : '320px') : '0',
-          paddingBottom: '70px' // Space for bottom bar
+          paddingLeft: isSidebarVisible ? (isMobile ? "0" : "320px") : "0",
+          paddingRight:
+            user && isMusicPlayerVisible ? (isMobile ? "0" : "320px") : "0",
+          paddingBottom: "70px", // Space for bottom bar
         }}
       >
         {children}
       </div>
-      
+
       {/* Music player sidebar - always rendered for logged users */}
       {user && (
-        <MusicPlayer 
+        <MusicPlayer
           isVisible={isMusicPlayerVisible}
           onVisibilityChange={setIsMusicPlayerVisible}
         />
       )}
-      
+
       {/* Sidebar - always rendered */}
-      <Sidebox 
+      <Sidebox
         isVisible={isSidebarVisible}
-        onVisibilityChange={setIsSidebarVisible} 
+        onVisibilityChange={setIsSidebarVisible}
       />
-      
+
       {/* Bottom Bar */}
       <BottomBar
         isSidebarVisible={isSidebarVisible}
@@ -121,7 +120,7 @@ export default function ClientLayout({
         onNewNote={handleNewNote}
         isUserLoggedIn={!!user}
       />
-      
+
       {/* <div id="Chatbot">
         <button
           onClick={toggleModal}

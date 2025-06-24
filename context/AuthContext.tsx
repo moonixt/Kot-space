@@ -93,7 +93,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const signUp = async (email: string, password: string): Promise<SignUpResult> => {
+  const signUp = async (
+    email: string,
+    password: string,
+  ): Promise<SignUpResult> => {
     try {
       console.log("Tentando criar conta com:", email);
       const { data, error } = await supabase.auth.signUp({
@@ -119,7 +122,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return {
         success: true,
         needsEmailConfirmation: true,
-        user: data.user || undefined
+        user: data.user || undefined,
       };
     } catch (error) {
       console.error("Erro ao criar conta:", error);
@@ -146,16 +149,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   // Memoizar o valor do contexto para evitar re-renderizações desnecessárias
-  const contextValue = useMemo(() => ({
-    user,
-    session,
-    isLoading,
-    signIn,
-    signUp,
-    signOut,
-  }), [user, session, isLoading]);
+  const contextValue = useMemo(
+    () => ({
+      user,
+      session,
+      isLoading,
+      signIn,
+      signUp,
+      signOut,
+    }),
+    [user, session, isLoading],
+  );
 
-  return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
+  );
 }
 
 export function useAuth() {

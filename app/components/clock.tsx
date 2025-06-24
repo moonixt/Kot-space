@@ -38,6 +38,6 @@ const DigitalClock = memo(() => {
   );
 });
 
-DigitalClock.displayName = 'DigitalClock';
+DigitalClock.displayName = "DigitalClock";
 
 export default DigitalClock;

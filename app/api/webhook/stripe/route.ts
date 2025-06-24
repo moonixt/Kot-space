@@ -49,7 +49,7 @@ const validateStripeSignature = async (request: Request) => {
 export async function POST(request: Request) {
   //function to handle the post request from the stripe API
   console.log("Webhook do Stripe recebido");
-  
+
   // Validar a assinatura do webhook
   const event = await validateStripeSignature(request); //event is a variable that will be used to store the event from the stripe API
 
@@ -60,7 +60,7 @@ export async function POST(request: Request) {
 
   try {
     console.log(`Processando evento do Stripe: ${event.type}`);
-    
+
     // Processar eventos de checkout bem-sucedido (INSCRIÇÃO INICIAL)
     if (event.type === "checkout.session.completed") {
       const session = event.data.object as Stripe.Checkout.Session;
@@ -68,7 +68,7 @@ export async function POST(request: Request) {
       // Obter o ID do cliente que fez o pagamento
       const customerId = session.customer as string;
       const userId = session.client_reference_id;
-      
+
       // Obter o ID da assinatura
       const subscriptionId = session.subscription as string;
 
@@ -140,41 +140,49 @@ export async function POST(request: Request) {
 
       return NextResponse.json({ success: true }); //if pass, return success
     }
-    
+
     // Processar eventos de pagamento de fatura bem-sucedido (RENOVAÇÕES)
     else if (event.type === "invoice.payment_succeeded") {
       const invoice = event.data.object as any;
-      
+
       if (invoice.subscription && invoice.customer) {
         const customerId = invoice.customer as string;
-        
+
         // Buscar o usuário pelo stripe_customer_id
         const { data: userData, error: userError } = await supabaseAdmin
           .from("user_metadata")
           .select("id, subscription_end_date") // Adicionei subscription_end_date para verificar
           .eq("stripe_customer_id", customerId)
           .single();
-          
+
         if (userError || !userData) {
-          console.error("Usuário não encontrado para o customer ID:", customerId);
-          return NextResponse.json({ error: "User not found" }, { status: 404 });
+          console.error(
+            "Usuário não encontrado para o customer ID:",
+            customerId,
+          );
+          return NextResponse.json(
+            { error: "User not found" },
+            { status: 404 },
+          );
         }
-        
+
         // Obter detalhes da assinatura
         const stripe = getStripeInstance();
-        const subscription = await stripe.subscriptions.retrieve(invoice.subscription as string);
-        
+        const subscription = await stripe.subscriptions.retrieve(
+          invoice.subscription as string,
+        );
+
         // Calcular nova data de término (+ 30 dias a partir da data de término atual)
         let subscriptionEndDate = new Date();
-        
+
         // Se já existe uma data de término, adicionar 30 dias a ela
         if (userData.subscription_end_date) {
           subscriptionEndDate = new Date(userData.subscription_end_date);
         }
-        
+
         // Adicionar 30 dias à data de término
         subscriptionEndDate.setDate(subscriptionEndDate.getDate() + 30);
-        
+
         // Atualizar os dados de assinatura no banco
         const updateResult = await supabaseAdmin
           .from("user_metadata")
@@ -185,54 +193,66 @@ export async function POST(request: Request) {
             is_subscription_active: true, // Garantir que está ativo após renovação
           })
           .eq("id", userData.id);
-          
+
         if (updateResult.error) {
-          console.error("Erro ao atualizar dados de renovação:", updateResult.error);
-          return NextResponse.json({ error: "Database update failed" }, { status: 500 });
+          console.error(
+            "Erro ao atualizar dados de renovação:",
+            updateResult.error,
+          );
+          return NextResponse.json(
+            { error: "Database update failed" },
+            { status: 500 },
+          );
         }
-        
-        console.log(`Assinatura renovada com sucesso para o usuário: ${userData.id}, nova data de término: ${subscriptionEndDate.toISOString()}`);
+
+        console.log(
+          `Assinatura renovada com sucesso para o usuário: ${userData.id}, nova data de término: ${subscriptionEndDate.toISOString()}`,
+        );
       }
     }
-    
+
     // Processar alterações de status da assinatura
     else if (event.type === "customer.subscription.updated") {
       const subscription = event.data.object as any;
       const customerId = subscription.customer as string;
-      
+
       // Log detalhado do evento para debug
       console.log("Detalhes do evento subscription.updated:", {
         status: subscription.status,
         cancelAt: subscription.cancel_at,
         canceledAt: subscription.canceled_at,
         endedAt: subscription.ended_at,
-        eventId: event.id
+        eventId: event.id,
       });
-      
+
       // Buscar o usuário pelo stripe_customer_id
       const { data: userData, error: userError } = await supabaseAdmin
         .from("user_metadata")
         .select("id, subscription_status")
         .eq("stripe_customer_id", customerId)
         .single();
-        
+
       if (userError || !userData) {
         console.error("Usuário não encontrado para o customer ID:", customerId);
         return NextResponse.json({ error: "User not found" }, { status: 404 });
       }
-      
-      console.log(`Usuário encontrado: ${userData.id}, status atual: ${userData.subscription_status}`);
-      
+
+      console.log(
+        `Usuário encontrado: ${userData.id}, status atual: ${userData.subscription_status}`,
+      );
+
       // Verificação mais robusta para detectar cancelamentos
-      const isCanceled = 
-        subscription.status === "canceled" || 
-        subscription.cancel_at !== null || 
+      const isCanceled =
+        subscription.status === "canceled" ||
+        subscription.cancel_at !== null ||
         subscription.canceled_at !== null;
-      
+
       // Verificar se é uma atualização de cancelamento
       if (isCanceled) {
-        console.log(`Detectado cancelamento de assinatura no evento ${event.id}`);
-        
+        console.log(
+          `Detectado cancelamento de assinatura no evento ${event.id}`,
+        );
+
         // Aplicar mesma lógica do evento customer.subscription.deleted
         const updateResult = await supabaseAdmin
           .from("user_metadata")
@@ -243,22 +263,32 @@ export async function POST(request: Request) {
             updated_at: new Date().toISOString(),
           })
           .eq("id", userData.id);
-          
+
         if (updateResult.error) {
-          console.error("Erro ao atualizar status após cancelamento:", updateResult.error);
-          return NextResponse.json({ error: "Database update failed" }, { status: 500 });
+          console.error(
+            "Erro ao atualizar status após cancelamento:",
+            updateResult.error,
+          );
+          return NextResponse.json(
+            { error: "Database update failed" },
+            { status: 500 },
+          );
         }
-        
-        console.log(`Assinatura cancelada para o usuário: ${userData.id} (via evento updated)`);
-      } 
+
+        console.log(
+          `Assinatura cancelada para o usuário: ${userData.id} (via evento updated)`,
+        );
+      }
       // Caso contrário, é uma atualização normal (não cancelamento)
       else {
-        console.log(`Atualizando assinatura para status: ${subscription.status}`);
-        
+        console.log(
+          `Atualizando assinatura para status: ${subscription.status}`,
+        );
+
         // Usar a mesma lógica simples para calcular a data de término
         const subscriptionEndDate = new Date();
         subscriptionEndDate.setMonth(subscriptionEndDate.getMonth() + 1);
-        
+
         const updateResult = await supabaseAdmin
           .from("user_metadata")
           .update({
@@ -269,30 +299,38 @@ export async function POST(request: Request) {
             updated_at: new Date().toISOString(),
           })
           .eq("id", userData.id);
-          
+
         if (updateResult.error) {
-          console.error("Erro ao atualizar status da assinatura:", updateResult.error);
-          return NextResponse.json({ error: "Database update failed" }, { status: 500 });
+          console.error(
+            "Erro ao atualizar status da assinatura:",
+            updateResult.error,
+          );
+          return NextResponse.json(
+            { error: "Database update failed" },
+            { status: 500 },
+          );
         }
-        
-        console.log(`Status da assinatura atualizado para: ${subscription.status}`);
+
+        console.log(
+          `Status da assinatura atualizado para: ${subscription.status}`,
+        );
       }
     }
-    
+
     // Lidar com falhas de pagamento
     else if (event.type === "invoice.payment_failed") {
       const invoice = event.data.object as any;
-      
+
       if (invoice.subscription && invoice.customer) {
         const customerId = invoice.customer as string;
-        
+
         // Buscar o usuário pelo stripe_customer_id
-        const { data: userData, } = await supabaseAdmin
+        const { data: userData } = await supabaseAdmin
           .from("user_metadata")
           .select("id")
           .eq("stripe_customer_id", customerId)
           .single();
-          
+
         if (userData) {
           // Atualizar o status para indicar falha no pagamento
           await supabaseAdmin
@@ -302,29 +340,34 @@ export async function POST(request: Request) {
               payment_failed_at: new Date().toISOString(),
             })
             .eq("id", userData.id);
-            
-          console.log(`Falha no pagamento registrada para o usuário: ${userData.id}`);
+
+          console.log(
+            `Falha no pagamento registrada para o usuário: ${userData.id}`,
+          );
         }
       }
     }
-    
+
     // Lidar com o cancelamento da assinatura
     else if (event.type === "customer.subscription.deleted") {
       const subscription = event.data.object as any;
       const customerId = subscription.customer as string;
-      
+
       // Buscar o usuário pelo stripe_customer_id
       const { data: userData, error: userError } = await supabaseAdmin
         .from("user_metadata")
         .select("id")
         .eq("stripe_customer_id", customerId)
         .single();
-        
+
       if (userError || !userData) {
-        console.error("Usuário não encontrado para o customer ID (cancelamento):", customerId);
+        console.error(
+          "Usuário não encontrado para o customer ID (cancelamento):",
+          customerId,
+        );
         return NextResponse.json({ error: "User not found" }, { status: 404 });
       }
-      
+
       // Atualizar o status para indicar que a assinatura foi cancelada
       const updateResult = await supabaseAdmin
         .from("user_metadata")
@@ -335,12 +378,18 @@ export async function POST(request: Request) {
           updated_at: new Date().toISOString(),
         })
         .eq("id", userData.id);
-        
+
       if (updateResult.error) {
-        console.error("Erro ao atualizar status após cancelamento:", updateResult.error);
-        return NextResponse.json({ error: "Database update failed" }, { status: 500 });
+        console.error(
+          "Erro ao atualizar status após cancelamento:",
+          updateResult.error,
+        );
+        return NextResponse.json(
+          { error: "Database update failed" },
+          { status: 500 },
+        );
       }
-      
+
       console.log(`Assinatura cancelada para o usuário: ${userData.id}`);
     }
 

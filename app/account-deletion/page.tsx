@@ -2,7 +2,7 @@
 
 /**
  * Página Pública de Instruções para Exclusão de Conta
- * 
+ *
  * Esta página pública permite que qualquer usuário veja as instruções
  * para solicitar a exclusão de sua conta, sem necessidade de login.
  * Criada para atender aos requisitos do Google Play Store.
@@ -68,7 +68,8 @@ Best regards,
               Account Deletion Instructions
             </h1>
             <p className="text-xl text-[var(--muted)] max-w-2xl mx-auto">
-              Learn how to permanently delete your Lynxky account and all associated data
+              Learn how to permanently delete your Lynxky account and all
+              associated data
             </p>
           </div>
 
@@ -81,7 +82,8 @@ Best regards,
                   Important Warning
                 </h3>
                 <p className="text-[var(--muted)] mb-4">
-                  Account deletion is permanent and irreversible. Once processed, you will lose:
+                  Account deletion is permanent and irreversible. Once
+                  processed, you will lose:
                 </p>
                 <ul className="text-[var(--muted)] space-y-2">
                   <li className="flex items-center gap-2">
@@ -121,19 +123,36 @@ Best regards,
               </div>
               <div className="space-y-4 text-[var(--muted)]">
                 <div className="flex gap-3">
-                  <span className="flex-shrink-0 w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-semibold">1</span>
-                  <p>Copy the email template below or compose your own deletion request</p>
+                  <span className="flex-shrink-0 w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-semibold">
+                    1
+                  </span>
+                  <p>
+                    Copy the email template below or compose your own deletion
+                    request
+                  </p>
                 </div>
                 <div className="flex gap-3">
-                  <span className="flex-shrink-0 w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-semibold">2</span>
-                  <p>Send the email to <strong className="text-blue-400">{supportEmail}</strong></p>
+                  <span className="flex-shrink-0 w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-semibold">
+                    2
+                  </span>
+                  <p>
+                    Send the email to{" "}
+                    <strong className="text-blue-400">{supportEmail}</strong>
+                  </p>
                 </div>
                 <div className="flex gap-3">
-                  <span className="flex-shrink-0 w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-semibold">3</span>
-                  <p>Include your registered email address and any additional details</p>
+                  <span className="flex-shrink-0 w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-semibold">
+                    3
+                  </span>
+                  <p>
+                    Include your registered email address and any additional
+                    details
+                  </p>
                 </div>
                 <div className="flex gap-3">
-                  <span className="flex-shrink-0 w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-semibold">4</span>
+                  <span className="flex-shrink-0 w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-semibold">
+                    4
+                  </span>
                   <p>Wait for confirmation from our support team</p>
                 </div>
               </div>
@@ -149,31 +168,55 @@ Best regards,
               </div>
               <div className="space-y-4 text-[var(--muted)]">
                 <div className="flex gap-3">
-                  <span className="flex-shrink-0 w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-sm font-semibold">✓</span>
+                  <span className="flex-shrink-0 w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-sm font-semibold">
+                    ✓
+                  </span>
                   <div>
-                    <p className="font-medium text-[var(--foreground)]">Request Received</p>
-                    <p className="text-sm">We will acknowledge your request within 24 hours</p>
+                    <p className="font-medium text-[var(--foreground)]">
+                      Request Received
+                    </p>
+                    <p className="text-sm">
+                      We will acknowledge your request within 24 hours
+                    </p>
                   </div>
                 </div>
                 <div className="flex gap-3">
-                  <span className="flex-shrink-0 w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-sm font-semibold">✓</span>
+                  <span className="flex-shrink-0 w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-sm font-semibold">
+                    ✓
+                  </span>
                   <div>
-                    <p className="font-medium text-[var(--foreground)]">Verification Process</p>
-                    <p className="text-sm">We may ask for additional verification (1-3 days)</p>
+                    <p className="font-medium text-[var(--foreground)]">
+                      Verification Process
+                    </p>
+                    <p className="text-sm">
+                      We may ask for additional verification (1-3 days)
+                    </p>
                   </div>
                 </div>
                 <div className="flex gap-3">
-                  <span className="flex-shrink-0 w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-sm font-semibold">✓</span>
+                  <span className="flex-shrink-0 w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-sm font-semibold">
+                    ✓
+                  </span>
                   <div>
-                    <p className="font-medium text-[var(--foreground)]">Data Deletion</p>
-                    <p className="text-sm">Complete removal of all data (up to 30 days)</p>
+                    <p className="font-medium text-[var(--foreground)]">
+                      Data Deletion
+                    </p>
+                    <p className="text-sm">
+                      Complete removal of all data (up to 30 days)
+                    </p>
                   </div>
                 </div>
                 <div className="flex gap-3">
-                  <span className="flex-shrink-0 w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-sm font-semibold">✓</span>
+                  <span className="flex-shrink-0 w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-sm font-semibold">
+                    ✓
+                  </span>
                   <div>
-                    <p className="font-medium text-[var(--foreground)]">Confirmation</p>
-                    <p className="text-sm">Final confirmation email sent to you</p>
+                    <p className="font-medium text-[var(--foreground)]">
+                      Confirmation
+                    </p>
+                    <p className="text-sm">
+                      Final confirmation email sent to you
+                    </p>
                   </div>
                 </div>
               </div>
@@ -186,7 +229,7 @@ Best regards,
               <h2 className="text-xl font-semibold text-[var(--foreground)]">
                 Email Template
               </h2>
-              <button 
+              <button
                 onClick={handleCopy}
                 className="flex items-center gap-2 px-3 py-2 bg-[var(--background)] hover:bg-[var(--background)]/80 text-[var(--foreground)] rounded-lg border border-[var(--border)] transition-colors"
                 title="Copy email template"
@@ -195,7 +238,7 @@ Best regards,
                 {copied ? "Copied!" : "Copy"}
               </button>
             </div>
-            
+
             <div className="relative">
               <pre className="text-sm whitespace-pre-wrap text-[var(--foreground)] p-4 bg-[var(--background)]/50 rounded-lg border border-[var(--border)] overflow-x-auto">
                 {emailTemplate}
@@ -217,7 +260,7 @@ Best regards,
               <Mail size={20} />
               Send Deletion Request Email
             </button>
-            
+
             <Link href="/">
               <button className="px-8 py-4 bg-[var(--container)] hover:bg-[var(--container)]/80 text-[var(--foreground)] rounded-lg flex items-center justify-center gap-3 font-medium border border-[var(--border)] transition-colors">
                 Back to Lynxky
@@ -232,16 +275,34 @@ Best regards,
             </h2>
             <div className="space-y-4 text-[var(--muted)]">
               <div>
-                <h3 className="font-medium text-[var(--foreground)] mb-2">Data Retention Policy</h3>
-                <p>We retain personal data only as long as necessary to provide our services. Upon account deletion, all personal data is permanently removed from our systems within 30 days.</p>
+                <h3 className="font-medium text-[var(--foreground)] mb-2">
+                  Data Retention Policy
+                </h3>
+                <p>
+                  We retain personal data only as long as necessary to provide
+                  our services. Upon account deletion, all personal data is
+                  permanently removed from our systems within 30 days.
+                </p>
               </div>
               <div>
-                <h3 className="font-medium text-[var(--foreground)] mb-2">Legal Compliance</h3>
-                <p>This deletion process complies with GDPR, CCPA, and other privacy regulations. You have the right to request deletion of your personal data at any time.</p>
+                <h3 className="font-medium text-[var(--foreground)] mb-2">
+                  Legal Compliance
+                </h3>
+                <p>
+                  This deletion process complies with GDPR, CCPA, and other
+                  privacy regulations. You have the right to request deletion of
+                  your personal data at any time.
+                </p>
               </div>
               <div>
-                <h3 className="font-medium text-[var(--foreground)] mb-2">Need Help?</h3>
-                <p>If you have questions about the deletion process or need assistance, please contact our support team at <strong className="text-blue-400">{supportEmail}</strong></p>
+                <h3 className="font-medium text-[var(--foreground)] mb-2">
+                  Need Help?
+                </h3>
+                <p>
+                  If you have questions about the deletion process or need
+                  assistance, please contact our support team at{" "}
+                  <strong className="text-blue-400">{supportEmail}</strong>
+                </p>
               </div>
             </div>
           </div>
@@ -249,7 +310,8 @@ Best regards,
           {/* Footer */}
           <div className="text-center mt-12 pt-8 border-t border-[var(--border)]">
             <p className="text-[var(--muted)] text-sm">
-              Last updated: {new Date().toLocaleDateString()} | Lynxky Account Deletion Policy
+              Last updated: {new Date().toLocaleDateString()} | Lynxky Account
+              Deletion Policy
             </p>
           </div>
         </div>

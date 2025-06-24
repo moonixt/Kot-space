@@ -7,10 +7,10 @@ import { useAuth } from "../../context/AuthContext";
 import { useRouter } from "next/navigation";
 import { checkSubscriptionStatus } from "../../lib/checkSubscriptionStatus";
 
-export function ProtectedRoute({ 
-  children, 
-  allowReadOnly = true 
-}: { 
+export function ProtectedRoute({
+  children,
+  allowReadOnly = true,
+}: {
   children: React.ReactNode;
   allowReadOnly?: boolean;
 }) {
@@ -23,7 +23,7 @@ export function ProtectedRoute({
   useEffect(() => {
     // Handle authentication check
     if (!isLoading && !user && !isRedirecting) {
-      console.log("Usuário não autenticado, redirecionando para login");
+      // console.log("Usuário não autenticado, redirecionando para login");
       setIsRedirecting(true);
       router.push("/login");
       return; // Stop execution here to prevent further checks
@@ -33,20 +33,20 @@ export function ProtectedRoute({
     const verifySubscription = async () => {
       if (!isLoading && user && !isRedirecting) {
         try {
-          const { 
-            hasFullAccess, 
-            hasReadOnlyAccess: readOnlyAccess, 
-            subscriptionStatus, 
-            subscriptionEndDate 
-          } = await checkSubscriptionStatus(user.id);
-          
-          console.log("Status da assinatura:", {
-            hasFullAccess: hasFullAccess,
+          const {
+            hasFullAccess,
             hasReadOnlyAccess: readOnlyAccess,
-            status: subscriptionStatus,
-            endDate: subscriptionEndDate
-          });
-            if (!hasFullAccess && (!readOnlyAccess || !allowReadOnly)) {
+            // subscriptionStatus,
+            // subscriptionEndDate
+          } = await checkSubscriptionStatus(user.id);
+
+          // console.log("Status da assinatura:", {
+          //   hasFullAccess: hasFullAccess,
+          //   hasReadOnlyAccess: readOnlyAccess,
+          //   status: subscriptionStatus,
+          //   endDate: subscriptionEndDate
+          // });
+          if (!hasFullAccess && (!readOnlyAccess || !allowReadOnly)) {
             console.log("Sem acesso, redirecionando para pricing");
             setIsRedirecting(true);
             router.push("/pricing"); // Redireciona para a página de planos
@@ -66,7 +66,11 @@ export function ProtectedRoute({
   }, [user, isLoading, router, isRedirecting]);
 
   // Show loading state when authenticating or redirecting
-  if (isLoading || isRedirecting || (!hasActiveSubscription && !hasReadOnlyAccess && user)) {
+  if (
+    isLoading ||
+    isRedirecting ||
+    (!hasActiveSubscription && !hasReadOnlyAccess && user)
+  ) {
     return (
       <div className="flex justify-center items-center h-screen">
         {/* <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
@@ -76,5 +80,7 @@ export function ProtectedRoute({
   }
 
   // Only render children if user is authenticated and has some level of access
-  return user && (hasActiveSubscription || hasReadOnlyAccess) ? <>{children}</> : null;
+  return user && (hasActiveSubscription || hasReadOnlyAccess) ? (
+    <>{children}</>
+  ) : null;
 }

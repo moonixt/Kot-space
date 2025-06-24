@@ -391,7 +391,7 @@
       "description": "Permiten que el sitio recuerde sus elecciones"
     },
     "analytics": {
-      "title": "Cookies Analíticas", 
+      "title": "Cookies Analíticas",
       "description": "Ayudan a entender cómo usa el sitio"
     },
     "marketing": {
@@ -406,7 +406,7 @@
     "backToLogin": "Volver al inicio de sesión",
     "languageSwitcher": {
       "pt": "PT",
-      "en": "EN", 
+      "en": "EN",
       "de": "DE",
       "es": "ES",
       "ja": "JA"

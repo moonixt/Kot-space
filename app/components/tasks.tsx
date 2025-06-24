@@ -19,10 +19,14 @@ interface Task {
 
 const Tasks = () => {
   const { t } = useTranslation();
-  
+
   const priorityOptions = [
     { value: "low", label: t("tasks.lowPriority"), color: "bg-green-200" },
-    { value: "medium", label: t("tasks.mediumPriority"), color: "bg-yellow-200" },
+    {
+      value: "medium",
+      label: t("tasks.mediumPriority"),
+      color: "bg-yellow-200",
+    },
     { value: "high", label: t("tasks.highPriority"), color: "bg-red-200" },
   ];
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -93,10 +97,10 @@ const Tasks = () => {
 
     // Check user limits before adding task
     if (!user) return;
-    
+
     try {
       const userLimits = await checkUserLimits(user.id);
-      
+
       if (!userLimits.canCreateTask) {
         // Show limit reached notification with upgrade option
         const notification = document.createElement("div");
@@ -458,87 +462,153 @@ const Tasks = () => {
             // Calculate dynamic height based on content and priority
             const baseHeight = 120;
             const contentHeight = (task.description?.length || 0) * 0.8;
-            const priorityHeight = task.priority === "high" ? 20 : task.priority === "medium" ? 10 : 0;
+            const priorityHeight =
+              task.priority === "high"
+                ? 20
+                : task.priority === "medium"
+                  ? 10
+                  : 0;
             const varietyHeight = (index % 4) * 30; // Add variety to heights
-            
+
             return (
               <div
                 key={task.id}
                 className={`break-inside-avoid mb-4 p-4 bg-[var(--container)] hover:bg-[var(--container)]/80 hover:shadow-md transition-all duration-200 rounded-xl border border-[var(--foreground)]/30 hover:border-[var(--border-color)]/50 overflow-hidden backdrop-blur-sm ${
                   task.is_completed ? "opacity-60" : ""
                 } ${
-                  task.priority === "high" ? "border-r-4 border-r-red-300" :
-                  task.priority === "medium" ? "border-r-4 border-r-yellow-400" :
-                  task.priority === "low" ? "border-r-4 border-r-green-400" : ""
+                  task.priority === "high"
+                    ? "border-r-4 border-r-red-300"
+                    : task.priority === "medium"
+                      ? "border-r-4 border-r-yellow-400"
+                      : task.priority === "low"
+                        ? "border-r-4 border-r-green-400"
+                        : ""
                 }`}
                 style={{
-                  minHeight: `${baseHeight + contentHeight + priorityHeight + varietyHeight}px`
+                  minHeight: `${baseHeight + contentHeight + priorityHeight + varietyHeight}px`,
                 }}
               >
-              <div className="flex items-start gap-2">
-                <button
-                  onClick={() =>
-                    toggleTaskCompletion(task.id, task.is_completed)
-                  }
-                  className="flex-shrink-0 mt-1"
-                >
-                  <div id="checkbox"
-                    className={`w-5 h-5 ${
-                      task.is_completed
-                        ? "bg-[var(--foreground)] border-[var(--foreground)]"
-                        : task.priority === "high"
-                          ? "border-red-400"
-                          : task.priority === "low"
-                            ? "border-green-400"
-                            : "border-yellow-400"
-                    } border flex items-center justify-center transition-colors`}
+                <div className="flex items-start gap-2">
+                  <button
+                    onClick={() =>
+                      toggleTaskCompletion(task.id, task.is_completed)
+                    }
+                    className="flex-shrink-0 mt-1"
                   >
-                    {task.is_completed && (
-                      <svg
-                        width="12"
-                        height="12"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="var(--background)"
-                        strokeWidth="3"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <polyline points="20 6 9 17 4 12"></polyline>
-                      </svg>
-                    )}
-                  </div>
-                </button>
-                <div className="flex-grow break-words overflow-hidden">
-                  <span
-                    className={`${
-                      task.is_completed ? "line-through opacity-70" : ""
-                    }`}
-                  >
-                    <span
-                      className="font-medium cursor-pointer hover:underline break-words"
-                      onClick={() => setEditingTask(task)}
+                    <div
+                      id="checkbox"
+                      className={`w-5 h-5 ${
+                        task.is_completed
+                          ? "bg-[var(--foreground)] border-[var(--foreground)]"
+                          : task.priority === "high"
+                            ? "border-red-400"
+                            : task.priority === "low"
+                              ? "border-green-400"
+                              : "border-yellow-400"
+                      } border flex items-center justify-center transition-colors`}
                     >
-                      {task.title}
-                    </span>
-                  </span>
-                  {task.description && (
-                    <div className="text-xs mt-1.5 text-[var(--foreground)] opacity-80 break-words overflow-hidden">
-                      {task.description}
-                    </div>
-                  )}
-                  <div className="flex flex-wrap items-center gap-2 text-xs text-[var(--foreground)] opacity-60 mt-2">
-                    {task.due_date && (
-                      <span
-                        className={`flex items-center gap-1 ${
-                          isOverdue(task.due_date) && !task.is_completed
-                            ? "text-red-500 opacity-100"
-                            : ""
-                        }`}
-                      >
+                      {task.is_completed && (
                         <svg
                           width="12"
                           height="12"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="var(--background)"
+                          strokeWidth="3"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                      )}
+                    </div>
+                  </button>
+                  <div className="flex-grow break-words overflow-hidden">
+                    <span
+                      className={`${
+                        task.is_completed ? "line-through opacity-70" : ""
+                      }`}
+                    >
+                      <span
+                        className="font-medium cursor-pointer hover:underline break-words"
+                        onClick={() => setEditingTask(task)}
+                      >
+                        {task.title}
+                      </span>
+                    </span>
+                    {task.description && (
+                      <div className="text-xs mt-1.5 text-[var(--foreground)] opacity-80 break-words overflow-hidden">
+                        {task.description}
+                      </div>
+                    )}
+                    <div className="flex flex-wrap items-center gap-2 text-xs text-[var(--foreground)] opacity-60 mt-2">
+                      {task.due_date && (
+                        <span
+                          className={`flex items-center gap-1 ${
+                            isOverdue(task.due_date) && !task.is_completed
+                              ? "text-red-500 opacity-100"
+                              : ""
+                          }`}
+                        >
+                          <svg
+                            width="12"
+                            height="12"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <rect
+                              x="3"
+                              y="4"
+                              width="18"
+                              height="18"
+                              rx="2"
+                              ry="2"
+                            ></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                          </svg>
+                          {formatDate(task.due_date)}
+                        </span>
+                      )}
+                      {task.priority && (
+                        <span
+                          className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border ${
+                            task.priority === "high"
+                              ? "bg-red-50 text-red-700 border-red-200"
+                              : task.priority === "low"
+                                ? "bg-green-50 text-green-700 border-green-200"
+                                : "bg-yellow-50 text-yellow-700 border-yellow-200"
+                          }`}
+                        >
+                          {task.priority === "high"
+                            ? t("tasks.highPriority")
+                            : task.priority === "low"
+                              ? t("tasks.lowPriority")
+                              : t("tasks.mediumPriority")}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex gap-1.5">
+                    <div className="relative">
+                      <button
+                        onClick={() => {
+                          setEditingTaskId(task.id);
+                          setEditingTaskDate(
+                            task.due_date ? new Date(task.due_date) : null,
+                          );
+                        }}
+                        className="p-1.5 text-[var(--foreground)] opacity-40 hover:opacity-100 hover:bg-[var(--background)]/30 rounded"
+                        title={t("tasks.setDueDate")}
+                      >
+                        <svg
+                          width="16"
+                          height="16"
                           viewBox="0 0 24 24"
                           fill="none"
                           stroke="currentColor"
@@ -558,39 +628,51 @@ const Tasks = () => {
                           <line x1="8" y1="2" x2="8" y2="6"></line>
                           <line x1="3" y1="10" x2="21" y2="10"></line>
                         </svg>
-                        {formatDate(task.due_date)}
-                      </span>
-                    )}
-                    {task.priority && (
-                      <span
-                        className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border ${
-                          task.priority === "high"
-                            ? "bg-red-50 text-red-700 border-red-200"
-                            : task.priority === "low"
-                              ? "bg-green-50 text-green-700 border-green-200"
-                              : "bg-yellow-50 text-yellow-700 border-yellow-200"
-                        }`}
-                      >
-                        {task.priority === "high"
-                          ? t("tasks.highPriority")
-                          : task.priority === "low"
-                            ? t("tasks.lowPriority")
-                            : t("tasks.mediumPriority")}
-                      </span>
-                    )}
-                  </div>
-                </div>
-                <div className="flex gap-1.5">
-                  <div className="relative">
+                      </button>
+
+                      {editingTaskId === task.id && (
+                        <div
+                          ref={datePickerRef}
+                          className="fixed inset-0 z-20 flex items-center justify-center"
+                        >
+                          <div
+                            className="absolute inset-0 bg-black bg-opacity-25"
+                            onClick={() => setEditingTaskId(null)}
+                          ></div>
+                          <div className="relative z-30 bg-[var(--background)] rounded-lg shadow-lg p-4">
+                            <DatePicker
+                              selected={editingTaskDate}
+                              onChange={(date) =>
+                                updateTaskDueDate(task.id, date)
+                              }
+                              inline
+                              className="bg-[var(--background)] text-[var(--foreground)]"
+                            />
+                            <div className="flex justify-between mt-3">
+                              <button
+                                type="button"
+                                onClick={() => updateTaskDueDate(task.id, null)}
+                                className="text-xs px-3 py-1.5 hover:bg-[var(--container)] rounded"
+                              >
+                                {t("tasks.clear")}
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setEditingTaskId(null)}
+                                className="text-xs px-3 py-1.5 bg-[var(--foreground)] text-[var(--background)] rounded"
+                              >
+                                {t("tasks.done")}
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
                     <button
-                      onClick={() => {
-                        setEditingTaskId(task.id);
-                        setEditingTaskDate(
-                          task.due_date ? new Date(task.due_date) : null,
-                        );
-                      }}
+                      onClick={() => setEditingTask(task)}
                       className="p-1.5 text-[var(--foreground)] opacity-40 hover:opacity-100 hover:bg-[var(--background)]/30 rounded"
-                      title={t("tasks.setDueDate")}
+                      title={t("tasks.editTask")}
                     >
                       <svg
                         width="16"
@@ -602,103 +684,35 @@ const Tasks = () => {
                         strokeLinecap="round"
                         strokeLinejoin="round"
                       >
-                        <rect
-                          x="3"
-                          y="4"
-                          width="18"
-                          height="18"
-                          rx="2"
-                          ry="2"
-                        ></rect>
-                        <line x1="16" y1="2" x2="16" y2="6"></line>
-                        <line x1="8" y1="2" x2="8" y2="6"></line>
-                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                        <path d="M12 20h9"></path>
+                        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
                       </svg>
                     </button>
 
-                    {editingTaskId === task.id && (
-                      <div
-                        ref={datePickerRef}
-                        className="fixed inset-0 z-20 flex items-center justify-center"
+                    <button
+                      onClick={() => deleteTask(task.id)}
+                      className="p-1.5 text-[var(--foreground)] opacity-40 hover:opacity-100 hover:bg-red-500/20 hover:text-red-500 rounded"
+                      title={t("tasks.deleteTask")}
+                    >
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
                       >
-                        <div
-                          className="absolute inset-0 bg-black bg-opacity-25"
-                          onClick={() => setEditingTaskId(null)}
-                        ></div>
-                        <div className="relative z-30 bg-[var(--background)] rounded-lg shadow-lg p-4">
-                          <DatePicker
-                            selected={editingTaskDate}
-                            onChange={(date) =>
-                              updateTaskDueDate(task.id, date)
-                            }
-                            inline
-                            className="bg-[var(--background)] text-[var(--foreground)]"
-                          />
-                          <div className="flex justify-between mt-3">
-                            <button
-                              type="button"
-                              onClick={() => updateTaskDueDate(task.id, null)}
-                              className="text-xs px-3 py-1.5 hover:bg-[var(--container)] rounded"
-                            >
-                              {t("tasks.clear")}
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => setEditingTaskId(null)}
-                              className="text-xs px-3 py-1.5 bg-[var(--foreground)] text-[var(--background)] rounded"
-                            >
-                              {t("tasks.done")}
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    )}
+                        <path d="M3 6h18"></path>
+                        <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                        <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                      </svg>
+                    </button>
                   </div>
-
-                  <button
-                    onClick={() => setEditingTask(task)}
-                    className="p-1.5 text-[var(--foreground)] opacity-40 hover:opacity-100 hover:bg-[var(--background)]/30 rounded"
-                    title={t("tasks.editTask")}
-                  >
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M12 20h9"></path>
-                      <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
-                    </svg>
-                  </button>
-
-                  <button
-                    onClick={() => deleteTask(task.id)}
-                    className="p-1.5 text-[var(--foreground)] opacity-40 hover:opacity-100 hover:bg-red-500/20 hover:text-red-500 rounded"
-                    title={t("tasks.deleteTask")}
-                  >
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M3 6h18"></path>
-                      <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
-                      <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
-                    </svg>
-                  </button>
                 </div>
               </div>
-            </div>
-          );
+            );
           })}
         </div>
       ) : (

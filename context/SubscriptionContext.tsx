@@ -1,8 +1,14 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { useAuth } from './AuthContext';
-import { checkSubscriptionStatus } from '../lib/checkSubscriptionStatus';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
+import { useAuth } from "./AuthContext";
+import { checkSubscriptionStatus } from "../lib/checkSubscriptionStatus";
 
 interface SubscriptionContextType {
   hasFullAccess: boolean;
@@ -17,7 +23,9 @@ interface SubscriptionContextType {
   refreshSubscriptionStatus: () => Promise<void>;
 }
 
-const SubscriptionContext = createContext<SubscriptionContextType | undefined>(undefined);
+const SubscriptionContext = createContext<SubscriptionContextType | undefined>(
+  undefined,
+);
 
 export function SubscriptionProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
@@ -27,8 +35,12 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
   const [canSave, setCanSave] = useState(false);
   const [canCreate, setCanCreate] = useState(false);
   const [canRead, setCanRead] = useState(false);
-  const [subscriptionStatus, setSubscriptionStatus] = useState<string | null>(null);
-  const [subscriptionEndDate, setSubscriptionEndDate] = useState<string | null>(null);
+  const [subscriptionStatus, setSubscriptionStatus] = useState<string | null>(
+    null,
+  );
+  const [subscriptionEndDate, setSubscriptionEndDate] = useState<string | null>(
+    null,
+  );
   const [isLoading, setIsLoading] = useState(true);
 
   const refreshSubscriptionStatus = async () => {
@@ -40,7 +52,7 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
     try {
       setIsLoading(true);
       const status = await checkSubscriptionStatus(user.id);
-        setHasFullAccess(status.hasFullAccess);
+      setHasFullAccess(status.hasFullAccess);
       setHasReadOnlyAccess(status.hasReadOnlyAccess);
       setCanEdit(status.canEdit);
       setCanSave(status.canSave);
@@ -87,7 +99,9 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
 export function useSubscription(): SubscriptionContextType {
   const context = useContext(SubscriptionContext);
   if (!context) {
-    throw new Error('useSubscription must be used within a SubscriptionProvider');
+    throw new Error(
+      "useSubscription must be used within a SubscriptionProvider",
+    );
   }
   return context;
 }

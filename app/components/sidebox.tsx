@@ -17,7 +17,7 @@ import {
   Folder,
   FolderOpen,
   Inbox,
-  Settings
+  Settings,
   // Book,
 } from "lucide-react";
 import Link from "next/link";
@@ -36,7 +36,8 @@ import {
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuLabel,
-  DropdownMenuRadioGroup,  DropdownMenuRadioItem,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
   DropdownMenuSeparator,
   DropdownMenuItem,
 } from "../../components/ui/dropdown-menu";
@@ -47,7 +48,10 @@ interface SideboxProps {
   onVisibilityChange?: (isVisible: boolean) => void;
 }
 
-export default function Sidebox({ isVisible = false, onVisibilityChange }: SideboxProps) {
+export default function Sidebox({
+  isVisible = false,
+  onVisibilityChange,
+}: SideboxProps) {
   interface Note {
     id: string;
     title: string;
@@ -68,13 +72,14 @@ export default function Sidebox({ isVisible = false, onVisibilityChange }: Sideb
   const [newFolderName, setNewFolderName] = useState("");
   const [isAddingFolder, setIsAddingFolder] = useState(false);
   const [isFolderCreating, setIsFolderCreating] = useState(false);
-  const [showFoldersTab, setShowFoldersTab] = useState(false);  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [showFoldersTab, setShowFoldersTab] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const router = useRouter();
   const { user } = useAuth();
   const [, setError] = useState<string | null>(null);
   const { t } = useTranslation();
-  
+
   const languages = [
     { code: "en", name: "English" },
     { code: "pt-BR", name: "Português (BR)" },
@@ -106,7 +111,8 @@ export default function Sidebox({ isVisible = false, onVisibilityChange }: Sideb
       langToSet = "de";
     } else if (browserLang && browserLang.startsWith("es")) {
       langToSet = "es";
-    }    i18n.changeLanguage(langToSet);
+    }
+    i18n.changeLanguage(langToSet);
     if (typeof window !== "undefined") {
       localStorage.setItem("i18nextLng", langToSet);
     }
@@ -168,7 +174,8 @@ export default function Sidebox({ isVisible = false, onVisibilityChange }: Sideb
         .from("folders")
         .select("*")
         .eq("user_id", user.id)
-        .order("name", { ascending: true });      setFolders(
+        .order("name", { ascending: true });
+      setFolders(
         (data || []).map((folder) => ({
           ...folder,
           name: decrypt(folder.name), // Descriptografa o nome da pasta
@@ -246,7 +253,8 @@ export default function Sidebox({ isVisible = false, onVisibilityChange }: Sideb
         },
       );
     }
-  }  const toggleMobileSidebar = () => {
+  }
+  const toggleMobileSidebar = () => {
     // Only close sidebar on mobile devices, not on desktop
     if (isMobile && onVisibilityChange) {
       onVisibilityChange(false);
@@ -263,16 +271,17 @@ export default function Sidebox({ isVisible = false, onVisibilityChange }: Sideb
           : folder,
       ),
     );
-  };  const createFolder = async () => {
+  };
+  const createFolder = async () => {
     if (!newFolderName.trim() || !user) return;
 
     try {
       // Set loading state to true when starting folder creation
       setIsFolderCreating(true);
-      
+
       // Check user limits before creating folder
       const userLimits = await checkUserLimits(user.id);
-        if (!userLimits.canCreateFolder) {
+      if (!userLimits.canCreateFolder) {
         // Show limit reached notification with upgrade option
         const notification = document.createElement("div");
         notification.className =
@@ -297,14 +306,14 @@ export default function Sidebox({ isVisible = false, onVisibilityChange }: Sideb
         }, 5000);
         return;
       }
-      
+
       const { data, error } = await supabase
         .from("folders")
         .insert([{ name: encrypt(newFolderName), user_id: user.id }])
         .select();
 
       if (error) throw error;
-      
+
       if (data && data[0]) {
         setFolders([
           ...folders,
@@ -348,26 +357,29 @@ export default function Sidebox({ isVisible = false, onVisibilityChange }: Sideb
     }
   };
 
-
-const toggleFullscreen = () => {
-      if (!document.fullscreenElement) {
-        if (document.documentElement.requestFullscreen) {
-          document.documentElement.requestFullscreen();
-        } else if ((document.documentElement as any).webkitRequestFullscreen) { // Safari
-          (document.documentElement as any).webkitRequestFullscreen();
-        } else if ((document.documentElement as any).msRequestFullscreen) { // IE11
-          (document.documentElement as any).msRequestFullscreen();
-        }
-      } else {
-        if (document.exitFullscreen) {
-          document.exitFullscreen();
-        } else if ((document as any).webkitExitFullscreen) { // Safari
-          (document as any).webkitExitFullscreen();
-        } else if ((document as any).msExitFullscreen) { // IE11
-          (document as any).msExitFullscreen();
-        }
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      if (document.documentElement.requestFullscreen) {
+        document.documentElement.requestFullscreen();
+      } else if ((document.documentElement as any).webkitRequestFullscreen) {
+        // Safari
+        (document.documentElement as any).webkitRequestFullscreen();
+      } else if ((document.documentElement as any).msRequestFullscreen) {
+        // IE11
+        (document.documentElement as any).msRequestFullscreen();
       }
-    };
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if ((document as any).webkitExitFullscreen) {
+        // Safari
+        (document as any).webkitExitFullscreen();
+      } else if ((document as any).msExitFullscreen) {
+        // IE11
+        (document as any).msExitFullscreen();
+      }
+    }
+  };
 
   const moveNoteToFolder = async (noteId: string, folderId: string | null) => {
     if (!user) return;
@@ -386,23 +398,26 @@ const toggleFullscreen = () => {
         notes.map((note) =>
           note.id === noteId ? { ...note, folder_id: folderId } : note,
         ),
-      );    } catch (error) {
+      );
+    } catch (error) {
       console.error("Erro ao mover nota:", error);
     }
   };
   return (
-    <div 
+    <div
       className={`w-80 h-screen fixed left-0 top-0 z-50 transition-all duration-300 ease-in-out ${
-        isVisible ? 'translate-x-0' : '-translate-x-full'
+        isVisible ? "translate-x-0" : "-translate-x-full"
       }`}
       style={{
-        pointerEvents: isVisible ? 'auto' : 'none'
+        pointerEvents: isVisible ? "auto" : "none",
       }}
-    >      {/* Sidebar */}
+    >
+      {" "}
+      {/* Sidebar */}
       <aside
         className="w-full h-full bg-[var(--background)]/85 backdrop-blur text-[var(--text-color)] shadow-xl overflow-y-auto scrollbar"
         style={{
-          paddingBottom: "60px" // Leave space for bottom bar
+          paddingBottom: "60px", // Leave space for bottom bar
         }}
       >
         <div className="flex flex-col h-full">
@@ -412,16 +427,17 @@ const toggleFullscreen = () => {
               <h1 className="text-xl font-bold flex items-center">
                 <BookOpen size={20} className="text-[var(--foreground)]" />
                 {user ? (
-                  <Link href={"/dashboard"}>                    <span
+                  <Link href={"/dashboard"}>
+                    {" "}
+                    <span
                       className="text-[var(--foreground)] px-2 py-1 rounded-lg transition-colors duration-200 hover:bg-[var(--container)] hover:shadow-sm font-medium"
                       onClick={() => toggleMobileSidebar()}
                     >
                       {t("sidebar.myWorkspace")}
                     </span>
                   </Link>
-                ) : (                  <span className="text-[var(--foreground)] pl-2">
-                    Lynxky
-                  </span>
+                ) : (
+                  <span className="text-[var(--foreground)] pl-2">Lynxky</span>
                 )}
               </h1>
 
@@ -459,7 +475,6 @@ const toggleFullscreen = () => {
               />
             </div>
           </div>
-
           {/* Navigation Tabs */}
           <div className="flex">
             <button
@@ -477,7 +492,6 @@ const toggleFullscreen = () => {
               {t("sidebar.folders")}
             </button>
           </div>
-
           {/* Folders Section */}
           <div
             className={`overflow-y-auto flex-1 ${showFoldersTab ? "" : "hidden"} ${!user ? "hidden" : ""}`}
@@ -495,7 +509,6 @@ const toggleFullscreen = () => {
                 <FolderPlus size={16} className="text-[var(--foreground)]" />
               </button>
             </div>
-
             {isAddingFolder && (
               <div className="p-2 bg-[var(--container)] bg-opacity-30">
                 <div className="flex">
@@ -540,7 +553,6 @@ const toggleFullscreen = () => {
                 </button>
               </div>
             )}
-
             {/* Folders List */}
             <div className="px-2 py-1 space-y-1">
               {folders.length === 0 ? (
@@ -603,7 +615,8 @@ const toggleFullscreen = () => {
                       <div className="ml-7 space-y-0.5 mt-0.5 mb-2 bg-[var(--container)] bg-opacity-20 rounded-md py-1">
                         {notes
                           .filter((note) => note.folder_id === folder.id)
-                          .map((note) => (                            <Link
+                          .map((note) => (
+                            <Link
                               href={`/notes/${note.id}`}
                               key={note.id}
                               onClick={() => toggleMobileSidebar()}
@@ -647,14 +660,14 @@ const toggleFullscreen = () => {
                 ))
               )}
             </div>
-
             {/* Notas sem pasta para arrastar */}
             <div className="mt-4 px-4 py-3 flex items-center bg-[var(--background-darker)]">
               <Inbox size={16} className="text-[var(--foreground)] mr-2" />
               <h3 className="text-sm font-medium text-[var(--foreground)]">
                 {t("sidebar.unfiled")}
               </h3>
-            </div>            <div className="px-2 py-2">
+            </div>{" "}
+            <div className="px-2 py-2">
               {notes
                 .filter((note) => note.folder_id === null)
                 .map((note) => (
@@ -744,7 +757,6 @@ const toggleFullscreen = () => {
               )}
             </div>
           </div>
-
           {/* Notes list - shown only in "Notes" tab view */}
           <div
             className={`flex-1 overflow-y-auto px-2 py-2 space-y-1 ${showFoldersTab ? "hidden" : ""}`}
@@ -757,7 +769,8 @@ const toggleFullscreen = () => {
               <div className="flex justify-center py-8">
                 <div className="w-8 h-8 border-2 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
               </div>
-            ) : filteredNotes.length > 0 ? (              filteredNotes.map((note) => (
+            ) : filteredNotes.length > 0 ? (
+              filteredNotes.map((note) => (
                 <div key={note.id} className="relative group">
                   <Link
                     href={`/notes/${note.id}`}
@@ -890,7 +903,6 @@ const toggleFullscreen = () => {
               </div>
             )}
           </div>
-
           {/* Footer */}
           <div className="p-4 text-xs text-[var(--foreground)]">
             <div className="flex justify-between items-center">
@@ -951,9 +963,9 @@ const toggleFullscreen = () => {
                 </svg>
               </button>
             </div>
-          </div>          <div className="p-2 ">
+          </div>{" "}
+          <div className="p-2 ">
             <div className="flex justify-end items-center gap-2 ">
-               
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="icon" aria-label="Controls">
@@ -987,7 +999,7 @@ const toggleFullscreen = () => {
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
-            
+
             <ThemeToggle />
           </div>
           {user && (

@@ -38,7 +38,7 @@ const Profile = memo(() => {
   // Memoizar funções para evitar re-criações desnecessárias
   const getUserWallpaper = useCallback(async () => {
     if (!user?.id || dataLoaded) return;
-    
+
     setWallpaperLoading(true);
     try {
       const { data, error } = await supabase
@@ -71,7 +71,7 @@ const Profile = memo(() => {
 
   const getUserPhoto = useCallback(async () => {
     if (!user?.id || dataLoaded) return;
-    
+
     setAvatarLoading(true);
     try {
       const { data, error } = await supabase
@@ -100,7 +100,7 @@ const Profile = memo(() => {
 
   const getUserBio = useCallback(async () => {
     if (!user?.id || dataLoaded) return;
-    
+
     setBioLoading(true);
     try {
       const { data, error } = await supabase
@@ -111,13 +111,14 @@ const Profile = memo(() => {
 
       if (error && error.code !== "PGRST116") throw error;
 
-      if (data?.bio) {      setBio(data.bio);
+      if (data?.bio) {
+        setBio(data.bio);
       } else {
-        setBio(t('profile.bioPlaceholder'));
+        setBio(t("profile.bioPlaceholder"));
       }
     } catch (error) {
       console.error("Error fetching bio:", error);
-      setBio(t('profile.bioPlaceholder'));
+      setBio(t("profile.bioPlaceholder"));
     } finally {
       setBioLoading(false);
     }
@@ -125,7 +126,7 @@ const Profile = memo(() => {
 
   const getUserNotes = useCallback(async () => {
     if (!user?.id || dataLoaded) return;
-    
+
     try {
       const { data, error } = await supabase
         .from("notes")
@@ -149,14 +150,21 @@ const Profile = memo(() => {
           getUserWallpaper(),
           getUserPhoto(),
           getUserBio(),
-          getUserNotes()
+          getUserNotes(),
         ]);
         setDataLoaded(true);
       };
-      
+
       loadAllData();
     }
-  }, [user?.id, dataLoaded, getUserWallpaper, getUserPhoto, getUserBio, getUserNotes]);
+  }, [
+    user?.id,
+    dataLoaded,
+    getUserWallpaper,
+    getUserPhoto,
+    getUserBio,
+    getUserNotes,
+  ]);
 
   // Resetar estado quando usuário mudar
   useEffect(() => {
@@ -175,7 +183,7 @@ const Profile = memo(() => {
     };
 
     document.addEventListener("visibilitychange", handleVisibilityChange);
-    
+
     return () => {
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
@@ -454,7 +462,8 @@ const Profile = memo(() => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
-    };  }, []);
+    };
+  }, []);
 
   // Se não há usuário, não renderizar nada
   if (!user) {
@@ -495,15 +504,15 @@ const Profile = memo(() => {
   // Add this function to update the wallpaper position
   const updateWallpaperPosition = async (position: string) => {
     if (!user) return;
-    
+
     setWallpaperPosition(position);
-    
+
     try {
       const { error } = await supabase
         .from("profiles")
-        .update({ 
+        .update({
           wallpaper_position: position,
-          updated_at: new Date().toISOString() 
+          updated_at: new Date().toISOString(),
         })
         .eq("id", user.id);
 
@@ -515,322 +524,385 @@ const Profile = memo(() => {
 
   return (
     <>
-    <div className="flex justify-center ">
-      <div className="bg-[var(--background)] text-[var(--background]">
-        <div className="relative">
-          {wallpaperLoading ? (
-            <div className="w-600 h-55 sm:h-130 md:h-70 2xl:h-150 bg-gray-200 animate-pulse"></div>
-          ) : (
-            <>
-              <Link href="/dashboard">
-                <Image
-                  src={wallpaperUrl || "/static/images/susan.jpg"}
-                  alt="Profile"
-                  width={4000}
-                  height={4000}
-                  className={`w-screen  h-80 sm:h-130 md:h-90 2xl:h-180 object-cover ${
-                    wallpaperPosition === "top"
-                      ? "object-top"
-                      : wallpaperPosition === "bottom"
-                      ? "object-bottom"
-                      : "object-center"
-                  }`}
-                  priority
-                  unoptimized={wallpaperUrl?.endsWith(".gif")}
-                />
-              </Link>
-            </>
-          )}
-
-          {/* Position controls - always visible, above wallpaper */}
-            <div className="absolute z-20 top-2 left-0 flex gap-1  rounded-md p-1 shadow-lg">
-            <button 
-              onClick={() => fileInputRef.current?.click()}
-              className="w-7 h-7 flex items-center justify-center rounded hover:bg-white/10"
-              title={t("profile.wallpaper.upload")}
-              type="button"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-            </button>
-            <button 
-              onClick={() => updateWallpaperPosition("top")}
-              className={`w-7 h-7 flex items-center justify-center rounded ${wallpaperPosition === 'top' ? 'bg-white/30 border border-white' : 'hover:bg-white/10'}`}
-              title={t("profile.wallpaper.positionTop")}
-              type="button"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line></svg>
-            </button>
-            <button 
-              onClick={() => updateWallpaperPosition("center")}
-              className={`w-7 h-7 flex items-center justify-center rounded ${wallpaperPosition === 'center' ? 'bg-white/30 border border-white' : 'hover:bg-white/10'}`}
-              title={t("profile.wallpaper.positionCenter")}
-              type="button"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="12" y1="3" x2="12" y2="21"></line><line x1="3" y1="12" x2="21" y2="12"></line></svg>
-            </button>
-            <button 
-              onClick={() => updateWallpaperPosition("bottom")}
-              className={`w-7 h-7 flex items-center justify-center rounded ${wallpaperPosition === 'bottom' ? 'bg-white/30 border border-white' : 'hover:bg-white/10'}`}
-              title={t("profile.wallpaper.positionBottom")}
-              type="button"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="15" x2="21" y2="15"></line></svg>
-            </button>
-            </div>
-
-          <div className="absolute top-0 flex justify-center  w-full  ">
-            <div id="clock" className="bg-black/80 backdrop-blur-sm">
-              <Clock />
-            </div>
-          </div>
-
-           
-
-          {/* Informações do usuário e data */}
-          <div className="absolute bottom-6 right-2 sm:right-auto sm:left-2 flex flex-col gap-1">
-            <div className="bg-black/70 backdrop-blur-sm text-white text-sm px-3 py-1.5 rounded-md shadow-sm">
-              {new Date().toLocaleDateString(undefined, {
-                weekday: "short",
-                day: "numeric",
-                month: "short",
-                year: "numeric",
-              })}
-            </div>
-
-            {user && (
-              <div className="bg-black/70 backdrop-blur-sm text-white text-sm px-3 py-1.5 rounded-md shadow-sm flex items-center gap-2">
-                <span>{user?.email?.split("@")[0] || "Guest"}</span>
-                <span className="h-4 w-px bg-[var(--foreground)]/30"></span>
-                <span className="flex items-center gap-1">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                    <polyline points="14 2 14 8 20 8"></polyline>
-                  </svg>
-                  {notes || 0}
-                </span>
-              </div>
+      <div className="flex justify-center ">
+        <div className="bg-[var(--background)] text-[var(--background]">
+          <div className="relative">
+            {wallpaperLoading ? (
+              <div className="w-600 h-55 sm:h-130 md:h-70 2xl:h-150 bg-gray-200 animate-pulse"></div>
+            ) : (
+              <>
+                <Link href="/dashboard">
+                  <Image
+                    src={wallpaperUrl || "/static/images/susan.jpg"}
+                    alt="Profile"
+                    width={4000}
+                    height={4000}
+                    className={`w-screen  h-80 sm:h-130 md:h-90 2xl:h-180 object-cover ${
+                      wallpaperPosition === "top"
+                        ? "object-top"
+                        : wallpaperPosition === "bottom"
+                          ? "object-bottom"
+                          : "object-center"
+                    }`}
+                    priority
+                    unoptimized={wallpaperUrl?.endsWith(".gif")}
+                  />
+                </Link>
+              </>
             )}
-          </div>
 
-          {/* Pesquisa rápida */}
-          <div
-            className="absolute top-20 sm:top-24 left-1/2 transform -translate-x-1/2 z-5 "
-            ref={searchResultsRef}
-          >
-            <div className="flex items-center bg-black/70 backdrop-blur-sm rounded-md shadow-sm p-1">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="ml-2 text-white"
+            {/* Position controls - always visible, above wallpaper */}
+            <div className="absolute z-20 top-2 left-0 flex gap-1  rounded-md p-1 shadow-lg">
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                className="w-7 h-7 flex items-center justify-center rounded hover:bg-white/10"
+                title={t("profile.wallpaper.upload")}
+                type="button"
               >
-                <circle cx="11" cy="11" r="8"></circle>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-              </svg>
-              <input
-                type="text"
-                placeholder={t("sidebar.searchNotes")}
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="bg-transparent text-white px-2 py-1.5 w-48 focus:outline-none text-sm"
-                onFocus={() => {
-                  if (searchTerm && searchResults.length > 0)
-                    setShowSearchResults(true);
-                }}
-              />
-              {isSearching && (
-                <div className="mr-2">
-                  <div className="w-3 h-3 border-2 border-t-transparent border-white rounded-full animate-spin"></div>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="text-white"
+                >
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="17 8 12 3 7 8"></polyline>
+                  <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+              </button>
+              <button
+                onClick={() => updateWallpaperPosition("top")}
+                className={`w-7 h-7 flex items-center justify-center rounded ${wallpaperPosition === "top" ? "bg-white/30 border border-white" : "hover:bg-white/10"}`}
+                title={t("profile.wallpaper.positionTop")}
+                type="button"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="text-white"
+                >
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                  <line x1="3" y1="9" x2="21" y2="9"></line>
+                </svg>
+              </button>
+              <button
+                onClick={() => updateWallpaperPosition("center")}
+                className={`w-7 h-7 flex items-center justify-center rounded ${wallpaperPosition === "center" ? "bg-white/30 border border-white" : "hover:bg-white/10"}`}
+                title={t("profile.wallpaper.positionCenter")}
+                type="button"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="text-white"
+                >
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                  <line x1="12" y1="3" x2="12" y2="21"></line>
+                  <line x1="3" y1="12" x2="21" y2="12"></line>
+                </svg>
+              </button>
+              <button
+                onClick={() => updateWallpaperPosition("bottom")}
+                className={`w-7 h-7 flex items-center justify-center rounded ${wallpaperPosition === "bottom" ? "bg-white/30 border border-white" : "hover:bg-white/10"}`}
+                title={t("profile.wallpaper.positionBottom")}
+                type="button"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="text-white"
+                >
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                  <line x1="3" y1="15" x2="21" y2="15"></line>
+                </svg>
+              </button>
+            </div>
+
+            <div className="absolute top-0 flex justify-center  w-full  ">
+              <div id="clock" className="bg-black/80 backdrop-blur-sm">
+                <Clock />
+              </div>
+            </div>
+
+            {/* Informações do usuário e data */}
+            <div className="absolute bottom-6 right-2 sm:right-auto sm:left-2 flex flex-col gap-1">
+              <div className="bg-black/70 backdrop-blur-sm text-white text-sm px-3 py-1.5 rounded-md shadow-sm">
+                {new Date().toLocaleDateString(undefined, {
+                  weekday: "short",
+                  day: "numeric",
+                  month: "short",
+                  year: "numeric",
+                })}
+              </div>
+
+              {user && (
+                <div className="bg-black/70 backdrop-blur-sm text-white text-sm px-3 py-1.5 rounded-md shadow-sm flex items-center gap-2">
+                  <span>{user?.email?.split("@")[0] || "Guest"}</span>
+                  <span className="h-4 w-px bg-[var(--foreground)]/30"></span>
+                  <span className="flex items-center gap-1">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="14"
+                      height="14"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                      <polyline points="14 2 14 8 20 8"></polyline>
+                    </svg>
+                    {notes || 0}
+                  </span>
                 </div>
               )}
             </div>
 
-            {/* Dropdown de resultados com z-index alto */}
-            {showSearchResults && (
-              <div className="absolute left-0 right-0 mt-1 bg-black/50 backdrop-blur-sm rounded-md shadow-xl max-h-[300px] overflow-y-auto  border border-white/10">
-                {searchResults.length > 0 ? (
-                  searchResults.map((note) => (
-                    <button
-                      key={note.id}
-                      onClick={() => {
-                        setShowSearchResults(false);
-                        setSearchTerm("");
-                        router.push(`/notes/${note.id}`);
-                      }}
-                      className="flex flex-col w-full text-left p-3 hover:bg-white/10 transition-colors border-b border-white/10 last:border-0"
-                    >
-                      <div className="flex items-center gap-2">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="14"
-                          height="14"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          className="text-white"
-                        >
-                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                          <polyline points="14 2 14 8 20 8"></polyline>
-                        </svg>
-                        <p className="text-white text-sm font-medium truncate flex-1">
-                          {note.title || t("sidebar.untitled")}
-                        </p>
-                      </div>
-
-                      {note.content && (
-                        <p className="text-white/70 text-xs mt-1 line-clamp-2 pl-6">
-                          {getExcerpt(note.content, 80)}
-                        </p>
-                      )}
-
-                      <div className="flex items-center text-white/60 text-xs mt-1.5 pl-6">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="12"
-                          height="12"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          className="mr-1"
-                        >
-                          <circle cx="12" cy="12" r="10"></circle>
-                          <polyline points="12 6 12 12 16 14"></polyline>
-                        </svg>
-                        {formatDate(note.created_at)}
-                      </div>
-                    </button>
-                  ))
-                ) : (
-                  <div className="p-4 text-center text-white/70 text-sm">
-                    {searchTerm.length > 0
-                      ? t("sidebar.noNotesFound")
-                      : t("sidebar.searchNotes")}
+            {/* Pesquisa rápida */}
+            <div
+              className="absolute top-20 sm:top-24 left-1/2 transform -translate-x-1/2 z-5 "
+              ref={searchResultsRef}
+            >
+              <div className="flex items-center bg-black/70 backdrop-blur-sm rounded-md shadow-sm p-1">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="ml-2 text-white"
+                >
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input
+                  type="text"
+                  placeholder={t("sidebar.searchNotes")}
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="bg-transparent text-white px-2 py-1.5 w-48 focus:outline-none text-sm"
+                  onFocus={() => {
+                    if (searchTerm && searchResults.length > 0)
+                      setShowSearchResults(true);
+                  }}
+                />
+                {isSearching && (
+                  <div className="mr-2">
+                    <div className="w-3 h-3 border-2 border-t-transparent border-white rounded-full animate-spin"></div>
                   </div>
                 )}
               </div>
-            )}
-          </div>
 
-          {/* Loading indicator for wallpaper upload */}
-          {uploading && (
-            <div className="absolute top-2 left-14 bg-[var(--background)] text-[var(--foreground)] p-2 rounded-md shadow flex items-center gap-2">
-              <div className="h-4 w-4 border-2 border-t-transparent border-current rounded-full animate-spin"></div>
-              <span className="text-xs">Uploading...</span>
+              {/* Dropdown de resultados com z-index alto */}
+              {showSearchResults && (
+                <div className="absolute left-0 right-0 mt-1 bg-black/50 backdrop-blur-sm rounded-md shadow-xl max-h-[300px] overflow-y-auto  border border-white/10">
+                  {searchResults.length > 0 ? (
+                    searchResults.map((note) => (
+                      <button
+                        key={note.id}
+                        onClick={() => {
+                          setShowSearchResults(false);
+                          setSearchTerm("");
+                          router.push(`/notes/${note.id}`);
+                        }}
+                        className="flex flex-col w-full text-left p-3 hover:bg-white/10 transition-colors border-b border-white/10 last:border-0"
+                      >
+                        <div className="flex items-center gap-2">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="14"
+                            height="14"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            className="text-white"
+                          >
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                          </svg>
+                          <p className="text-white text-sm font-medium truncate flex-1">
+                            {note.title || t("sidebar.untitled")}
+                          </p>
+                        </div>
+
+                        {note.content && (
+                          <p className="text-white/70 text-xs mt-1 line-clamp-2 pl-6">
+                            {getExcerpt(note.content, 80)}
+                          </p>
+                        )}
+
+                        <div className="flex items-center text-white/60 text-xs mt-1.5 pl-6">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="12"
+                            height="12"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            className="mr-1"
+                          >
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                          </svg>
+                          {formatDate(note.created_at)}
+                        </div>
+                      </button>
+                    ))
+                  ) : (
+                    <div className="p-4 text-center text-white/70 text-sm">
+                      {searchTerm.length > 0
+                        ? t("sidebar.noNotesFound")
+                        : t("sidebar.searchNotes")}
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
-          )}
-        </div>
 
-        <div className="flex justify-center items-center gap-2 mt-[-50px] pb-2 relative">
-            <div id="background blur" className="absolute inset-0 bg-[var(--background)]/10 backdrop-blur z-0 h-[30px] mt-11"> </div>
-          <div className="relative">
-            {avatarLoading ? (
-              <div className="h-[80px] w-[80px] rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse"></div>
-            ) : (
-              <Avatar
-                onClick={() => avatarFileInputRef.current?.click()}
-                className="cursor-pointer hover:opacity-86 transition-opacity duration-700"
-              >
-                <AvatarImage
-                  className="h-[110px] w-[110px] rounded-full object-cover object-center border-1 border-black"
-                  src={avatar_url || ""}
-                  alt="Profile avatar"
-                />
-              </Avatar>
-            )}
-            {uploadingAvatar && (
-              <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-full">
-                <div className="h-6 w-6 border-2 border-t-transparent border-white rounded-full animate-spin"></div>
+            {/* Loading indicator for wallpaper upload */}
+            {uploading && (
+              <div className="absolute top-2 left-14 bg-[var(--background)] text-[var(--foreground)] p-2 rounded-md shadow flex items-center gap-2">
+                <div className="h-4 w-4 border-2 border-t-transparent border-current rounded-full animate-spin"></div>
+                <span className="text-xs">Uploading...</span>
               </div>
             )}
-            <button
-              onClick={() => avatarFileInputRef.current?.click()}
-              className="absolute bottom-0 left-0 bg-[var(--background)] text-[var(--foreground)] p-1 rounded-full opacity-80 hover:opacity-100 border border-[var(--foreground)]"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="12"
-                height="12"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-              </svg>
-            </button>
-            <input
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={(e) => {
-                if (e.target.files && e.target.files.length > 0) {
-                  uploadAvatar(e.target.files[0]);
-                }
-              }}
-              ref={avatarFileInputRef}
-            />
           </div>
 
-          {bioLoading ? (
-            <div className="italic text-[var(--foreground)] bg-[var(--container)] w-40 h-6 rounded animate-pulse "></div>
-          ) : (
+          <div className="flex justify-center items-center gap-2 mt-[-50px] pb-2 relative">
             <div
-              contentEditable
-              suppressContentEditableWarning
-              onBlur={(e) => {
-                const newBio = e.target.innerText;
-                if (newBio.length <= 50) {                updateBio(newBio);
-                } else {
-                  alert("Bio must be 50 characters or less.");
-                  e.target.innerText = bio || t('profile.bioPlaceholder'); // Revert to the previous bio or use default
-                }
-              }}
-              className="italic  text-[var(--foreground)] bg-[var(--container)]/30 backdrop-blur-sm max-w-[260px] overflow-wrap-anywhere"
+              id="background blur"
+              className="absolute inset-0 bg-[var(--background)]/10 backdrop-blur z-0 h-[30px] mt-11"
             >
-              {bio || t('profile.bioPlaceholder')}
+              {" "}
             </div>
-          )}
-        </div>
+            <div className="relative">
+              {avatarLoading ? (
+                <div className="h-[80px] w-[80px] rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse"></div>
+              ) : (
+                <Avatar
+                  onClick={() => avatarFileInputRef.current?.click()}
+                  className="cursor-pointer hover:opacity-86 transition-opacity duration-700"
+                >
+                  <AvatarImage
+                    className="h-[110px] w-[110px] rounded-full object-cover object-center border-1 border-black"
+                    src={avatar_url || ""}
+                    alt="Profile avatar"
+                  />
+                </Avatar>
+              )}
+              {uploadingAvatar && (
+                <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-full">
+                  <div className="h-6 w-6 border-2 border-t-transparent border-white rounded-full animate-spin"></div>
+                </div>
+              )}
+              <button
+                onClick={() => avatarFileInputRef.current?.click()}
+                className="absolute bottom-0 left-0 bg-[var(--background)] text-[var(--foreground)] p-1 rounded-full opacity-80 hover:opacity-100 border border-[var(--foreground)]"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+              </button>
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => {
+                  if (e.target.files && e.target.files.length > 0) {
+                    uploadAvatar(e.target.files[0]);
+                  }
+                }}
+                ref={avatarFileInputRef}
+              />
+            </div>
 
-        {/* Input oculto para uploa</h2>d alternativo */}
-        <input
-          type="file"
-          ref={fileInputRef}
-          onChange={handleFileChange}
-          accept="image/*"        style={{ display: "none" }}
-        />
+            {bioLoading ? (
+              <div className="italic text-[var(--foreground)] bg-[var(--container)] w-40 h-6 rounded animate-pulse "></div>
+            ) : (
+              <div
+                contentEditable
+                suppressContentEditableWarning
+                onBlur={(e) => {
+                  const newBio = e.target.innerText;
+                  if (newBio.length <= 50) {
+                    updateBio(newBio);
+                  } else {
+                    alert("Bio must be 50 characters or less.");
+                    e.target.innerText = bio || t("profile.bioPlaceholder"); // Revert to the previous bio or use default
+                  }
+                }}
+                className="italic  text-[var(--foreground)] bg-[var(--container)]/30 backdrop-blur-sm max-w-[260px] overflow-wrap-anywhere"
+              >
+                {bio || t("profile.bioPlaceholder")}
+              </div>
+            )}
+          </div>
+
+          {/* Input oculto para uploa</h2>d alternativo */}
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileChange}
+            accept="image/*"
+            style={{ display: "none" }}
+          />
+        </div>
       </div>
-    </div>
-    <Analytics />
+      <Analytics />
     </>
   );
 });
 
-Profile.displayName = 'Profile';
+Profile.displayName = "Profile";
 
 export default Profile;

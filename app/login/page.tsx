@@ -1,6 +1,6 @@
 "use client";
 
-import { Analytics } from "@vercel/analytics/next"
+import { Analytics } from "@vercel/analytics/next";
 import { useState, Suspense, useEffect, useRef } from "react";
 import { useAuth } from "../../context/AuthContext";
 import Link from "next/link";
@@ -53,36 +53,36 @@ function LoginForm() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
-    
+
     // Verificar se o captcha foi completado
     if (!turnstileToken) {
       setError(t("login.captcha.required"));
       return;
     }
-    
+
     setLoading(true);
 
     try {
       // Verificar o captcha no backend primeiro
-      const captchaResponse = await fetch('/api/verify-turnstile', {
-        method: 'POST',
+      const captchaResponse = await fetch("/api/verify-turnstile", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ token: turnstileToken }),
       });
 
       const captchaResult = await captchaResponse.json();
-      
+
       if (!captchaResult.success) {
         setError(t("login.captcha.error"));
         resetTurnstile();
         return;
       }
 
-      console.log("Tentando fazer login na página de login");
+      // console.log("Tentando fazer login na página de login");
       await signIn(email, password);
-      console.log("Login realizado com sucesso");
+      // console.log("Login realizado com sucesso");
       router.push("/"); // Consertado Bug de redirecionamento, Authcontext linha 37
     } catch (error) {
       if (error instanceof Error) {
@@ -108,9 +108,9 @@ function LoginForm() {
         options: {
           redirectTo: `${window.location.origin}/`,
           queryParams: {
-            access_type: 'offline',
-            prompt: 'select_account', // Força o usuário a escolher a conta
-          }
+            access_type: "offline",
+            prompt: "select_account", // Força o usuário a escolher a conta
+          },
         },
       });
 
@@ -272,7 +272,7 @@ function LoginForm() {
                 >
                   {loading ? t("login.loggingIn") : t("login.signInWithEmail")}
                 </button>
-                
+
                 {/* Error and message display below login button */}
                 {message && (
                   <div className="p-4 bg-blue-500/20 border border-blue-500/30 rounded-lg text-blue-400 text-sm">
@@ -285,7 +285,6 @@ function LoginForm() {
                     {error}
                   </div>
                 )}
-               
               </div>
             </form>
           ) : (
@@ -313,18 +312,16 @@ function LoginForm() {
               {t("login.resetPassword")}
             </Link>
           </div>
-          
-            <div className="mt-4 text-center text-sm text-[var(--foreground)]">
-              <Link href="/terms" className="text-blue-400 hover:underline">
-                {t("login.termsOfUse")}
-              </Link>
-              {" • "}
-              <Link href="/privacy" className="text-blue-400 hover:underline">
-                {t("login.privacyPolicy")}
-              </Link>
-            </div>
 
-
+          <div className="mt-4 text-center text-sm text-[var(--foreground)]">
+            <Link href="/terms" className="text-blue-400 hover:underline">
+              {t("login.termsOfUse")}
+            </Link>
+            {" • "}
+            <Link href="/privacy" className="text-blue-400 hover:underline">
+              {t("login.privacyPolicy")}
+            </Link>
+          </div>
         </div>
       </div>
     </>
