@@ -25,14 +25,18 @@ export default function BottomBar({
   return (
     <div className="fixed bottom-0 left-0 right-0 z-[50] bg-black/85 backdrop-blur  shadow-lg">
       <div className="flex items-center justify-center gap-4 px-4 py-2">
-        {/* Sidebar toggle */}        <button
+        {/* Sidebar toggle */}{" "}
+        <button
           onClick={onSidebarToggle}
           className="flex items-center justify-center w-10 h-10 rounded-full bg-black text-white  transition-all duration-200 shadow-md"
           aria-label={
             isSidebarVisible ? t("sidebar.closeMenu") : t("sidebar.openMenu")
           }
-        >        {isSidebarVisible ? <ChevronLeft size={20} /> : <Menu size={20} />}
-        </button>        {/* New Note button (only for logged users) */}
+        >
+          {" "}
+          {isSidebarVisible ? <ChevronLeft size={20} /> : <Menu size={20} />}
+        </button>{" "}
+        {/* New Note button (only for logged users) */}
         {isUserLoggedIn && (
           <button
             onClick={onNewNote}
@@ -42,14 +46,15 @@ export default function BottomBar({
             <Plus size={24} />
           </button>
         )}
-
         {/* Music player toggle (only for logged users) */}
         {isUserLoggedIn && (
           <button
             onClick={onMusicPlayerToggle}
             className="flex items-center justify-center w-10 h-10 rounded-full bg-black/50 backdrop-blur hover:bg-black/30 text-white/80 transition-all duration-200 shadow-md"
             aria-label={
-              isMusicPlayerVisible ? t('musicPlayer.hidePlayer') : t('musicPlayer.showPlayer')
+              isMusicPlayerVisible
+                ? t("musicPlayer.hidePlayer")
+                : t("musicPlayer.showPlayer")
             }
           >
             {isMusicPlayerVisible ? (
@@ -64,10 +69,10 @@ export default function BottomBar({
                 strokeLinecap="round"
                 strokeLinejoin="round"
               >
-                <path d="m9 18 6-6-6-6"/>
+                <path d="m9 18 6-6-6-6" />
               </svg>
             ) : (
-              <Headphones size={20}/>
+              <Headphones size={20} />
             )}
           </button>
         )}

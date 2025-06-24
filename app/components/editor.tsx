@@ -10,7 +10,6 @@ import eventEmitter from "../../lib/eventEmitter"; // Import do event emitter
 import { checkUserLimits } from "../../lib/checkUserLimits"; // Import the user limits checker
 import { checkSubscriptionStatus } from "../../lib/checkSubscriptionStatus"; // Import subscription checker
 import {
-
   Eye,
   Edit,
   ListOrdered,
@@ -80,7 +79,7 @@ function Editor() {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [showFolderDropdown]);  // Check subscription status when user changes
+  }, [showFolderDropdown]); // Check subscription status when user changes
   useEffect(() => {
     const checkSubscription = async () => {
       if (user) {
@@ -271,8 +270,9 @@ function Editor() {
     try {
       // Check user limits before saving
       const userLimits = await checkUserLimits(user.id);
-      
-      if (!userLimits.canCreateNote) {        // Show limit reached notification with upgrade option
+
+      if (!userLimits.canCreateNote) {
+        // Show limit reached notification with upgrade option
         const notification = document.createElement("div");
         notification.className =
           "fixed bottom-4 right-4 bg-yellow-500 text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-500 flex items-center gap-2 max-w-md z-[60]";
@@ -292,7 +292,8 @@ function Editor() {
 
         setTimeout(() => {
           notification.style.opacity = "0";
-          setTimeout(() => notification.remove(), 500);        }, 5000);
+          setTimeout(() => notification.remove(), 500);
+        }, 5000);
         return;
       }
 
@@ -337,7 +338,7 @@ function Editor() {
       fetchFolders();
 
       // Emit event to notify other components
-      eventEmitter.emit("noteSaved");      // Notification toast for the success
+      eventEmitter.emit("noteSaved"); // Notification toast for the success
       const notification = document.createElement("div");
       notification.className =
         "fixed bottom-4 left-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-500 flex items-center gap-2 z-[60]";
@@ -453,9 +454,9 @@ function Editor() {
 
       if (data) {
         // Descriptografar os nomes das pastas
-        const decryptedFolders = data.map(folder => ({
+        const decryptedFolders = data.map((folder) => ({
           ...folder,
-          name: decrypt(folder.name)
+          name: decrypt(folder.name),
         }));
         setFolders(decryptedFolders);
       }
@@ -518,7 +519,8 @@ function Editor() {
       // This is just to trigger any event listeners that might be monitoring for changes
     } catch (error) {
       console.error("Erro ao buscar notas:", error);
-    }  };
+    }
+  };
 
   return (
     <div
@@ -528,37 +530,41 @@ function Editor() {
       <Profile />
       <div className="mx-auto max-w-7xl w-full h-full flex flex-col flex-grow">
         <div className="bg-[var(--background)] overflow-hidden flex flex-col flex-grow h-full  transition-all duration-300">
-       
           {/* Title Section */}
           <div className="p-5 sm:p-6 relative">
-                <div className="flex justify-center">                  <button
-                    className={`flex items-center justify-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 w-46 rounded-md text-sm sm:text-base font-medium transition-all duration-300 ${
-                    saving
-                      ? "bg-[var(--container)] text-[var(--foreground)] opacity-70"
-                      : "bg-gradient-to-r from-[var(--button-theme)] to-[var(--theme2)]/40 border border-[var(--border-theme)]/30 text-[var(--text-theme)]"
-                    }`}
-                    onClick={saveNote}
-                    disabled={saving || (!title.trim() && !content.trim())}
-                  >
-                    {saving ? (
-                    <>
-                      <div className="w-4 h-4 border-2 border-[var(--foreground)] border-t-transparent rounded-full animate-spin"></div>
-                      <span>{t("editor.saving")}</span>
-                    </>
-                    ) : (                    <>
-                  
-                      <span>{t("editor.save")}</span>
-                    </>
-                    )}
-                  </button>
-                </div>
-            <div className="flex items-center gap-3">              <button
+            <div className="flex justify-center">
+              {" "}
+              <button
+                className={`flex items-center justify-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 w-46 rounded-md text-sm sm:text-base font-medium transition-all duration-300 ${
+                  saving
+                    ? "bg-[var(--container)] text-[var(--foreground)] opacity-70"
+                    : "bg-gradient-to-r from-[var(--button-theme)] to-[var(--theme2)]/40 border border-[var(--border-theme)]/30 text-[var(--text-theme)]"
+                }`}
+                onClick={saveNote}
+                disabled={saving || (!title.trim() && !content.trim())}
+              >
+                {saving ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-[var(--foreground)] border-t-transparent rounded-full animate-spin"></div>
+                    <span>{t("editor.saving")}</span>
+                  </>
+                ) : (
+                  <>
+                    <span>{t("editor.save")}</span>
+                  </>
+                )}
+              </button>
+            </div>
+            <div className="flex items-center gap-3">
+              {" "}
+              <button
                 onClick={() => setShowEmojiPicker(!showEmojiPicker)}
                 className="p-2 text-[var(--foreground)] hover:bg-[var(--container)] rounded-full transition-all duration-200"
                 title={t("editor.addEmoji")}
               >
                 <SmilePlus size={22} />
-              </button>              <input
+              </button>{" "}
+              <input
                 className="bg-transparent text-[var(--foreground)] focus:outline-none focus:ring-0 border-none w-full text-xl sm:text-2xl font-medium placeholder-opacity-60 placeholder-[var(--foreground)]"
                 placeholder={t("editor.titlePlaceholder")}
                 maxLength={40}
@@ -577,8 +583,7 @@ function Editor() {
                   />
                 </div>
               )}
-
-              {/* Add folder selection dropdown */} 
+              {/* Add folder selection dropdown */}
               <div className="relative" ref={folderDropdownRef}>
                 <button
                   onClick={() => setShowFolderDropdown(!showFolderDropdown)}
@@ -766,7 +771,6 @@ function Editor() {
             </div>
 
             <div className="flex items-center gap-2">
-             
               <button
                 className={`rounded-md px-3 py-1.5 transition-all duration-200 flex items-center gap-1.5 ${
                   isPreviewMode
@@ -834,7 +838,9 @@ function Editor() {
           {/* Content Area */}
           <div className=" scrollbar bg-[var(--background)] relative">
             {!isPreviewMode ? (
-              <div className="h-full relative">                <textarea
+              <div className="h-full relative">
+                {" "}
+                <textarea
                   className="p-5 sm:p-6 w-full bg-transparent text-[var(--foreground)] resize-none focus:outline-none min-h-[270px] sm:min-h-[370px] h-full text-base sm:text-lg overflow-auto transition-all duration-300"
                   placeholder={t("editor.contentPlaceholder")}
                   maxLength={15000}
@@ -1048,14 +1054,12 @@ function Editor() {
           </div> */}
 
           {/* Footer Section */}
-            <div className="flex justify-between items-center p-4 sm:p-5 bg-[var(--container)]">
+          <div className="flex justify-between items-center p-4 sm:p-5 bg-[var(--container)]">
             <div className="text-xs sm:text-sm text-[var(--foreground)] opacity-70">
               <span className="font-medium">{content.length}</span> / 15000{" "}
               {t("editor.characters")}
             </div>
-       
-            </div>
-         
+          </div>
         </div>
       </div>
     </div>

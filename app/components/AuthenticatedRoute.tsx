@@ -3,7 +3,11 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { useRouter } from "next/navigation";
 
-export function AuthenticatedRoute({ children }: { children: React.ReactNode }) {
+export function AuthenticatedRoute({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const { user, isLoading } = useAuth();
   const router = useRouter();
   const [isRedirecting, setIsRedirecting] = useState(false);

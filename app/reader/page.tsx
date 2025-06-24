@@ -264,7 +264,9 @@ export default function EbookReaderPage() {
                     <h3 className="text-xl font-medium mb-2">
                       Nenhum ebook aberto
                     </h3>
-                    <p className="mb-6">Abra um arquivo para começar a leitura</p>
+                    <p className="mb-6">
+                      Abra um arquivo para começar a leitura
+                    </p>
                     <button
                       onClick={() => fileInputRef.current?.click()}
                       className="px-4 py-2 bg-[var(--accent-color)] text-white rounded-md hover:bg-opacity-90 transition-colors flex items-center gap-2 mx-auto"

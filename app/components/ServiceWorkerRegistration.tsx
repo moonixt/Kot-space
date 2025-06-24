@@ -11,13 +11,19 @@ export default function ServiceWorkerRegistration() {
       // Registrar apenas após o load da página
       const registerSW = async () => {
         try {
-          const registration = await navigator.serviceWorker.register("/sw.js", {
-            scope: "/",
-            updateViaCache: "none" // Evitar cache do próprio SW
-          });
-          
-          console.log("Service Worker registrado com sucesso:", registration.scope);
-          
+          const registration = await navigator.serviceWorker.register(
+            "/sw.js",
+            {
+              scope: "/",
+              updateViaCache: "none", // Evitar cache do próprio SW
+            },
+          );
+
+          console.log(
+            "Service Worker registrado com sucesso:",
+            registration.scope,
+          );
+
           // Verificar updates sem forçar reload
           registration.addEventListener("updatefound", () => {
             const newWorker = registration.installing;
@@ -33,7 +39,6 @@ export default function ServiceWorkerRegistration() {
               });
             }
           });
-          
         } catch (error) {
           console.log("Falha no registro do Service Worker:", error);
         }

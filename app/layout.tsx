@@ -98,10 +98,7 @@ export default async function RootLayout({
           property="og:description"
           content="Capture inspiration, craft ideas, and let your notes shine."
         />
-        <meta
-          property="og:image"
-          content="/static/images/og.png"
-        />
+        <meta property="og:image" content="/static/images/og.png" />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="/" />
         <meta property="og:site_name" content="Lynxky" />
@@ -111,26 +108,29 @@ export default async function RootLayout({
           name="twitter:description"
           content="Capture inspiration, craft ideas, and let your notes shine"
         />
-        <meta
-          name="twitter:image"
-          content="/static/images/og.png"
-        />
+        <meta name="twitter:image" content="/static/images/og.png" />
         <meta name="twitter:site" content="@lynxky" />
         <meta name="twitter:creator" content="@lynxky" />
-        
+
         {/* Additional meta tags for better social media compatibility */}
         <meta property="og:locale" content="en_US" />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
-        <meta property="og:image:alt" content="Lynxky - Capture your thoughts" />
-        
+        <meta
+          property="og:image:alt"
+          content="Lynxky - Capture your thoughts"
+        />
+
         {/* WhatsApp specific meta tags */}
         <meta property="og:image:type" content="image/png" />
         <meta name="format-detection" content="telephone=no" />
         {/* Schema.org structured data for better search engine and messaging app compatibility */}
         <meta name="application-name" content="Lynxky" />
         <meta name="generator" content="Next.js" />
-        <meta name="keywords" content="notes, productivity, writing, ideas, inspiration" />
+        <meta
+          name="keywords"
+          content="notes, productivity, writing, ideas, inspiration"
+        />
         <meta name="author" content="Lynxky" />
         <meta name="creator" content="Lynxky" />
         <meta name="publisher" content="Lynxky" />
@@ -142,15 +142,16 @@ export default async function RootLayout({
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "WebApplication",
-              "name": "Lynxky",
-              "description": "Capture inspiration, craft ideas, and let your notes shine.",
-              "image": "/static/images/og.png",
-              "url": "/",
-              "applicationCategory": "ProductivityApplication",
-              "operatingSystem": "Web",
-              "browserRequirements": "Requires JavaScript. Requires HTML5.",
-              "permissions": "none"
-            })
+              name: "Lynxky",
+              description:
+                "Capture inspiration, craft ideas, and let your notes shine.",
+              image: "/static/images/og.png",
+              url: "/",
+              applicationCategory: "ProductivityApplication",
+              operatingSystem: "Web",
+              browserRequirements: "Requires JavaScript. Requires HTML5.",
+              permissions: "none",
+            }),
           }}
         />
       </head>

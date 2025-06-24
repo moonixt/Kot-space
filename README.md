@@ -4,10 +4,6 @@
   
 ![electron_8Y4CM0yrQL](https://github.com/user-attachments/assets/c3350501-f863-4037-af29-a136a0530b7a)
 
-
-
-
-
   <h1 align="center">Lynxky</h1>
 
   <p align="center">

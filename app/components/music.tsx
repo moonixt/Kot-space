@@ -3,16 +3,17 @@
 import React, { useState, useEffect } from "react";
 import { useMusicPlayer } from "../../context/MusicPlayerContext";
 import { useTranslation } from "react-i18next";
-import {
-   ListMusic,
-} from "lucide-react";
+import { ListMusic } from "lucide-react";
 
 interface MusicPlayerProps {
   isVisible?: boolean;
   onVisibilityChange?: (visible: boolean) => void;
 }
 
-export default function MusicPlayer({ isVisible = false, onVisibilityChange }: MusicPlayerProps) {
+export default function MusicPlayer({
+  isVisible = false,
+  onVisibilityChange,
+}: MusicPlayerProps) {
   const { t } = useTranslation();
   const {
     audioFile,
@@ -45,31 +46,31 @@ export default function MusicPlayer({ isVisible = false, onVisibilityChange }: M
 
   // Load saved volume from localStorage
   useEffect(() => {
-    const savedVolume = localStorage.getItem('musicPlayerVolume');
+    const savedVolume = localStorage.getItem("musicPlayerVolume");
     if (savedVolume) {
       const vol = parseFloat(savedVolume);
       setVolume(vol);
-      console.log('Loaded saved volume:', vol);
+      console.log("Loaded saved volume:", vol);
     }
   }, []);
 
   // Save volume to localStorage when it changes
   useEffect(() => {
-    localStorage.setItem('musicPlayerVolume', volume.toString());
+    localStorage.setItem("musicPlayerVolume", volume.toString());
   }, [volume]);
 
   // Check for saved tracks on component mount
   useEffect(() => {
     const checkSavedTracks = async () => {
-      const savedTracksData = localStorage.getItem('musicPlayerTracks');
+      const savedTracksData = localStorage.getItem("musicPlayerTracks");
       // console.log('Music component mounted, checking for saved tracks...', !!savedTracksData);
-      
+
       if (savedTracksData && audioFiles.length === 0) {
-        console.log('Found saved tracks, loading automatically...');
+        console.log("Found saved tracks, loading automatically...");
         await loadSavedTracks();
       }
     };
-    
+
     checkSavedTracks();
   }, [loadSavedTracks, audioFiles.length]);
 
@@ -153,18 +154,18 @@ export default function MusicPlayer({ isVisible = false, onVisibilityChange }: M
     try {
       // Dynamic import to avoid SSR issues and React Native dependencies
       const jsmediatags = (await import("jsmediatags")).default;
-      
+
       jsmediatags.read(file, {
         onSuccess: (tag) => {
           const { picture, title, artist, album } = tag.tags;
-          
+
           // Extract metadata
           setTrackMetadata({
             title: title || undefined,
             artist: artist || undefined,
             album: album || undefined,
           });
-          
+
           // Extract album art
           if (picture) {
             const { data, format } = picture;
@@ -180,7 +181,7 @@ export default function MusicPlayer({ isVisible = false, onVisibilityChange }: M
           console.error("Error reading metadata:", error);
           setAlbumArt(null);
           setTrackMetadata({});
-        }
+        },
       });
     } catch (error) {
       console.error("Error extracting album art:", error);
@@ -195,7 +196,7 @@ export default function MusicPlayer({ isVisible = false, onVisibilityChange }: M
     if (albumArt) {
       URL.revokeObjectURL(albumArt);
     }
-    
+
     if (audioFile) {
       extractAlbumArt(audioFile);
     } else {
@@ -216,7 +217,7 @@ export default function MusicPlayer({ isVisible = false, onVisibilityChange }: M
       {/* Sidebar Player container */}
       <div
         className={`backdrop-blur bg-black/80 shadow-2xl flex flex-col transition-all duration-300 border-l border-white/10 ${
-          isVisible ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'
+          isVisible ? "translate-x-0 opacity-100" : "translate-x-full opacity-0"
         }`}
         style={{
           position: "fixed",
@@ -227,7 +228,7 @@ export default function MusicPlayer({ isVisible = false, onVisibilityChange }: M
           zIndex: 50,
           padding: "5px",
           paddingTop: "10px",
-          pointerEvents: isVisible ? 'auto' : 'none', // Disable interactions when hidden
+          pointerEvents: isVisible ? "auto" : "none", // Disable interactions when hidden
         }}
       >
         {/* Player content */}
@@ -251,14 +252,16 @@ export default function MusicPlayer({ isVisible = false, onVisibilityChange }: M
                   <ListMusic size={20} className="inline-block " />
                 </div>
                 <span className="text-sm">
-                  {!audioFile ? t('musicPlayer.uploadAudioFiles') : t('musicPlayer.changeAudioFiles')}
+                  {!audioFile
+                    ? t("musicPlayer.uploadAudioFiles")
+                    : t("musicPlayer.changeAudioFiles")}
                 </span>
               </div>
             </label>
 
             {showMultiFileHint && (
               <p className="text-xs text-white/70 mt-2 text-center">
-                {t('musicPlayer.multiFileHint')}
+                {t("musicPlayer.multiFileHint")}
               </p>
             )}
 
@@ -268,9 +271,10 @@ export default function MusicPlayer({ isVisible = false, onVisibilityChange }: M
                 <button
                   onClick={clearPlaylist}
                   className="text-xs text-red-400 hover:text-red-300 transition-colors px-3 py-1 rounded border border-red-400/30 hover:border-red-300/50"
-                  title={`${t('musicPlayer.clearPlaylist')} (${audioFiles.length} ${t('musicPlayer.tracks')})`}
+                  title={`${t("musicPlayer.clearPlaylist")} (${audioFiles.length} ${t("musicPlayer.tracks")})`}
                 >
-                  {t('musicPlayer.clearPlaylist')} ({audioFiles.length} {t('musicPlayer.tracks')})
+                  {t("musicPlayer.clearPlaylist")} ({audioFiles.length}{" "}
+                  {t("musicPlayer.tracks")})
                 </button>
               </div>
             )}
@@ -282,7 +286,8 @@ export default function MusicPlayer({ isVisible = false, onVisibilityChange }: M
                   className="text-xs   transition-colors px-3 py-1 rounded "
                   title="Carregar músicas salvas do localStorage"
                 >
-                  {t('musicPlayer.loadSavedTracks') || 'Carregar Músicas Salvas'}
+                  {t("musicPlayer.loadSavedTracks") ||
+                    "Carregar Músicas Salvas"}
                 </button>
               </div>
             )}
@@ -296,9 +301,9 @@ export default function MusicPlayer({ isVisible = false, onVisibilityChange }: M
                 <div className="mb-4 flex justify-center">
                   <div className="w-full h-full rounded-lg overflow-hidden bg-white/10 flex items-center justify-center shadow-lg transition-transform duration-300 hover:scale-105">
                     {albumArt ? (
-                      <img 
-                        src={albumArt} 
-                        alt="Album cover" 
+                      <img
+                        src={albumArt}
+                        alt="Album cover"
                         className="w-full h-full object-cover"
                       />
                     ) : (
@@ -315,21 +320,26 @@ export default function MusicPlayer({ isVisible = false, onVisibilityChange }: M
                           strokeLinejoin="round"
                           className="mx-auto mb-2"
                         >
-                          <circle cx="12" cy="12" r="10"/>
-                          <circle cx="12" cy="12" r="3"/>
+                          <circle cx="12" cy="12" r="10" />
+                          <circle cx="12" cy="12" r="3" />
                         </svg>
-                        <div className="text-xs">{t('musicPlayer.noCover')}</div>
+                        <div className="text-xs">
+                          {t("musicPlayer.noCover")}
+                        </div>
                       </div>
                     )}
                   </div>
                 </div>
-                
+
                 <div className="text-xs text-white/60 mb-1">
                   {audioFiles.length > 1
-                    ? t('musicPlayer.trackOf', { current: currentTrackIndex + 1, total: audioFiles.length })
-                    : t('musicPlayer.nowPlaying')}
+                    ? t("musicPlayer.trackOf", {
+                        current: currentTrackIndex + 1,
+                        total: audioFiles.length,
+                      })
+                    : t("musicPlayer.nowPlaying")}
                 </div>
-                
+
                 {/* Track Title */}
                 <div
                   className="text-white/90 font-medium text-sm truncate mb-1"
@@ -337,7 +347,7 @@ export default function MusicPlayer({ isVisible = false, onVisibilityChange }: M
                 >
                   {trackMetadata.title || audioFile.name}
                 </div>
-                
+
                 {/* Artist */}
                 {trackMetadata.artist && (
                   <div
@@ -347,7 +357,7 @@ export default function MusicPlayer({ isVisible = false, onVisibilityChange }: M
                     {trackMetadata.artist}
                   </div>
                 )}
-                
+
                 {/* Album */}
                 {trackMetadata.album && (
                   <div
@@ -369,7 +379,7 @@ export default function MusicPlayer({ isVisible = false, onVisibilityChange }: M
                 <button
                   onClick={skipToPrevious}
                   className="text-white hover:text-blue-300 transition-colors p-2 rounded-full hover:bg-white/10"
-                  title={t('musicPlayer.previousTrack')}
+                  title={t("musicPlayer.previousTrack")}
                   style={{ opacity: audioFiles.length <= 1 ? 0.5 : 1 }}
                   disabled={audioFiles.length <= 1}
                 >
@@ -393,7 +403,9 @@ export default function MusicPlayer({ isVisible = false, onVisibilityChange }: M
                 <button
                   onClick={togglePlay}
                   className="text-white hover:text-blue-300 transition-colors p-3 rounded-full hover:bg-white/10 bg-blue-600/30"
-                  title={isPlaying ? t('musicPlayer.pause') : t('musicPlayer.play')}
+                  title={
+                    isPlaying ? t("musicPlayer.pause") : t("musicPlayer.play")
+                  }
                 >
                   {isPlaying ? (
                     <svg
@@ -431,7 +443,7 @@ export default function MusicPlayer({ isVisible = false, onVisibilityChange }: M
                 <button
                   onClick={skipToNext}
                   className="text-white hover:text-blue-300 transition-colors p-2 rounded-full hover:bg-white/10"
-                  title={t('musicPlayer.nextTrack')}
+                  title={t("musicPlayer.nextTrack")}
                   style={{ opacity: audioFiles.length <= 1 ? 0.5 : 1 }}
                   disabled={audioFiles.length <= 1}
                 >
@@ -488,7 +500,7 @@ export default function MusicPlayer({ isVisible = false, onVisibilityChange }: M
                     style={{
                       background: `linear-gradient(to right, #3b82f6 ${volume * 100}%, rgba(255,255,255,0.2) ${volume * 100}%)`,
                     }}
-                    title={`${t('musicPlayer.volume')}: ${Math.round(volume * 100)}%`}
+                    title={`${t("musicPlayer.volume")}: ${Math.round(volume * 100)}%`}
                   />
                   <span className="text-xs text-white/70 min-w-[3ch]">
                     {Math.round(volume * 100)}%
@@ -527,7 +539,8 @@ export default function MusicPlayer({ isVisible = false, onVisibilityChange }: M
             <div className="mt-6 flex-1 overflow-hidden flex flex-col">
               <div className="flex items-center justify-between mb-3 px-4">
                 <h3 className="text-white/80 text-sm font-medium">
-                  {t('musicPlayer.playlist')} ({audioFiles.length} {t('musicPlayer.tracks')})
+                  {t("musicPlayer.playlist")} ({audioFiles.length}{" "}
+                  {t("musicPlayer.tracks")})
                 </h3>
                 <div className="flex items-center text-xs text-green-400/70">
                   <svg
@@ -542,11 +555,11 @@ export default function MusicPlayer({ isVisible = false, onVisibilityChange }: M
                     strokeLinejoin="round"
                     className="mr-1"
                   >
-                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
-                    <polyline points="17,21 17,13 7,13 7,21"/>
-                    <polyline points="7,3 7,8 15,8"/>
+                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+                    <polyline points="17,21 17,13 7,13 7,21" />
+                    <polyline points="7,3 7,8 15,8" />
                   </svg>
-                  {t('musicPlayer.saved')}
+                  {t("musicPlayer.saved")}
                 </div>
               </div>
               <div className="overflow-y-auto flex-1 px-2 music-player-scrollbar">

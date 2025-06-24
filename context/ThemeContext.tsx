@@ -53,12 +53,22 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   // Mark when we're on the client and load theme
   useEffect(() => {
     setIsClient(true);
-    
+
     // Load theme from localStorage only on client side
     try {
       const savedTheme = localStorage.getItem("theme") as Theme | null;
-      const validThemes: Theme[] = ["green", "light", "purple", "yellow", "dark", "red", "blue", "grey", "system"];
-      
+      const validThemes: Theme[] = [
+        "green",
+        "light",
+        "purple",
+        "yellow",
+        "dark",
+        "red",
+        "blue",
+        "grey",
+        "system",
+      ];
+
       if (savedTheme && validThemes.includes(savedTheme)) {
         setThemeState(savedTheme);
       } else {
@@ -117,7 +127,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   // Listen to system preference changes
   useEffect(() => {
     if (!isClient || theme === undefined) return;
-    
+
     const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
 
     const handleChange = () => {

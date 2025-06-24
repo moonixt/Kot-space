@@ -3,7 +3,9 @@ import { supabase } from "./supabase";
 export const checkSubscriptionStatus = async (userId: string) => {
   const { data, error } = await supabase
     .from("user_metadata")
-    .select("is_subscription_active, subscription_end_date, subscription_status")
+    .select(
+      "is_subscription_active, subscription_end_date, subscription_status",
+    )
     .eq("id", userId)
     .single();
 
@@ -11,7 +13,8 @@ export const checkSubscriptionStatus = async (userId: string) => {
     throw new Error("Erro ao verificar o status da assinatura.");
   }
 
-  const { is_subscription_active, subscription_end_date, subscription_status } = data;
+  const { is_subscription_active, subscription_end_date, subscription_status } =
+    data;
 
   // Verifica se o período de assinatura expirou
   const now = new Date();
@@ -19,8 +22,9 @@ export const checkSubscriptionStatus = async (userId: string) => {
   const subscriptionExpired = subscriptionEndDate < now;
 
   // Se a assinatura foi cancelada mas ainda não expirou, o usuário ainda deve ter acesso completo
-  const hasFullAccess = (is_subscription_active || 
-                        (subscription_status === "canceled" && !subscriptionExpired));
+  const hasFullAccess =
+    is_subscription_active ||
+    (subscription_status === "canceled" && !subscriptionExpired);
 
   // Usuários com trial expirado podem ler mas não editar
   const hasReadOnlyAccess = subscriptionExpired && !is_subscription_active;

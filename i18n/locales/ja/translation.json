@@ -178,7 +178,7 @@
       "noContent": "内容なし"
     },
     "bookmark": "ブックマーク",
-      "unbookmark": "ブックマークを外す",
+    "unbookmark": "ブックマークを外す",
     "info": "ヘルプと情報",
     "freeTrialButton": "無料トライアル"
   },
@@ -569,7 +569,7 @@
       "description": "サイトがあなたの選択を記憶できるようにします"
     },
     "analytics": {
-      "title": "分析Cookie", 
+      "title": "分析Cookie",
       "description": "サイトの利用状況を理解するのに役立ちます"
     },
     "marketing": {
@@ -584,7 +584,7 @@
     "backToLogin": "ログインに戻る",
     "languageSwitcher": {
       "pt": "PT",
-      "en": "EN", 
+      "en": "EN",
       "de": "DE",
       "es": "ES",
       "ja": "JA"

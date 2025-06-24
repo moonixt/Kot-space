@@ -6,7 +6,9 @@ import { supabase } from "./supabase";
  * @param userId - ID do usuário
  * @returns true se tem subscription_id (assinatura ativa), false se não tem (trial)
  */
-export const checkStripeSubscription = async (userId: string): Promise<boolean> => {
+export const checkStripeSubscription = async (
+  userId: string,
+): Promise<boolean> => {
   try {
     const { data, error } = await supabase
       .from("user_metadata")
