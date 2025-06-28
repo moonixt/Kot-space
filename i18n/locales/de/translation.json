@@ -182,6 +182,89 @@
     "unbookmark": "Favorit entfernen",
     "freeTrialButton": "Kostenlose Testversion"
   },
+  "collaboration": {
+    "joinByCode": {
+      "title": "Mit Einladungscode beitreten",
+      "inputLabel": "Einladungscode",
+      "inputPlaceholder": "Einladungscode eingeben (z.B. ABC123XY)",
+      "joinButton": "Notiz beitreten",
+      "cancelButton": "Abbrechen",
+      "joiningButton": "Beitritt...",
+      "description": "Gib den 8-stelligen Code ein, den du erhalten hast, um an der Notiz mitzuarbeiten",
+      "errors": {
+        "invalidCode": "Ungültiger Einladungscode",
+        "expiredCode": "Dieser Einladungscode ist abgelaufen",
+        "maxUsesReached": "Dieser Einladungscode hat seine maximale Nutzung erreicht",
+        "noteNotFound": "Notiz nicht gefunden",
+        "alreadyCollaborator": "Du bist bereits ein Mitwirkender an dieser Notiz",
+        "generic": "Fehler beim Beitritt zur Notiz mit Einladungscode"
+      }
+    }
+  },
+  "collaboratorManager": {
+    "title": "Mitwirkende",
+    "description": "Generiere Codes um Mitwirkende zu dieser Notiz einzuladen",
+    "manageCollaborators": "Mitwirkende verwalten",
+    "viewAllCollaborators": "Alle Mitwirkende anzeigen",
+    "collaborator": "Mitwirkender",
+    "collaborators": "Mitwirkende",
+    "allCollaboratorsHaveAccess": "Alle Mitwirkende haben Zugriff",
+    "manageInvites": "Einladungen verwalten",
+    "close": "Schließen",
+    "noCollaboratorsFound": "Keine Mitwirkende gefunden",
+    "invitePeopleToCollaborate": "Lade Personen ein, an dieser Notiz mitzuwirken",
+    "personHasAccess": "{{count}} Person hat Zugriff auf diese Notiz",
+    "peopleHaveAccess": "{{count}} Personen haben Zugriff auf diese Notiz",
+    "permissions": {
+      "owner": "Eigentümer",
+      "admin": "Administrator", 
+      "write": "Bearbeiter",
+      "read": "Betrachter",
+      "collaborator": "Mitwirkender",
+      "changePermission": "Berechtigung ändern",
+      "remove": "Entfernen",
+      "permissionUpdated": "Berechtigung erfolgreich aktualisiert!",
+      "updateError": "Fehler beim Aktualisieren der Berechtigung",
+      "collaboratorRemoved": "Mitwirkender erfolgreich entfernt!",
+      "removeError": "Fehler beim Entfernen des Mitwirkenden"
+    },
+    "inviteCodes": {
+      "title": "Einladungscodes",
+      "generateNew": "Neuen Code generieren",
+      "choosePermissionLevel": "Wähle die Berechtigungsstufe für den neuen Code",
+      "viewOnly": "Nur ansehen",
+      "readOnly": "Nur lesen",
+      "canEdit": "Kann bearbeiten",
+      "fullControl": "Vollzugriff",
+      "generatingCode": "Code wird generiert...",
+      "activeCodes": "Aktive Codes",
+      "noActiveCodes": "Keine aktiven Codes",
+      "generateInviteCodes": "Generiere Einladungscodes, damit andere Personen an dieser Notiz mitwirken können",
+      "copyCode": "Code kopieren",
+      "deactivateCode": "Code deaktivieren",
+      "created": "Erstellt",
+      "uses": "Verwendungen",
+      "unlimited": "unbegrenzt",
+      "expires": "Läuft ab",
+      "codesValidUntilDeactivated": "Codes sind gültig bis zur Deaktivierung",
+      "loadingCodes": "Codes werden geladen...",
+      "codeGenerated": "Code erfolgreich generiert!",
+      "codeDeactivated": "Code deaktiviert!",
+      "codeCopied": "Code kopiert!",
+      "errorGenerating": "Fehler beim Generieren des Codes",
+      "errorDeactivating": "Fehler beim Deaktivieren des Codes",
+      "errorLoading": "Fehler beim Laden der Codes"
+    }
+  },
+  "noteTypeSelector": {
+    "privateNotes": "Private Notizen",
+    "collaborativeNotes": "Kollaborative Notizen",
+    "privateTooltip": "Private Notizen - nur Sie können sie sehen",
+    "publicTooltip": "Öffentliche Notizen - mit Echtzeit-Zusammenarbeit",
+    "collaboration": "Zusammenarbeit",
+    "connected": "Verbunden",
+    "disconnected": "Getrennt"
+  },
   "tasks": {
     "addNew": "Neue Aufgabe hinzufügen",
     "add": "Hinzufügen",
@@ -237,7 +320,17 @@
     "noEvents": "Keine Ereignisse für diesen Tag. Fügen Sie oben eines hinzu."
   },
   "editor": {
-    "backToDashboard": "Zurück zum Dashboard"
+    "backToDashboard": "Zurück zum Dashboard",
+    "folderDisabledPublic": "Ordner sind für öffentliche Notizen nicht verfügbar",
+    "privateNote": "Private Notiz",
+    "publicNote": "Öffentliche Notiz",
+    "onlyYouCanSee": "Nur Sie können das sehen",
+    "realtimeCollaboration": "Echtzeit-Zusammenarbeit",
+    "connected": "Verbunden",
+    "disconnected": "Getrennt",
+    "selectNoteType": "Notiztyp auswählen",
+    "selectFolder": "Ordner auswählen",
+    "noFolder": "Kein Ordner"
   },
   "profile": {
     "wallpaper": {

@@ -181,6 +181,7 @@
     "unbookmark": "Remove bookmark",
     "info": "Help & Info",
     "freeTrialButton": "Free Trial",
+    "joinByCode": "Enter with invite",
 
     "emptyState": {
       "title": "No notes found",
@@ -190,7 +191,94 @@
     "note": {
       "untitled": "Untitled",
       "noContent": "No content"
+    },
+    "collaborative": "Collaborative",
+    "private": "Private",
+    "publicNotesEmptyDescription": "Create your first collaborative note to start sharing and collaborating with others!",
+    "noPublicNotesYet": "No public notes yet"
+  },
+  "collaboration": {
+    "joinByCode": {
+      "title": "Join with Invite Code",
+      "inputLabel": "Invite Code",
+      "inputPlaceholder": "Enter invite code (e.g., ABC123XY)",
+      "joinButton": "Join Note",
+      "cancelButton": "Cancel",
+      "joiningButton": "Joining...",
+      "description": "Enter the 8-character code you received to collaborate on the note",
+      "errors": {
+        "invalidCode": "Invalid invite code",
+        "expiredCode": "This invite code has expired",
+        "maxUsesReached": "This invite code has reached its maximum uses",
+        "noteNotFound": "Note not found",
+        "alreadyCollaborator": "You are already a collaborator on this note",
+        "generic": "Error joining note with invite code"
+      }
     }
+  },
+  "collaboratorManager": {
+    "title": "Collaborators",
+    "description": "Generate codes to invite collaborators to this note",
+    "manageCollaborators": "Manage collaborators",
+    "viewAllCollaborators": "View all collaborators",
+    "collaborator": "collaborator",
+    "collaborators": "collaborators",
+    "allCollaboratorsHaveAccess": "All collaborators have access",
+    "manageInvites": "Manage Invites",
+    "close": "Close",
+    "noCollaboratorsFound": "No collaborators found",
+    "invitePeopleToCollaborate": "Invite people to collaborate on this note",
+    "personHasAccess": "{{count}} person has access to this note",
+    "peopleHaveAccess": "{{count}} people have access to this note",
+    "permissions": {
+      "owner": "Owner",
+      "admin": "Administrator", 
+      "write": "Editor",
+      "read": "Viewer",
+      "collaborator": "Collaborator",
+      "changePermission": "Change Permission",
+      "remove": "Remove",
+      "permissionUpdated": "Permission updated successfully!",
+      "updateError": "Error updating permission",
+      "collaboratorRemoved": "Collaborator removed successfully!",
+      "removeError": "Error removing collaborator"
+    },
+    "inviteCodes": {
+      "title": "Invite Codes",
+      "generateNew": "Generate New Code",
+      "choosePermissionLevel": "Choose the permission level for the new code",
+      "viewOnly": "View Only",
+      "readOnly": "Read only",
+      "canEdit": "Can edit",
+      "fullControl": "Full control",
+      "generatingCode": "Generating code...",
+      "activeCodes": "Active Codes",
+      "noActiveCodes": "No active codes",
+      "generateInviteCodes": "Generate invite codes to allow other people to collaborate on this note",
+      "copyCode": "Copy code",
+      "deactivateCode": "Deactivate code",
+      "created": "Created",
+      "uses": "Uses",
+      "unlimited": "unlimited",
+      "expires": "Expires",
+      "codesValidUntilDeactivated": "Codes are valid until deactivated",
+      "loadingCodes": "Loading codes...",
+      "codeGenerated": "Code generated successfully!",
+      "codeDeactivated": "Code deactivated!",
+      "codeCopied": "Code copied!",
+      "errorGenerating": "Error generating code",
+      "errorDeactivating": "Error deactivating code",
+      "errorLoading": "Error loading codes"
+    }
+  },
+  "noteTypeSelector": {
+    "privateNotes": "Private Notes",
+    "collaborativeNotes": "Collaborative Notes",
+    "privateTooltip": "Private notes - only you can see",
+    "publicTooltip": "Public notes - with real-time collaboration",
+    "collaboration": "Collaboration",
+    "connected": "Connected",
+    "disconnected": "Disconnected"
   },
   "tasks": {
     "addNew": "Add a new task",
@@ -291,7 +379,15 @@
     "enterFolderName": "Enter folder name",
     "folderCreateError": "Error creating folder. Please try again.",
     "newNote": "New note",
-    "backToDashboard": "Back to dashboard"
+    "backToDashboard": "Back to dashboard",
+    "folderDisabledPublic": "Folders are not available for public notes",
+    "privateNote": "Private Note",
+    "publicNote": "Public Note",
+    "onlyYouCanSee": "Only you can see",
+    "realtimeCollaboration": "Real-time collaboration",
+    "connected": "Connected",
+    "disconnected": "Disconnected",
+    "selectNoteType": "Select note type"
   },
   "notes": {
     "backToHome": "Back to home",

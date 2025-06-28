@@ -10,12 +10,17 @@ import { ProtectedRoute } from "../components/ProtectedRoute";
 import Profile from "../profile/page";
 import Tasks from "../components/tasks";
 // import CalendarView from "../components/CalendarView";
-import { decrypt } from "../components/Encryption";
 import { useTranslation } from "react-i18next";
 // import Tables from "../components/tables";
-import { Eye, Star } from "lucide-react";
+import { Eye, Star, Users, Plus } from "lucide-react";
 //Info
 import { checkStripeSubscription } from "../../lib/checkStripeSubscription";
+
+// Import the hybrid note system
+import { usePrivateNotes, usePublicNotes, NoteType } from "../../lib/realtimeManager";
+import NoteTypeSelector, { CollaborativeStatus } from "../components/NoteTypeSelector";
+import JoinByCode from "../components/JoinByCode";
+import { decrypt } from "../components/Encryption";
 
 // Bookmark
 import {
@@ -33,7 +38,12 @@ interface Note {
   content: string;
   created_at: string;
   favorite?: boolean;
+  type?: 'private' | 'public';
+  is_collaborative?: boolean;
 }
+
+// Combined note type for unified display
+type DisplayNote = Note | (NoteType & { favorite?: boolean });
 
 // Utility function to extract first image from markdown content
 const extractFirstImage = (content: string): string | null => {
@@ -57,12 +67,31 @@ const getTextPreview = (content: string, maxLength: number = 150): string => {
 
 export default function DashboardPage() {
   const { t } = useTranslation();
-  const [notes, setNotes] = useState<Note[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [notesLoaded, setNotesLoaded] = useState(false); // Controlar se já carregou as notas
-  const [hasActiveSubscription, setHasActiveSubscription] = useState<
-    boolean | null
-  >(null);
+  const { user } = useAuth();
+  const router = useRouter();
+  
+  // State for note type selection
+  const [currentNoteType, setCurrentNoteType] = useState<'private' | 'public'>('private');
+  
+  // State for JoinByCode modal
+  const [showJoinModal, setShowJoinModal] = useState(false);
+  
+  // Use hybrid note system hooks
+  const { 
+    notes: privateNotes, 
+    loading: privateLoading, 
+    refresh: refreshPrivateNotes
+  } = usePrivateNotes(user?.id);
+  
+  const { 
+    notes: publicNotes, 
+    loading: publicLoading, 
+    isConnected: realtimeConnected,
+    refresh: refreshPublicNotes
+  } = usePublicNotes(user?.id);
+
+  // Legacy state management for backward compatibility
+  const [hasActiveSubscription, setHasActiveSubscription] = useState<boolean | null>(null);
   const [showTasks, setShowTasks] = useState(() => {
     if (typeof window !== "undefined") {
       const savedShowTasks = localStorage.getItem("showTasks");
@@ -70,17 +99,20 @@ export default function DashboardPage() {
     }
     return true;
   });
-  const { user } = useAuth();
+
+  // Determine current notes to display based on selected type
+  const currentNotes = currentNoteType === 'private' ? privateNotes : publicNotes;
+  const currentLoading = currentNoteType === 'private' ? privateLoading : publicLoading;
 
   // Memoizar o componente Profile corretamente
   const MemoizedProfile = useMemo(() => <Profile />, [user?.id]);
 
-  // Função para alternar o favorito
+  // Função para alternar o favorito (apenas para notas privadas)
   const toggleFavorite = async (
     noteId: string,
     currentFavorite: boolean | undefined,
   ) => {
-    if (!user) return;
+    if (!user || currentNoteType !== 'private') return;
     try {
       const { error } = await supabase
         .from("notes")
@@ -88,16 +120,14 @@ export default function DashboardPage() {
         .eq("id", noteId)
         .eq("user_id", user.id);
       if (error) throw error;
-      // Atualiza localmente
-      setNotes((prev) =>
-        prev.map((note) =>
-          note.id === noteId ? { ...note, favorite: !currentFavorite } : note,
-        ),
-      );
+      
+      // Refresh private notes
+      refreshPrivateNotes();
     } catch (error) {
       console.error("Erro ao atualizar favorito:", error);
     }
   };
+
   // Função para verificar se o usuário tem assinatura ativa do Stripe
   const fetchSubscriptionStatus = async () => {
     if (!user) return;
@@ -112,26 +142,19 @@ export default function DashboardPage() {
     }
   };
 
-  // Buscar notas do Supabase, favoritos primeiro
-  const fetchNotes = async () => {
-    if (!user || notesLoaded) return; // Não buscar se já carregou
-
-    setLoading(true);
-    try {
-      const { data } = await supabase
-        .from("notes")
-        .select("*")
-        .eq("user_id", user.id)
-        .order("favorite", { ascending: false, nullsFirst: true })
-        .order("created_at", { ascending: false });
-      setNotes(data || []);
-      setNotesLoaded(true); // Marcar como carregado
-    } catch (error) {
-      console.error("Erro ao buscar notas:", error);
-    } finally {
-      setLoading(false);
-    }
+  // Handle successful join via invite code
+  const handleJoinSuccess = (noteId: string) => {
+    setShowJoinModal(false);
+    // Switch to public notes to show the newly joined note
+    setCurrentNoteType('public');
+    // Refresh public notes to include the newly joined note
+    refreshPublicNotes();
+    // Navigate to the note with type parameter
+    router.push(`/notes/${noteId}?type=public`);
   };
+
+  // Update loading state when both hooks are loaded
+  // Note: Loading state is now managed by individual hooks
 
   // Load display preferences from localStorage on initial render
   useEffect(() => {
@@ -154,28 +177,23 @@ export default function DashboardPage() {
   useEffect(() => {
     if (typeof window !== "undefined") {
       localStorage.setItem("showTasks", showTasks.toString());
-      // localStorage.setItem("showCalendar", showCalendar.toString());
-      // localStorage.setItem("showTables", showTables.toString());
     }
-  }, [showTasks]); // showCalendar, showTables
+  }, [showTasks]);
+
+  // Fetch subscription status when user changes
   useEffect(() => {
-    fetchNotes();
-    fetchSubscriptionStatus();
+    if (user) {
+      fetchSubscriptionStatus();
+    } else {
+      setHasActiveSubscription(null);
+    }
   }, [user]);
-  // Resetar estado quando usuário mudar
-  useEffect(() => {
-    if (user?.id) {
-      setNotesLoaded(false); // Resetar para novo usuário
-      setHasActiveSubscription(null); // Resetar status da assinatura para novo usuário
-    }
-  }, [user?.id]);
 
   // Prevenir re-fetch desnecessário quando a página volta a ter foco
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (!document.hidden) {
-        console.log("Dashboard visível - não fazendo re-fetch das notas");
-        // NÃO fazer fetchNotes() aqui
+        console.log("Dashboard visível - notas são gerenciadas pelos hooks");
       }
     };
 
@@ -185,8 +203,6 @@ export default function DashboardPage() {
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, []);
-
-  const router = useRouter();
 
   return (
     <>
@@ -324,26 +340,66 @@ export default function DashboardPage() {
                 </DropdownMenu>
               </div>
             </div>
-            {loading ? (
+
+            {/* Note Type Selector and Actions */}
+            <div className="mb-6 grid items-center justify-center gap-2">
+              <NoteTypeSelector
+                currentType={currentNoteType}
+                onTypeChange={setCurrentNoteType}
+                className="flex-1"
+              />
+              
+              {/* Join by Code Button - only show for public notes */}
+              {currentNoteType === 'public' && (
+                <button
+                  onClick={() => setShowJoinModal(true)}
+                  className="px-4 py-2 bg-gradient-to-r from-[var(--button-theme)] to-[var(--theme2)]/40 border border-[var(--border-theme)]/30 text-[var(--text-theme)] rounded-md hover:bg-opacity-60 transition-all hover:shadow-md flex items-center gap-2"
+                  title={t("dashboard.joinByCode", "Join by Code")}
+                >
+                  <Plus className="h-4 w-4" />
+                  <span className=" sm:inline">{t("dashboard.joinByCode", "Join by Code")}</span>
+                </button>
+              )}
+              
+              {/* Realtime Connection Status for Public Notes */}
+              {currentNoteType === 'public' && (
+                <div>
+                  <CollaborativeStatus isConnected={realtimeConnected} />
+                </div>
+              )}
+            </div>
+
+            {currentLoading ? (
               <p>{t("dashboard.loading")}</p>
             ) : (
               <div className="columns-2 sm:columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-4 pt-5 space-y-4">
-                {notes.map((note, index) => {
-                  // Calculate dynamic height based on content length and index for variety
-                  const decryptedContent = decrypt(note.content);
-                  const firstImage = extractFirstImage(decryptedContent);
-                  const textPreview = getTextPreview(decryptedContent);
+                {currentNotes.map((note: DisplayNote, index: number) => {
+                  // Handle both private and public note types with decryption
+                  const noteTitle = currentNoteType === 'private' 
+                    ? (note as Note).title  // Already decrypted in usePrivateNotes hook
+                    : decrypt((note as NoteType).title);  // Decrypt public note title
+                  
+                  const noteContent = currentNoteType === 'private'
+                    ? (note as Note).content || ''  // Already decrypted in usePrivateNotes hook
+                    : decrypt((note as NoteType).content || '');  // Decrypt public note content
+                  
+                  const firstImage = extractFirstImage(noteContent);
+                  const textPreview = getTextPreview(noteContent);
 
-                  const contentLength = decryptedContent.length;
-                  const baseHeight = firstImage ? 280 : 200; // More height for cards with images
+                  const contentLength = noteContent.length;
+                  const baseHeight = firstImage ? 280 : 200;
                   const contentHeight = Math.min(contentLength / 3, 150);
-                  const varietyHeight = (index % 3) * 70; // Adds variety: 0, 40, or 80px
-                  const totalHeight =
-                    baseHeight + contentHeight + varietyHeight;
+                  const varietyHeight = (index % 3) * 70;
+                  const totalHeight = baseHeight + contentHeight + varietyHeight;
+
+                  // Determine the link based on note type
+                  const noteLink = currentNoteType === 'private' 
+                    ? `/notes/${note.id}`
+                    : `/notes/${note.id}?type=public`;
 
                   return (
                     <Link
-                      href={`/notes/${note.id}`}
+                      href={noteLink}
                       key={note.id}
                       className="block break-inside-avoid mb-4"
                     >
@@ -352,31 +408,40 @@ export default function DashboardPage() {
                         className="p-4 bg-[var(--container)]/30 backdrop-blur-sm hover:bg-opacity-60 transition-all hover:scale-[1.02] hover:shadow-lg flex flex-col rounded-lg border border-[var(--foreground)]/20 overflow-hidden"
                         style={{ minHeight: `${totalHeight}px` }}
                       >
-                        <div className="flex justify-end mb-2 ">
-                          <button
-                            type="button"
-                            aria-label={
-                              note.favorite
-                                ? t("dashboard.unbookmark")
-                                : t("dashboard.bookmark")
-                            }
-                            onClick={(e) => {
-                              e.preventDefault();
-                              toggleFavorite(note.id, note.favorite);
-                            }}
-                            className={`rounded-full p-1.5 transition-colors ${note.favorite ? " text-[var(--foreground)]" : "hover:bg-[var(--foreground)] hover:text-[var(--background)]"}`}
-                          >
-                            <Star
-                              size={18}
-                              fill={note.favorite ? "currentColor" : "none"}
-                            />
-                          </button>
+                        <div className="flex justify-between items-center mb-2">
+                          {/* Collaboration indicator for public notes */}
+                          {currentNoteType === 'public' && (note as NoteType).is_collaborative && (
+                            <div className="flex items-center gap-1 text-xs text-blue-500">
+                              <Users size={14} />
+                              <span>Collaborative</span>
+                            </div>
+                          )}
+                          
+                          {/* Favorite button - only for private notes */}
+                          {currentNoteType === 'private' && (
+                            <button
+                              type="button"
+                              aria-label={
+                                (note as Note).favorite
+                                  ? t("dashboard.unbookmark")
+                                  : t("dashboard.bookmark")
+                              }
+                              onClick={(e) => {
+                                e.preventDefault();
+                                toggleFavorite(note.id, (note as Note).favorite);
+                              }}
+                              className={`rounded-full p-1.5 transition-colors ml-auto ${(note as Note).favorite ? " text-[var(--foreground)]" : "hover:bg-[var(--foreground)] hover:text-[var(--background)]"}`}
+                            >
+                              <Star
+                                size={18}
+                                fill={(note as Note).favorite ? "currentColor" : "none"}
+                              />
+                            </button>
+                          )}
                         </div>
 
                         <h2 className="text-base font-semibold mb-3 leading-tight break-words overflow-hidden">
-                          {note.title
-                            ? decrypt(note.title)
-                            : t("dashboard.note.untitled")}
+                          {noteTitle || t("dashboard.note.untitled")}
                         </h2>
 
                         {/* Display first image if available */}
@@ -423,7 +488,7 @@ export default function DashboardPage() {
                 })}
               </div>
             )}
-            {!loading && notes.length === 0 && (
+            {!currentLoading && currentNotes.length === 0 && (
               <div className="flex flex-col items-center justify-center p-10 border border-dashed border-[var(--foreground)] bg-opacity-10 mt-4">
                 <svg
                   width="48"
@@ -442,34 +507,30 @@ export default function DashboardPage() {
                   <line x1="9" y1="15" x2="15" y2="15"></line>
                 </svg>
                 <h3 className="text-lg font-semibold mb-2">
-                  {t("dashboard.emptyState.title")}
+                  {currentNoteType === 'private' 
+                    ? t("dashboard.emptyState.title") 
+                    : "No public notes yet"}
                 </h3>
                 <p className="text-sm text-[var(--foreground)] opacity-70 mb-4 text-center">
-                  {t("dashboard.emptyState.description")}
+                  {currentNoteType === 'private'
+                    ? t("dashboard.emptyState.description")
+                    : "Create your first collaborative note to start sharing and collaborating with others!"}
                 </p>
-                <button
-                  className="px-4 py-2 bg-[var(--foreground)] text-[var(--background)] hover:bg-opacity-80 transition-colors flex items-center gap-2"
-                  onClick={() => router.push("/editor")}
-                >
-                  <span>{t("dashboard.emptyState.createFirstNote")}</span>
-                  <svg
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <line x1="12" y1="5" x2="12" y2="19"></line>
-                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                  </svg>
-                </button>
               </div>
             )}{" "}
           </div>
         </div>
+        
+        {/* Join by Code Modal */}
+        <JoinByCode
+          isOpen={showJoinModal}
+          onClose={() => setShowJoinModal(false)}
+          onSuccess={handleJoinSuccess}
+          onError={(error) => {
+            console.error('Join by code error:', error);
+            // You could add a toast notification here
+          }}
+        />
       </ProtectedRoute>
       <Analytics />
     </>

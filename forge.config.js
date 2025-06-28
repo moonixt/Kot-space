@@ -4,7 +4,10 @@ const { FuseV1Options, FuseVersion } = require("@electron/fuses");
 module.exports = {
   packagerConfig: {
     asar: true,
-    icon: "public/icon-512x512", // sem extensão, Electron Forge adiciona .ico/.icns
+    name: "Lynxky",
+    productName: "Lynxky",
+    executableName: "lynxky",
+    icon: "app/favicon", // Usando favicon sem extensão
   },
   rebuildConfig: {},
   makers: [
@@ -12,22 +15,50 @@ module.exports = {
       name: "@electron-forge/maker-squirrel",
       config: {
         authors: "Derek W",
-        description: "Your notes, your way.",
-        // setupIcon: 'public/icons/icon-512x512.ico', // ícone do instalador
-        // iconUrl: 'file://' + __dirname + '/public/icon-512x512.ico', // caminho absoluto para o ícone
+        description: "Lynxky - Your notes, your way.",
+        name: "Lynxky",
+        setupExe: "Lynxky-Setup.exe",
+        setupMsi: "Lynxky-Setup.msi",
+        setupIcon: 'app/favicon', // Use favicon sem extensão
+        // iconUrl removido - deve ser uma URL HTTP válida ou omitido
       },
+      platforms: ["win32"],
     },
     {
       name: "@electron-forge/maker-zip",
+      platforms: ["darwin", "linux", "win32"],
+    },
+    {
+      name: "@electron-forge/maker-dmg",
+      config: {
+        name: "Lynxky",
+        icon: "app/favicon", // Usando favicon sem extensão
+      },
       platforms: ["darwin"],
     },
     {
       name: "@electron-forge/maker-deb",
-      config: {},
+      config: {
+        options: {
+          maintainer: "Derek W",
+          homepage: "https://lynxky.com",
+          description: "Lynxky - Your notes, your way.",
+          icon: "app/favicon", // Usando favicon sem extensão
+        },
+      },
+      platforms: ["linux"],
     },
     {
       name: "@electron-forge/maker-rpm",
-      config: {},
+      config: {
+        options: {
+          maintainer: "Derek W",
+          homepage: "https://lynxky.com",
+          description: "Lynxky - Your notes, your way.",
+          icon: "app/favicon", // Usando favicon sem extensão
+        },
+      },
+      platforms: ["linux"],
     },
   ],
   plugins: [

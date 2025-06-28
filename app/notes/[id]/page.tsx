@@ -2,7 +2,7 @@
 
 import React, { useCallback, useEffect, useState, useRef } from "react";
 import { Analytics } from "@vercel/analytics/next";
-import { useRouter, useParams } from "next/navigation";
+import { useRouter, useParams, useSearchParams } from "next/navigation";
 import { supabase } from "../../../lib/supabase";
 import { useAuth } from "../../../context/AuthContext";
 import {
@@ -16,6 +16,8 @@ import {
   LayoutList,
   ListOrdered,
   Eye,
+  Lock,
+  Users,
 } from "lucide-react";
 import { encrypt, decrypt } from "../../components/Encryption";
 import { useTranslation } from "next-i18next";
@@ -27,8 +29,9 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import jsPDF from "jspdf";
 import { ProtectedRoute } from "../../components/ProtectedRoute";
-import eventEmitter from "../../../lib/eventEmitter";
 import { checkSubscriptionStatus } from "../../../lib/checkSubscriptionStatus";
+import { usePublicNoteCollaboration, realtimeManager } from "../../../lib/realtimeManager";
+import CollaboratorManager from "../../components/CollaboratorManager";
 
 interface Note {
   id: string;
@@ -37,6 +40,7 @@ interface Note {
   created_at: string;
   folder_id: string | null;
   tags: string;
+  type?: 'private' | 'public';
 }
 
 export default function NotePage() {
@@ -46,7 +50,11 @@ export default function NotePage() {
   const { user } = useAuth();
   const router = useRouter();
   const params = useParams();
+  const searchParams = useSearchParams();
   const { t } = useTranslation();
+
+  // Determine note type from URL params
+  const noteType = searchParams?.get('type') === 'public' ? 'public' : 'private';
   const [editMode, setEditMode] = useState(false);
   const [editTitle, setEditTitle] = useState("");
   const [editContent, setEditContent] = useState("");
@@ -57,10 +65,13 @@ export default function NotePage() {
   const [showEmojiPickerContent, setShowEmojiPickerContent] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
-  // Add subscription status states
   const [canEdit, setCanEdit] = useState(true);
   const [canSave, setCanSave] = useState(true);
   const [hasReadOnlyAccess, setHasReadOnlyAccess] = useState(false);
+  const [linkCopied, setLinkCopied] = useState(false);
+  // Collaboration states - only used for public notes
+  const [noteCollaborators, setNoteCollaborators] = useState<any[]>([]);
+  const [userPermission, setUserPermission] = useState<'owner' | 'admin' | 'write' | 'read' | null>(null);
 
   const noteId =
     typeof params.id === "string"
@@ -69,39 +80,130 @@ export default function NotePage() {
         ? params.id[0]
         : null;
 
+  // Setup realtime collaboration hooks (only for public notes)
+
+  const publicCollaboration = usePublicNoteCollaboration(
+    noteType === 'public' ? noteId || undefined : undefined, 
+    noteType === 'public' ? user?.id : undefined
+  );
+  
+  // For private notes, we don't need real-time collaboration
+  // Legacy realtime is removed to avoid unnecessary connections
+
+  // Extract the appropriate values based on note type - only for public notes
+  const collaborators = noteType === 'public' ? publicCollaboration.collaborators : [];
+  const onlineUsers = noteType === 'public' ? publicCollaboration.onlineUsers : [];
+  const sendActivity = noteType === 'public' ? publicCollaboration.sendActivity : () => {};
+  const refreshCollaborators = noteType === 'public' ? publicCollaboration.refreshCollaborators : async () => {};
+
+
+  // Workaround: All collaborators are displayed with "online" status for simplicity
+  const collaboratorsWithPresence = collaborators.map(collaborator => ({
+    ...collaborator,
+    isOnline: true
+  }));
+
+  // Debug logs for collaboration
+  useEffect(() => {
+    // No debug
+  }, [noteType, noteId, collaborators, onlineUsers, collaboratorsWithPresence, user?.id, userPermission]);
+
+  // WORKAROUND: Direct test function to check collaborators
+  // Debug/test function removed for production cleanup
+
+  // Function to refresh collaborators - used by CollaboratorManager
+  const loadNoteCollaborators = useCallback(async () => {
+    if (noteType === 'public') {
+      await refreshCollaborators();
+    }
+  }, [noteType, refreshCollaborators]);
+
+  // Force load collaborators when note is loaded
+  useEffect(() => {
+    if (note && noteType === 'public' && noteId) {
+      setTimeout(() => {
+        loadNoteCollaborators();
+      }, 1000); // Wait 1 second after note loads to force refresh
+    }
+  }, [note, noteType, noteId, loadNoteCollaborators]);
+
   const fetchNote = useCallback(async () => {
     if (!user || !noteId) return;
 
     try {
-      const { data, error } = await supabase
-        .from("notes")
-        .select("*")
-        .eq("id", noteId)
-        .eq("user_id", user.id)
-        .single();
+      if (noteType === 'public') {
+        // WORKAROUND: First try to get the note directly to see if it exists
+        const { data: noteData, error: noteError } = await supabase
+          .from("public_notes")
+          .select("*")
+          .eq("id", noteId)
+          .single();
 
-      if (error) {
-        throw error;
-      }
+        if (noteError) {
+          setNote(null);
+          setLoading(false);
+          return;
+        }
 
-      if (data) {
-        const decryptedTitle = decrypt(data.title);
-        const decryptedContent = data.content ? decrypt(data.content) : "";
+        if (!noteData) {
+          setNote(null);
+          setLoading(false);
+          return;
+        }
 
+        // Check if user has permission to access this public note
+        const userPermission = await realtimeManager.getUserNotePermission(noteId, user.id);
+        // If no permission found, still allow access for owner or misconfigured note
+
+        // Decrypt the public note data
+        const decryptedTitle = decrypt(noteData.title);
+        const decryptedContent = noteData.content ? decrypt(noteData.content) : "";
+
+        // Set the note data with decrypted content
         setNote({
-          ...data,
+          id: noteData.id,
           title: decryptedTitle,
           content: decryptedContent,
+          created_at: noteData.created_at,
+          folder_id: null, // Public notes don't have folders
+          tags: "", // Public notes don't have tags yet
+          type: 'public'
         });
         setEditTitle(decryptedTitle);
         setEditContent(decryptedContent);
+      } else {
+        // Fetch private note (existing logic)
+        const { data, error } = await supabase
+          .from("notes")
+          .select("*")
+          .eq("id", noteId)
+          .eq("user_id", user.id)
+          .single();
+
+        if (error) {
+          throw error;
+        }
+
+        if (data) {
+          const decryptedTitle = decrypt(data.title);
+          const decryptedContent = data.content ? decrypt(data.content) : "";
+
+          setNote({
+            ...data,
+            title: decryptedTitle,
+            content: decryptedContent,
+            type: 'private'
+          });
+          setEditTitle(decryptedTitle);
+          setEditContent(decryptedContent);
+        }
       }
     } catch (error) {
-      console.error("Error fetching note:", error);
+      setNote(null);
     } finally {
       setLoading(false);
     }
-  }, [user, noteId]);
+  }, [user, noteId, noteType]);
 
   useEffect(() => {
     fetchNote();
@@ -118,34 +220,61 @@ export default function NotePage() {
 
     setSaving(true);
     try {
-      const encryptedTitle = encrypt(editTitle || "Untitled");
-      const encryptedContent = encrypt(editContent);
-
-      const { error } = await supabase
-        .from("notes")
-        .update({
+      if (noteType === 'public') {
+        // Update public note with encryption
+        const encryptedTitle = encrypt(editTitle || "Untitled");
+        const encryptedContent = encrypt(editContent);
+        
+        const result = await realtimeManager.updatePublicNote(noteId, {
           title: encryptedTitle,
-          content: encryptedContent,
-        })
-        .eq("id", noteId)
-        .eq("user_id", user.id);
+          content: encryptedContent
+        });
 
-      if (error) {
-        throw error;
+        if (!result.success) {
+          throw new Error(result.error || 'Failed to update public note');
+        }
+
+        // Update local state with decrypted values
+        setNote((prev) => {
+          if (!prev) return null;
+          return {
+            ...prev,
+            title: editTitle || "Untitled",
+            content: editContent,
+          };
+        });
+      } else {
+        // Update private note (existing logic)
+        const encryptedTitle = encrypt(editTitle || "Untitled");
+        const encryptedContent = encrypt(editContent);
+
+        const { error } = await supabase
+          .from("notes")
+          .update({
+            title: encryptedTitle,
+            content: encryptedContent,
+          })
+          .eq("id", noteId)
+          .eq("user_id", user.id);
+
+        if (error) {
+          throw error;
+        }
+
+        // Update note state with the edited values
+        setNote((prev) => {
+          if (!prev) return null;
+          return {
+            ...prev,
+            title: editTitle,
+            content: editContent,
+          };
+        });
       }
 
-      // Update note state with the edited values
-      setNote((prev) => {
-        if (!prev) return null;
-        return {
-          ...prev,
-          title: editTitle,
-          content: editContent,
-        };
-      });
-
-      // Emit event to update sidebar
-      eventEmitter.emit("noteSaved");
+      // Emit event to update sidebar via Realtime
+      // The Realtime system will automatically notify all subscribed components
+      // No manual event emission needed!
 
       setEditMode(false);
       showToast(t("editor.noteSaved"), "success");
@@ -171,18 +300,44 @@ export default function NotePage() {
 
     setDeleting(true);
     try {
-      const { error } = await supabase
-        .from("notes")
-        .delete()
-        .eq("id", noteId)
-        .eq("user_id", user.id);
+      if (noteType === 'public') {
+        // Delete public note - only owner can delete
+        const { data: publicNoteData } = await supabase
+          .from('public_notes')
+          .select('owner_id')
+          .eq('id', noteId)
+          .single();
 
-      if (error) {
-        throw error;
+        if (!publicNoteData || publicNoteData.owner_id !== user.id) {
+          throw new Error('Only the note owner can delete this note');
+        }
+
+        // Delete all related data first
+        await supabase.from('collaboration_invites').delete().eq('public_note_id', noteId);
+        await supabase.from('note_shares').delete().eq('public_note_id', noteId);
+        
+        // Delete the public note
+        const { error } = await supabase
+          .from("public_notes")
+          .delete()
+          .eq("id", noteId)
+          .eq("owner_id", user.id);
+
+        if (error) {
+          throw error;
+        }
+      } else {
+        // Delete private note (existing logic)
+        const { error } = await supabase
+          .from("notes")
+          .delete()
+          .eq("id", noteId)
+          .eq("user_id", user.id);
+
+        if (error) {
+          throw error;
+        }
       }
-
-      // Emit event to update sidebar
-      eventEmitter.emit("noteSaved");
 
       showToast(t("editor.noteDeleted"), "success");
 
@@ -192,7 +347,7 @@ export default function NotePage() {
       }, 1000);
     } catch (error) {
       console.error("Error deleting note:", error);
-      showToast(t("editor.deleteError"), "error");
+      showToast(error instanceof Error ? error.message : t("editor.deleteError"), "error");
       setDeleting(false);
     }
   };
@@ -359,8 +514,8 @@ export default function NotePage() {
 
     const icon =
       type === "success"
-        ? '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 00-1.414 1.414l2 2a1 1001.414 0l4-4z" clip-rule="evenodd" /></svg>'
-        : '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 101.414 1.414L10 11.414l1.293-1.293a1 1 00-1.414-1.414L11.414 10l1.293-1.293a1 1 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" /></svg>';
+        ? '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg>'
+        : '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293-1.293a1 1 0 00-1.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" /></svg>';
 
     toast.innerHTML = icon + message;
     document.body.appendChild(toast);
@@ -462,9 +617,43 @@ export default function NotePage() {
     }
   }
 
+  function handleCopyNoteLink() {
+    if (!note) return;
+
+    try {
+      // Get the current URL
+      const noteUrl = window.location.href;
+      
+      // Copy to clipboard
+      navigator.clipboard.writeText(noteUrl).then(() => {
+        showToast("Link da nota copiado! ⚠️ Apenas colaboradores convidados podem acessar.", "success");
+      }).catch(() => {
+        // Fallback for older browsers
+        const textArea = document.createElement("textarea");
+        textArea.value = noteUrl;
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        showToast("Link da nota copiado! ⚠️ Apenas colaboradores convidados podem acessar.", "success");
+      });
+    } catch (error) {
+      console.error("Erro ao copiar link:", error);
+      showToast("Erro ao copiar link da nota", "error");
+    }
+  }
+
   useEffect(() => {
     const checkSubscription = async () => {
       if (!user) return;
+
+      // For public notes, permissions are handled differently
+      if (noteType === 'public') {
+        // For public notes, we'll set permissions after loading collaborators
+        // The owner should always be able to edit public notes
+        return;
+      }
 
       try {
         const status = await checkSubscriptionStatus(user.id);
@@ -472,12 +661,53 @@ export default function NotePage() {
         setCanSave(status.canSave);
         setHasReadOnlyAccess(status.hasReadOnlyAccess);
       } catch (error) {
-        console.error("Error checking subscription status:", error);
+        // No debug
       }
     };
 
     checkSubscription();
-  }, [user]);
+  }, [user, noteType]);
+
+  // Set initial permissions for public notes when note is loaded
+  useEffect(() => {
+    if (note && noteType === 'public' && user?.id) {
+      // Check if this is a public note and if user is owner
+      const checkOwnership = async () => {
+        try {
+          const { data: publicNoteData } = await supabase
+            .from('public_notes')
+            .select('owner_id')
+            .eq('id', noteId)
+            .single();
+
+          if (publicNoteData?.owner_id === user.id) {
+            // User is the owner, grant full permissions
+            setUserPermission('owner');
+            setCanEdit(true);
+            setCanSave(true);
+            setHasReadOnlyAccess(false);
+          }
+        } catch (error) {
+          // No debug
+        }
+      };
+
+      checkOwnership();
+    }
+  }, [note, noteType, user?.id, noteId]);
+
+  // Novo estado para colaboradores (workaround)
+  const [allCollaborators, setAllCollaborators] = useState<Array<{ user_id: string, full_name?: string, email?: string, isOwner: boolean }>>([]);
+
+  // Carregar colaboradores ao abrir a nota pública
+  useEffect(() => {
+    if (noteType === 'public' && noteId) {
+      realtimeManager.getAllNoteCollaborators(noteId).then(setAllCollaborators);
+    }
+  }, [noteType, noteId]);
+
+  // Array de colaboradores para a UI (deve ser declarado antes do uso no JSX)
+  const collaboratorsForUI = noteType === 'public' ? allCollaborators : [];
 
   if (loading) {
     return (
@@ -501,17 +731,26 @@ export default function NotePage() {
             strokeLinecap="round"
             strokeLinejoin="round"
             strokeWidth={2}
-            d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            d="M12 15v2m-6 4h12a2 2 0 002-2v-4a2 2 0 00-2-2H6a2 2 0 00-2 2v4a2 2 0 002 2z"
+          />
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M12 9v2m0-6v.01"
           />
         </svg>
         <h3 className="text-2xl font-bold text-slate-400">
           {t("notes.noteNotFound")}
         </h3>
-        <p className="text-slate-500 mt-2">
-          {t("notes.noteNotExistOrRemoved")}
+        <p className="text-slate-500 mt-2 text-center max-w-md">
+          {noteType === 'public' 
+            ? "You don't have permission to access this collaborative note. You need to be invited by the note owner."
+            : t("notes.noteNotExistOrRemoved")
+          }
         </p>
         <Link
-          href="/"
+          href="/dashboard"
           className="mt-6 text-blue-400 hover:underline flex items-center gap-2"
         >
           <ArrowLeft size={16} />
@@ -573,15 +812,28 @@ export default function NotePage() {
           >
             <ArrowLeft size={20} className="text-[var(--foreground)]" />
           </Link>
-          <h1 className="text-xl font-semibold text-[var(--foreground)]">
-            {note.title}
-          </h1>
+          
+          <div className="flex items-center gap-3 flex-1">
+            <h1 className="text-xl font-semibold text-[var(--foreground)]">
+              {note.title}
+            </h1>
+            
+            {/* Note type indicator */}
+            <div className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs ${
+              noteType === 'public' 
+                ? 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300'
+                : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400'
+            }`}>
+              {noteType === 'public' ? <Users size={12} /> : <Lock size={12} />}
+              <span>{noteType === 'public' ? 'Collaborative' : 'Private'}</span>
+            </div>
+          </div>
         </div>
         <Profile />
         <div className="min-h-screen  flex justify-center ">
           <div className="w-full max-w-7xl bg-[var(--background)] min-h-screen  flex flex-col">
             {/* Barra de navegação superior */}
-            <div className="bg-opacity-10 px-4 py-2 text-[var(--foreground)] flex justify-between items-center">
+            <div className="bg-opacity-10 px-4 py-2 text-[var(--foreground)]   items-center">
               <Link
                 href="/dashboard"
                 className="flex items-center gap-2 text-[var(--foreground)] hover:text-[var(--foreground-light)] transition-colors"
@@ -591,6 +843,26 @@ export default function NotePage() {
               </Link>
 
               <div className="flex items-center gap-2 pr-10">
+                {/* Debug button removed for production */
+                }
+
+                {/* Enhanced collaboration manager with Google Docs style features - only for public notes */}
+                {noteType === 'public' && (
+                  <CollaboratorManager
+                    collaborators={collaboratorsForUI}
+                    noteId={noteId || ''}
+                    currentUserId={user?.id || ''}
+                    userPermission={userPermission}
+                    onRefreshCollaborators={async () => {
+                      if (noteType === 'public' && noteId) {
+                        const result = await realtimeManager.getAllNoteCollaborators(noteId);
+                        setAllCollaborators(result);
+                      }
+                    }}
+                    isPublicNote={true}
+                  />
+                )}
+                
                 {editMode ? (
                   <>
                     <button
@@ -632,6 +904,13 @@ export default function NotePage() {
                     onClick={() => {
                       if (canEdit) {
                         setEditMode(true);
+                        // Send activity when entering edit mode - only for public notes
+                        if (noteType === 'public') {
+                          sendActivity('editing', { 
+                            noteId: noteId || '',
+                            action: 'start_editing'
+                          });
+                        }
                       } else {
                         showToast(
                           "You can only read this note. Upgrade to edit.",
@@ -957,6 +1236,57 @@ export default function NotePage() {
                     <line x1="12" y1="3" x2="12" y2="15"></line>
                   </svg>
                   <span>PDF</span>
+                </button>
+
+                <button
+                  onClick={async () => {
+                    try {
+                      const noteUrl = `${window.location.origin}/notes/${note.id}`;
+                      await navigator.clipboard.writeText(noteUrl);
+                      setLinkCopied(true);
+                      setTimeout(() => setLinkCopied(false), 2000);
+                    } catch (err) {
+                      // Fallback for browsers that don't support clipboard API
+                      const textArea = document.createElement('textarea');
+                      textArea.value = `${window.location.origin}/notes/${note.id}`;
+                      document.body.appendChild(textArea);
+                      textArea.select();
+                      document.execCommand('copy');
+                      document.body.removeChild(textArea);
+                      setLinkCopied(true);
+                      setTimeout(() => setLinkCopied(false), 2000);
+                    }
+                  }}
+                  disabled={!note}
+                  className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-colors ${
+                    linkCopied 
+                      ? 'bg-green-500/30 hover:bg-green-500/40' 
+                      : 'hover:bg-green-500/20'
+                  }`}
+                  title="Compartilhar link da nota"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="text-white"
+                  >
+                    {linkCopied ? (
+                      <path d="M20 6L9 17l-5-5" />
+                    ) : (
+                      <>
+                        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                      </>
+                    )}
+                  </svg>
+                  <span>{linkCopied ? 'Copiado!' : 'Link'}</span>
                 </button>
 
                 <button

@@ -4,9 +4,9 @@
 
 // import Papa from "papaparse";
 // import * as XLSX from "xlsx";
-import { useState, useRef, useEffect } from "react"; //import Usestate, the hook to managge state in react
+import { useState, useRef, useEffect, useCallback } from "react"; //import Usestate, the hook to managge state in react
 import { supabase } from "../../lib/supabase"; //import the supabase client to connect to the database
-import eventEmitter from "../../lib/eventEmitter"; // Import do event emitter
+import { useRealtimeUserData, realtimeManager } from "../../lib/realtimeManager"; // Import realtime manager
 import { checkUserLimits } from "../../lib/checkUserLimits"; // Import the user limits checker
 import { checkSubscriptionStatus } from "../../lib/checkSubscriptionStatus"; // Import subscription checker
 import {
@@ -18,6 +18,8 @@ import {
   Image,
   FolderIcon,
   ChevronDown, // Add import for dropdown icon
+  Lock,
+  Users,
 } from "lucide-react"; //import of some icons from Lucide-React library
 import { useAuth } from "../../context/AuthContext"; //import of the auth context to manage the authentication of the user
 import ReactMarkdown from "react-markdown"; //Library to render markdown
@@ -29,7 +31,11 @@ import Profile from "../profile/page";
 import { encrypt, decrypt } from "./Encryption"; // Importar funções de criptografia e descriptografia
 import { useTranslation } from "react-i18next"; // Import the translation hook
 
-function Editor() {
+interface EditorProps {
+  initialNoteType?: 'private' | 'public';
+}
+
+function Editor({ initialNoteType = 'private' }: EditorProps) {
   //main function for the editor component
   const [title, setTitle] = useState(""); //state for the title of the note, initialized as empty string
   const [content, setContent] = useState(""); //state for the content of the note, initialized as empty string
@@ -44,6 +50,10 @@ function Editor() {
   // const [tagSearchTerm, setTagSearchTerm] = useState("");
   const { t } = useTranslation(); // Add the translation hook to access translations  // Add subscription status state
   const [, setCanCreateNotes] = useState(true);
+  
+  // State for note type selection
+  const [selectedNoteType, setSelectedNoteType] = useState<'private' | 'public'>(initialNoteType);
+  const [showNoteTypeDropdown, setShowNoteTypeDropdown] = useState(false);
   const [, setHasReadOnlyAccess] = useState(false);
 
   // Add state for folders and folder selection
@@ -58,6 +68,34 @@ function Editor() {
 
   // Create a ref for the folder dropdown
   const folderDropdownRef = useRef<HTMLDivElement>(null);
+  
+  // Create a ref for the note type dropdown
+  const noteTypeDropdownRef = useRef<HTMLDivElement>(null);
+
+  // Setup Realtime for this user
+  const { isConnected } = useRealtimeUserData(user?.id, {
+    onNotesChange: (payload) => {
+      console.log('Editor: Notes changed via realtime', payload);
+      // Realtime will automatically update the sidebar since it has its own subscription
+      // No need to manually refetch here
+    },
+    onFoldersChange: (payload) => {
+      console.log('Editor: Folders changed via realtime', payload);
+      // Atualizar a lista de pastas quando houver mudanças
+      if (user) {
+        fetchFolders();
+      }
+    },
+    onTasksChange: (payload) => {
+      console.log('Editor: Tasks changed via realtime', payload);
+    },
+    onCalendarEventsChange: (payload) => {
+      console.log('Editor: Calendar events changed via realtime', payload);
+    },
+    onNoteSharedChange: (payload) => {
+      console.log('Editor: Note sharing changed via realtime', payload);
+    }
+  });
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -68,10 +106,17 @@ function Editor() {
       ) {
         setShowFolderDropdown(false);
       }
+      
+      if (
+        noteTypeDropdownRef.current &&
+        !noteTypeDropdownRef.current.contains(event.target as Node)
+      ) {
+        setShowNoteTypeDropdown(false);
+      }
     }
 
-    // Add event listener when dropdown is open
-    if (showFolderDropdown) {
+    // Add event listener when any dropdown is open
+    if (showFolderDropdown || showNoteTypeDropdown) {
       document.addEventListener("mousedown", handleClickOutside);
     }
 
@@ -79,7 +124,7 @@ function Editor() {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [showFolderDropdown]); // Check subscription status when user changes
+  }, [showFolderDropdown, showNoteTypeDropdown]); // Check subscription status when user changes
   useEffect(() => {
     const checkSubscription = async () => {
       if (user) {
@@ -124,6 +169,32 @@ function Editor() {
     // Fetch folders when component mounts
     if (user) {
       fetchFolders();
+    }
+  }, [user]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Add fetchFolders function using useCallback to prevent dependency issues
+  const fetchFolders = useCallback(async () => {
+    if (!user) return;
+
+    try {
+      const { data, error } = await supabase
+        .from("folders")
+        .select("id, name")
+        .eq("user_id", user.id)
+        .order("name", { ascending: true });
+
+      if (error) throw error;
+
+      if (data) {
+        // Descriptografar os nomes das pastas
+        const decryptedFolders = data.map((folder) => ({
+          ...folder,
+          name: decrypt(folder.name),
+        }));
+        setFolders(decryptedFolders);
+      }
+    } catch (error) {
+      console.error("Error fetching folders:", error);
     }
   }, [user]);
 
@@ -268,56 +339,78 @@ function Editor() {
     }
 
     try {
-      // Check user limits before saving
-      const userLimits = await checkUserLimits(user.id);
+      // Check user limits before saving (only for private notes for now)
+      if (selectedNoteType === 'private') {
+        const userLimits = await checkUserLimits(user.id);
 
-      if (!userLimits.canCreateNote) {
-        // Show limit reached notification with upgrade option
-        const notification = document.createElement("div");
-        notification.className =
-          "fixed bottom-4 right-4 bg-yellow-500 text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-500 flex items-center gap-2 max-w-md z-[60]";
-        notification.innerHTML = `
-          <div class="flex flex-col gap-2">
-            <div class="flex items-center gap-2">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
-              </svg>
-              <span>${t("editor.limitReached")}</span>
-            </div>
-            <button onclick="window.location.href='/pricing'" class="bg-white text-yellow-600 px-3 py-1 rounded text-sm font-medium hover:bg-gray-100 transition-colors">
-              ${t("editor.upgradeToPro")}
-            </button>
-          </div>`;
-        document.body.appendChild(notification);
+        if (!userLimits.canCreateNote) {
+          // Show limit reached notification with upgrade option
+          const notification = document.createElement("div");
+          notification.className =
+            "fixed bottom-4 right-4 bg-yellow-500 text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-500 flex items-center gap-2 max-w-md z-[60]";
+          notification.innerHTML = `
+            <div class="flex flex-col gap-2">
+              <div class="flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                </svg>
+                <span>${t("editor.limitReached")}</span>
+              </div>
+              <button onclick="window.location.href='/pricing'" class="bg-white text-yellow-600 px-3 py-1 rounded text-sm font-medium hover:bg-gray-100 transition-colors">
+                ${t("editor.upgradeToPro")}
+              </button>
+            </div>`;
+          document.body.appendChild(notification);
 
-        setTimeout(() => {
-          notification.style.opacity = "0";
-          setTimeout(() => notification.remove(), 500);
-        }, 5000);
-        return;
+          setTimeout(() => {
+            notification.style.opacity = "0";
+            setTimeout(() => notification.remove(), 500);
+          }, 5000);
+          return;
+        }
       }
 
-      // Criptografar o conteúdo da nota antes de salvar
-      const encryptedContent = encrypt(content);
-      const encryptedTitle = encrypt(title);
+      setSaving(true); // Change the state to true
 
-      //Saving of the notes
-      setSaving(true); //change the state to true
-      const { error } = await supabase //call the supabase client
-        .from("notes") //from the notes table
-        .insert([
-          //insert the following values
+      if (selectedNoteType === 'public') {
+        // Save as public note using the realtime manager with encryption
+        const encryptedContent = encrypt(content);
+        const encryptedTitle = encrypt(title || "Untitled");
+        
+        const result = await realtimeManager.createPublicNote(
+          encryptedTitle, 
+          encryptedContent,
           {
-            title: encryptedTitle, // Salvar título criptografado
-            content: encryptedContent, // Salvar conteúdo criptografado
-            user_id: user.id, // Add the user id in the note
-            tags: selectedTags, // Add the selected tags in the dabase
-            folder_id: selectedFolder ? selectedFolder.id : null, // Add the folder id if selected
-          },
-        ])
-        .select(); //return and apply the values in the database
+            allowAnonymousView: false,
+            allowAnonymousEdit: false
+          }
+        );
 
-      if (error) throw error; //if error trow a error saved in the variable
+        if (!result.success) {
+          throw new Error(result.error || 'Failed to create public note');
+        }
+      } else {
+        // Save as private note (existing logic)
+        // Criptografar o conteúdo da nota antes de salvar
+        const encryptedContent = encrypt(content);
+        const encryptedTitle = encrypt(title);
+
+        const { error } = await supabase //call the supabase client
+          .from("notes") //from the notes table
+          .insert([
+            //insert the following values
+            {
+              title: encryptedTitle, // Salvar título criptografado
+              content: encryptedContent, // Salvar conteúdo criptografado
+              user_id: user.id, // Add the user id in the note
+              tags: selectedTags, // Add the selected tags in the dabase
+              folder_id: selectedFolder ? selectedFolder.id : null, // Add the folder id if selected
+            },
+          ])
+          .select(); //return and apply the values in the database
+
+        if (error) throw error; //if error trow a error saved in the variable
+      }
 
       // If success, this flow will be executed:
       setTitle(""); // the title notes will be empty
@@ -326,19 +419,16 @@ function Editor() {
       setSelectedFolder(null); // Clear selected folder
 
       // Limpar localStorage após salvar com sucesso
-      if (!error) {
-        localStorage.removeItem("fair-note-title");
-        localStorage.removeItem("fair-note-content");
-        localStorage.removeItem("fair-note-tags");
-        localStorage.removeItem("fair-note-folder");
-      }
+      localStorage.removeItem("fair-note-title");
+      localStorage.removeItem("fair-note-content");
+      localStorage.removeItem("fair-note-tags");
+      localStorage.removeItem("fair-note-folder");
 
       // Auto fetch notes and folders after saving
-      fetchNotes();
-      fetchFolders();
+      // Removed manual calls since Realtime will automatically notify all subscribed components
+      // The sidebar will update automatically via its own Realtime subscription
 
-      // Emit event to notify other components
-      eventEmitter.emit("noteSaved"); // Notification toast for the success
+      // Realtime will automatically notify other components!
       const notification = document.createElement("div");
       notification.className =
         "fixed bottom-4 left-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-500 flex items-center gap-2 z-[60]";
@@ -370,9 +460,6 @@ function Editor() {
     } finally {
       setSaving(false); //after save, the state of the setSaving will be false
     }
-    setTitle("");
-    setContent("");
-    setSelectedTags([]);
   };
 
   const isImageFile = (file: File) => {
@@ -439,31 +526,7 @@ function Editor() {
   //   return t(`tags.${tagKey}`, { defaultValue: tagKey });
   // };
 
-  // Add fetchFolders function to get user's folders
-  const fetchFolders = async () => {
-    if (!user) return;
 
-    try {
-      const { data, error } = await supabase
-        .from("folders")
-        .select("id, name")
-        .eq("user_id", user.id)
-        .order("name", { ascending: true });
-
-      if (error) throw error;
-
-      if (data) {
-        // Descriptografar os nomes das pastas
-        const decryptedFolders = data.map((folder) => ({
-          ...folder,
-          name: decrypt(folder.name),
-        }));
-        setFolders(decryptedFolders);
-      }
-    } catch (error) {
-      console.error("Error fetching folders:", error);
-    }
-  };
 
   // Function to handle folder creation
   // const createNewFolder = async () => {
@@ -500,28 +563,6 @@ function Editor() {
   //   }
   // };
 
-  // Add fetchNotes function to get the latest notes
-  const fetchNotes = async () => {
-    if (!user) return;
-
-    try {
-      // We don't need to update local state since this is just to update the sidebar
-      // This function is called after saving a note to refresh the sidebar
-      const { error } = await supabase
-        .from("notes")
-        .select("*")
-        .eq("user_id", user.id)
-        .order("created_at", { ascending: false });
-
-      if (error) throw error;
-
-      // The sidebar component will automatically fetch notes via its own hooks
-      // This is just to trigger any event listeners that might be monitoring for changes
-    } catch (error) {
-      console.error("Erro ao buscar notas:", error);
-    }
-  };
-
   return (
     <div
       id="Editor"
@@ -532,6 +573,14 @@ function Editor() {
         <div className="bg-[var(--background)] overflow-hidden flex flex-col flex-grow h-full  transition-all duration-300">
           {/* Title Section */}
           <div className="p-5 sm:p-6 relative">
+            {/* Realtime Connection Indicator */}
+            <div className="absolute top-2 right-2 flex items-center gap-2 text-xs">
+              <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`}></div>
+              <span className="text-[var(--foreground-light)]">
+                {isConnected ? t('editor.connected') : t('editor.disconnected')}
+              </span>
+            </div>
+
             <div className="flex justify-center">
               {" "}
               <button
@@ -583,70 +632,138 @@ function Editor() {
                   />
                 </div>
               )}
-              {/* Add folder selection dropdown */}
-              <div className="relative" ref={folderDropdownRef}>
-                <button
-                  onClick={() => setShowFolderDropdown(!showFolderDropdown)}
-                  className="flex items-center gap-1 px-3 py-1.5 rounded-md bg-[var(--container)] hover:bg-opacity-80 text-[var(--foreground)] text-sm transition-colors"
-                  title={t("editor.selectFolder")}
-                >
-                  <FolderIcon size={16} />
-                  <span className="max-w-[100px] truncate">
-                    {selectedFolder
-                      ? selectedFolder.name
-                      : t("editor.noFolder", { defaultValue: "" })}
-                  </span>
-                  <ChevronDown size={14} />
-                </button>
+              {/* Folder and note type dropdowns moved outside the note area for better positioning */}
+              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                {/* Folder selection dropdown */}
+                <div className="relative" ref={folderDropdownRef}>
+                  <button
+                    onClick={() => {
+                      if (selectedNoteType === 'public') return;
+                      setShowFolderDropdown(!showFolderDropdown);
+                    }}
+                    className={`flex items-center gap-1 px-3 py-1.5 rounded-md bg-[var(--container)] text-sm transition-colors ${selectedNoteType === 'public' ? 'opacity-60 cursor-not-allowed' : 'hover:bg-opacity-80 text-[var(--foreground)]'}`}
+                    title={selectedNoteType === 'public' ? t('editor.folderDisabledPublic') : t("editor.selectFolder")}
+                    disabled={selectedNoteType === 'public'}
+                  >
+                    <FolderIcon size={16} />
+                    <span className="max-w-[100px] truncate">
+                      {selectedFolder
+                        ? selectedFolder.name
+                        : t("editor.noFolder", { defaultValue: "" })}
+                    </span>
+                    <ChevronDown size={14} />
+                  </button>
 
-                {showFolderDropdown && (
-                  <div className="absolute right-0 mt-1 w-48 rounded-md bg-[var(--container)]  shadow-lg z-50">
-                    <div className="py-1 max-h-60 overflow-y-auto scrollbar">
-                      <button
-                        onClick={() => {
-                          setSelectedFolder(null);
-                          setShowFolderDropdown(false);
-                        }}
-                        className={`flex items-center w-full text-left px-3 py-2 text-sm ${
-                          !selectedFolder
-                            ? "bg-[var(--accent-color)] text-white"
-                            : "hover:bg-[var(--container)] text-[var(--foreground)]"
-                        }`}
-                      >
-                        {t("editor.noFolder", { defaultValue: "" })}
-                      </button>
-
-                      {folders.map((folder) => (
+                  {showFolderDropdown && (
+                    <div className="absolute right-0 mt-1 w-48 rounded-md bg-[var(--container)] shadow-lg z-50">
+                      <div className="py-1 max-h-60 overflow-y-auto scrollbar">
                         <button
-                          key={folder.id}
                           onClick={() => {
-                            setSelectedFolder(folder);
+                            setSelectedFolder(null);
                             setShowFolderDropdown(false);
                           }}
                           className={`flex items-center w-full text-left px-3 py-2 text-sm ${
-                            selectedFolder?.id === folder.id
+                            !selectedFolder
                               ? "bg-[var(--accent-color)] text-white"
                               : "hover:bg-[var(--container)] text-[var(--foreground)]"
                           }`}
                         >
-                          {folder.name}
+                          {t("editor.noFolder", { defaultValue: "" })}
                         </button>
-                      ))}
 
-                      <div className="my-1"></div>
+                        {folders.map((folder) => (
+                          <button
+                            key={folder.id}
+                            onClick={() => {
+                              setSelectedFolder(folder);
+                              setShowFolderDropdown(false);
+                            }}
+                            className={`flex items-center w-full text-left px-3 py-2 text-sm ${
+                              selectedFolder?.id === folder.id
+                                ? "bg-[var(--accent-color)] text-white"
+                                : "hover:bg-[var(--container)] text-[var(--foreground)]"
+                            }`}
+                          >
+                            {folder.name}
+                          </button>
+                        ))}
 
-                      <button
-                        onClick={() => {
-                          // createNewFolder();
-                          setShowFolderDropdown(false);
-                        }}
-                        className="flex text-sm text-[var(--accent-color)] hover:bg-[var(--container)]"
-                      >
-                        {/* + {t("editor.createFolder", { defaultValue: "" })} */}
-                      </button>
+                        <div className="my-1"></div>
+
+                        <button
+                          onClick={() => {
+                            // createNewFolder();
+                            setShowFolderDropdown(false);
+                          }}
+                          className="flex text-sm text-[var(--accent-color)] hover:bg-[var(--container)]"
+                        >
+                          {/* + {t("editor.createFolder", { defaultValue: "" })} */}
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
+                </div>
+
+                {/* Note type selection dropdown */}
+                <div className="relative" ref={noteTypeDropdownRef}>
+                  <button
+                    onClick={() => setShowNoteTypeDropdown(!showNoteTypeDropdown)}
+                    className={`flex items-center gap-1 px-3 py-1.5 rounded-md hover:bg-opacity-80 text-sm transition-colors ${
+                      selectedNoteType === 'private' 
+                        ? 'bg-gray-500 text-white' 
+                        : 'bg-blue-500 text-white'
+                    }`}
+                    title={t('editor.selectNoteType')}
+                  >
+                    {selectedNoteType === 'private' ? <Lock size={16} /> : <Users size={16} />}
+                    <span className="max-w-[100px] truncate">
+                      {selectedNoteType === 'private' ? t('editor.privateNote') : t('editor.publicNote')}
+                    </span>
+                    <ChevronDown size={14} />
+                  </button>
+
+                  {showNoteTypeDropdown && (
+                    <div className="absolute right-0 mt-1 w-48 rounded-md bg-[var(--container)] shadow-lg z-50">
+                      <div className="py-1">
+                        <button
+                          onClick={() => {
+                            setSelectedNoteType('private');
+                            setShowNoteTypeDropdown(false);
+                          }}
+                          className={`flex items-center gap-2 w-full text-left px-3 py-2 text-sm ${
+                            selectedNoteType === 'private'
+                              ? "bg-[var(--accent-color)] text-white"
+                              : "hover:bg-[var(--container)] text-[var(--foreground)]"
+                          }`}
+                        >
+                          <Lock size={16} />
+                          <div>
+                            <div className="font-medium">{t('editor.privateNote')}</div>
+                            <div className="text-xs opacity-70">{t('editor.onlyYouCanSee')}</div>
+                          </div>
+                        </button>
+
+                        <button
+                          onClick={() => {
+                            setSelectedNoteType('public');
+                            setShowNoteTypeDropdown(false);
+                          }}
+                          className={`flex items-center gap-2 w-full text-left px-3 py-2 text-sm ${
+                            selectedNoteType === 'public'
+                              ? "bg-[var(--accent-color)] text-white"
+                              : "hover:bg-[var(--container)] text-[var(--foreground)]"
+                          }`}
+                        >
+                          <Users size={16} />
+                          <div>
+                            <div className="font-medium">{t('editor.publicNote')}</div>
+                            <div className="text-xs opacity-70">{t('editor.realtimeCollaboration')}</div>
+                          </div>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
