@@ -62,7 +62,37 @@
     "forgotPassword": "パスワードをお忘れですか？",
     "resetPassword": "パスワードをリセット",
     "termsOfUse": "利用規約",
-    "privacyPolicy": "プライバシーポリシー"
+    "privacyPolicy": "プライバシーポリシー",
+    "loginProblems": "ログインに問題がありますか？",
+    "helpModal": {
+      "title": "ログインに問題がありますか？",
+      "commonProblem": "最も一般的な問題：システム時刻",
+      "problemDescription": "ほとんどのログイン問題（429エラー、無効なJWT、即座のログアウトを含む）は、デバイスの時刻が正しくない場合に発生します。",
+      "howToFix": "修正方法：",
+      "windows": "Windows：",
+      "windowsSteps": {
+        "step1": "設定 → 時刻と言語",
+        "step2": "「今すぐ同期」をクリック",
+        "step3": "「時刻を自動的に設定する」を有効にする"
+      },
+      "mac": "Mac：",
+      "macSteps": {
+        "step1": "システム環境設定 → 日付と時刻",
+        "step2": "「日付と時刻を自動的に設定」をチェック"
+      },
+      "linux": "Linux：",
+      "otherProblems": "その他の問題：",
+      "problems": {
+        "error429": "エラー429：試行回数が多すぎます - 数分待ってください",
+        "captcha": "Captchaが機能しない：広告ブロッカーを無効にしてください",
+        "googleLogin": "Googleログインが失敗：ブラウザのクッキーをクリア",
+        "unsafeBrowser": "iOS/埋め込みブラウザ：安全でないまたは埋め込みブラウザでのGoogleログイン（iOS）- SafariまたはChromeを直接使用",
+        "immediateLogout": "即座のログアウト：常にシステム時刻に関連"
+      },
+      "tip": "ヒント：",
+      "tipText": "時刻を修正した後、再度ログインを試す前に1〜2分待ってください。",
+      "understood": "理解しました"
+    }
   },
   "signup": {
     "title": "Lynxkyアカウントを作成",
@@ -521,13 +551,27 @@
     "volunteering": "ボランティア"
   },
   "profile": {
+    "profile": "プロフィール",
+    "email": "メールアドレス",
+    "changePassword": "パスワードを変更",
+    "logout": "ログアウト",
+    "deleteAccount": "アカウントを削除",
+    "deleteAccountConfirm": "アカウントを削除してもよろしいですか？この操作は元に戻せません。",
+    "cancel": "キャンセル",
+    "confirm": "確認",
+    "bio": "自己紹介",
+    "bioPlaceholder": "あなたの思いを記録してください",
+    "saveBio": "自己紹介を保存",
+    "bioSaved": "自己紹介が正常に保存されました！",
+    "bioError": "自己紹介の保存でエラーが発生しました",
+    "setUsername": "名前を設定",
+    "setUsernameTooltip": "プロフィールに表示する名前を設定する必要があります",
     "wallpaper": {
       "upload": "壁紙をアップロード",
       "positionTop": "上に揃える",
       "positionCenter": "中央揃え",
       "positionBottom": "下に揃える"
-    },
-    "bioPlaceholder": "あなたの思いを記録してください"
+    }
   },
   "theme": {
     "light": "ライト",

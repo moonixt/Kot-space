@@ -19,6 +19,36 @@
       "required": "Por favor, complete a verificação de segurança",
       "error": "Erro na verificação de segurança. Tente novamente",
       "loading": "Carregando verificação de segurança..."
+    },
+    "loginProblems": "Problemas de login?",
+    "helpModal": {
+      "title": "Problemas de Login?",
+      "commonProblem": "Problema mais comum: Horário do sistema",
+      "problemDescription": "A maioria dos problemas de login (incluindo erros 429, JWT inválido, logout imediato) acontece quando o horário do seu dispositivo está incorreto.",
+      "howToFix": "Como corrigir:",
+      "windows": "Windows:",
+      "windowsSteps": {
+        "step1": "Configurações → Hora e idioma",
+        "step2": "Clique em 'Sincronizar agora'",
+        "step3": "Ative 'Definir horário automaticamente'"
+      },
+      "mac": "Mac:",
+      "macSteps": {
+        "step1": "Preferências do Sistema → Data e Hora",
+        "step2": "Marque 'Definir data e hora automaticamente'"
+      },
+      "linux": "Linux:",
+      "otherProblems": "Outros problemas:",
+      "problems": {
+        "error429": "Erro 429: Muitas tentativas - aguarde alguns minutos",
+        "captcha": "Captcha não funciona: Desative bloqueadores de anúncios",
+        "googleLogin": "Login com Google falha: Limpe cookies do navegador",
+        "unsafeBrowser": "Navegadores iOS/embedded: Login com Google em navegadores não seguros ou embarcados (iOS) - Use Safari ou Chrome diretamente",
+        "immediateLogout": "Logout imediato: Sempre relacionado ao horário do sistema"
+      },
+      "tip": "Dica:",
+      "tipText": "Após corrigir o horário, aguarde 1-2 minutos antes de tentar fazer login novamente.",
+      "understood": "Entendi"
     }
   },
   "signup": {
@@ -523,7 +553,9 @@
       "positionCenter": "Centralizar",
       "positionBottom": "Alinhar embaixo"
     },
-    "bioPlaceholder": "Capture seus pensamentos"
+    "bioPlaceholder": "Capture seus pensamentos",
+    "setUsername": "Definir nome",
+    "setUsernameTooltip": "Você precisa definir um nome para exibir no seu perfil"
   },
   "theme": {
     "light": "Claro",

@@ -5,6 +5,7 @@ import { Analytics } from "@vercel/analytics/next";
 import { useRouter, useParams, useSearchParams } from "next/navigation";
 import { supabase } from "../../../lib/supabase";
 import { useAuth } from "../../../context/AuthContext";
+import { checkSubscriptionStatus } from "../../../lib/checkSubscriptionStatus";
 import {
   ArrowLeft,
   Calendar,
@@ -28,7 +29,6 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import jsPDF from "jspdf";
 import { ProtectedRoute } from "../../components/ProtectedRoute";
-import { checkSubscriptionStatus } from "../../../lib/checkSubscriptionStatus";
 import { usePublicNoteCollaboration, realtimeManager } from "../../../lib/realtimeManager";
 import CollaboratorManager from "../../components/CollaboratorManager";
 
@@ -68,6 +68,7 @@ export default function NotePage() {
   const [canEdit, setCanEdit] = useState(true);
   const [canSave, setCanSave] = useState(true);
   const [hasReadOnlyAccess, setHasReadOnlyAccess] = useState(false);
+  const [isCollaboratorWithoutEditRights, setIsCollaboratorWithoutEditRights] = useState(false);
   const [linkCopied, setLinkCopied] = useState(false);
   // Collaboration states - only used for public notes
   const [noteCollaborators, setNoteCollaborators] = useState<any[]>([]);
@@ -678,53 +679,67 @@ export default function NotePage() {
     const checkSubscription = async () => {
       if (!user) return;
 
-      // For public notes, permissions are handled differently
-      if (noteType === 'public') {
-        // For public notes, we'll set permissions after loading collaborators
-        // The owner should always be able to edit public notes
-        return;
-      }
-
       try {
         const status = await checkSubscriptionStatus(user.id);
-        setCanEdit(status.canEdit);
-        setCanSave(status.canSave);
-        setHasReadOnlyAccess(status.hasReadOnlyAccess);
+        
+        if (noteType === 'public') {
+          // For public notes, check if user is owner first
+          try {
+            const { data: publicNoteData } = await supabase
+              .from('public_notes')
+              .select('owner_id')
+              .eq('id', noteId)
+              .single();
+
+            if (publicNoteData?.owner_id === user.id) {
+              // User is the owner, grant permissions based on subscription
+              setUserPermission('owner');
+              setCanEdit(status.canEdit);
+              setCanSave(status.canSave);
+              setHasReadOnlyAccess(status.hasReadOnlyAccess);
+              setIsCollaboratorWithoutEditRights(false);
+            } else {
+              // User is not owner - could be a collaborator
+              // Check if they have valid subscription first
+              if (status.canEdit && status.canSave && !status.hasReadOnlyAccess) {
+                // User has valid subscription, any read-only is due to collaboration permissions
+                setCanEdit(false); // Will be updated based on collaboration permissions
+                setCanSave(false); // Will be updated based on collaboration permissions  
+                setHasReadOnlyAccess(false); // Not due to subscription limits
+                setIsCollaboratorWithoutEditRights(true); // Assume read-only collaborator for now
+              } else {
+                // User doesn't have valid subscription
+                setCanEdit(status.canEdit);
+                setCanSave(status.canSave);
+                setHasReadOnlyAccess(status.hasReadOnlyAccess);
+                setIsCollaboratorWithoutEditRights(false);
+              }
+            }
+          } catch (error) {
+            // If can't check ownership, apply subscription limits
+            setCanEdit(status.canEdit);
+            setCanSave(status.canSave);
+            setHasReadOnlyAccess(status.hasReadOnlyAccess);
+            setIsCollaboratorWithoutEditRights(false);
+          }
+        } else {
+          // For private notes, apply subscription status directly
+          setCanEdit(status.canEdit);
+          setCanSave(status.canSave);
+          setHasReadOnlyAccess(status.hasReadOnlyAccess);
+          setIsCollaboratorWithoutEditRights(false);
+        }
       } catch (error) {
-        // No debug
+        // On error, set restrictive permissions
+        setCanEdit(false);
+        setCanSave(false);
+        setHasReadOnlyAccess(true);
+        setIsCollaboratorWithoutEditRights(false);
       }
     };
 
     checkSubscription();
-  }, [user, noteType]);
-
-  // Set initial permissions for public notes when note is loaded
-  useEffect(() => {
-    if (note && noteType === 'public' && user?.id) {
-      // Check if this is a public note and if user is owner
-      const checkOwnership = async () => {
-        try {
-          const { data: publicNoteData } = await supabase
-            .from('public_notes')
-            .select('owner_id')
-            .eq('id', noteId)
-            .single();
-
-          if (publicNoteData?.owner_id === user.id) {
-            // User is the owner, grant full permissions
-            setUserPermission('owner');
-            setCanEdit(true);
-            setCanSave(true);
-            setHasReadOnlyAccess(false);
-          }
-        } catch (error) {
-          // No debug
-        }
-      };
-
-      checkOwnership();
-    }
-  }, [note, noteType, user?.id, noteId]);
+  }, [user, noteType, noteId]);
 
   // Novo estado para colaboradores (workaround)
   const [allCollaborators, setAllCollaborators] = useState<Array<{ user_id: string, full_name?: string, email?: string, isOwner: boolean }>>([]);
@@ -886,7 +901,7 @@ export default function NotePage() {
     <>
       <ProtectedRoute>
         {/* Read-only mode banner */}
-        {hasReadOnlyAccess && !canEdit && (
+        {(hasReadOnlyAccess && !canEdit) || (isCollaboratorWithoutEditRights && !canEdit) ? (
           <div className="bg-amber-500/20 border-l-4 border-amber-500 p-3 text-amber-200 text-sm flex items-center gap-2">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -903,16 +918,27 @@ export default function NotePage() {
               />
             </svg>
             <span>
-              You are viewing this note in read-only mode.
-              <a
-                href="/pricing"
-                className="underline ml-1 hover:text-amber-100"
-              >
-                Upgrade to edit
-              </a>
+              {isCollaboratorWithoutEditRights ? (
+                noteType === 'public' 
+                  ? "You are viewing this collaborative note as an invited reader."
+                  : "You are viewing this note in read-only mode."
+              ) : (
+                <>
+                  {noteType === 'public' 
+                    ? "You are viewing this collaborative note in read-only mode." 
+                    : "You are viewing this note in read-only mode."
+                  }
+                  <a
+                    href="/pricing"
+                    className="underline ml-1 hover:text-amber-100"
+                  >
+                    Upgrade to edit
+                  </a>
+                </>
+              )}
             </span>
           </div>
-        )}
+        ) : null}
 
         <div className=" sticky top-0 bg-[var(--background)]/60 bg-opacity-90 backdrop-blur-sm z-10 py-3 px-4 flex items-center">
           <Link

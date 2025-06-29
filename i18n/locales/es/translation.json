@@ -62,7 +62,37 @@
     "forgotPassword": "¿Olvidaste tu contraseña?",
     "resetPassword": "Restablecer contraseña",
     "termsOfUse": "Términos de Uso",
-    "privacyPolicy": "Política de Privacidad"
+    "privacyPolicy": "Política de Privacidad",
+    "loginProblems": "¿Problemas de inicio de sesión?",
+    "helpModal": {
+      "title": "¿Problemas de Inicio de Sesión?",
+      "commonProblem": "Problema más común: Hora del sistema",
+      "problemDescription": "La mayoría de problemas de inicio de sesión (incluyendo errores 429, JWT inválido, cierre inmediato) ocurren cuando la hora de tu dispositivo es incorrecta.",
+      "howToFix": "Cómo solucionarlo:",
+      "windows": "Windows:",
+      "windowsSteps": {
+        "step1": "Configuración → Hora e idioma",
+        "step2": "Clic en 'Sincronizar ahora'",
+        "step3": "Activar 'Establecer hora automáticamente'"
+      },
+      "mac": "Mac:",
+      "macSteps": {
+        "step1": "Preferencias del Sistema → Fecha y Hora",
+        "step2": "Marcar 'Establecer fecha y hora automáticamente'"
+      },
+      "linux": "Linux:",
+      "otherProblems": "Otros problemas:",
+      "problems": {
+        "error429": "Error 429: Demasiados intentos - espera unos minutos",
+        "captcha": "Captcha no funciona: Desactiva bloqueadores de anuncios",
+        "googleLogin": "Falla login con Google: Borra cookies del navegador",
+        "unsafeBrowser": "Navegadores iOS/integrados: Login con Google en navegadores no seguros o integrados (iOS) - Usa Safari o Chrome directamente",
+        "immediateLogout": "Cierre inmediato: Siempre relacionado con la hora del sistema"
+      },
+      "tip": "Consejo:",
+      "tipText": "Después de corregir la hora, espera 1-2 minutos antes de intentar iniciar sesión nuevamente.",
+      "understood": "Entendido"
+    }
   },
   "signup": {
     "title": "Crear cuenta de Lynxky",
@@ -383,13 +413,27 @@
     "exitEditMode": "Salir"
   },
   "profile": {
+    "profile": "Perfil",
+    "email": "Correo electrónico",
+    "changePassword": "Cambiar contraseña",
+    "logout": "Cerrar sesión",
+    "deleteAccount": "Eliminar cuenta",
+    "deleteAccountConfirm": "¿Estás seguro de que quieres eliminar tu cuenta? Esta acción no se puede deshacer.",
+    "cancel": "Cancelar",
+    "confirm": "Confirmar",
+    "bio": "Biografía",
+    "bioPlaceholder": "Captura tus pensamientos",
+    "saveBio": "Guardar biografía",
+    "bioSaved": "¡Biografía guardada exitosamente!",
+    "bioError": "Error al guardar biografía",
+    "setUsername": "Establecer nombre",
+    "setUsernameTooltip": "Necesitas establecer un nombre para mostrar en tu perfil",
     "wallpaper": {
       "upload": "Subir fondo de pantalla",
       "positionTop": "Alinear arriba",
       "positionCenter": "Centrar",
       "positionBottom": "Alinear abajo"
-    },
-    "bioPlaceholder": "Captura tus pensamientos"
+    }
   },
   "theme": {
     "light": "Claro",

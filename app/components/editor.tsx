@@ -647,15 +647,15 @@ function Editor({ initialNoteType = 'private' }: EditorProps) {
               </button>
             </div>
             */}
-            <div className="flex items-center gap-3">
-              {" "}
+            {/* Title row with emoji button and title input */}
+            <div className="flex items-center gap-3 mb-3 sm:mb-0">
               <button
                 onClick={() => setShowEmojiPicker(!showEmojiPicker)}
                 className="p-2 text-[var(--foreground)] hover:bg-[var(--container)] rounded-full transition-all duration-200"
                 title={t("editor.addEmoji")}
               >
                 <SmilePlus size={22} />
-              </button>{" "}
+              </button>
               <input
                 className="bg-transparent text-[var(--foreground)] focus:outline-none focus:ring-0 border-none w-full text-xl sm:text-2xl font-medium placeholder-opacity-60 placeholder-[var(--foreground)]"
                 placeholder={t("editor.titlePlaceholder")}
@@ -675,98 +675,100 @@ function Editor({ initialNoteType = 'private' }: EditorProps) {
                   />
                 </div>
               )}
-              {/* Folder and note type dropdowns moved outside the note area for better positioning */}
-              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
-                {/* Folder selection dropdown */}
-                <div className="relative" ref={folderDropdownRef}>
-                  <button
-                    onClick={() => {
-                      if (selectedNoteType === 'public') return;
-                      setShowFolderDropdown(!showFolderDropdown);
-                    }}
-                    className={`flex items-center gap-1 px-3 py-1.5 rounded-md bg-[var(--container)] text-sm transition-colors ${selectedNoteType === 'public' ? 'opacity-60 cursor-not-allowed' : 'hover:bg-opacity-80 text-[var(--foreground)]'}`}
-                    title={selectedNoteType === 'public' ? t('editor.folderDisabledPublic') : t("editor.selectFolder")}
-                    disabled={selectedNoteType === 'public'}
-                  >
-                    <FolderIcon size={16} />
-                    <span className="max-w-[100px] truncate">
-                      {selectedFolder
-                        ? selectedFolder.name
-                        : t("editor.noFolder", { defaultValue: "" })}
-                    </span>
-                    <ChevronDown size={14} />
-                  </button>
+            </div>
 
-                  {showFolderDropdown && (
-                    <div className="absolute right-0 mt-1 w-48 rounded-md bg-[var(--container)] shadow-lg z-50">
-                      <div className="py-1 max-h-60 overflow-y-auto scrollbar">
+            {/* Dropdowns row - separated for better mobile layout */}
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 sm:justify-end">
+              {/* Folder selection dropdown */}
+              <div className="relative" ref={folderDropdownRef}>
+                <button
+                  onClick={() => {
+                    if (selectedNoteType === 'public') return;
+                    setShowFolderDropdown(!showFolderDropdown);
+                  }}
+                  className={`flex items-center gap-1 px-3 py-1.5 rounded-md bg-[var(--container)] text-sm transition-colors w-full sm:w-auto ${selectedNoteType === 'public' ? 'opacity-60 cursor-not-allowed' : 'hover:bg-opacity-80 text-[var(--foreground)]'}`}
+                  title={selectedNoteType === 'public' ? t('editor.folderDisabledPublic') : t("editor.selectFolder")}
+                  disabled={selectedNoteType === 'public'}
+                >
+                  <FolderIcon size={16} />
+                  <span className="max-w-[200px] sm:max-w-[100px] truncate">
+                    {selectedFolder
+                      ? selectedFolder.name
+                      : t("editor.noFolder", { defaultValue: "" })}
+                  </span>
+                  <ChevronDown size={14} className="ml-auto" />
+                </button>
+
+                {showFolderDropdown && (
+                  <div className="absolute left-0 mt-1 w-full sm:w-48 sm:right-0 sm:left-auto rounded-md bg-[var(--container)] shadow-lg z-50">
+                    <div className="py-1 max-h-60 overflow-y-auto scrollbar">
+                      <button
+                        onClick={() => {
+                          setSelectedFolder(null);
+                          setShowFolderDropdown(false);
+                        }}
+                        className={`flex items-center w-full text-left px-3 py-2 text-sm ${
+                          !selectedFolder
+                            ? "bg-[var(--accent-color)] text-white"
+                            : "hover:bg-[var(--container)] text-[var(--foreground)]"
+                        }`}
+                      >
+                        {t("editor.noFolder", { defaultValue: "" })}
+                      </button>
+
+                      {folders.map((folder) => (
                         <button
+                          key={folder.id}
                           onClick={() => {
-                            setSelectedFolder(null);
+                            setSelectedFolder(folder);
                             setShowFolderDropdown(false);
                           }}
                           className={`flex items-center w-full text-left px-3 py-2 text-sm ${
-                            !selectedFolder
+                            selectedFolder?.id === folder.id
                               ? "bg-[var(--accent-color)] text-white"
                               : "hover:bg-[var(--container)] text-[var(--foreground)]"
                           }`}
                         >
-                          {t("editor.noFolder", { defaultValue: "" })}
+                          {folder.name}
                         </button>
+                      ))}
 
-                        {folders.map((folder) => (
-                          <button
-                            key={folder.id}
-                            onClick={() => {
-                              setSelectedFolder(folder);
-                              setShowFolderDropdown(false);
-                            }}
-                            className={`flex items-center w-full text-left px-3 py-2 text-sm ${
-                              selectedFolder?.id === folder.id
-                                ? "bg-[var(--accent-color)] text-white"
-                                : "hover:bg-[var(--container)] text-[var(--foreground)]"
-                            }`}
-                          >
-                            {folder.name}
-                          </button>
-                        ))}
+                      <div className="my-1"></div>
 
-                        <div className="my-1"></div>
-
-                        <button
-                          onClick={() => {
-                            // createNewFolder();
-                            setShowFolderDropdown(false);
-                          }}
-                          className="flex text-sm text-[var(--accent-color)] hover:bg-[var(--container)]"
-                        >
-                          {/* + {t("editor.createFolder", { defaultValue: "" })} */}
-                        </button>
-                      </div>
+                      <button
+                        onClick={() => {
+                          // createNewFolder();
+                          setShowFolderDropdown(false);
+                        }}
+                        className="flex text-sm text-[var(--accent-color)] hover:bg-[var(--container)]"
+                      >
+                        {/* + {t("editor.createFolder", { defaultValue: "" })} */}
+                      </button>
                     </div>
-                  )}
-                </div>
+                  </div>
+                )}
+              </div>
 
-                {/* Note type selection dropdown */}
-                <div className="relative" ref={noteTypeDropdownRef}>
-                  <button
-                    onClick={() => setShowNoteTypeDropdown(!showNoteTypeDropdown)}
-                    className={`flex items-center gap-1 px-3 py-1.5 rounded-md hover:bg-opacity-80 text-sm transition-colors ${
-                      selectedNoteType === 'private' 
-                        ? 'bg-gray-500 text-white' 
-                        : 'bg-blue-500 text-white'
-                    }`}
-                    title={t('editor.selectNoteType')}
-                  >
-                    {selectedNoteType === 'private' ? <Lock size={16} /> : <Users size={16} />}
-                    <span className="max-w-[100px] truncate">
-                      {selectedNoteType === 'private' ? t('editor.privateNote') : t('editor.publicNote')}
-                    </span>
-                    <ChevronDown size={14} />
-                  </button>
+              {/* Note type selection dropdown */}
+              <div className="relative" ref={noteTypeDropdownRef}>
+                <button
+                  onClick={() => setShowNoteTypeDropdown(!showNoteTypeDropdown)}
+                  className={`flex items-center gap-1 px-3 py-1.5 rounded-md hover:bg-opacity-80 text-sm transition-colors w-full sm:w-auto ${
+                    selectedNoteType === 'private' 
+                      ? 'bg-gray-500 text-white' 
+                      : 'bg-blue-500 text-white'
+                  }`}
+                  title={t('editor.selectNoteType')}
+                >
+                  {selectedNoteType === 'private' ? <Lock size={16} /> : <Users size={16} />}
+                  <span className="max-w-[200px] sm:max-w-[100px] truncate">
+                    {selectedNoteType === 'private' ? t('editor.privateNote') : t('editor.publicNote')}
+                  </span>
+                  <ChevronDown size={14} className="ml-auto" />
+                </button>
 
-                  {showNoteTypeDropdown && (
-                    <div className="absolute right-0 mt-1 w-48 rounded-md bg-[var(--container)] shadow-lg z-50">
+                {showNoteTypeDropdown && (
+                    <div className="absolute left-0 mt-1 w-full sm:w-48 sm:right-0 sm:left-auto rounded-md bg-[var(--container)] shadow-lg z-50">
                       <div className="py-1">
                         <button
                           onClick={() => {
@@ -806,7 +808,6 @@ function Editor({ initialNoteType = 'private' }: EditorProps) {
                       </div>
                     </div>
                   )}
-                </div>
               </div>
             </div>
           </div>
