@@ -31,6 +31,7 @@ import jsPDF from "jspdf";
 import { ProtectedRoute } from "../../components/ProtectedRoute";
 import { usePublicNoteCollaboration, realtimeManager } from "../../../lib/realtimeManager";
 import CollaboratorManager from "../../components/CollaboratorManager";
+import { useCollaborativeNoteSync } from "../../../hooks/useCollaborativeNoteSync";
 
 interface Note {
   id: string;
@@ -87,6 +88,14 @@ export default function NotePage() {
     noteType === 'public' ? noteId || undefined : undefined, 
     noteType === 'public' ? user?.id : undefined
   );
+
+  // Setup collaborative note sync with 2-second polling for public notes
+  const collaborativeSync = useCollaborativeNoteSync({
+    noteId: noteId,
+    noteType: noteType,
+    user: user,
+    isEnabled: !!noteId && !!user && noteType === 'public' && !editMode // Only sync when not editing
+  }) as any; // Temporary type cast to avoid TS issues
   
   // For private notes, we don't need real-time collaboration
   // Legacy realtime is removed to avoid unnecessary connections
@@ -127,6 +136,47 @@ export default function NotePage() {
       }, 1000); // Wait 1 second after note loads to force refresh
     }
   }, [note, noteType, noteId, loadNoteCollaborators]);
+
+  // Handle collaborative sync updates for public notes
+  useEffect(() => {
+    if (noteType === 'public' && collaborativeSync.note && !editMode) {
+      // Only update if we're not in edit mode to avoid conflicts
+      const syncedNote = collaborativeSync.note;
+      
+      // Check if the synced note is different from current note
+      if (note && (note.title !== syncedNote.title || note.content !== syncedNote.content)) {
+        console.log('Collaborative sync: Note updated from server');
+        
+        // Adapt synced note to match local Note interface
+        const adaptedNote: Note = {
+          id: syncedNote.id,
+          title: syncedNote.title,
+          content: syncedNote.content,
+          created_at: syncedNote.created_at,
+          folder_id: null, // Public notes don't have folders
+          tags: "", // Public notes don't have tags yet
+          type: 'public'
+        };
+        
+        setNote(adaptedNote);
+        
+        // Also update edit fields if they haven't been modified by user
+        if (!localStorage.getItem(`fair-note-edit-title-${noteId}`)) {
+          setEditTitle(syncedNote.title);
+        }
+        if (!localStorage.getItem(`fair-note-edit-content-${noteId}`)) {
+          setEditContent(syncedNote.content);
+        }
+      }
+    }
+  }, [collaborativeSync.note, noteType, editMode, note, noteId]);
+
+  // Mark user edit start when entering edit mode for public notes
+  useEffect(() => {
+    if (editMode && noteType === 'public' && collaborativeSync.markUserEditStart) {
+      collaborativeSync.markUserEditStart();
+    }
+  }, [editMode, noteType, collaborativeSync.markUserEditStart]);
 
   const fetchNote = useCallback(async () => {
     if (!user || !noteId) return;
@@ -994,6 +1044,48 @@ export default function NotePage() {
           </div>
         ) : null}
 
+        {/* Conflict resolution banner for public notes */}
+        {noteType === 'public' && collaborativeSync.hasConflict && collaborativeSync.conflictNote ? (
+          <div className="bg-orange-100 dark:bg-orange-500/20 border-l-4 border-orange-500 p-4 text-orange-800 dark:text-orange-200 text-sm">
+            <div className="flex items-start gap-3">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5 text-orange-600 dark:text-orange-400 mt-0.5 flex-shrink-0"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.864-.833-2.633 0L4.168 16.5c-.77.833.192 2.5 1.732 2.5z"
+                />
+              </svg>
+              <div className="flex-1">
+                <h4 className="font-semibold mb-2">Conflicting changes detected</h4>
+                <p className="mb-3">
+                  Someone else has modified this note while you were editing. Choose how to proceed:
+                </p>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => collaborativeSync.resolveConflict(true)}
+                    className="px-4 py-2 bg-orange-600 text-white rounded-md hover:bg-orange-700 transition-colors text-sm"
+                  >
+                    Use server version (lose my changes)
+                  </button>
+                  <button
+                    onClick={() => collaborativeSync.resolveConflict(false)}
+                    className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors text-sm"
+                  >
+                    Keep my version (ignore server changes)
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : null}
+
         <div className=" sticky top-0 bg-[var(--background)]/60 bg-opacity-90 backdrop-blur-sm z-10 py-3 px-4 flex items-center">
           <Link
             href="/dashboard"
@@ -1112,12 +1204,32 @@ export default function NotePage() {
                   />
                   
                   {/* Auto-save status indicator */}
-                  <div className="flex items-center gap-2 text-xs">
+                  <div className="flex items-center gap-3 text-xs">
                     {autoSaveStatus === 'saving' && (
                       <span className="text-yellow-400 animate-pulse">{t("editor.saving")}</span>
                     )}
                     {autoSaveStatus === 'saved' && (
                       <span className="text-green-400">{t("editor.saved")}</span>
+                    )}
+                    
+                    {/* Collaborative sync indicator for public notes */}
+                    {noteType === 'public' && (
+                      <div className="flex items-center gap-2">
+                        <div className={`w-2 h-2 rounded-full ${
+                          collaborativeSync.isOnline ? 'bg-green-500' : 'bg-red-500'
+                        }`}></div>
+                        <span className="text-[var(--foreground-light)]">
+                          {collaborativeSync.isOnline 
+                            ? `Syncing ${collaborativeSync.lastUpdated ? 
+                                `(last: ${collaborativeSync.lastUpdated.toLocaleTimeString()})` 
+                                : ''}`
+                            : 'Offline'
+                          }
+                        </span>
+                        {collaborativeSync.error && (
+                          <span className="text-red-400" title={collaborativeSync.error}>⚠️</span>
+                        )}
+                      </div>
                     )}
                   </div>
                   
@@ -1357,8 +1469,32 @@ export default function NotePage() {
             </div>
 
             <div className=" p-6  items-center">
-              <div className="text-sm text-[var(--foreground)]">
-                ID: {note.id.slice(0, 8)}...
+              <div className="flex flex-col gap-2 mb-4">
+                <div className="text-sm text-[var(--foreground)]">
+                  ID: {note.id.slice(0, 8)}...
+                </div>
+                
+                {/* Collaborative sync status for public notes */}
+                {noteType === 'public' && (
+                  <div className="text-sm text-[var(--foreground)] flex items-center gap-2">
+                    <div className={`w-2 h-2 rounded-full ${
+                      collaborativeSync.isOnline ? 'bg-green-500' : 'bg-red-500'
+                    }`}></div>
+                    <span>
+                      Collaborative sync: {collaborativeSync.isOnline ? 'Active' : 'Offline'}
+                      {collaborativeSync.lastUpdated && (
+                        <span className="text-[var(--foreground-light)] ml-2">
+                          (Last sync: {collaborativeSync.lastUpdated.toLocaleTimeString()})
+                        </span>
+                      )}
+                    </span>
+                    {collaborativeSync.error && (
+                      <span className="text-red-400 text-xs" title={collaborativeSync.error}>
+                        Error
+                      </span>
+                    )}
+                  </div>
+                )}
               </div>
               {/* <div className="text-sm text-[var(--foreground)]">
                 #
