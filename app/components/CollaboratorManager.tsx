@@ -142,12 +142,17 @@ const UserAvatar: React.FC<UserAvatarProps> = ({
         {showPermission && getPermissionIcon(user.permission)}
       </div>
       <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-black text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50">
-        <div>{displayName}</div>
+        <div className="font-medium">{displayName}</div>
         {user.permission && (
-          <div className="text-gray-300 capitalize">
+          <div className="text-gray-300 capitalize flex items-center gap-1 mt-1">
+            {user.permission === 'owner' && <Crown size={10} className="text-yellow-400" />}
+            {user.permission === 'admin' && <Crown size={10} className="text-purple-400" />}
+            {user.permission === 'write' && <Edit size={10} className="text-green-400" />}
+            {user.permission === 'read' && <Eye size={10} className="text-gray-400" />}
             {user.permission === 'owner' ? t('collaboratorManager.permissions.owner') : 
              user.permission === 'admin' ? t('collaboratorManager.permissions.admin') :
-             user.permission === 'write' ? t('collaboratorManager.permissions.write') : t('collaboratorManager.permissions.read')}
+             user.permission === 'write' ? t('collaboratorManager.permissions.write') : 
+             t('collaboratorManager.permissions.read')}
           </div>
         )}
         <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-black"></div>
@@ -213,27 +218,39 @@ const CollaboratorCard: React.FC<{
             {collaborator.full_name || collaborator.email || collaborator.user_id}
           </div>
           <div className="flex items-center gap-2 mt-1">
+            {/* Status Badge - Owner/Collaborator */}
             <span className="text-xs px-2 py-1 rounded-full bg-blue-900 text-blue-300 capitalize flex items-center gap-1">
-              {/* Permissão textual */}
-              {collaborator.permission === 'owner' ? t('collaboratorManager.permissions.owner') : 
-               collaborator.permission === 'admin' ? t('collaboratorManager.permissions.admin') :
-               collaborator.permission === 'write' ? t('collaboratorManager.permissions.write') :
-               collaborator.permission === 'read' ? t('collaboratorManager.permissions.read') :
-               collaborator.isOwner ? t('collaboratorManager.permissions.owner') : t('collaboratorManager.permissions.collaborator')}
-              {/* Permissão ao lado, com ícone */}
-              {collaborator.permission && (
-                <span className="flex items-center gap-0.5 ml-2">
-                  {/* Ícone de permissão */}
-                  {collaborator.permission === 'owner' && <Crown size={12} className="text-yellow-500" />}
-                  {collaborator.permission === 'admin' && <Crown size={12} className="text-yellow-400" />}
-                  {collaborator.permission === 'write' && <Edit size={12} className="text-blue-400" />}
-                  {collaborator.permission === 'read' && <Eye size={12} className="text-gray-400" />}
-                  <span className="text-gray-300 text-xs capitalize">
-                    {collaborator.permission}
-                  </span>
-                </span>
+              {collaborator.permission === 'owner' || collaborator.isOwner ? (
+                <>
+                  <Crown size={12} className="text-yellow-500" />
+                  {t('collaboratorManager.permissions.owner')}
+                </>
+              ) : (
+                <>
+                  <Users size={12} className="text-blue-300" />
+                  {t('collaboratorManager.permissions.collaborator')}
+                </>
               )}
             </span>
+            
+            {/* Permission Badge - Specific permission level */}
+            {collaborator.permission && (
+              <span className={`text-xs px-2 py-1 rounded-full capitalize flex items-center gap-1 ${
+                collaborator.permission === 'owner' ? 'bg-yellow-900 text-yellow-200' :
+                collaborator.permission === 'admin' ? 'bg-purple-900 text-purple-200' :
+                collaborator.permission === 'write' ? 'bg-green-900 text-green-200' :
+                'bg-yellow-400 text-white'
+              }`}>
+                {collaborator.permission === 'owner' && <Crown size={12} className="text-yellow-400" />}
+                {collaborator.permission === 'admin' && <Crown size={12} className="text-purple-400" />}
+                {collaborator.permission === 'write' && <Edit size={12} className="text-green-400" />}
+                {collaborator.permission === 'read' && <Eye size={12} className="text-gray-400" />}
+                {collaborator.permission === 'owner' ? t('collaboratorManager.permissions.owner') :
+                 collaborator.permission === 'admin' ? t('collaboratorManager.permissions.admin') :
+                 collaborator.permission === 'write' ? t('collaboratorManager.permissions.write') :
+                 t('collaboratorManager.permissions.read')}
+              </span>
+            )}
           </div>
           <div className="text-sm text-gray-400">
             {collaborator.email || collaborator.user_id}
@@ -371,10 +388,83 @@ const InviteCodeModal: React.FC<{
     }
   };
 
-  const copyToClipboard = (code: string) => {
-    navigator.clipboard.writeText(code).then(() => {
-      setNotification({ type: 'success', message: t('collaboratorManager.inviteCodes.codeCopied') });
-    });
+  const [copying, setCopying] = useState<string | null>(null);
+
+  const copyToClipboard = async (code: string) => {
+    if (copying === code) return; // Prevent double-click
+    
+    setCopying(code);
+    
+    try {
+      // Check if the Clipboard API is available and we're in a secure context
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(code);
+        setNotification({ type: 'success', message: t('collaboratorManager.inviteCodes.codeCopied') });
+        return;
+      }
+
+      // Fallback method for older browsers or non-HTTPS contexts
+      const textArea = document.createElement('textarea');
+      textArea.value = code;
+      
+      // Make the textarea out of viewport
+      textArea.style.position = 'fixed';
+      textArea.style.left = '-999999px';
+      textArea.style.top = '-999999px';
+      textArea.style.opacity = '0';
+      textArea.style.pointerEvents = 'none';
+      textArea.setAttribute('readonly', '');
+      textArea.setAttribute('contenteditable', 'true');
+      
+      document.body.appendChild(textArea);
+      
+      // Select and copy the text
+      textArea.focus();
+      textArea.select();
+      textArea.setSelectionRange(0, 99999); // For mobile devices
+      
+      try {
+        const successful = document.execCommand('copy');
+        if (successful) {
+          setNotification({ type: 'success', message: t('collaboratorManager.inviteCodes.codeCopied') });
+        } else {
+          throw new Error('execCommand failed');
+        }
+      } catch (err) {
+        console.error('Fallback copy failed:', err);
+        
+        // Final fallback - select the text for manual copy
+        textArea.style.position = 'static';
+        textArea.style.left = 'auto';
+        textArea.style.top = 'auto';
+        textArea.style.opacity = '1';
+        textArea.style.pointerEvents = 'auto';
+        textArea.style.background = '#333';
+        textArea.style.color = '#fff';
+        textArea.style.padding = '10px';
+        textArea.style.margin = '10px 0';
+        textArea.style.borderRadius = '4px';
+        textArea.style.width = '100%';
+        
+        setNotification({ 
+          type: 'error', 
+          message: t('collaboratorManager.inviteCodes.copyError') + ' - Text selected for manual copy'
+        });
+        
+        setTimeout(() => {
+          document.body.removeChild(textArea);
+        }, 3000);
+        return;
+      }
+      
+      document.body.removeChild(textArea);
+      
+    } catch (error) {
+      console.error('Copy to clipboard failed:', error);
+      setNotification({ type: 'error', message: t('collaboratorManager.inviteCodes.copyError') });
+    } finally {
+      setTimeout(() => setCopying(null), 500); // Reset copying state
+    }
   };
 
   const formatDate = (dateString: string) => {
@@ -391,7 +481,7 @@ const InviteCodeModal: React.FC<{
 
   return (
     <div 
-      className="fixed inset-0 flex items-center justify-center z-50 animate-in fade-in duration-200"
+      className="fixed inset-0 flex items-center justify-center z-50 animate-in fade-in duration-200 p-2 sm:p-4"
       onClick={(e) => {
         // Fecha o modal se clicar fora do conteúdo
         if (e.target === e.currentTarget) {
@@ -399,17 +489,17 @@ const InviteCodeModal: React.FC<{
         }
       }}
     >
-      <div className="bg-gray-900 shadow-xl w-full max-w-4xl max-h-[85vh] overflow-hidden animate-in slide-in-from-bottom-4 duration-200" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+      <div className="bg-gray-900 shadow-xl w-full max-w-4xl max-h-[90vh] sm:max-h-[85vh] overflow-hidden animate-in slide-in-from-bottom-4 duration-200" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
         {/* Header do Modal */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-700 bg-gradient-to-r from-blue-900/20 to-blue-900/20">
+        <div className="flex items-center justify-between p-4 sm:p-6 border-b border-gray-700 bg-gradient-to-r from-blue-900/20 to-blue-900/20">
           <div>
-            <h3 className="text-xl font-bold text-white flex items-center gap-3">
-              <div className="p-2  rounded-full">
-                <QrCode size={30} className="text-white" />
+            <h3 className="text-lg sm:text-xl font-bold text-white flex items-center gap-2 sm:gap-3">
+              <div className="p-1 sm:p-2 rounded-full">
+                <QrCode size={24} className="sm:w-[30px] sm:h-[30px] text-white" />
               </div>
-              {t('collaboratorManager.inviteCodes.title')}
+              <span className="leading-tight">{t('collaboratorManager.inviteCodes.title')}</span>
             </h3>
-            <p className="text-sm text-gray-300 mt-1">
+            <p className="text-xs sm:text-sm text-gray-300 mt-1">
               {t('collaboratorManager.description')}
             </p>
           </div>
@@ -423,7 +513,7 @@ const InviteCodeModal: React.FC<{
         </div>
 
         {/* Conteúdo do Modal */}
-        <div className="p-6 max-w-4xl h-126 overflow-y-auto hide-scrollbar">
+        <div className="p-4 sm:p-6 max-w-4xl h-96 sm:h-126 overflow-y-auto hide-scrollbar">
           {/* Notification */}
           {notification && (
             <div className={`p-4 flex items-center gap-3 mb-6 animate-in slide-in-from-top-2 duration-200 ${
@@ -448,7 +538,7 @@ const InviteCodeModal: React.FC<{
 
           {/* Generate new code */}
           {userPermission === 'owner' && (
-            <div className="bg-gradient-to-br from-gray-700 to-gray-800 p-6 mb-6 border border-gray-600">
+            <div className="bg-gradient-to-br from-gray-700 to-gray-800 p-4 sm:p-6 mb-6 border border-gray-600">
               <div className="flex items-center gap-3 mb-4">
                 <div className="p-2 bg-blue-500 rounded-lg">
                   <Plus size={16} className="text-white" />
@@ -462,11 +552,11 @@ const InviteCodeModal: React.FC<{
                   </p>
                 </div>
               </div>
-              <div className="flex flex-wrap gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <button
                   onClick={() => generateInviteCode('read')}
                   disabled={generating}
-                  className="px-4 py-3 bg-yellow-400 hover:bg-yellow-600 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg text-sm flex items-center gap-2 transition-all hover:scale-105 shadow-md"
+                  className="px-3 sm:px-4 py-3 bg-yellow-400 hover:bg-yellow-600 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg text-sm flex items-center gap-2 transition-all hover:scale-105 shadow-md w-full justify-center sm:justify-start"
                 >
                   <Eye size={16} />
                   <div className="text-left">
@@ -477,7 +567,7 @@ const InviteCodeModal: React.FC<{
                 <button
                   onClick={() => generateInviteCode('write')}
                   disabled={generating}
-                  className="px-4 py-3 bg-blue-500 hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg text-sm flex items-center gap-2 transition-all hover:scale-105 shadow-md"
+                  className="px-3 sm:px-4 py-3 bg-blue-500 hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg text-sm flex items-center gap-2 transition-all hover:scale-105 shadow-md w-full justify-center sm:justify-start"
                 >
                   <Edit size={16} />
                   <div className="text-left">
@@ -488,7 +578,7 @@ const InviteCodeModal: React.FC<{
                 <button
                   onClick={() => generateInviteCode('admin')}
                   disabled={generating}
-                  className="px-4 py-3 bg-purple-500 hover:bg-purple-600 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg text-sm flex items-center gap-2 transition-all hover:scale-105 shadow-md"
+                  className="px-3 sm:px-4 py-3 bg-purple-500 hover:bg-purple-600 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg text-sm flex items-center gap-2 transition-all hover:scale-105 shadow-md w-full justify-center sm:justify-start"
                 >
                   <Crown size={16} />
                   <div className="text-left">
@@ -538,25 +628,42 @@ const InviteCodeModal: React.FC<{
                 {inviteCodes.map((invite, index) => (
                   <div 
                     key={invite.id} 
-                    className="p-4 bg-gradient-to-br from-gray-700 to-gray-800 border border-gray-600 hover:shadow-lg transition-all duration-200 animate-in slide-in-from-left-4"
+                    className="p-3 sm:p-4 bg-gradient-to-br from-gray-700 to-gray-800 border border-gray-600 hover:shadow-lg transition-all duration-200 animate-in slide-in-from-left-4"
                     style={{ animationDelay: `${index * 100}ms` }}
                   >
-                    <div className="flex items-start justify-between mb-3">
+                    <div className="flex flex-col sm:flex-row sm:items-start justify-between mb-3 gap-3 sm:gap-0">
                       <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-2">
-                          <code className="bg-gray-700 px-3 py-2 rounded-lg font-mono text-lg font-semibold text-white border">
-                            {invite.invite_code}
-                          </code>
-                          <button
-                            onClick={() => copyToClipboard(invite.invite_code)}
-                            className="p-2 hover:bg-gray-700 rounded-lg transition-colors group"
-                            title={t('collaboratorManager.inviteCodes.copyCode')}
-                          >
-                            <Copy size={16} className="text-gray-400 group-hover:text-blue-400 transition-colors" />
-                          </button>
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-2">
+                          <div className="flex items-center gap-2 flex-1">
+                            <code className="bg-gray-700 px-3 py-3 rounded-lg font-mono text-base sm:text-lg font-semibold text-white border border-gray-600 flex-1 break-all">
+                              {invite.invite_code}
+                            </code>
+                            <button
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                copyToClipboard(invite.invite_code);
+                              }}
+                              disabled={copying === invite.invite_code}
+                              className={`flex items-center justify-center p-3 rounded-lg transition-colors group min-w-[44px] min-h-[44px] touch-manipulation border shrink-0 ${
+                                copying === invite.invite_code 
+                                  ? 'bg-blue-500 border-blue-400 cursor-not-allowed' 
+                                  : 'hover:bg-gray-600 active:bg-gray-500 border-gray-600 hover:border-blue-400'
+                              }`}
+                              title={t('collaboratorManager.inviteCodes.copyCode')}
+                              type="button"
+                              aria-label={t('collaboratorManager.inviteCodes.copyCode')}
+                            >
+                              {copying === invite.invite_code ? (
+                                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                              ) : (
+                                <Copy size={18} className="text-gray-300 group-hover:text-blue-400 group-active:text-blue-300 transition-colors" />
+                              )}
+                            </button>
+                          </div>
                         </div>
                         <div className="flex items-center gap-2">
-                          <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+                          <span className={`px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium ${
                             invite.permission === 'admin' ? 'bg-purple-900 text-purple-200' :
                             invite.permission === 'write' ? 'bg-blue-900 text-blue-200' :
                             'bg-yellow-400 text-white'
@@ -574,7 +681,7 @@ const InviteCodeModal: React.FC<{
                       {userPermission === 'owner' && (
                         <button
                           onClick={() => deactivateCode(invite.id)}
-                          className="p-2 hover:bg-red-900/20 rounded-lg text-red-400 transition-colors group"
+                          className="p-2 hover:bg-red-900/20 rounded-lg text-red-400 transition-colors group self-start sm:self-auto"
                           title={t('collaboratorManager.inviteCodes.deactivateCode')}
                         >
                           <Trash2 size={16} className="group-hover:scale-110 transition-transform" />
@@ -605,7 +712,7 @@ const InviteCodeModal: React.FC<{
         </div>
 
         {/* Footer do Modal */}
-        <div className="px-6 py-4 bg-gray-700 border-t border-gray-600">
+        <div className="px-4 sm:px-6 py-4 bg-gray-700 border-t border-gray-600">
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-2 text-sm text-gray-400">
               <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
@@ -824,37 +931,38 @@ export const CollaboratorManager: React.FC<CollaboratorManagerProps> = ({
       {/* Lista completa de colaboradores - Modal */}
       {showCollaboratorsModal && (
         <div 
-          className="fixed inset-0 flex items-center justify-center z-50 animate-in fade-in duration-200"
+          className="fixed inset-0 flex items-center justify-center z-50 animate-in fade-in duration-200 p-2 sm:p-4"
           onClick={(e) => {
             if (e.target === e.currentTarget) {
               setShowCollaboratorsModal(false);
             }
           }}
         >
-          <div className="bg-gray-900  shadow-xl w-full max-w-4xl mx-4 max-h-[85vh] overflow-hidden animate-in slide-in-from-bottom-4 duration-200">
+          <div className="bg-gray-900 shadow-xl w-full max-w-4xl max-h-[90vh] sm:max-h-[85vh] overflow-hidden animate-in slide-in-from-bottom-4 duration-200">
             {/* Header do Modal */}
-            <div className="flex items-center justify-between p-6 border-b border-gray-700">
+            <div className="flex items-center justify-between p-4 sm:p-6 border-b border-gray-700">
               <div>
-                <h3 className="text-lg font-semibold text-white">
+                <h3 className="text-base sm:text-lg font-semibold text-white">
                   {t('collaboratorManager.title')}
                 </h3>
-                <p className="text-sm text-gray-300 mt-1">
+                <p className="text-xs sm:text-sm text-gray-300 mt-1">
                   {collaborators.length === 1 
                     ? t('collaboratorManager.personHasAccess', { count: 1 })
                     : t('collaboratorManager.peopleHaveAccess', { count: collaborators.length })}
                 </p>
               </div>
-              <div className="flex items-center gap-2 ">
+              <div className="flex items-center gap-2">
                 {canManageCollaborators && (
                   <button
                     onClick={() => {
                       setShowInviteCodeModal(true);
                       setShowCollaboratorsModal(false);
                     }}
-                    className="flex items-center gap-2 px-3 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 text-sm transition-colors"
+                    className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 text-xs sm:text-sm transition-colors"
                   >
-                    <Link size={14} />
-                    {t('collaboratorManager.manageInvites')}
+                    <Link size={12} className="sm:w-[14px] sm:h-[14px]" />
+                    <span className="hidden sm:inline">{t('collaboratorManager.manageInvites')}</span>
+                    <span className="sm:hidden">Convites</span>
                   </button>
                 )}
                 <button
@@ -862,13 +970,13 @@ export const CollaboratorManager: React.FC<CollaboratorManagerProps> = ({
                   className="p-2 hover:bg-gray-800 rounded-full transition-colors text-gray-400 hover:text-white"
                   title={t('collaboratorManager.close')}
                 >
-                  <X size={16} />
+                  <X size={14} className="sm:w-4 sm:h-4" />
                 </button>
               </div>
             </div>
 
             {/* Conteúdo do Modal */}
-            <div className="p-6 max-w-4xl h-126 overflow-y-auto hide-scrollbar">
+            <div className="p-4 sm:p-6 max-w-4xl h-96 sm:h-126 overflow-y-auto hide-scrollbar">
               {collaborators.length === 0 ? (
                 <div className="text-center py-8">
                   <div className="w-16 h-16 mx-auto bg-gray-800 rounded-full flex items-center justify-center mb-4">
@@ -903,7 +1011,7 @@ export const CollaboratorManager: React.FC<CollaboratorManagerProps> = ({
             </div>
 
             {/* Footer do Modal */}
-            <div className="px-6 py-4 bg-gray-800 border-t border-gray-700">
+            <div className="px-4 sm:px-6 py-4 bg-gray-800 border-t border-gray-700">
               <div className="flex justify-between items-center text-sm text-gray-400">
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>

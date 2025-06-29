@@ -255,6 +255,7 @@
       "codeGenerated": "コードが正常に生成されました！",
       "codeDeactivated": "コードが無効化されました！",
       "codeCopied": "コードがコピーされました！",
+      "copyError": "コードのコピーに失敗しました",
       "errorGenerating": "コード生成エラー",
       "errorDeactivating": "コード無効化エラー",
       "errorLoading": "コード読み込みエラー"

@@ -169,8 +169,13 @@ export default function NotePage() {
           tags: "", // Public notes don't have tags yet
           type: 'public'
         });
-        setEditTitle(decryptedTitle);
-        setEditContent(decryptedContent);
+        
+        // Check for saved edits in localStorage first
+        const savedTitle = localStorage.getItem(`fair-note-edit-title-${noteId}`);
+        const savedContent = localStorage.getItem(`fair-note-edit-content-${noteId}`);
+        
+        setEditTitle(savedTitle !== null ? savedTitle : decryptedTitle);
+        setEditContent(savedContent !== null ? savedContent : decryptedContent);
       } else {
         // Fetch private note (existing logic)
         const { data, error } = await supabase
@@ -194,8 +199,13 @@ export default function NotePage() {
             content: decryptedContent,
             type: 'private'
           });
-          setEditTitle(decryptedTitle);
-          setEditContent(decryptedContent);
+          
+          // Check for saved edits in localStorage first
+          const savedTitle = localStorage.getItem(`fair-note-edit-title-${noteId}`);
+          const savedContent = localStorage.getItem(`fair-note-edit-content-${noteId}`);
+          
+          setEditTitle(savedTitle !== null ? savedTitle : decryptedTitle);
+          setEditContent(savedContent !== null ? savedContent : decryptedContent);
         }
       }
     } catch (error) {
@@ -275,6 +285,10 @@ export default function NotePage() {
       // Emit event to update sidebar via Realtime
       // The Realtime system will automatically notify all subscribed components
       // No manual event emission needed!
+
+      // Limpar localStorage após salvar com sucesso
+      localStorage.removeItem(`fair-note-edit-title-${noteId}`);
+      localStorage.removeItem(`fair-note-edit-content-${noteId}`);
 
       setEditMode(false);
       showToast(t("editor.noteSaved"), "success");
@@ -500,6 +514,10 @@ export default function NotePage() {
 
   function cancelEdit() {
     if (!note) return;
+    // Limpar localStorage ao cancelar
+    localStorage.removeItem(`fair-note-edit-title-${noteId}`);
+    localStorage.removeItem(`fair-note-edit-content-${noteId}`);
+    
     setEditTitle(note.title);
     setEditContent(note.content);
     setEditMode(false);
@@ -709,6 +727,22 @@ export default function NotePage() {
   // Array de colaboradores para a UI (deve ser declarado antes do uso no JSX)
   const collaboratorsForUI = noteType === 'public' ? allCollaborators : [];
 
+  // Persistência de edição no localStorage
+  useEffect(() => {
+    if (!editMode) return;
+    // Salvar no localStorage enquanto edita
+    localStorage.setItem(`fair-note-edit-title-${noteId}`, editTitle);
+    localStorage.setItem(`fair-note-edit-content-${noteId}`, editContent);
+  }, [editTitle, editContent, editMode, noteId]);
+
+  // Limpar localStorage ao sair do modo de edição
+  useEffect(() => {
+    if (!editMode) {
+      localStorage.removeItem(`fair-note-edit-title-${noteId}`);
+      localStorage.removeItem(`fair-note-edit-content-${noteId}`);
+    }
+  }, [editMode, noteId]);
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen text-[var(--foreground)]">
@@ -848,16 +882,11 @@ export default function NotePage() {
                 {/* Enhanced collaboration manager with Google Docs style features - only for public notes */}
                 {noteType === 'public' && (
                   <CollaboratorManager
-                    collaborators={collaboratorsForUI}
+                    collaborators={collaboratorsWithPresence}
                     noteId={noteId || ''}
                     currentUserId={user?.id || ''}
                     userPermission={userPermission}
-                    onRefreshCollaborators={async () => {
-                      if (noteType === 'public' && noteId) {
-                        const result = await realtimeManager.getAllNoteCollaborators(noteId);
-                        setAllCollaborators(result);
-                      }
-                    }}
+                    onRefreshCollaborators={loadNoteCollaborators}
                     isPublicNote={true}
                   />
                 )}
@@ -904,12 +933,13 @@ export default function NotePage() {
                       if (canEdit) {
                         setEditMode(true);
                         // Send activity when entering edit mode - only for public notes
-                        if (noteType === 'public') {
-                          sendActivity('editing', { 
-                            noteId: noteId || '',
-                            action: 'start_editing'
-                          });
-                        }
+                        // DISABLED: Collaboration activities temporarily disabled
+                        // if (noteType === 'public') {
+                        //   sendActivity('editing', { 
+                        //     noteId: noteId || '',
+                        //     action: 'start_editing'
+                        //   });
+                        // }
                       } else {
                         showToast(
                           "You can only read this note. Upgrade to edit.",

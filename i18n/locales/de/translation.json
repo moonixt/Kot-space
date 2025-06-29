@@ -251,6 +251,7 @@
       "codeGenerated": "Code erfolgreich generiert!",
       "codeDeactivated": "Code deaktiviert!",
       "codeCopied": "Code kopiert!",
+      "copyError": "Fehler beim Kopieren des Codes",
       "errorGenerating": "Fehler beim Generieren des Codes",
       "errorDeactivating": "Fehler beim Deaktivieren des Codes",
       "errorLoading": "Fehler beim Laden der Codes"

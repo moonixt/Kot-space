@@ -323,33 +323,12 @@ class RealtimeManager {
 
   /**
    * Envia uma atividade de colaboração para outros usuários
+   * TEMPORARILY DISABLED - Activities disabled to prevent errors
    */
   async sendCollaborationActivity(noteId: string, userId: string, activityType: string, data?: any, isPublicNote = false) {
-    try {
-      const activityData: any = {
-        user_id: userId,
-        activity_type: activityType,
-        activity_data: data,
-      };
-
-      if (isPublicNote) {
-        activityData.public_note_id = noteId;
-      } else {
-        activityData.note_id = noteId;
-      }
-
-      const { error } = await supabase
-        .from('note_activity')
-        .insert(activityData);
-
-      if (error) {
-        console.error('Error sending collaboration activity:', error);
-      } else {
-        this.log(`Sent collaboration activity: ${activityType}`, data);
-      }
-    } catch (error) {
-      console.error('Error sending collaboration activity:', error);
-    }
+    // DISABLED: Collaboration activities temporarily disabled to prevent errors
+    console.log('[DEBUG] Collaboration activity disabled:', { noteId, userId, activityType, data, isPublicNote });
+    return; // Early return - no database insertion
   }
 
   /**
@@ -496,21 +475,30 @@ class RealtimeManager {
       const collaborators: CollaboratorPresence[] = [];
 
       // First, get the note owner
-      const { data: publicNoteData } = await supabase
+      console.log('[DEBUG] Fetching public note data...');
+      const { data: publicNoteData, error: noteError } = await supabase
         .from('public_notes')
         .select('owner_id')
         .eq('id', noteId)
         .single();
 
-      console.log('[DEBUG] Public note data:', publicNoteData);
+      console.log('[DEBUG] Public note query result:', { data: publicNoteData, error: noteError });
+
+      if (noteError) {
+        console.error('[DEBUG] Error fetching public note:', noteError);
+        return [];
+      }
 
       if (publicNoteData?.owner_id) {
         // Get owner profile
-        const { data: ownerProfile } = await supabase
+        console.log('[DEBUG] Fetching owner profile for ID:', publicNoteData.owner_id);
+        const { data: ownerProfile, error: ownerError } = await supabase
           .from('profiles')
           .select('id, email, full_name, avatar_url')
           .eq('id', publicNoteData.owner_id)
           .single();
+
+        console.log('[DEBUG] Owner profile query result:', { data: ownerProfile, error: ownerError });
 
         if (ownerProfile) {
           collaborators.push({
@@ -530,30 +518,35 @@ class RealtimeManager {
       }
 
       // Get all shared collaborators for this public note
+      console.log('[DEBUG] Fetching note shares...');
       const { data: shares, error } = await supabase
         .from('note_shares')
         .select('shared_with_id, permission')
         .eq('public_note_id', noteId);
 
-      console.log('[DEBUG] Note shares found:', shares?.length || 0, shares);
+      console.log('[DEBUG] Note shares query result:', { sharesCount: shares?.length || 0, shares, error });
 
       if (error) {
-        console.error('Error fetching shares:', error);
+        console.error('[DEBUG] Error fetching shares:', error);
+        console.log('[DEBUG] Returning collaborators (owner only):', collaborators.length);
+        return collaborators; // Return at least the owner
       } else if (shares && shares.length > 0) {
         // Get profiles for all shared users
         const userIds = shares.map(share => share.shared_with_id);
+        console.log('[DEBUG] Fetching profiles for user IDs:', userIds);
         
-        const { data: profiles } = await supabase
+        const { data: profiles, error: profilesError } = await supabase
           .from('profiles')
           .select('id, email, full_name, avatar_url')
           .in('id', userIds);
 
-        console.log('[DEBUG] Shared user profiles found:', profiles?.length || 0);
+        console.log('[DEBUG] Shared user profiles query result:', { profilesCount: profiles?.length || 0, profiles, error: profilesError });
 
         if (profiles) {
           shares.forEach(share => {
             const profile = profiles.find(p => p.id === share.shared_with_id);
             if (profile) {
+              console.log('[DEBUG] Adding collaborator:', { id: profile.id, name: profile.full_name, permission: share.permission });
               collaborators.push({
                 user_id: profile.id,
                 email: profile.email,
@@ -567,9 +560,13 @@ class RealtimeManager {
                 selection_start: undefined,
                 selection_end: undefined,
               });
+            } else {
+              console.warn('[DEBUG] Profile not found for user ID:', share.shared_with_id);
             }
           });
         }
+      } else {
+        console.log('[DEBUG] No shares found for this note');
       }
 
       console.log('[DEBUG] Final collaborators list:', collaborators.length, collaborators.map(c => ({ 
@@ -1601,9 +1598,9 @@ export const useRealtimeNoteCollaboration = (
   }, [noteId, userId]); // Remove callbacks dependency
 
   const sendActivity = (activityType: string, data?: any) => {
-    if (noteId && userId) {
-      realtimeManager.sendCollaborationActivity(noteId, userId, activityType, data);
-    }
+    // DISABLED: Collaboration activities temporarily disabled to prevent errors
+    console.log('[DEBUG] Private note activity disabled:', { noteId, userId, activityType, data });
+    return; // Early return - no database operations
   };
 
   return { collaborators, sendActivity };
@@ -1828,10 +1825,9 @@ export const usePublicNoteCollaboration = (
     onlineUsers, // All collaborators are considered "online" for display
     refreshCollaborators,
     sendActivity: (activityType: string, data?: any) => {
-      if (publicNoteId && userId) {
-        // For public notes, we log activity to note_activity table with public_note_id
-        realtimeManager.sendCollaborationActivity(publicNoteId, userId, activityType, data, true);
-      }
+      // DISABLED: Collaboration activities temporarily disabled to prevent errors
+      console.log('[DEBUG] Public note activity disabled:', { publicNoteId, userId, activityType, data });
+      return; // Early return - no database operations
     }
   };
 };
