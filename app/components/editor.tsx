@@ -35,40 +35,37 @@ interface EditorProps {
   initialNoteType?: 'private' | 'public';
 }
 
+
 function Editor({ initialNoteType = 'private' }: EditorProps) {
   //main function for the editor component
-  const [title, setTitle] = useState(""); //state for the title of the note, initialized as empty string
-  const [content, setContent] = useState(""); //state for the content of the note, initialized as empty string
-  const [saving, setSaving] = useState(false); //state for the saving process, inatilized as false
-  const { user } = useAuth(); // get the user method for the context auth, to get the user data from the context
-  const [selectedTags, setSelectedTags] = useState<string[]>([]); // state for the selected tags, initialized as empty array of strings
-  const [isPreviewMode, setIsPreviewMode] = useState(false); // state for preview mode, start as a false, and are active when the user click on preview button
-  const [showEmojiPicker, setShowEmojiPicker] = useState(false); // state for the emoji picker
-  const [showEmojiPickerContent, setShowEmojiPickerContent] = useState(false); //state for the emoji picker in the content area
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [autoSaveStatus, setAutoSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
+  const autoSaveTimeout = useRef<NodeJS.Timeout | null>(null);
+  const { user } = useAuth();
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [isPreviewMode, setIsPreviewMode] = useState(false);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [showEmojiPickerContent, setShowEmojiPickerContent] = useState(false);
   const [imageUploadLoading, setImageUploadLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   // const [tagSearchTerm, setTagSearchTerm] = useState("");
-  const { t } = useTranslation(); // Add the translation hook to access translations  // Add subscription status state
+  const { t } = useTranslation();
   const [, setCanCreateNotes] = useState(true);
-  
+
   // State for note type selection
   const [selectedNoteType, setSelectedNoteType] = useState<'private' | 'public'>(initialNoteType);
   const [showNoteTypeDropdown, setShowNoteTypeDropdown] = useState(false);
   const [, setHasReadOnlyAccess] = useState(false);
 
   // Add state for folders and folder selection
-  const [folders, setFolders] = useState<Array<{ id: string; name: string }>>(
-    [],
-  );
-  const [selectedFolder, setSelectedFolder] = useState<{
-    id: string;
-    name: string;
-  } | null>(null);
+  const [folders, setFolders] = useState<Array<{ id: string; name: string }>>([]);
+  const [selectedFolder, setSelectedFolder] = useState<{ id: string; name: string } | null>(null);
   const [showFolderDropdown, setShowFolderDropdown] = useState(false);
 
   // Create a ref for the folder dropdown
   const folderDropdownRef = useRef<HTMLDivElement>(null);
-  
   // Create a ref for the note type dropdown
   const noteTypeDropdownRef = useRef<HTMLDivElement>(null);
 
@@ -170,6 +167,14 @@ function Editor({ initialNoteType = 'private' }: EditorProps) {
     if (user) {
       fetchFolders();
     }
+
+    // Cleanup function - limpa localStorage quando o componente é desmontado
+    return () => {
+      localStorage.removeItem("fair-note-title");
+      localStorage.removeItem("fair-note-content");
+      localStorage.removeItem("fair-note-tags");
+      localStorage.removeItem("fair-note-folder");
+    };
   }, [user]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Add fetchFolders function using useCallback to prevent dependency issues
@@ -413,35 +418,20 @@ function Editor({ initialNoteType = 'private' }: EditorProps) {
       }
 
       // If success, this flow will be executed:
-      setTitle(""); // the title notes will be empty
-      setContent(""); // the content of the notes will be empty
-      setSelectedTags([]); // Clean the selected tags
-      setSelectedFolder(null); // Clear selected folder
+      // Status é controlado pelo autosave
 
-      // Limpar localStorage após salvar com sucesso
+      // Limpar localStorage após salvar com sucesso para evitar duplicação
       localStorage.removeItem("fair-note-title");
       localStorage.removeItem("fair-note-content");
       localStorage.removeItem("fair-note-tags");
       localStorage.removeItem("fair-note-folder");
 
+      // NÃO limpar os campos do editor - manter o conteúdo após salvar
+      // Os campos devem permanecer com o conteúdo atual para permitir edições contínuas
+
       // Auto fetch notes and folders after saving
       // Removed manual calls since Realtime will automatically notify all subscribed components
       // The sidebar will update automatically via its own Realtime subscription
-
-      // Realtime will automatically notify other components!
-      const notification = document.createElement("div");
-      notification.className =
-        "fixed bottom-4 left-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-500 flex items-center gap-2 z-[60]";
-      notification.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 00-1.414-1.414L9 10.586 7.707 9.293a1 1 00-1.414 1.414l2 2a1 1 001.414 0l4-4z" clip-rule="evenodd" />
-      </svg>${t("editor.noteSaved")}`;
-      document.body.appendChild(notification);
-
-      setTimeout(() => {
-        //delay for the notification desappear
-        notification.style.opacity = "0";
-        setTimeout(() => notification.remove(), 500);
-      }, 3000);
     } catch (error) {
       console.error("Erro ao salvar nota:", error); //error logged in the console      // Notification toast for erro
       const notification = document.createElement("div");
@@ -458,9 +448,53 @@ function Editor({ initialNoteType = 'private' }: EditorProps) {
         setTimeout(() => notification.remove(), 500);
       }, 3000);
     } finally {
-      setSaving(false); //after save, the state of the setSaving will be false
+      setSaving(false);
     }
   };
+
+  // Auto-save effect
+  useEffect(() => {
+    if (!title.trim() && !content.trim()) return;
+    
+    if (autoSaveTimeout.current) clearTimeout(autoSaveTimeout.current);
+    
+    // Resetar o status para idle primeiro
+    setAutoSaveStatus('idle');
+    
+    autoSaveTimeout.current = setTimeout(async () => {
+      setAutoSaveStatus('saving');
+      try {
+        await saveNote();
+        setAutoSaveStatus('saved');
+        setTimeout(() => setAutoSaveStatus('idle'), 1500);
+      } catch (error) {
+        setAutoSaveStatus('idle');
+      }
+    }, 1500); // 1.5s debounce
+    
+    return () => {
+      if (autoSaveTimeout.current) clearTimeout(autoSaveTimeout.current);
+    };
+  }, [title, content, selectedTags, selectedFolder, selectedNoteType]);
+
+  // Keyboard shortcut for save (Ctrl+S / Cmd+S)
+  useEffect(() => {
+    const handler = async (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault();
+        setAutoSaveStatus('saving');
+        try {
+          await saveNote();
+          setAutoSaveStatus('saved');
+          setTimeout(() => setAutoSaveStatus('idle'), 1500);
+        } catch (error) {
+          setAutoSaveStatus('idle');
+        }
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [title, content, selectedTags, selectedFolder, selectedNoteType]);
 
   const isImageFile = (file: File) => {
     const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
@@ -573,16 +607,24 @@ function Editor({ initialNoteType = 'private' }: EditorProps) {
         <div className="bg-[var(--background)] overflow-hidden flex flex-col flex-grow h-full  transition-all duration-300">
           {/* Title Section */}
           <div className="p-5 sm:p-6 relative">
-            {/* Realtime Connection Indicator */}
-            <div className="absolute top-2 right-2 flex items-center gap-2 text-xs">
+            {/* Realtime Connection Indicator + Auto-save status */}
+            <div className="absolute top-2 right-2 flex items-center gap-3 text-xs">
               <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`}></div>
               <span className="text-[var(--foreground-light)]">
                 {isConnected ? t('editor.connected') : t('editor.disconnected')}
               </span>
+              {/* Auto-save status */}
+              {autoSaveStatus === 'saving' && (
+                <span className="text-yellow-400 animate-pulse">{t('editor.saving')}</span>
+              )}
+              {autoSaveStatus === 'saved' && (
+                <span className="text-green-400">Salvo!</span>
+              )}
             </div>
 
-            <div className="flex justify-center">
-              {" "}
+            {/* Botão de salvar manual opcional, pode ser removido se quiser só autosave */}
+            {/*
+            <div className="flex justify-center mt-2">
               <button
                 className={`flex items-center justify-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 w-46 rounded-md text-sm sm:text-base font-medium transition-all duration-300 ${
                   saving
@@ -604,6 +646,7 @@ function Editor({ initialNoteType = 'private' }: EditorProps) {
                 )}
               </button>
             </div>
+            */}
             <div className="flex items-center gap-3">
               {" "}
               <button

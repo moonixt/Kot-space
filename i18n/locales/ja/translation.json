@@ -379,7 +379,8 @@
     "realtimeCollaboration": "リアルタイムコラボレーション",
     "connected": "接続中",
     "disconnected": "切断",
-    "selectNoteType": "ノートタイプを選択"
+    "selectNoteType": "ノートタイプを選択",
+    "exitEditMode": "終了"
   },
   "notes": {
     "backToHome": "ホームに戻る",

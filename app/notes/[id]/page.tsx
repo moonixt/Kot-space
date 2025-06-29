@@ -6,7 +6,6 @@ import { useRouter, useParams, useSearchParams } from "next/navigation";
 import { supabase } from "../../../lib/supabase";
 import { useAuth } from "../../../context/AuthContext";
 import {
-  Save,
   ArrowLeft,
   Calendar,
   Edit,
@@ -46,7 +45,6 @@ interface Note {
 export default function NotePage() {
   const [note, setNote] = useState<Note | null>(null);
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
   const { user } = useAuth();
   const router = useRouter();
   const params = useParams();
@@ -58,6 +56,8 @@ export default function NotePage() {
   const [editMode, setEditMode] = useState(false);
   const [editTitle, setEditTitle] = useState("");
   const [editContent, setEditContent] = useState("");
+  const [autoSaveStatus, setAutoSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
+  const autoSaveTimeout = useRef<NodeJS.Timeout | null>(null);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [isPreviewMode, setIsPreviewMode] = useState(false);
   const [imageUploadLoading, setImageUploadLoading] = useState(false);
@@ -219,16 +219,17 @@ export default function NotePage() {
     fetchNote();
   }, [fetchNote]);
 
-  const handleSave = async () => {
+  const handleSave = async (isAutoSave = false) => {
     if (!user || !noteId) return;
 
     // Check if user can save before proceeding
     if (!canSave) {
-      showToast("You can only read this note. Upgrade to edit.", "error");
+      if (!isAutoSave) {
+        showToast("You can only read this note. Upgrade to edit.", "error");
+      }
       return;
     }
 
-    setSaving(true);
     try {
       if (noteType === 'public') {
         // Update public note with encryption
@@ -290,13 +291,17 @@ export default function NotePage() {
       localStorage.removeItem(`fair-note-edit-title-${noteId}`);
       localStorage.removeItem(`fair-note-edit-content-${noteId}`);
 
-      setEditMode(false);
-      showToast(t("editor.noteSaved"), "success");
+      // Only exit edit mode and show toast for manual saves
+      if (!isAutoSave) {
+        setEditMode(false);
+        showToast(t("editor.noteSaved"), "success");
+      }
     } catch (error) {
       console.error("Error saving note:", error);
-      showToast(t("editor.saveError"), "error");
-    } finally {
-      setSaving(false);
+      if (!isAutoSave) {
+        showToast(t("editor.saveError"), "error");
+      }
+      throw error; // Re-throw for autosave error handling
     }
   };
 
@@ -524,6 +529,13 @@ export default function NotePage() {
     setIsPreviewMode(false);
   }
 
+  function exitEditMode() {
+    // Não limpar localStorage - as alterações são salvas automaticamente
+    // Apenas sair do modo de edição
+    setEditMode(false);
+    setIsPreviewMode(false);
+  }
+
   function showToast(message: string, type: "success" | "error") {
     const toast = document.createElement("div");
     toast.className = `fixed bottom-4 right-4 px-6 py-3 rounded-lg shadow-lg transform transition-all duration-500 flex items-center gap-2 ${
@@ -743,6 +755,71 @@ export default function NotePage() {
     }
   }, [editMode, noteId]);
 
+  // Auto-save effect
+  useEffect(() => {
+    if (!editMode) return; // Only autosave when in edit mode
+    if (!editTitle.trim() && !editContent.trim()) return;
+    if (!note) return; // Aguardar a nota carregar
+    
+    // Verificar se houve mudanças reais comparando com os valores originais da nota
+    const titleChanged = editTitle !== note.title;
+    const contentChanged = editContent !== note.content;
+    
+    if (!titleChanged && !contentChanged) {
+      return; // Não salvar se não houve mudanças
+    }
+    
+    if (autoSaveTimeout.current) clearTimeout(autoSaveTimeout.current);
+    
+    // Resetar o status para idle primeiro
+    setAutoSaveStatus('idle');
+    
+    autoSaveTimeout.current = setTimeout(async () => {
+      setAutoSaveStatus('saving');
+      try {
+        await handleSave(true); // Pass true to indicate this is an autosave
+        setAutoSaveStatus('saved');
+        setTimeout(() => setAutoSaveStatus('idle'), 1500);
+      } catch (error) {
+        setAutoSaveStatus('idle');
+      }
+    }, 1500); // 1.5s debounce
+    
+    return () => {
+      if (autoSaveTimeout.current) clearTimeout(autoSaveTimeout.current);
+    };
+  }, [editTitle, editContent, editMode, note]);
+
+  // Keyboard shortcut for save (Ctrl+S / Cmd+S)
+  useEffect(() => {
+    const handler = async (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 's' && editMode) {
+        e.preventDefault();
+        if (!note) return;
+        
+        // Verificar se houve mudanças reais antes de salvar manualmente
+        const titleChanged = editTitle !== note.title;
+        const contentChanged = editContent !== note.content;
+        
+        if (!titleChanged && !contentChanged) {
+          showToast("Nenhuma alteração para salvar", "success");
+          return;
+        }
+        
+        setAutoSaveStatus('saving');
+        try {
+          await handleSave(false); // Manual save
+          setAutoSaveStatus('saved');
+          setTimeout(() => setAutoSaveStatus('idle'), 1500);
+        } catch (error) {
+          setAutoSaveStatus('idle');
+        }
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [editTitle, editContent, editMode, note]);
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen text-[var(--foreground)]">
@@ -865,22 +942,11 @@ export default function NotePage() {
         <Profile />
         <div className="min-h-screen  flex justify-center ">
           <div className="w-full max-w-7xl bg-[var(--background)] min-h-screen  flex flex-col">
-            {/* Barra de navegação superior */}
-            <div className="bg-opacity-10 px-4 py-2 text-[var(--foreground)]   items-center">
-              {/* <Link
-                href="/dashboard"
-                className="flex items-center gap-2 text-[var(--foreground)] hover:text-[var(--foreground-light)] transition-colors"
-              >
-                <ArrowLeft size={18} />
-                <span>{t("notes.backToNotes")}</span>
-              </Link> */}
-
-              <div className="flex items-center gap-2 pr-10">
-                {/* Debug button removed for production */
-                }
-
+            {/* Área de colaboração e controles de edição */}
+            <div className="bg-opacity-10 px-4 py-2 text-[var(--foreground)]">
+              <div className="flex items-center justify-between">
                 {/* Enhanced collaboration manager with Google Docs style features - only for public notes */}
-                {noteType === 'public' && (
+                {noteType === 'public' ? (
                   <CollaboratorManager
                     collaborators={collaboratorsWithPresence}
                     noteId={noteId || ''}
@@ -889,69 +955,48 @@ export default function NotePage() {
                     onRefreshCollaborators={loadNoteCollaborators}
                     isPublicNote={true}
                   />
-                )}
-                
-                {editMode ? (
-                  <>
-                    <button
-                      className={`rounded transition-colors px-2 py-1 flex items-center gap-1 ${
-                        !canSave ? "opacity-50 cursor-not-allowed" : ""
-                      }`}
-                      title={t("editor.save")}
-                      onClick={handleSave}
-                      disabled={saving || !canSave}
-                    >
-                      {saving ? (
-                        <div className="w-4 h-4 border-2 border-green-300 border-t-transparent rounded-full animate-spin"></div>
-                      ) : (
-                        <>
-                          <Save size={16} /> {t("editor.save")}
-                        </>
-                      )}
-                    </button>
-                    <button
-                      className="rounded hover:bg-red-400 transition-colors px-2 py-1 flex items-center gap-1"
-                      title={t("editor.cancel")}
-                      onClick={cancelEdit}
-                    >
-                      <X size={16} /> {t("editor.cancel")}
-                    </button>
-                  </>
                 ) : (
-                  <button
-                    className={`rounded transition-colors px-2 py-1 flex items-center gap-1 ${
-                      !canEdit
-                        ? "opacity-50 cursor-not-allowed"
-                        : "hover:bg-[var(--accent-color)]"
-                    }`}
-                    title={
-                      !canEdit
-                        ? "Read-only mode - Upgrade to edit"
-                        : t("editor.edit")
-                    }
-                    onClick={() => {
-                      if (canEdit) {
-                        setEditMode(true);
-                        // Send activity when entering edit mode - only for public notes
-                        // DISABLED: Collaboration activities temporarily disabled
-                        // if (noteType === 'public') {
-                        //   sendActivity('editing', { 
-                        //     noteId: noteId || '',
-                        //     action: 'start_editing'
-                        //   });
-                        // }
-                      } else {
-                        showToast(
-                          "You can only read this note. Upgrade to edit.",
-                          "error",
-                        );
-                      }
-                    }}
-                    disabled={!canEdit}
-                  >
-                    <Edit size={16} /> {t("editor.edit")}
-                  </button>
+                  <div></div> // Empty div to maintain layout balance
                 )}
+
+                {/* Edit Mode Toggle */}
+                <div className="flex items-center gap-2">
+                  {editMode ? (
+                    <button
+                      className="text-[var(--foregrounded)] rounded-lg px-3 py-2 flex items-center gap-2 transition-colors border border-blue-400/30"
+                      title="Exit edit mode"
+                      onClick={exitEditMode}
+                    >
+                      <X size={16} /> {t("editor.exitEditMode")}
+                    </button>
+                  ) : (
+                    <button
+                      className={`rounded-lg px-3 py-2 flex items-center gap-2 transition-colors border ${
+                        !canEdit
+                          ? "border-gray-600 text-gray-400 cursor-not-allowed"
+                          : "border-green-400/30 text-[var(--foreground)]"
+                      }`}
+                      title={
+                        !canEdit
+                          ? "Read-only mode - Upgrade to edit"
+                          : t("editor.edit")
+                      }
+                      onClick={() => {
+                        if (canEdit) {
+                          setEditMode(true);
+                        } else {
+                          showToast(
+                            "You can only read this note. Upgrade to edit.",
+                            "error",
+                          );
+                        }
+                      }}
+                      disabled={!canEdit}
+                    >
+                      <Edit size={16} /> {t("editor.edit")}
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
 
@@ -975,6 +1020,17 @@ export default function NotePage() {
                     disabled={!canEdit}
                     readOnly={!canEdit}
                   />
+                  
+                  {/* Auto-save status indicator */}
+                  <div className="flex items-center gap-2 text-xs">
+                    {autoSaveStatus === 'saving' && (
+                      <span className="text-yellow-400 animate-pulse">Salvando...</span>
+                    )}
+                    {autoSaveStatus === 'saved' && (
+                      <span className="text-green-400">Salvo!</span>
+                    )}
+                  </div>
+                  
                   {showEmojiPicker && (
                     <div className="absolute z-50 top-14 left-4 shadow-xl rounded-lg overflow-hidden">
                       <EmojiPicker
@@ -1148,11 +1204,11 @@ export default function NotePage() {
             )}
 
             {/* Área de conteúdo */}
-            <div className="flex-grow overflow-auto p-4">
+            <div className="flex-grow overflow-hidden p-4">
               {editMode ? (
                 <>
                   {!isPreviewMode ? (
-                    <div className="h-full">
+                    <div className="h-full flex flex-col">
                       <div className="mb-4 text-xs bg-[var(--container)] bg-opacity-50 p-2 rounded flex items-center gap-2 text-[var(--foreground)]">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -1174,14 +1230,19 @@ export default function NotePage() {
                         value={editContent}
                         onChange={(e) => setEditContent(e.target.value)}
                         placeholder={t("editor.noteContent")}
-                        className={`w-full h-full min-h-[300px] text-lg bg-transparent focus:outline-none resize-none text-[var(--foreground)] p-2 ${!canEdit ? "opacity-60 cursor-not-allowed" : ""}`}
-                        style={{ fontSize: "18px", lineHeight: "1.7" }}
+                        className={`flex-1 w-full text-lg bg-transparent focus:outline-none resize-none text-[var(--foreground)] p-2 scrollbar-hide ${!canEdit ? "opacity-60 cursor-not-allowed" : ""}`}
+                        style={{ 
+                          fontSize: "18px", 
+                          lineHeight: "1.7",
+                          scrollbarWidth: "none",
+                          msOverflowStyle: "none"
+                        }}
                         disabled={!canEdit}
                         readOnly={!canEdit}
                       />
                     </div>
                   ) : (
-                    <div className="markdown-content p-5 w-full bg-transparent text-[var(--foreground)] min-h-[300px] h-full text-lg overflow-auto  rounded-md">
+                    <div className="markdown-content h-full w-full bg-transparent text-[var(--foreground)] text-lg overflow-y-auto scrollbar-hide p-5 rounded-md">
                       {editContent ? (
                         <ReactMarkdown remarkPlugins={[remarkGfm]}>
                           {editContent}
@@ -1195,7 +1256,7 @@ export default function NotePage() {
                   )}
                 </>
               ) : (
-                <div className="h-full overflow-auto pr-2">
+                <div className="h-full overflow-y-auto scrollbar-hide">
                   <div className="prose prose-invert prose-lg w-full break-words text-lg text-[var(--foreground)] leading-relaxed markdown-content">
                     <ReactMarkdown remarkPlugins={[remarkGfm]}>
                       {note.content}
@@ -1235,9 +1296,9 @@ export default function NotePage() {
                     strokeLinejoin="round"
                     className="text-white"
                   >
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                    <polyline points="17 8 12 3 7 8"></polyline>
-                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2H6a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h13a2 2 0 0 1 2 2v4z"></path>
+                    <path d="M12 3v9"></path>
+                    <path d="M9 6h6"></path>
                   </svg>
                   <span>TXT</span>
                 </button>
@@ -1260,9 +1321,9 @@ export default function NotePage() {
                     strokeLinejoin="round"
                     className="text-white"
                   >
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                    <polyline points="17 8 12 3 7 8"></polyline>
-                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2H6a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h13a2 2 0 0 1 2 2v4z"></path>
+                    <path d="M12 3v9"></path>
+                    <path d="M9 6h6"></path>
                   </svg>
                   <span>PDF</span>
                 </button>
@@ -1362,6 +1423,69 @@ export default function NotePage() {
         </div>
       </ProtectedRoute>
       <Analytics />
+      <style jsx global>{`
+        .scrollbar-hide {
+          scrollbar-width: none; /* Firefox */
+          -ms-overflow-style: none; /* IE 10+ */
+        }
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none; /* Chrome/Safari/Webkit */
+        }
+        
+        /* Custom textarea styling */
+        textarea.scrollbar-hide:focus {
+          outline: none;
+          border: none;
+        }
+        
+        /* Improve markdown content rendering */
+        .markdown-content {
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        
+        .markdown-content h1,
+        .markdown-content h2,
+        .markdown-content h3,
+        .markdown-content h4,
+        .markdown-content h5,
+        .markdown-content h6 {
+          margin-top: 1.5em;
+          margin-bottom: 0.5em;
+          font-weight: 600;
+        }
+        
+        .markdown-content p {
+          margin-bottom: 1em;
+        }
+        
+        .markdown-content ul,
+        .markdown-content ol {
+          margin-bottom: 1em;
+          padding-left: 1.5em;
+        }
+        
+        .markdown-content code {
+          background-color: rgba(255, 255, 255, 0.1);
+          padding: 0.2em 0.4em;
+          border-radius: 4px;
+          font-size: 0.9em;
+        }
+        
+        .markdown-content pre {
+          background-color: rgba(255, 255, 255, 0.05);
+          padding: 1em;
+          border-radius: 8px;
+          overflow-x: auto;
+          margin: 1em 0;
+        }
+        
+        .markdown-content blockquote {
+          border-left: 4px solid rgba(255, 255, 255, 0.3);
+          padding-left: 1em;
+          margin: 1em 0;
+          font-style: italic;
+        }
+      `}</style>
     </>
   );
 }

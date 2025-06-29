@@ -379,7 +379,8 @@
     "realtimeCollaboration": "Colaboración en tiempo real",
     "connected": "Conectado",
     "disconnected": "Desconectado",
-    "selectNoteType": "Seleccionar tipo de nota"
+    "selectNoteType": "Seleccionar tipo de nota",
+    "exitEditMode": "Salir"
   },
   "profile": {
     "wallpaper": {

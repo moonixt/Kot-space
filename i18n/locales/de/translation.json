@@ -331,7 +331,8 @@
     "disconnected": "Getrennt",
     "selectNoteType": "Notiztyp auswählen",
     "selectFolder": "Ordner auswählen",
-    "noFolder": "Kein Ordner"
+    "noFolder": "Kein Ordner",
+    "exitEditMode": "Beenden"
   },
   "profile": {
     "wallpaper": {

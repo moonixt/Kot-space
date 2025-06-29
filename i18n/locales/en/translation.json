@@ -349,6 +349,7 @@
     "orderedList": "Numbered List",
     "unorderedList": "Bullet List",
     "edit": "Edit",
+    "exitEditMode": "Exit",
     "preview": "Preview",
     "noPreviewContent": "No content to preview...",
     "tags": "Tags:",

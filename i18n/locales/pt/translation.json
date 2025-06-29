@@ -337,6 +337,7 @@
     "orderedList": "Lista Numerada",
     "unorderedList": "Lista com Marcadores",
     "edit": "Editar",
+    "exitEditMode": "Sair",
     "preview": "Visualizar",
     "noPreviewContent": "Nenhum conteúdo para visualizar...",
     "tags": "Tags:",
