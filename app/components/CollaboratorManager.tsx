@@ -1,5 +1,3 @@
-
-/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import React, { useState, useEffect } from 'react';
@@ -203,7 +201,7 @@ const CollaboratorCard: React.FC<{
   };
 
   return (
-    <div className="flex items-center justify-between p-3 bg-gray-800 rounded-lg">
+    <div className="flex items-center justify-between p-3 bg-gray-800 rounded-lg  ">
       <div className="flex items-center gap-3">
         <UserAvatar 
           user={collaborator} 
@@ -393,7 +391,7 @@ const InviteCodeModal: React.FC<{
 
   return (
     <div 
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 animate-in fade-in duration-200"
+      className="fixed inset-0 flex items-center justify-center z-50 animate-in fade-in duration-200"
       onClick={(e) => {
         // Fecha o modal se clicar fora do conteúdo
         if (e.target === e.currentTarget) {
@@ -401,13 +399,13 @@ const InviteCodeModal: React.FC<{
         }
       }}
     >
-      <div className="bg-gray-900 rounded-lg shadow-xl w-full max-w-3xl max-h-[85vh] overflow-hidden animate-in slide-in-from-bottom-4 duration-200">
+      <div className="bg-gray-900 shadow-xl w-full max-w-4xl max-h-[85vh] overflow-hidden animate-in slide-in-from-bottom-4 duration-200" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
         {/* Header do Modal */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-700 bg-gradient-to-r from-green-900/20 to-blue-900/20">
+        <div className="flex items-center justify-between p-6 border-b border-gray-700 bg-gradient-to-r from-blue-900/20 to-blue-900/20">
           <div>
             <h3 className="text-xl font-bold text-white flex items-center gap-3">
-              <div className="p-2 bg-green-500 rounded-full">
-                <Link size={20} className="text-white" />
+              <div className="p-2  rounded-full">
+                <QrCode size={30} className="text-white" />
               </div>
               {t('collaboratorManager.inviteCodes.title')}
             </h3>
@@ -425,12 +423,12 @@ const InviteCodeModal: React.FC<{
         </div>
 
         {/* Conteúdo do Modal */}
-        <div className="p-6 max-h-96 overflow-y-auto">
+        <div className="p-6 max-w-4xl h-126 overflow-y-auto hide-scrollbar">
           {/* Notification */}
           {notification && (
-            <div className={`p-4 rounded-lg flex items-center gap-3 mb-6 animate-in slide-in-from-top-2 duration-200 ${
+            <div className={`p-4 flex items-center gap-3 mb-6 animate-in slide-in-from-top-2 duration-200 ${
               notification.type === 'success' 
-                ? 'bg-green-900/20 text-green-200 border border-green-800'
+                ? 'bg-green-500/40 text-green-200 border border-green-800'
                 : 'bg-red-900/20 text-red-200 border border-red-800'
             }`}>
               {notification.type === 'success' ? (
@@ -450,7 +448,7 @@ const InviteCodeModal: React.FC<{
 
           {/* Generate new code */}
           {userPermission === 'owner' && (
-            <div className="bg-gradient-to-br from-gray-700 to-gray-800 p-6 rounded-xl border border-gray-600 mb-6">
+            <div className="bg-gradient-to-br from-gray-700 to-gray-800 p-6 mb-6 border border-gray-600">
               <div className="flex items-center gap-3 mb-4">
                 <div className="p-2 bg-blue-500 rounded-lg">
                   <Plus size={16} className="text-white" />
@@ -468,7 +466,7 @@ const InviteCodeModal: React.FC<{
                 <button
                   onClick={() => generateInviteCode('read')}
                   disabled={generating}
-                  className="px-4 py-3 bg-gray-500 hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg text-sm flex items-center gap-2 transition-all hover:scale-105 shadow-md"
+                  className="px-4 py-3 bg-yellow-400 hover:bg-yellow-600 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg text-sm flex items-center gap-2 transition-all hover:scale-105 shadow-md"
                 >
                   <Eye size={16} />
                   <div className="text-left">
@@ -540,7 +538,7 @@ const InviteCodeModal: React.FC<{
                 {inviteCodes.map((invite, index) => (
                   <div 
                     key={invite.id} 
-                    className="border border-gray-600 rounded-xl p-4 from-gray-700 to-gray-800 bg-gray-750 hover:shadow-lg transition-all duration-200 animate-in slide-in-from-left-4"
+                    className="p-4 bg-gradient-to-br from-gray-700 to-gray-800 border border-gray-600 hover:shadow-lg transition-all duration-200 animate-in slide-in-from-left-4"
                     style={{ animationDelay: `${index * 100}ms` }}
                   >
                     <div className="flex items-start justify-between mb-3">
@@ -561,7 +559,7 @@ const InviteCodeModal: React.FC<{
                           <span className={`px-3 py-1 rounded-full text-sm font-medium ${
                             invite.permission === 'admin' ? 'bg-purple-900 text-purple-200' :
                             invite.permission === 'write' ? 'bg-blue-900 text-blue-200' :
-                            'bg-gray-700 text-gray-200'
+                            'bg-yellow-400 text-white'
                           }`}>
                             {invite.permission === 'admin' ? (
                               <><Crown size={12} className="inline mr-1" />{t('collaboratorManager.permissions.admin')}</>
@@ -588,10 +586,10 @@ const InviteCodeModal: React.FC<{
                         <Calendar size={12} />
                         <span>{t('collaboratorManager.inviteCodes.created')}: {formatDate(invite.created_at)}</span>
                       </div>
-                      <div className="flex items-center gap-2">
+                      {/* <div className="flex items-center gap-2">
                         <Users size={12} />
                         <span>{t('collaboratorManager.inviteCodes.uses')}: {invite.current_uses}{invite.max_uses ? `/${invite.max_uses}` : ` (${t('collaboratorManager.inviteCodes.unlimited')})`}</span>
-                      </div>
+                      </div> */}
                       {invite.expires_at && (
                         <div className="flex items-center gap-2">
                           <AlertCircle size={12} />
@@ -617,7 +615,7 @@ const InviteCodeModal: React.FC<{
              
               <button
                 onClick={onClose}
-                className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition-colors"
+                className="px-4 py-2 text-blue-400 hover:text-blue-500 rounded-lg font-medium transition-colors"
               >
                 {t('collaboratorManager.close')}
               </button>
@@ -625,6 +623,15 @@ const InviteCodeModal: React.FC<{
           </div>
         </div>
       </div>
+      <style jsx global>{`
+        .hide-scrollbar {
+          scrollbar-width: none; /* Firefox */
+          -ms-overflow-style: none; /* IE 10+ */
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+          display: none; /* Chrome/Safari/Webkit */
+        }
+      `}</style>
     </div>
   );
 };
@@ -794,18 +801,18 @@ export const CollaboratorManager: React.FC<CollaboratorManagerProps> = ({
         </div>
 
         <div className="flex items-center gap-2">
-          <button
+          {/* <button
             onClick={() => setShowCollaboratorsModal(true)}
             className="p-2 hover:bg-gray-700 rounded-full transition-colors"
             title={t('collaboratorManager.manageCollaborators')}
           >
             <Settings size={16} />
-          </button>
+          </button> */}
 
           {canManageCollaborators && (
             <button
               onClick={() => setShowInviteCodeModal(true)}
-              className="p-2 hover:bg-green-900 rounded-full transition-colors text-green-500"
+              className="p-2 hover:bg-blue-900 rounded-full transition-colors text-blue-500"
               title={t('collaboratorManager.inviteCodes.title')}
             >
               <Users size={16} />
@@ -817,14 +824,14 @@ export const CollaboratorManager: React.FC<CollaboratorManagerProps> = ({
       {/* Lista completa de colaboradores - Modal */}
       {showCollaboratorsModal && (
         <div 
-          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 animate-in fade-in duration-200"
+          className="fixed inset-0 flex items-center justify-center z-50 animate-in fade-in duration-200"
           onClick={(e) => {
             if (e.target === e.currentTarget) {
               setShowCollaboratorsModal(false);
             }
           }}
         >
-          <div className="bg-gray-900 border border-gray-700 rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[80vh] overflow-hidden animate-in slide-in-from-bottom-4 duration-200">
+          <div className="bg-gray-900  shadow-xl w-full max-w-4xl mx-4 max-h-[85vh] overflow-hidden animate-in slide-in-from-bottom-4 duration-200">
             {/* Header do Modal */}
             <div className="flex items-center justify-between p-6 border-b border-gray-700">
               <div>
@@ -837,14 +844,14 @@ export const CollaboratorManager: React.FC<CollaboratorManagerProps> = ({
                     : t('collaboratorManager.peopleHaveAccess', { count: collaborators.length })}
                 </p>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 ">
                 {canManageCollaborators && (
                   <button
                     onClick={() => {
                       setShowInviteCodeModal(true);
                       setShowCollaboratorsModal(false);
                     }}
-                    className="flex items-center gap-2 px-3 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 text-sm transition-colors"
+                    className="flex items-center gap-2 px-3 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 text-sm transition-colors"
                   >
                     <Link size={14} />
                     {t('collaboratorManager.manageInvites')}
@@ -861,7 +868,7 @@ export const CollaboratorManager: React.FC<CollaboratorManagerProps> = ({
             </div>
 
             {/* Conteúdo do Modal */}
-            <div className="p-6 max-h-96 overflow-y-auto">
+            <div className="p-6 max-w-4xl h-126 overflow-y-auto hide-scrollbar">
               {collaborators.length === 0 ? (
                 <div className="text-center py-8">
                   <div className="w-16 h-16 mx-auto bg-gray-800 rounded-full flex items-center justify-center mb-4">
@@ -911,6 +918,15 @@ export const CollaboratorManager: React.FC<CollaboratorManagerProps> = ({
               </div>
             </div>
           </div>
+          <style jsx global>{`
+            .hide-scrollbar {
+              scrollbar-width: none; /* Firefox */
+              -ms-overflow-style: none; /* IE 10+ */
+            }
+            .hide-scrollbar::-webkit-scrollbar {
+              display: none; /* Chrome/Safari/Webkit */
+            }
+          `}</style>
         </div>
       )}
 

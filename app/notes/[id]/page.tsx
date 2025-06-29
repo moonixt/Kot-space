@@ -792,8 +792,7 @@ export default function NotePage() {
               />
             </svg>
             <span>
-              You are viewing this note in read-only mode. Your trial has
-              expired.
+              You are viewing this note in read-only mode.
               <a
                 href="/pricing"
                 className="underline ml-1 hover:text-amber-100"
@@ -834,13 +833,13 @@ export default function NotePage() {
           <div className="w-full max-w-7xl bg-[var(--background)] min-h-screen  flex flex-col">
             {/* Barra de navegação superior */}
             <div className="bg-opacity-10 px-4 py-2 text-[var(--foreground)]   items-center">
-              <Link
+              {/* <Link
                 href="/dashboard"
                 className="flex items-center gap-2 text-[var(--foreground)] hover:text-[var(--foreground-light)] transition-colors"
               >
                 <ArrowLeft size={18} />
                 <span>{t("notes.backToNotes")}</span>
-              </Link>
+              </Link> */}
 
               <div className="flex items-center gap-2 pr-10">
                 {/* Debug button removed for production */
