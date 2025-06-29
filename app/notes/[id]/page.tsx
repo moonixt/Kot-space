@@ -826,7 +826,8 @@ export default function NotePage() {
   // Auto-save effect
   useEffect(() => {
     if (!editMode) return; // Only autosave when in edit mode
-    if (!editTitle.trim() && !editContent.trim()) return;
+    // Permitir salvar notas vazias (removido a validação que impedia isso)
+    // if (!editTitle.trim() && !editContent.trim()) return;
     if (!note) return; // Aguardar a nota carregar
     
     // Verificar se houve mudanças reais comparando com os valores originais da nota
@@ -955,10 +956,10 @@ export default function NotePage() {
       <ProtectedRoute>
         {/* Read-only mode banner */}
         {(hasReadOnlyAccess && !canEdit) || (isCollaboratorWithoutEditRights && !canEdit) ? (
-          <div className="bg-amber-500/20 border-l-4 border-amber-500 p-3 text-amber-200 text-sm flex items-center gap-2">
+          <div className="bg-amber-100 dark:bg-amber-500/20 border-l-4 border-amber-500 p-3 text-amber-800 dark:text-amber-200 text-sm flex items-center gap-2">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-4 w-4"
+              className="h-4 w-4 text-amber-600 dark:text-amber-400"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -983,9 +984,9 @@ export default function NotePage() {
                   }
                   <a
                     href="/pricing"
-                    className="underline ml-1 hover:text-amber-100"
+                    className="underline ml-1 hover:text-amber-700 dark:hover:text-amber-100 font-medium"
                   >
-                    Upgrade to edit
+                    Upgrade
                   </a>
                 </>
               )}
@@ -1113,10 +1114,10 @@ export default function NotePage() {
                   {/* Auto-save status indicator */}
                   <div className="flex items-center gap-2 text-xs">
                     {autoSaveStatus === 'saving' && (
-                      <span className="text-yellow-400 animate-pulse">Salvando...</span>
+                      <span className="text-yellow-400 animate-pulse">{t("editor.saving")}</span>
                     )}
                     {autoSaveStatus === 'saved' && (
-                      <span className="text-green-400">Salvo!</span>
+                      <span className="text-green-400">{t("editor.saved")}</span>
                     )}
                   </div>
                   

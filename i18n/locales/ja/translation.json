@@ -377,7 +377,6 @@
     "noTagsFound": "該当するタグがありません",
     "characters": "文字",
     "save": "ノートを保存",
-    "saving": "保存中",
     "loginRequired": "ノートを保存するにはログインが必要です！",
     "noteSaved": "ノートが正常に保存されました！",
     "saveError": "ノートの保存中にエラーが発生しました。再試行してください。",
@@ -410,6 +409,8 @@
     "connected": "接続中",
     "disconnected": "切断",
     "selectNoteType": "ノートタイプを選択",
+    "saving": "保存中...",
+    "saved": "保存済み!",
     "exitEditMode": "終了"
   },
   "notes": {

@@ -377,7 +377,6 @@
     "noTagsFound": "No se encontraron etiquetas para",
     "characters": "caracteres",
     "save": "Guardar nota",
-    "saving": "Guardando",
     "loginRequired": "¡Necesitas iniciar sesión para guardar notas!",
     "noteSaved": "¡Nota guardada con éxito!",
     "saveError": "Error al guardar la nota. Inténtalo de nuevo.",
@@ -410,6 +409,8 @@
     "connected": "Conectado",
     "disconnected": "Desconectado",
     "selectNoteType": "Seleccionar tipo de nota",
+    "saving": "Guardando...",
+    "saved": "¡Guardado!",
     "exitEditMode": "Salir"
   },
   "profile": {

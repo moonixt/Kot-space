@@ -387,7 +387,6 @@
     "noTagsFound": "No tag found for",
     "characters": "characters",
     "save": "Save note",
-    "saving": "Saving",
     "loginRequired": "You need to be logged in to save notes!",
     "noteSaved": "Note saved successfully!",
     "saveError": "Error saving note. Try again.",
@@ -419,7 +418,9 @@
     "realtimeCollaboration": "Real-time collaboration",
     "connected": "Connected",
     "disconnected": "Disconnected",
-    "selectNoteType": "Select note type"
+    "selectNoteType": "Select note type",
+    "saving": "Saving...",
+    "saved": "Saved!"
   },
   "notes": {
     "backToHome": "Back to home",

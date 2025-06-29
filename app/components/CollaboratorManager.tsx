@@ -28,6 +28,7 @@ interface Collaborator {
   full_name?: string;
   email?: string;
   avatar_url?: string;
+  bio?: string;
   isOwner?: boolean;
   permission?: 'owner' | 'admin' | 'write' | 'read';
 }
@@ -143,6 +144,11 @@ const UserAvatar: React.FC<UserAvatarProps> = ({
       </div>
       <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-black text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50">
         <div className="font-medium">{displayName}</div>
+        {user.bio && (
+          <div className="text-gray-300 italic text-xs mt-1 max-w-48 whitespace-normal">
+            {user.bio}
+          </div>
+        )}
         {user.permission && (
           <div className="text-gray-300 capitalize flex items-center gap-1 mt-1">
             {user.permission === 'owner' && <Crown size={10} className="text-yellow-400" />}
@@ -220,39 +226,51 @@ const CollaboratorCard: React.FC<{
               <div className="w-2 h-2 bg-green-400 rounded-full"></div>
             )}
           </div>
-          <div className="flex items-center gap-2 mt-1">
-            {/* Status Badge - Owner/Collaborator */}
-            <span className="text-xs px-2 py-1 rounded-full bg-blue-900 text-blue-300 capitalize flex items-center gap-1">
-              {collaborator.permission === 'owner' || collaborator.isOwner ? (
-                <>
-                  <Crown size={12} className="text-yellow-500" />
-                  {t('collaboratorManager.permissions.owner')}
-                </>
-              ) : (
-                <>
-                  <Users size={12} className="text-blue-300" />
-                  {t('collaboratorManager.permissions.collaborator')}
-                </>
-              )}
-            </span>
-            
-            {/* Permission Badge - Specific permission level */}
-            {collaborator.permission && (
-              <span className={`text-xs px-2 py-1 rounded-full capitalize flex items-center gap-1 ${
-                collaborator.permission === 'owner' ? 'bg-yellow-900 text-yellow-200' :
-                collaborator.permission === 'admin' ? 'bg-purple-900 text-purple-200' :
-                collaborator.permission === 'write' ? 'bg-green-900 text-green-200' :
-                'bg-blue-900 text-blue-200'
-              }`}>
-                {collaborator.permission === 'owner' && <Crown size={12} className="text-yellow-400" />}
-                {collaborator.permission === 'admin' && <Crown size={12} className="text-purple-400" />}
-                {collaborator.permission === 'write' && <Edit size={12} className="text-green-400" />}
-                {collaborator.permission === 'read' && <Eye size={12} className="text-blue-200" />}
-                {collaborator.permission === 'owner' ? t('collaboratorManager.permissions.owner') :
-                 collaborator.permission === 'admin' ? t('collaboratorManager.permissions.admin') :
-                 collaborator.permission === 'write' ? t('collaboratorManager.permissions.write') :
-                 t('collaboratorManager.permissions.read')}
+          <div className="space-y-1 mt-1">
+            {/* Primeira linha: Status Badge e Permission Badge */}
+            <div className="flex items-center gap-2 flex-wrap">
+              {/* Status Badge - Owner/Collaborator */}
+              <span className="text-xs px-2 py-1 rounded-full bg-blue-900 text-blue-300 capitalize flex items-center gap-1">
+                {collaborator.permission === 'owner' || collaborator.isOwner ? (
+                  <>
+                    <Crown size={12} className="text-yellow-500" />
+                    {t('collaboratorManager.permissions.owner')}
+                  </>
+                ) : (
+                  <>
+                    <Users size={12} className="text-blue-300" />
+                    {t('collaboratorManager.permissions.collaborator')}
+                  </>
+                )}
               </span>
+              
+              {/* Permission Badge - Specific permission level */}
+              {collaborator.permission && (
+                <span className={`text-xs px-2 py-1 rounded-full capitalize flex items-center gap-1 ${
+                  collaborator.permission === 'owner' ? 'bg-yellow-900 text-yellow-200' :
+                  collaborator.permission === 'admin' ? 'bg-purple-900 text-purple-200' :
+                  collaborator.permission === 'write' ? 'bg-green-900 text-green-200' :
+                  'bg-blue-900 text-blue-200'
+                }`}>
+                  {collaborator.permission === 'owner' && <Crown size={12} className="text-yellow-400" />}
+                  {collaborator.permission === 'admin' && <Crown size={12} className="text-purple-400" />}
+                  {collaborator.permission === 'write' && <Edit size={12} className="text-green-400" />}
+                  {collaborator.permission === 'read' && <Eye size={12} className="text-blue-200" />}
+                  {collaborator.permission === 'owner' ? t('collaboratorManager.permissions.owner') :
+                   collaborator.permission === 'admin' ? t('collaboratorManager.permissions.admin') :
+                   collaborator.permission === 'write' ? t('collaboratorManager.permissions.write') :
+                   t('collaboratorManager.permissions.read')}
+                </span>
+              )}
+            </div>
+
+            {/* Segunda linha: Bio do usuário */}
+            {collaborator.bio && (
+              <div className="flex items-center">
+                <span className="text-xs px-2 py-1 rounded-full bg-gray-700 text-gray-300 italic max-w-xs truncate">
+                  {collaborator.bio}
+                </span>
+              </div>
             )}
           </div>
           <div className="text-sm text-gray-400">

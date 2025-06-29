@@ -375,7 +375,6 @@
     "noTagsFound": "Nenhuma tag encontrada para",
     "characters": "caracteres",
     "save": "Salvar nota",
-    "saving": "Salvando",
     "loginRequired": "Você precisa estar logado para salvar notas!",
     "noteSaved": "Nota salva com sucesso!",
     "saveError": "Erro ao salvar nota. Tente novamente.",
@@ -406,7 +405,9 @@
     "realtimeCollaboration": "Colaboração em tempo real",
     "connected": "Conectado",
     "disconnected": "Desconectado",
-    "selectNoteType": "Selecionar tipo de nota"
+    "selectNoteType": "Selecionar tipo de nota",
+    "saving": "Salvando...",
+    "saved": "Salvo!"
   },
   "notes": {
     "backToHome": "Voltar para a página inicial",
