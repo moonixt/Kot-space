@@ -148,7 +148,7 @@ const UserAvatar: React.FC<UserAvatarProps> = ({
             {user.permission === 'owner' && <Crown size={10} className="text-yellow-400" />}
             {user.permission === 'admin' && <Crown size={10} className="text-purple-400" />}
             {user.permission === 'write' && <Edit size={10} className="text-green-400" />}
-            {user.permission === 'read' && <Eye size={10} className="text-gray-400" />}
+            {user.permission === 'read' && <Eye size={10} className="text-blue-400" />}
             {user.permission === 'owner' ? t('collaboratorManager.permissions.owner') : 
              user.permission === 'admin' ? t('collaboratorManager.permissions.admin') :
              user.permission === 'write' ? t('collaboratorManager.permissions.write') : 
@@ -242,12 +242,12 @@ const CollaboratorCard: React.FC<{
                 collaborator.permission === 'owner' ? 'bg-yellow-900 text-yellow-200' :
                 collaborator.permission === 'admin' ? 'bg-purple-900 text-purple-200' :
                 collaborator.permission === 'write' ? 'bg-green-900 text-green-200' :
-                'bg-yellow-400 text-white'
+                'bg-blue-900 text-blue-200'
               }`}>
                 {collaborator.permission === 'owner' && <Crown size={12} className="text-yellow-400" />}
                 {collaborator.permission === 'admin' && <Crown size={12} className="text-purple-400" />}
                 {collaborator.permission === 'write' && <Edit size={12} className="text-green-400" />}
-                {collaborator.permission === 'read' && <Eye size={12} className="text-gray-400" />}
+                {collaborator.permission === 'read' && <Eye size={12} className="text-blue-200" />}
                 {collaborator.permission === 'owner' ? t('collaboratorManager.permissions.owner') :
                  collaborator.permission === 'admin' ? t('collaboratorManager.permissions.admin') :
                  collaborator.permission === 'write' ? t('collaboratorManager.permissions.write') :
@@ -265,7 +265,7 @@ const CollaboratorCard: React.FC<{
         <div className="relative">
           <button
             onClick={() => setShowActions(!showActions)}
-            className="p-2 hover:bg-gray-700 rounded-full transition-colors"
+            className="p-2 hover:bg-gray-700 text-white rounded-full transition-colors"
             disabled={isUpdating}
           >
             {isUpdating ? (
@@ -278,20 +278,20 @@ const CollaboratorCard: React.FC<{
           {showActions && (
             <div className="absolute right-0 top-full mt-1 bg-gray-800 border border-gray-700 rounded-lg shadow-lg z-10 min-w-48">
               <div className="p-2">
-                <div className="text-xs font-medium text-gray-400 mb-2">
+                <div className="text-xs font-medium text-white mb-2">
                   {t('collaboratorManager.permissions.changePermission')}
                 </div>
                 <div className="space-y-1">
                   <button
                     onClick={() => handlePermissionChange('read')}
-                    className="w-full text-left p-2 hover:bg-gray-700 rounded flex items-center gap-2 text-sm"
+                    className="w-full text-white text-left p-2 hover:bg-gray-700 rounded flex items-center gap-2 text-sm"
                   >
                     <Eye size={14} />
                     {t('collaboratorManager.permissions.read')}
                   </button>
                   <button
                     onClick={() => handlePermissionChange('write')}
-                    className="w-full text-left p-2 hover:bg-gray-700 rounded flex items-center gap-2 text-sm"
+                    className="w-full text-white text-left p-2 hover:bg-gray-700 rounded flex items-center gap-2 text-sm"
                   >
                     <Edit size={14} />
                     {t('collaboratorManager.permissions.write')}
@@ -299,7 +299,7 @@ const CollaboratorCard: React.FC<{
                   {currentUserPermission === 'owner' && (
                     <button
                       onClick={() => handlePermissionChange('admin')}
-                      className="w-full text-left p-2 hover:bg-gray-700 rounded flex items-center gap-2 text-sm"
+                      className="w-full text-white text-left p-2 hover:bg-gray-700 rounded flex items-center gap-2 text-sm"
                     >
                       <Crown size={14} />
                       {t('collaboratorManager.permissions.admin')}

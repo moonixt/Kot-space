@@ -352,7 +352,7 @@
   },
   "editor": {
     "newNote": "Nova Nota",
-    "titlePlaceholder": "Tema da anotação...",
+    "titlePlaceholder": "Nome do espaço de trabalho",
     "contentPlaceholder": "Escreva sua anotação aqui...",
     "noteTitle": "Título da nota",
     "noteContent": "Escreva sua nota aqui...",

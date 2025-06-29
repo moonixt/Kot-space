@@ -355,7 +355,7 @@
     "noEvents": "No hay eventos para este día. Agrega uno arriba."
   },
   "editor": {
-    "titlePlaceholder": "Tema de la nota...",
+    "titlePlaceholder": "Nombre del espacio de trabajo",
     "contentPlaceholder": "Escribe tu nota aquí...",
     "noteTitle": "Título de la nota",
     "noteContent": "Escribe tu nota aquí...",

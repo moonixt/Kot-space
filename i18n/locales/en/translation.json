@@ -364,7 +364,7 @@
     "noEvents": "No events for this day. Add one above."
   },
   "editor": {
-    "titlePlaceholder": "Note topic...",
+    "titlePlaceholder": "Workspace name",
     "contentPlaceholder": "Write your note here...",
     "noteTitle": "Note title",
     "noteContent": "Write your note here...",

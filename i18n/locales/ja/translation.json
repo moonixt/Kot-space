@@ -355,7 +355,7 @@
     "back": "ダッシュボードに戻る"
   },
   "editor": {
-    "titlePlaceholder": "ノートのトピック...",
+    "titlePlaceholder": "ワークスペースの名前",
     "contentPlaceholder": "ここにノートを書いてください...",
     "noteTitle": "ノートタイトル",
     "noteContent": "ここにノートを書いてください...",
