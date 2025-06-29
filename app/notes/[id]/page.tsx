@@ -2,11 +2,10 @@
 
 import React, { useCallback, useEffect, useState, useRef } from "react";
 import { Analytics } from "@vercel/analytics/next";
-import { useRouter, useParams } from "next/navigation";
+import { useRouter, useParams, useSearchParams } from "next/navigation";
 import { supabase } from "../../../lib/supabase";
 import { useAuth } from "../../../context/AuthContext";
 import {
-  Save,
   ArrowLeft,
   Calendar,
   Edit,
@@ -16,6 +15,8 @@ import {
   LayoutList,
   ListOrdered,
   Eye,
+  Lock,
+  Users,
 } from "lucide-react";
 import { encrypt, decrypt } from "../../components/Encryption";
 import { useTranslation } from "next-i18next";
@@ -27,8 +28,9 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import jsPDF from "jspdf";
 import { ProtectedRoute } from "../../components/ProtectedRoute";
-import eventEmitter from "../../../lib/eventEmitter";
 import { checkSubscriptionStatus } from "../../../lib/checkSubscriptionStatus";
+import { usePublicNoteCollaboration, realtimeManager } from "../../../lib/realtimeManager";
+import CollaboratorManager from "../../components/CollaboratorManager";
 
 interface Note {
   id: string;
@@ -37,19 +39,25 @@ interface Note {
   created_at: string;
   folder_id: string | null;
   tags: string;
+  type?: 'private' | 'public';
 }
 
 export default function NotePage() {
   const [note, setNote] = useState<Note | null>(null);
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
   const { user } = useAuth();
   const router = useRouter();
   const params = useParams();
+  const searchParams = useSearchParams();
   const { t } = useTranslation();
+
+  // Determine note type from URL params
+  const noteType = searchParams?.get('type') === 'public' ? 'public' : 'private';
   const [editMode, setEditMode] = useState(false);
   const [editTitle, setEditTitle] = useState("");
   const [editContent, setEditContent] = useState("");
+  const [autoSaveStatus, setAutoSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
+  const autoSaveTimeout = useRef<NodeJS.Timeout | null>(null);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [isPreviewMode, setIsPreviewMode] = useState(false);
   const [imageUploadLoading, setImageUploadLoading] = useState(false);
@@ -57,10 +65,13 @@ export default function NotePage() {
   const [showEmojiPickerContent, setShowEmojiPickerContent] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
-  // Add subscription status states
   const [canEdit, setCanEdit] = useState(true);
   const [canSave, setCanSave] = useState(true);
   const [hasReadOnlyAccess, setHasReadOnlyAccess] = useState(false);
+  const [linkCopied, setLinkCopied] = useState(false);
+  // Collaboration states - only used for public notes
+  const [noteCollaborators, setNoteCollaborators] = useState<any[]>([]);
+  const [userPermission, setUserPermission] = useState<'owner' | 'admin' | 'write' | 'read' | null>(null);
 
   const noteId =
     typeof params.id === "string"
@@ -69,91 +80,228 @@ export default function NotePage() {
         ? params.id[0]
         : null;
 
+  // Setup realtime collaboration hooks (only for public notes)
+
+  const publicCollaboration = usePublicNoteCollaboration(
+    noteType === 'public' ? noteId || undefined : undefined, 
+    noteType === 'public' ? user?.id : undefined
+  );
+  
+  // For private notes, we don't need real-time collaboration
+  // Legacy realtime is removed to avoid unnecessary connections
+
+  // Extract the appropriate values based on note type - only for public notes
+  const collaborators = noteType === 'public' ? publicCollaboration.collaborators : [];
+  const onlineUsers = noteType === 'public' ? publicCollaboration.onlineUsers : [];
+  const sendActivity = noteType === 'public' ? publicCollaboration.sendActivity : () => {};
+  const refreshCollaborators = noteType === 'public' ? publicCollaboration.refreshCollaborators : async () => {};
+
+
+  // Workaround: All collaborators are displayed with "online" status for simplicity
+  const collaboratorsWithPresence = collaborators.map(collaborator => ({
+    ...collaborator,
+    isOnline: true
+  }));
+
+  // Debug logs for collaboration
+  useEffect(() => {
+    // No debug
+  }, [noteType, noteId, collaborators, onlineUsers, collaboratorsWithPresence, user?.id, userPermission]);
+
+  // WORKAROUND: Direct test function to check collaborators
+  // Debug/test function removed for production cleanup
+
+  // Function to refresh collaborators - used by CollaboratorManager
+  const loadNoteCollaborators = useCallback(async () => {
+    if (noteType === 'public') {
+      await refreshCollaborators();
+    }
+  }, [noteType, refreshCollaborators]);
+
+  // Force load collaborators when note is loaded
+  useEffect(() => {
+    if (note && noteType === 'public' && noteId) {
+      setTimeout(() => {
+        loadNoteCollaborators();
+      }, 1000); // Wait 1 second after note loads to force refresh
+    }
+  }, [note, noteType, noteId, loadNoteCollaborators]);
+
   const fetchNote = useCallback(async () => {
     if (!user || !noteId) return;
 
     try {
-      const { data, error } = await supabase
-        .from("notes")
-        .select("*")
-        .eq("id", noteId)
-        .eq("user_id", user.id)
-        .single();
+      if (noteType === 'public') {
+        // WORKAROUND: First try to get the note directly to see if it exists
+        const { data: noteData, error: noteError } = await supabase
+          .from("public_notes")
+          .select("*")
+          .eq("id", noteId)
+          .single();
 
-      if (error) {
-        throw error;
-      }
+        if (noteError) {
+          setNote(null);
+          setLoading(false);
+          return;
+        }
 
-      if (data) {
-        const decryptedTitle = decrypt(data.title);
-        const decryptedContent = data.content ? decrypt(data.content) : "";
+        if (!noteData) {
+          setNote(null);
+          setLoading(false);
+          return;
+        }
 
+        // Check if user has permission to access this public note
+        const userPermission = await realtimeManager.getUserNotePermission(noteId, user.id);
+        // If no permission found, still allow access for owner or misconfigured note
+
+        // Decrypt the public note data
+        const decryptedTitle = decrypt(noteData.title);
+        const decryptedContent = noteData.content ? decrypt(noteData.content) : "";
+
+        // Set the note data with decrypted content
         setNote({
-          ...data,
+          id: noteData.id,
           title: decryptedTitle,
           content: decryptedContent,
+          created_at: noteData.created_at,
+          folder_id: null, // Public notes don't have folders
+          tags: "", // Public notes don't have tags yet
+          type: 'public'
         });
-        setEditTitle(decryptedTitle);
-        setEditContent(decryptedContent);
+        
+        // Check for saved edits in localStorage first
+        const savedTitle = localStorage.getItem(`fair-note-edit-title-${noteId}`);
+        const savedContent = localStorage.getItem(`fair-note-edit-content-${noteId}`);
+        
+        setEditTitle(savedTitle !== null ? savedTitle : decryptedTitle);
+        setEditContent(savedContent !== null ? savedContent : decryptedContent);
+      } else {
+        // Fetch private note (existing logic)
+        const { data, error } = await supabase
+          .from("notes")
+          .select("*")
+          .eq("id", noteId)
+          .eq("user_id", user.id)
+          .single();
+
+        if (error) {
+          throw error;
+        }
+
+        if (data) {
+          const decryptedTitle = decrypt(data.title);
+          const decryptedContent = data.content ? decrypt(data.content) : "";
+
+          setNote({
+            ...data,
+            title: decryptedTitle,
+            content: decryptedContent,
+            type: 'private'
+          });
+          
+          // Check for saved edits in localStorage first
+          const savedTitle = localStorage.getItem(`fair-note-edit-title-${noteId}`);
+          const savedContent = localStorage.getItem(`fair-note-edit-content-${noteId}`);
+          
+          setEditTitle(savedTitle !== null ? savedTitle : decryptedTitle);
+          setEditContent(savedContent !== null ? savedContent : decryptedContent);
+        }
       }
     } catch (error) {
-      console.error("Error fetching note:", error);
+      setNote(null);
     } finally {
       setLoading(false);
     }
-  }, [user, noteId]);
+  }, [user, noteId, noteType]);
 
   useEffect(() => {
     fetchNote();
   }, [fetchNote]);
 
-  const handleSave = async () => {
+  const handleSave = async (isAutoSave = false) => {
     if (!user || !noteId) return;
 
     // Check if user can save before proceeding
     if (!canSave) {
-      showToast("You can only read this note. Upgrade to edit.", "error");
+      if (!isAutoSave) {
+        showToast("You can only read this note. Upgrade to edit.", "error");
+      }
       return;
     }
 
-    setSaving(true);
     try {
-      const encryptedTitle = encrypt(editTitle || "Untitled");
-      const encryptedContent = encrypt(editContent);
-
-      const { error } = await supabase
-        .from("notes")
-        .update({
+      if (noteType === 'public') {
+        // Update public note with encryption
+        const encryptedTitle = encrypt(editTitle || "Untitled");
+        const encryptedContent = encrypt(editContent);
+        
+        const result = await realtimeManager.updatePublicNote(noteId, {
           title: encryptedTitle,
-          content: encryptedContent,
-        })
-        .eq("id", noteId)
-        .eq("user_id", user.id);
+          content: encryptedContent
+        });
 
-      if (error) {
-        throw error;
+        if (!result.success) {
+          throw new Error(result.error || 'Failed to update public note');
+        }
+
+        // Update local state with decrypted values
+        setNote((prev) => {
+          if (!prev) return null;
+          return {
+            ...prev,
+            title: editTitle || "Untitled",
+            content: editContent,
+          };
+        });
+      } else {
+        // Update private note (existing logic)
+        const encryptedTitle = encrypt(editTitle || "Untitled");
+        const encryptedContent = encrypt(editContent);
+
+        const { error } = await supabase
+          .from("notes")
+          .update({
+            title: encryptedTitle,
+            content: encryptedContent,
+          })
+          .eq("id", noteId)
+          .eq("user_id", user.id);
+
+        if (error) {
+          throw error;
+        }
+
+        // Update note state with the edited values
+        setNote((prev) => {
+          if (!prev) return null;
+          return {
+            ...prev,
+            title: editTitle,
+            content: editContent,
+          };
+        });
       }
 
-      // Update note state with the edited values
-      setNote((prev) => {
-        if (!prev) return null;
-        return {
-          ...prev,
-          title: editTitle,
-          content: editContent,
-        };
-      });
+      // Emit event to update sidebar via Realtime
+      // The Realtime system will automatically notify all subscribed components
+      // No manual event emission needed!
 
-      // Emit event to update sidebar
-      eventEmitter.emit("noteSaved");
+      // Limpar localStorage após salvar com sucesso
+      localStorage.removeItem(`fair-note-edit-title-${noteId}`);
+      localStorage.removeItem(`fair-note-edit-content-${noteId}`);
 
-      setEditMode(false);
-      showToast(t("editor.noteSaved"), "success");
+      // Only exit edit mode and show toast for manual saves
+      if (!isAutoSave) {
+        setEditMode(false);
+        showToast(t("editor.noteSaved"), "success");
+      }
     } catch (error) {
       console.error("Error saving note:", error);
-      showToast(t("editor.saveError"), "error");
-    } finally {
-      setSaving(false);
+      if (!isAutoSave) {
+        showToast(t("editor.saveError"), "error");
+      }
+      throw error; // Re-throw for autosave error handling
     }
   };
 
@@ -171,18 +319,44 @@ export default function NotePage() {
 
     setDeleting(true);
     try {
-      const { error } = await supabase
-        .from("notes")
-        .delete()
-        .eq("id", noteId)
-        .eq("user_id", user.id);
+      if (noteType === 'public') {
+        // Delete public note - only owner can delete
+        const { data: publicNoteData } = await supabase
+          .from('public_notes')
+          .select('owner_id')
+          .eq('id', noteId)
+          .single();
 
-      if (error) {
-        throw error;
+        if (!publicNoteData || publicNoteData.owner_id !== user.id) {
+          throw new Error('Only the note owner can delete this note');
+        }
+
+        // Delete all related data first
+        await supabase.from('collaboration_invites').delete().eq('public_note_id', noteId);
+        await supabase.from('note_shares').delete().eq('public_note_id', noteId);
+        
+        // Delete the public note
+        const { error } = await supabase
+          .from("public_notes")
+          .delete()
+          .eq("id", noteId)
+          .eq("owner_id", user.id);
+
+        if (error) {
+          throw error;
+        }
+      } else {
+        // Delete private note (existing logic)
+        const { error } = await supabase
+          .from("notes")
+          .delete()
+          .eq("id", noteId)
+          .eq("user_id", user.id);
+
+        if (error) {
+          throw error;
+        }
       }
-
-      // Emit event to update sidebar
-      eventEmitter.emit("noteSaved");
 
       showToast(t("editor.noteDeleted"), "success");
 
@@ -192,7 +366,7 @@ export default function NotePage() {
       }, 1000);
     } catch (error) {
       console.error("Error deleting note:", error);
-      showToast(t("editor.deleteError"), "error");
+      showToast(error instanceof Error ? error.message : t("editor.deleteError"), "error");
       setDeleting(false);
     }
   };
@@ -345,8 +519,19 @@ export default function NotePage() {
 
   function cancelEdit() {
     if (!note) return;
+    // Limpar localStorage ao cancelar
+    localStorage.removeItem(`fair-note-edit-title-${noteId}`);
+    localStorage.removeItem(`fair-note-edit-content-${noteId}`);
+    
     setEditTitle(note.title);
     setEditContent(note.content);
+    setEditMode(false);
+    setIsPreviewMode(false);
+  }
+
+  function exitEditMode() {
+    // Não limpar localStorage - as alterações são salvas automaticamente
+    // Apenas sair do modo de edição
     setEditMode(false);
     setIsPreviewMode(false);
   }
@@ -359,8 +544,8 @@ export default function NotePage() {
 
     const icon =
       type === "success"
-        ? '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 00-1.414 1.414l2 2a1 1001.414 0l4-4z" clip-rule="evenodd" /></svg>'
-        : '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 101.414 1.414L10 11.414l1.293-1.293a1 1 00-1.414-1.414L11.414 10l1.293-1.293a1 1 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" /></svg>';
+        ? '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg>'
+        : '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293-1.293a1 1 0 00-1.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" /></svg>';
 
     toast.innerHTML = icon + message;
     document.body.appendChild(toast);
@@ -462,9 +647,43 @@ export default function NotePage() {
     }
   }
 
+  function handleCopyNoteLink() {
+    if (!note) return;
+
+    try {
+      // Get the current URL
+      const noteUrl = window.location.href;
+      
+      // Copy to clipboard
+      navigator.clipboard.writeText(noteUrl).then(() => {
+        showToast("Link da nota copiado! ⚠️ Apenas colaboradores convidados podem acessar.", "success");
+      }).catch(() => {
+        // Fallback for older browsers
+        const textArea = document.createElement("textarea");
+        textArea.value = noteUrl;
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        showToast("Link da nota copiado! ⚠️ Apenas colaboradores convidados podem acessar.", "success");
+      });
+    } catch (error) {
+      console.error("Erro ao copiar link:", error);
+      showToast("Erro ao copiar link da nota", "error");
+    }
+  }
+
   useEffect(() => {
     const checkSubscription = async () => {
       if (!user) return;
+
+      // For public notes, permissions are handled differently
+      if (noteType === 'public') {
+        // For public notes, we'll set permissions after loading collaborators
+        // The owner should always be able to edit public notes
+        return;
+      }
 
       try {
         const status = await checkSubscriptionStatus(user.id);
@@ -472,12 +691,134 @@ export default function NotePage() {
         setCanSave(status.canSave);
         setHasReadOnlyAccess(status.hasReadOnlyAccess);
       } catch (error) {
-        console.error("Error checking subscription status:", error);
+        // No debug
       }
     };
 
     checkSubscription();
-  }, [user]);
+  }, [user, noteType]);
+
+  // Set initial permissions for public notes when note is loaded
+  useEffect(() => {
+    if (note && noteType === 'public' && user?.id) {
+      // Check if this is a public note and if user is owner
+      const checkOwnership = async () => {
+        try {
+          const { data: publicNoteData } = await supabase
+            .from('public_notes')
+            .select('owner_id')
+            .eq('id', noteId)
+            .single();
+
+          if (publicNoteData?.owner_id === user.id) {
+            // User is the owner, grant full permissions
+            setUserPermission('owner');
+            setCanEdit(true);
+            setCanSave(true);
+            setHasReadOnlyAccess(false);
+          }
+        } catch (error) {
+          // No debug
+        }
+      };
+
+      checkOwnership();
+    }
+  }, [note, noteType, user?.id, noteId]);
+
+  // Novo estado para colaboradores (workaround)
+  const [allCollaborators, setAllCollaborators] = useState<Array<{ user_id: string, full_name?: string, email?: string, isOwner: boolean }>>([]);
+
+  // Carregar colaboradores ao abrir a nota pública
+  useEffect(() => {
+    if (noteType === 'public' && noteId) {
+      realtimeManager.getAllNoteCollaborators(noteId).then(setAllCollaborators);
+    }
+  }, [noteType, noteId]);
+
+  // Array de colaboradores para a UI (deve ser declarado antes do uso no JSX)
+  const collaboratorsForUI = noteType === 'public' ? allCollaborators : [];
+
+  // Persistência de edição no localStorage
+  useEffect(() => {
+    if (!editMode) return;
+    // Salvar no localStorage enquanto edita
+    localStorage.setItem(`fair-note-edit-title-${noteId}`, editTitle);
+    localStorage.setItem(`fair-note-edit-content-${noteId}`, editContent);
+  }, [editTitle, editContent, editMode, noteId]);
+
+  // Limpar localStorage ao sair do modo de edição
+  useEffect(() => {
+    if (!editMode) {
+      localStorage.removeItem(`fair-note-edit-title-${noteId}`);
+      localStorage.removeItem(`fair-note-edit-content-${noteId}`);
+    }
+  }, [editMode, noteId]);
+
+  // Auto-save effect
+  useEffect(() => {
+    if (!editMode) return; // Only autosave when in edit mode
+    if (!editTitle.trim() && !editContent.trim()) return;
+    if (!note) return; // Aguardar a nota carregar
+    
+    // Verificar se houve mudanças reais comparando com os valores originais da nota
+    const titleChanged = editTitle !== note.title;
+    const contentChanged = editContent !== note.content;
+    
+    if (!titleChanged && !contentChanged) {
+      return; // Não salvar se não houve mudanças
+    }
+    
+    if (autoSaveTimeout.current) clearTimeout(autoSaveTimeout.current);
+    
+    // Resetar o status para idle primeiro
+    setAutoSaveStatus('idle');
+    
+    autoSaveTimeout.current = setTimeout(async () => {
+      setAutoSaveStatus('saving');
+      try {
+        await handleSave(true); // Pass true to indicate this is an autosave
+        setAutoSaveStatus('saved');
+        setTimeout(() => setAutoSaveStatus('idle'), 1500);
+      } catch (error) {
+        setAutoSaveStatus('idle');
+      }
+    }, 1500); // 1.5s debounce
+    
+    return () => {
+      if (autoSaveTimeout.current) clearTimeout(autoSaveTimeout.current);
+    };
+  }, [editTitle, editContent, editMode, note]);
+
+  // Keyboard shortcut for save (Ctrl+S / Cmd+S)
+  useEffect(() => {
+    const handler = async (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 's' && editMode) {
+        e.preventDefault();
+        if (!note) return;
+        
+        // Verificar se houve mudanças reais antes de salvar manualmente
+        const titleChanged = editTitle !== note.title;
+        const contentChanged = editContent !== note.content;
+        
+        if (!titleChanged && !contentChanged) {
+          showToast("Nenhuma alteração para salvar", "success");
+          return;
+        }
+        
+        setAutoSaveStatus('saving');
+        try {
+          await handleSave(false); // Manual save
+          setAutoSaveStatus('saved');
+          setTimeout(() => setAutoSaveStatus('idle'), 1500);
+        } catch (error) {
+          setAutoSaveStatus('idle');
+        }
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [editTitle, editContent, editMode, note]);
 
   if (loading) {
     return (
@@ -501,17 +842,26 @@ export default function NotePage() {
             strokeLinecap="round"
             strokeLinejoin="round"
             strokeWidth={2}
-            d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            d="M12 15v2m-6 4h12a2 2 0 002-2v-4a2 2 0 00-2-2H6a2 2 0 00-2 2v4a2 2 0 002 2z"
+          />
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M12 9v2m0-6v.01"
           />
         </svg>
         <h3 className="text-2xl font-bold text-slate-400">
           {t("notes.noteNotFound")}
         </h3>
-        <p className="text-slate-500 mt-2">
-          {t("notes.noteNotExistOrRemoved")}
+        <p className="text-slate-500 mt-2 text-center max-w-md">
+          {noteType === 'public' 
+            ? "You don't have permission to access this collaborative note. You need to be invited by the note owner."
+            : t("notes.noteNotExistOrRemoved")
+          }
         </p>
         <Link
-          href="/"
+          href="/dashboard"
           className="mt-6 text-blue-400 hover:underline flex items-center gap-2"
         >
           <ArrowLeft size={16} />
@@ -553,8 +903,7 @@ export default function NotePage() {
               />
             </svg>
             <span>
-              You are viewing this note in read-only mode. Your trial has
-              expired.
+              You are viewing this note in read-only mode.
               <a
                 href="/pricing"
                 className="underline ml-1 hover:text-amber-100"
@@ -573,77 +922,81 @@ export default function NotePage() {
           >
             <ArrowLeft size={20} className="text-[var(--foreground)]" />
           </Link>
-          <h1 className="text-xl font-semibold text-[var(--foreground)]">
-            {note.title}
-          </h1>
+          
+          <div className="flex items-center gap-3 flex-1">
+            <h1 className="text-xl font-semibold text-[var(--foreground)]">
+              {note.title}
+            </h1>
+            
+            {/* Note type indicator */}
+            <div className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs ${
+              noteType === 'public' 
+                ? 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300'
+                : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400'
+            }`}>
+              {noteType === 'public' ? <Users size={12} /> : <Lock size={12} />}
+              <span>{noteType === 'public' ? 'Collaborative' : 'Private'}</span>
+            </div>
+          </div>
         </div>
         <Profile />
         <div className="min-h-screen  flex justify-center ">
           <div className="w-full max-w-7xl bg-[var(--background)] min-h-screen  flex flex-col">
-            {/* Barra de navegação superior */}
-            <div className="bg-opacity-10 px-4 py-2 text-[var(--foreground)] flex justify-between items-center">
-              <Link
-                href="/dashboard"
-                className="flex items-center gap-2 text-[var(--foreground)] hover:text-[var(--foreground-light)] transition-colors"
-              >
-                <ArrowLeft size={18} />
-                <span>{t("notes.backToNotes")}</span>
-              </Link>
-
-              <div className="flex items-center gap-2 pr-10">
-                {editMode ? (
-                  <>
-                    <button
-                      className={`rounded transition-colors px-2 py-1 flex items-center gap-1 ${
-                        !canSave ? "opacity-50 cursor-not-allowed" : ""
-                      }`}
-                      title={t("editor.save")}
-                      onClick={handleSave}
-                      disabled={saving || !canSave}
-                    >
-                      {saving ? (
-                        <div className="w-4 h-4 border-2 border-green-300 border-t-transparent rounded-full animate-spin"></div>
-                      ) : (
-                        <>
-                          <Save size={16} /> {t("editor.save")}
-                        </>
-                      )}
-                    </button>
-                    <button
-                      className="rounded hover:bg-red-400 transition-colors px-2 py-1 flex items-center gap-1"
-                      title={t("editor.cancel")}
-                      onClick={cancelEdit}
-                    >
-                      <X size={16} /> {t("editor.cancel")}
-                    </button>
-                  </>
+            {/* Área de colaboração e controles de edição */}
+            <div className="bg-opacity-10 px-4 py-2 text-[var(--foreground)]">
+              <div className="flex items-center justify-between">
+                {/* Enhanced collaboration manager with Google Docs style features - only for public notes */}
+                {noteType === 'public' ? (
+                  <CollaboratorManager
+                    collaborators={collaboratorsWithPresence}
+                    noteId={noteId || ''}
+                    currentUserId={user?.id || ''}
+                    userPermission={userPermission}
+                    onRefreshCollaborators={loadNoteCollaborators}
+                    isPublicNote={true}
+                  />
                 ) : (
-                  <button
-                    className={`rounded transition-colors px-2 py-1 flex items-center gap-1 ${
-                      !canEdit
-                        ? "opacity-50 cursor-not-allowed"
-                        : "hover:bg-[var(--accent-color)]"
-                    }`}
-                    title={
-                      !canEdit
-                        ? "Read-only mode - Upgrade to edit"
-                        : t("editor.edit")
-                    }
-                    onClick={() => {
-                      if (canEdit) {
-                        setEditMode(true);
-                      } else {
-                        showToast(
-                          "You can only read this note. Upgrade to edit.",
-                          "error",
-                        );
-                      }
-                    }}
-                    disabled={!canEdit}
-                  >
-                    <Edit size={16} /> {t("editor.edit")}
-                  </button>
+                  <div></div> // Empty div to maintain layout balance
                 )}
+
+                {/* Edit Mode Toggle */}
+                <div className="flex items-center gap-2">
+                  {editMode ? (
+                    <button
+                      className="text-[var(--foregrounded)] rounded-lg px-3 py-2 flex items-center gap-2 transition-colors border border-blue-400/30"
+                      title="Exit edit mode"
+                      onClick={exitEditMode}
+                    >
+                      <X size={16} /> {t("editor.exitEditMode")}
+                    </button>
+                  ) : (
+                    <button
+                      className={`rounded-lg px-3 py-2 flex items-center gap-2 transition-colors border ${
+                        !canEdit
+                          ? "border-gray-600 text-gray-400 cursor-not-allowed"
+                          : "border-green-400/30 text-[var(--foreground)]"
+                      }`}
+                      title={
+                        !canEdit
+                          ? "Read-only mode - Upgrade to edit"
+                          : t("editor.edit")
+                      }
+                      onClick={() => {
+                        if (canEdit) {
+                          setEditMode(true);
+                        } else {
+                          showToast(
+                            "You can only read this note. Upgrade to edit.",
+                            "error",
+                          );
+                        }
+                      }}
+                      disabled={!canEdit}
+                    >
+                      <Edit size={16} /> {t("editor.edit")}
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
 
@@ -667,6 +1020,17 @@ export default function NotePage() {
                     disabled={!canEdit}
                     readOnly={!canEdit}
                   />
+                  
+                  {/* Auto-save status indicator */}
+                  <div className="flex items-center gap-2 text-xs">
+                    {autoSaveStatus === 'saving' && (
+                      <span className="text-yellow-400 animate-pulse">Salvando...</span>
+                    )}
+                    {autoSaveStatus === 'saved' && (
+                      <span className="text-green-400">Salvo!</span>
+                    )}
+                  </div>
+                  
                   {showEmojiPicker && (
                     <div className="absolute z-50 top-14 left-4 shadow-xl rounded-lg overflow-hidden">
                       <EmojiPicker
@@ -840,11 +1204,11 @@ export default function NotePage() {
             )}
 
             {/* Área de conteúdo */}
-            <div className="flex-grow overflow-auto p-4">
+            <div className="flex-grow overflow-hidden p-4">
               {editMode ? (
                 <>
                   {!isPreviewMode ? (
-                    <div className="h-full">
+                    <div className="h-full flex flex-col">
                       <div className="mb-4 text-xs bg-[var(--container)] bg-opacity-50 p-2 rounded flex items-center gap-2 text-[var(--foreground)]">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -866,14 +1230,19 @@ export default function NotePage() {
                         value={editContent}
                         onChange={(e) => setEditContent(e.target.value)}
                         placeholder={t("editor.noteContent")}
-                        className={`w-full h-full min-h-[300px] text-lg bg-transparent focus:outline-none resize-none text-[var(--foreground)] p-2 ${!canEdit ? "opacity-60 cursor-not-allowed" : ""}`}
-                        style={{ fontSize: "18px", lineHeight: "1.7" }}
+                        className={`flex-1 w-full text-lg bg-transparent focus:outline-none resize-none text-[var(--foreground)] p-2 scrollbar-hide ${!canEdit ? "opacity-60 cursor-not-allowed" : ""}`}
+                        style={{ 
+                          fontSize: "18px", 
+                          lineHeight: "1.7",
+                          scrollbarWidth: "none",
+                          msOverflowStyle: "none"
+                        }}
                         disabled={!canEdit}
                         readOnly={!canEdit}
                       />
                     </div>
                   ) : (
-                    <div className="markdown-content p-5 w-full bg-transparent text-[var(--foreground)] min-h-[300px] h-full text-lg overflow-auto  rounded-md">
+                    <div className="markdown-content h-full w-full bg-transparent text-[var(--foreground)] text-lg overflow-y-auto scrollbar-hide p-5 rounded-md">
                       {editContent ? (
                         <ReactMarkdown remarkPlugins={[remarkGfm]}>
                           {editContent}
@@ -887,7 +1256,7 @@ export default function NotePage() {
                   )}
                 </>
               ) : (
-                <div className="h-full overflow-auto pr-2">
+                <div className="h-full overflow-y-auto scrollbar-hide">
                   <div className="prose prose-invert prose-lg w-full break-words text-lg text-[var(--foreground)] leading-relaxed markdown-content">
                     <ReactMarkdown remarkPlugins={[remarkGfm]}>
                       {note.content}
@@ -927,9 +1296,9 @@ export default function NotePage() {
                     strokeLinejoin="round"
                     className="text-white"
                   >
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                    <polyline points="17 8 12 3 7 8"></polyline>
-                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2H6a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h13a2 2 0 0 1 2 2v4z"></path>
+                    <path d="M12 3v9"></path>
+                    <path d="M9 6h6"></path>
                   </svg>
                   <span>TXT</span>
                 </button>
@@ -952,11 +1321,62 @@ export default function NotePage() {
                     strokeLinejoin="round"
                     className="text-white"
                   >
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                    <polyline points="17 8 12 3 7 8"></polyline>
-                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2H6a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h13a2 2 0 0 1 2 2v4z"></path>
+                    <path d="M12 3v9"></path>
+                    <path d="M9 6h6"></path>
                   </svg>
                   <span>PDF</span>
+                </button>
+
+                <button
+                  onClick={async () => {
+                    try {
+                      const noteUrl = `${window.location.origin}/notes/${note.id}`;
+                      await navigator.clipboard.writeText(noteUrl);
+                      setLinkCopied(true);
+                      setTimeout(() => setLinkCopied(false), 2000);
+                    } catch (err) {
+                      // Fallback for browsers that don't support clipboard API
+                      const textArea = document.createElement('textarea');
+                      textArea.value = `${window.location.origin}/notes/${note.id}`;
+                      document.body.appendChild(textArea);
+                      textArea.select();
+                      document.execCommand('copy');
+                      document.body.removeChild(textArea);
+                      setLinkCopied(true);
+                      setTimeout(() => setLinkCopied(false), 2000);
+                    }
+                  }}
+                  disabled={!note}
+                  className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-colors ${
+                    linkCopied 
+                      ? 'bg-green-500/30 hover:bg-green-500/40' 
+                      : 'hover:bg-green-500/20'
+                  }`}
+                  title="Compartilhar link da nota"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="text-white"
+                  >
+                    {linkCopied ? (
+                      <path d="M20 6L9 17l-5-5" />
+                    ) : (
+                      <>
+                        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                      </>
+                    )}
+                  </svg>
+                  <span>{linkCopied ? 'Copiado!' : 'Link'}</span>
                 </button>
 
                 <button
@@ -1003,6 +1423,69 @@ export default function NotePage() {
         </div>
       </ProtectedRoute>
       <Analytics />
+      <style jsx global>{`
+        .scrollbar-hide {
+          scrollbar-width: none; /* Firefox */
+          -ms-overflow-style: none; /* IE 10+ */
+        }
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none; /* Chrome/Safari/Webkit */
+        }
+        
+        /* Custom textarea styling */
+        textarea.scrollbar-hide:focus {
+          outline: none;
+          border: none;
+        }
+        
+        /* Improve markdown content rendering */
+        .markdown-content {
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        
+        .markdown-content h1,
+        .markdown-content h2,
+        .markdown-content h3,
+        .markdown-content h4,
+        .markdown-content h5,
+        .markdown-content h6 {
+          margin-top: 1.5em;
+          margin-bottom: 0.5em;
+          font-weight: 600;
+        }
+        
+        .markdown-content p {
+          margin-bottom: 1em;
+        }
+        
+        .markdown-content ul,
+        .markdown-content ol {
+          margin-bottom: 1em;
+          padding-left: 1.5em;
+        }
+        
+        .markdown-content code {
+          background-color: rgba(255, 255, 255, 0.1);
+          padding: 0.2em 0.4em;
+          border-radius: 4px;
+          font-size: 0.9em;
+        }
+        
+        .markdown-content pre {
+          background-color: rgba(255, 255, 255, 0.05);
+          padding: 1em;
+          border-radius: 8px;
+          overflow-x: auto;
+          margin: 1em 0;
+        }
+        
+        .markdown-content blockquote {
+          border-left: 4px solid rgba(255, 255, 255, 0.3);
+          padding-left: 1em;
+          margin: 1em 0;
+          font-style: italic;
+        }
+      `}</style>
     </>
   );
 }

@@ -1,8 +1,9 @@
 {
-  "name": "nextjs",
-  "version": "0.1.0",
+  "name": "lynxky",
+  "version": "2.0.0",
   "private": true,
   "main": "main.js",
+  "productName": "Lynxky",
   "scripts": {
     "dev": "next dev",
     "dev:turbo": "next dev --turbopack",
@@ -13,12 +14,17 @@
     "electron:dev": "concurrently \"npm run dev\" \"wait-on http://localhost:3000 && electron .\"",
     "electron:prod": "npm run build && set ELECTRON_START_URL=file://%cd%/.next/production.html&& npx electron .",
     "electron:build": "npm run build && electron-builder",
-    "package": "electron-forge package",
-    "make": "electron-forge make"
+    "package": "npm run build && electron-forge package",
+    "make": "npm run build && electron-forge make",
+    "make:win": "npm run build && electron-forge make --platform=win32",
+    "make:mac": "npm run build && electron-forge make --platform=darwin",
+    "make:linux": "npm run build && electron-forge make --platform=linux",
+    "make:all": "npm run build && npm run make:win && npm run make:mac && npm run make:linux",
+    "build:electron": "npm run build && npm run make"
   },
   "build": {
-    "appId": "com.fairnote.app",
-    "productName": "Fair Note",
+    "appId": "com.lynxky.app",
+    "productName": "Lynxky",
     "files": [
       "main.js",
       "app/",
@@ -80,6 +86,7 @@
   "devDependencies": {
     "@electron-forge/cli": "^7.8.0",
     "@electron-forge/maker-deb": "^7.8.0",
+    "@electron-forge/maker-dmg": "^7.8.1",
     "@electron-forge/maker-rpm": "^7.8.0",
     "@electron-forge/maker-squirrel": "^7.8.0",
     "@electron-forge/maker-zip": "^7.8.0",

@@ -57,7 +57,7 @@ const Profile = memo(() => {
         setWallpaperUrl(urlData.publicUrl);
         setWallpaperPosition(data?.wallpaper_position || "center");
       } else {
-        setWallpaperUrl("/static/images/susan.jpg");
+        setWallpaperUrl("/static/images/susan.jpg"); //default wallpaper
         setWallpaperPosition("center");
       }
     } catch (error) {

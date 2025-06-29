@@ -282,6 +282,9 @@ export default function Settings() {
                   )}
                 </p>
 
+                {/* Profile Update Form */}
+                <ProfileUpdateForm user={user} />
+
                 <div className="space-y-4">
                   {/* <div className="flex items-center justify-between p-4 hover:bg-[var(--theme)]/10 rounded-lg transition-colors">
                   <div className="flex items-center">
@@ -875,5 +878,96 @@ export default function Settings() {
       </AuthenticatedRoute>
       <Analytics />
     </>
+  );
+}
+
+// ProfileUpdateForm component
+function ProfileUpdateForm({ user }: { user: any }) {
+  const [name, setName] = useState(user?.user_metadata?.full_name || "");
+  const [email, setEmail] = useState(user?.email || "");
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  // Update form fields if user changes
+  useEffect(() => {
+    setName(user?.user_metadata?.full_name || "");
+    setEmail(user?.email || "");
+  }, [user]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setSuccess(null);
+    setError(null);
+    
+    try {
+      const res = await fetch("/api/profile", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          userId: user.id,
+          full_name: name, 
+          email: email 
+        }),
+      });
+      
+      const data = await res.json();
+      
+      if (res.ok) {
+        setSuccess("Perfil atualizado com sucesso!");
+      } else {
+        setError(data.error || "Falha ao atualizar perfil.");
+      }
+    } catch (err) {
+      setError("Falha ao atualizar perfil.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="bg-[var(--theme)]/10 rounded-lg p-6 mb-6">
+      <h3 className="text-lg font-medium text-[var(--foreground)] mb-4">
+        Informações do Perfil
+      </h3>
+      <form onSubmit={handleSubmit} className="space-y-4 max-w-md">
+        <div>
+          <label className="block text-sm font-medium mb-1 text-[var(--foreground)]" htmlFor="name">
+            Nome
+          </label>
+          <input
+            id="name"
+            type="text"
+            className="w-full rounded border px-3 py-2 bg-[var(--background)] border-[var(--theme)]/30 focus:outline-none focus:ring-2 focus:ring-[var(--theme)] text-[var(--foreground)]"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            disabled={loading}
+            placeholder="Digite seu nome"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium mb-1 text-[var(--foreground)]" htmlFor="email">
+            Email
+          </label>
+          <input
+            id="email"
+            type="email"
+            className="w-full rounded border px-3 py-2 bg-[var(--background)] border-[var(--theme)]/30 focus:outline-none focus:ring-2 focus:ring-[var(--theme)] text-[var(--foreground)]"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            disabled={loading}
+            placeholder="Digite seu email"
+          />
+        </div>
+        <div className="flex gap-2 items-center">
+          <Button type="submit" disabled={loading} className="bg-[var(--theme)] text-white hover:bg-[var(--theme)]/80">
+            {loading ? "Salvando..." : "Salvar Alterações"}
+          </Button>
+          {success && <span className="text-green-500 text-sm">{success}</span>}
+          {error && <span className="text-red-500 text-sm">{error}</span>}
+        </div>
+      </form>
+    </div>
   );
 }

@@ -33,17 +33,33 @@ function createWindow() {
       nodeIntegration: false,
       contextIsolation: true,
     },
-    icon: path.join(__dirname, "public", "icon-512x512.png"),
+    icon: path.join(__dirname, "app", "favicon.ico"), // Ícone da janela
     title: "Lynxky",
   });
 
-  const startUrl = process.env.ELECTRON_START_URL || "http://localhost:3000";
+  // Em desenvolvimento usa localhost, em produção usa lynxky.com
+  const isDev = process.env.NODE_ENV === "development" || process.env.ELECTRON_START_URL;
+  const startUrl = isDev 
+    ? (process.env.ELECTRON_START_URL || "http://localhost:3000")
+    : "";
+    
   win.loadURL(startUrl).catch((err) => {
-    win.loadURL(
-      "data:text/html,<h2>Failed to load app. Is the Next.js server running?</h2><pre>" +
-        err +
-        "</pre>",
-    );
+    // Fallback para desenvolvimento se falhar
+    if (!isDev) {
+      win.loadURL("http://localhost:3000").catch(() => {
+        win.loadURL(
+          "data:text/html,<h2>Failed to load app. Please check your internet connection.</h2><pre>" +
+            err +
+            "</pre>",
+        );
+      });
+    } else {
+      win.loadURL(
+        "data:text/html,<h2>Failed to load app. Is the Next.js server running?</h2><pre>" +
+          err +
+          "</pre>",
+      );
+    }
   });
 
   const userLocale = app.getLocale(); // e.g., 'ja'
