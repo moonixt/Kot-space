@@ -20,6 +20,7 @@ export interface CollaboratorPresence {
   full_name?: string;
   email?: string;
   avatar_url?: string;
+  bio?: string;
   initials?: string;
   permission?: 'owner' | 'admin' | 'write' | 'read';
   cursor_position?: number;
@@ -494,7 +495,7 @@ class RealtimeManager {
         console.log('[DEBUG] Fetching owner profile for ID:', publicNoteData.owner_id);
         const { data: ownerProfile, error: ownerError } = await supabase
           .from('profiles')
-          .select('id, email, full_name, avatar_url')
+          .select('id, email, full_name, avatar_url, bio')
           .eq('id', publicNoteData.owner_id)
           .single();
 
@@ -506,6 +507,7 @@ class RealtimeManager {
             email: ownerProfile.email,
             full_name: ownerProfile.full_name,
             avatar_url: ownerProfile.avatar_url,
+            bio: ownerProfile.bio,
             initials: this.getInitials(ownerProfile.full_name, ownerProfile.email),
             permission: 'owner',
             online_at: new Date().toISOString(),
@@ -537,7 +539,7 @@ class RealtimeManager {
         
         const { data: profiles, error: profilesError } = await supabase
           .from('profiles')
-          .select('id, email, full_name, avatar_url')
+          .select('id, email, full_name, avatar_url, bio')
           .in('id', userIds);
 
         console.log('[DEBUG] Shared user profiles query result:', { profilesCount: profiles?.length || 0, profiles, error: profilesError });
@@ -552,6 +554,7 @@ class RealtimeManager {
                 email: profile.email,
                 full_name: profile.full_name,
                 avatar_url: profile.avatar_url,
+                bio: profile.bio,
                 initials: this.getInitials(profile.full_name, profile.email),
                 permission: share.permission,
                 online_at: new Date().toISOString(),
@@ -612,7 +615,7 @@ class RealtimeManager {
     // 4. Buscar profiles para quem tiver
     const { data: profiles } = await supabase
       .from('profiles')
-      .select('id, full_name, email')
+      .select('id, full_name, email, bio')
       .in('id', collaboratorIds);
     // Mapear profiles por id
     const profileMap = (profiles || []).reduce((acc, p) => { acc[p.id] = p; return acc; }, {} as any);
@@ -979,7 +982,7 @@ class RealtimeManager {
           // Get user profile information
           const { data: profile } = await supabase
             .from('profiles')
-            .select('full_name, email, avatar_url')
+            .select('full_name, email, avatar_url, bio')
             .eq('id', userId)
             .single();
 
@@ -991,6 +994,7 @@ class RealtimeManager {
             full_name: profile?.full_name,
             email: profile?.email,
             avatar_url: profile?.avatar_url,
+            bio: profile?.bio,
           });
 
           // Also update presence in database

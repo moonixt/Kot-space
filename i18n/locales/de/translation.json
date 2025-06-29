@@ -362,6 +362,9 @@
     "selectNoteType": "Notiztyp auswählen",
     "selectFolder": "Ordner auswählen",
     "noFolder": "Kein Ordner",
+    "titlePlaceholder": "Name des Arbeitsbereichs",
+    "saving": "Speichern...",
+    "saved": "Gespeichert!",
     "exitEditMode": "Beenden"
   },
   "profile": {

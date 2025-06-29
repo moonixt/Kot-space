@@ -124,8 +124,8 @@ export const JoinByCode: React.FC<JoinByCodeProps> = ({
             <button
               type="submit"
               disabled={!inviteCode.trim() || loading}
-              className="flex items-center gap-2 px-4 py-2 bg-[var(--button-theme)] hover:opacity-80
-                       text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center gap-2 px-4 py-2 bg-[var(--background)] hover:opacity-80
+                       text-[--foreground] rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />

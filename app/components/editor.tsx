@@ -322,7 +322,8 @@ function Editor({ initialNoteType = 'private' }: EditorProps) {
 
   const saveNote = async () => {
     //main fuction to save the notes in the database
-    if (!title.trim() && !content.trim()) return; //if the title is with space, removed it
+    // Permitir salvar notas vazias (removido a validação que impedia isso)
+    // if (!title.trim() && !content.trim()) return; //if the title is with space, removed it
 
     // Verify if the user is verified
     if (!user) {
@@ -398,7 +399,7 @@ function Editor({ initialNoteType = 'private' }: EditorProps) {
         // Save as private note (existing logic)
         // Criptografar o conteúdo da nota antes de salvar
         const encryptedContent = encrypt(content);
-        const encryptedTitle = encrypt(title);
+        const encryptedTitle = encrypt(title || "Untitled"); // Usar "Untitled" se o título estiver vazio
 
         const { error } = await supabase //call the supabase client
           .from("notes") //from the notes table
@@ -454,7 +455,8 @@ function Editor({ initialNoteType = 'private' }: EditorProps) {
 
   // Auto-save effect
   useEffect(() => {
-    if (!title.trim() && !content.trim()) return;
+    // Permitir salvar notas vazias (removido a condição que impedia isso)
+    // if (!title.trim() && !content.trim()) return;
     
     if (autoSaveTimeout.current) clearTimeout(autoSaveTimeout.current);
     
@@ -618,7 +620,7 @@ function Editor({ initialNoteType = 'private' }: EditorProps) {
                 <span className="text-yellow-400 animate-pulse">{t('editor.saving')}</span>
               )}
               {autoSaveStatus === 'saved' && (
-                <span className="text-green-400">Salvo!</span>
+                <span className="text-green-400">{t('editor.saved')}</span>
               )}
             </div>
 

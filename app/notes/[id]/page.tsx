@@ -679,8 +679,11 @@ export default function NotePage() {
     const checkSubscription = async () => {
       if (!user) return;
 
+      console.log('[DEBUG] Checking subscription and permissions for user:', user.id, 'noteType:', noteType, 'noteId:', noteId);
+
       try {
         const status = await checkSubscriptionStatus(user.id);
+        console.log('[DEBUG] Subscription status:', status);
         
         if (noteType === 'public') {
           // For public notes, check if user is owner first
@@ -691,24 +694,71 @@ export default function NotePage() {
               .eq('id', noteId)
               .single();
 
+            console.log('[DEBUG] Public note data:', publicNoteData);
+
             if (publicNoteData?.owner_id === user.id) {
               // User is the owner, grant permissions based on subscription
+              console.log('[DEBUG] User is note owner');
               setUserPermission('owner');
               setCanEdit(status.canEdit);
               setCanSave(status.canSave);
               setHasReadOnlyAccess(status.hasReadOnlyAccess);
               setIsCollaboratorWithoutEditRights(false);
             } else {
-              // User is not owner - could be a collaborator
-              // Check if they have valid subscription first
+              // User is not owner - check collaboration permissions
+              console.log('[DEBUG] User is not owner, checking collaboration permissions');
+              // First check if they have valid subscription
               if (status.canEdit && status.canSave && !status.hasReadOnlyAccess) {
-                // User has valid subscription, any read-only is due to collaboration permissions
-                setCanEdit(false); // Will be updated based on collaboration permissions
-                setCanSave(false); // Will be updated based on collaboration permissions  
-                setHasReadOnlyAccess(false); // Not due to subscription limits
-                setIsCollaboratorWithoutEditRights(true); // Assume read-only collaborator for now
+                // User has valid subscription, check their collaboration permissions
+                try {
+                  if (noteId) {
+                    const collaboratorPermission = await realtimeManager.getUserNotePermission(noteId, user.id);
+                    
+                    if (collaboratorPermission) {
+                      // User has collaboration permission, set based on their role
+                      console.log('[DEBUG] Collaboration permission found:', collaboratorPermission);
+                      setUserPermission(collaboratorPermission);
+                      
+                      if (collaboratorPermission === 'admin' || collaboratorPermission === 'write') {
+                        console.log('[DEBUG] Setting edit permissions for admin/write user');
+                        setCanEdit(true);
+                        setCanSave(true);
+                        setHasReadOnlyAccess(false);
+                        setIsCollaboratorWithoutEditRights(false);
+                      } else if (collaboratorPermission === 'read') {
+                        console.log('[DEBUG] Setting read-only permissions for read user');
+                        setCanEdit(false);
+                        setCanSave(false);
+                        setHasReadOnlyAccess(false);
+                        setIsCollaboratorWithoutEditRights(true);
+                      }
+                    } else {
+                      // No collaboration permission found
+                      console.log('[DEBUG] No collaboration permission found');
+                      setCanEdit(false);
+                      setCanSave(false);
+                      setHasReadOnlyAccess(false);
+                      setIsCollaboratorWithoutEditRights(true);
+                    }
+                  } else {
+                    // noteId is null, can't check permissions
+                    console.log('[DEBUG] noteId is null, defaulting to read-only');
+                    setCanEdit(false);
+                    setCanSave(false);
+                    setHasReadOnlyAccess(false);
+                    setIsCollaboratorWithoutEditRights(true);
+                  }
+                } catch (permissionError) {
+                  // Error checking collaboration permissions, default to read-only
+                  console.error('[DEBUG] Error checking collaboration permissions:', permissionError);
+                  setCanEdit(false);
+                  setCanSave(false);
+                  setHasReadOnlyAccess(false);
+                  setIsCollaboratorWithoutEditRights(true);
+                }
               } else {
                 // User doesn't have valid subscription
+                console.log('[DEBUG] User does not have valid subscription');
                 setCanEdit(status.canEdit);
                 setCanSave(status.canSave);
                 setHasReadOnlyAccess(status.hasReadOnlyAccess);
@@ -717,6 +767,7 @@ export default function NotePage() {
             }
           } catch (error) {
             // If can't check ownership, apply subscription limits
+            console.error('[DEBUG] Error checking note ownership:', error);
             setCanEdit(status.canEdit);
             setCanSave(status.canSave);
             setHasReadOnlyAccess(status.hasReadOnlyAccess);
@@ -724,6 +775,7 @@ export default function NotePage() {
           }
         } else {
           // For private notes, apply subscription status directly
+          console.log('[DEBUG] Private note, applying subscription status directly');
           setCanEdit(status.canEdit);
           setCanSave(status.canSave);
           setHasReadOnlyAccess(status.hasReadOnlyAccess);
@@ -731,6 +783,7 @@ export default function NotePage() {
         }
       } catch (error) {
         // On error, set restrictive permissions
+        console.error('[DEBUG] Error in checkSubscription:', error);
         setCanEdit(false);
         setCanSave(false);
         setHasReadOnlyAccess(true);
@@ -773,7 +826,8 @@ export default function NotePage() {
   // Auto-save effect
   useEffect(() => {
     if (!editMode) return; // Only autosave when in edit mode
-    if (!editTitle.trim() && !editContent.trim()) return;
+    // Permitir salvar notas vazias (removido a validação que impedia isso)
+    // if (!editTitle.trim() && !editContent.trim()) return;
     if (!note) return; // Aguardar a nota carregar
     
     // Verificar se houve mudanças reais comparando com os valores originais da nota
@@ -902,10 +956,10 @@ export default function NotePage() {
       <ProtectedRoute>
         {/* Read-only mode banner */}
         {(hasReadOnlyAccess && !canEdit) || (isCollaboratorWithoutEditRights && !canEdit) ? (
-          <div className="bg-amber-500/20 border-l-4 border-amber-500 p-3 text-amber-200 text-sm flex items-center gap-2">
+          <div className="bg-amber-100 dark:bg-amber-500/20 border-l-4 border-amber-500 p-3 text-amber-800 dark:text-amber-200 text-sm flex items-center gap-2">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-4 w-4"
+              className="h-4 w-4 text-amber-600 dark:text-amber-400"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -930,9 +984,9 @@ export default function NotePage() {
                   }
                   <a
                     href="/pricing"
-                    className="underline ml-1 hover:text-amber-100"
+                    className="underline ml-1 hover:text-amber-700 dark:hover:text-amber-100 font-medium"
                   >
-                    Upgrade to edit
+                    Upgrade
                   </a>
                 </>
               )}
@@ -1008,6 +1062,16 @@ export default function NotePage() {
                           : t("editor.edit")
                       }
                       onClick={() => {
+                        // Debug log for permissions
+                        console.log('[DEBUG] Edit button clicked - Permission state:', {
+                          canEdit,
+                          canSave,
+                          hasReadOnlyAccess,
+                          isCollaboratorWithoutEditRights,
+                          userPermission,
+                          noteType
+                        });
+                        
                         if (canEdit) {
                           setEditMode(true);
                         } else {
@@ -1050,10 +1114,10 @@ export default function NotePage() {
                   {/* Auto-save status indicator */}
                   <div className="flex items-center gap-2 text-xs">
                     {autoSaveStatus === 'saving' && (
-                      <span className="text-yellow-400 animate-pulse">Salvando...</span>
+                      <span className="text-yellow-400 animate-pulse">{t("editor.saving")}</span>
                     )}
                     {autoSaveStatus === 'saved' && (
-                      <span className="text-green-400">Salvo!</span>
+                      <span className="text-green-400">{t("editor.saved")}</span>
                     )}
                   </div>
                   
