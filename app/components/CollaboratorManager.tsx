@@ -114,9 +114,9 @@ const UserAvatar: React.FC<UserAvatarProps> = ({
   };
 
   const sizeClasses = {
-    sm: 'w-6 h-6 text-xs',
-    md: 'w-8 h-8 text-xs',
-    lg: 'w-10 h-10 text-sm'
+    sm: 'w-8 h-8 text-xs',
+    md: 'w-10 h-10 text-xs',
+    lg: 'w-12 h-12 text-sm'
   };
 
   const displayName = user.full_name || user.email || user.user_id || t('collaboratorManager.permissions.collaborator');
@@ -124,10 +124,10 @@ const UserAvatar: React.FC<UserAvatarProps> = ({
 
   return (
     <div className="relative group">
-      <div className={`relative ${sizeClasses[size]} rounded-full flex items-center justify-center font-medium text-white bg-blue-500 border-gray-400 transition-all overflow-hidden`}>
-        <Avatar>
+      <div className={`relative ${sizeClasses[size]} rounded-full flex items-center justify-center font-medium text-white border-gray-400 transition-all overflow-hidden`}>
+        <Avatar className="w-full aspect-square">
           <AvatarImage
-            className={`w-full h-full rounded-full object-cover object-center border-1 border-black`}
+            className="w-full h-full rounded-full object-cover object-center"
             src={hasCustomAvatar && !imageError ? avatarUrl : "/icons/icon-512x512.png"}
             alt="Profile avatar"
             onError={() => {
@@ -214,8 +214,11 @@ const CollaboratorCard: React.FC<{
           size="lg"
         />
         <div>
-          <div className="font-medium text-white">
+          <div className="font-medium text-white flex items-center gap-2">
             {collaborator.full_name || collaborator.email || collaborator.user_id}
+            {isOnline && (
+              <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+            )}
           </div>
           <div className="flex items-center gap-2 mt-1">
             {/* Status Badge - Owner/Collaborator */}
