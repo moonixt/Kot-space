@@ -403,7 +403,7 @@
     "backToDashboard": "ダッシュボードに戻る",
     "folderDisabledPublic": "パブリックノートではフォルダーは使用できません",
     "privateNote": "プライベートノート",
-    "publicNote": "パブリックノート",
+    "publicNote": "コラボレーションノート",
     "onlyYouCanSee": "あなただけが閲覧可能",
     "realtimeCollaboration": "リアルタイムコラボレーション",
     "connected": "接続中",
@@ -411,7 +411,14 @@
     "selectNoteType": "ノートタイプを選択",
     "saving": "保存中...",
     "saved": "保存済み!",
-    "exitEditMode": "終了"
+    "exitEditMode": "終了",
+    "changeNoteType": "ノートタイプを変更しますか？",
+    "saveCurrentNoteFirst": "現在のノートの内容は自動的に保存され、新しいタイプで編集を続けられます：",
+    "startNewNoteAs": "すでに書いた内容は現在のタイプの新しいノートとして保存されます。ここから新しいタイプで書き続けます：",
+    "noteTypeSwitchExplanation": "現在のコンテンツはプライベートノートとして保存され、新しいコンテンツは共同作業可能になり、共有できます。",
+    "continue": "変更を確認",
+    "changingTypeWillSave": "タイプを変更すると、現在のコンテンツが自動的に保存されます",
+    "hasContent": "このノートにはコンテンツがあります"
   },
   "notes": {
     "backToHome": "ホームに戻る",
@@ -632,7 +639,19 @@
       "title": "アカウント設定",
       "description": "個人アカウントの設定と環境設定を管理する",
       "deleteAccount": "アカウントを削除",
-      "deleteDescription": "アカウントとデータを完全に削除する"
+      "deleteDescription": "アカウントとデータを完全に削除する",
+      "profileForm": {
+        "title": "プロフィール情報",
+        "nameLabel": "名前",
+        "emailLabel": "メールアドレス",
+        "namePlaceholder": "お名前を入力してください",
+        "emailPlaceholder": "メールアドレスを入力してください",
+        "saveButton": "変更を保存",
+        "saving": "保存中...",
+        "successMessage": "プロフィールが正常に更新されました！",
+        "errorMessage": "プロフィールの更新に失敗しました。",
+        "errorGeneral": "プロフィールの更新に失敗しました。"
+      }
     },
     "privacy": {
       "title": "プライバシーとセキュリティ",

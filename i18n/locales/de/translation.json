@@ -354,7 +354,7 @@
     "backToDashboard": "Zurück zum Dashboard",
     "folderDisabledPublic": "Ordner sind für öffentliche Notizen nicht verfügbar",
     "privateNote": "Private Notiz",
-    "publicNote": "Öffentliche Notiz",
+    "publicNote": "Kollaborative Notiz",
     "onlyYouCanSee": "Nur Sie können das sehen",
     "realtimeCollaboration": "Echtzeit-Zusammenarbeit",
     "connected": "Verbunden",
@@ -365,7 +365,14 @@
     "titlePlaceholder": "Name des Arbeitsbereichs",
     "saving": "Speichern...",
     "saved": "Gespeichert!",
-    "exitEditMode": "Beenden"
+    "exitEditMode": "Beenden",
+    "changeNoteType": "Notiztyp ändern?",
+    "saveCurrentNoteFirst": "Der Inhalt Ihrer aktuellen Notiz wird automatisch gespeichert und Sie bearbeiten sie weiterhin mit dem neuen Typ:",
+    "startNewNoteAs": "Was Sie bereits geschrieben haben, wird als neue Notiz des aktuellen Typs gespeichert. Von hier aus schreiben Sie mit dem neuen Typ weiter:",
+    "noteTypeSwitchExplanation": "Ihr aktueller Inhalt wird als private Notiz gespeichert und der neue Inhalt wird kollaborativ und kann geteilt werden.",
+    "continue": "Änderung bestätigen",
+    "changingTypeWillSave": "Das Ändern des Typs speichert automatisch den aktuellen Inhalt",
+    "hasContent": "Diese Notiz hat Inhalt"
   },
   "profile": {
     "profile": "Profil",
@@ -448,7 +455,19 @@
       "title": "Kontoeinstellungen",
       "description": "Verwalten Sie Ihre persönlichen Einstellungen und Präferenzen",
       "deleteAccount": "Konto löschen",
-      "deleteDescription": "Löschen Sie Ihr Konto und Ihre Daten dauerhaft"
+      "deleteDescription": "Löschen Sie Ihr Konto und Ihre Daten dauerhaft",
+      "profileForm": {
+        "title": "Profilinformationen",
+        "nameLabel": "Name",
+        "emailLabel": "E-Mail",
+        "namePlaceholder": "Geben Sie Ihren Namen ein",
+        "emailPlaceholder": "Geben Sie Ihre E-Mail ein",
+        "saveButton": "Änderungen speichern",
+        "saving": "Speichern...",
+        "successMessage": "Profil erfolgreich aktualisiert!",
+        "errorMessage": "Fehler beim Aktualisieren des Profils.",
+        "errorGeneral": "Fehler beim Aktualisieren des Profils."
+      }
     },
     "privacy": {
       "title": "Datenschutz & Sicherheit",
