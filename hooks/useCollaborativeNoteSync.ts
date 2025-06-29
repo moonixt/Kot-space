@@ -16,6 +16,7 @@ interface UseCollaborativeNoteSyncProps {
   noteType: 'private' | 'public';
   user: any;
   isEnabled: boolean; // Only sync when note is open and user is viewing it
+  editMode?: boolean; // Optional: if provided, will pause polling during edit mode
 }
 
 interface SyncResult {
@@ -32,7 +33,8 @@ export function useCollaborativeNoteSync({
   noteId,
   noteType,
   user,
-  isEnabled
+  isEnabled,
+  editMode = false
 }: UseCollaborativeNoteSyncProps): SyncResult {
   const [note, setNote] = useState<Note | null>(null);
   const [loading, setLoading] = useState(false);
@@ -45,6 +47,7 @@ export function useCollaborativeNoteSync({
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const lastFetchedVersion = useRef<string | null>(null);
   const userEditTimestamp = useRef<Date | null>(null);
+  const isFetching = useRef<boolean>(false); // Prevent concurrent fetches
 
   // Monitor online status
   useEffect(() => {
@@ -61,12 +64,24 @@ export function useCollaborativeNoteSync({
   }, []);
 
   const fetchNoteUpdate = useCallback(async () => {
-    if (!noteId || !user || !isOnline || noteType !== 'public') {
+    // Validações mais rigorosas
+    if (!noteId || !user || !isOnline || noteType !== 'public' || !isEnabled) {
       return;
     }
 
+    // Prevent concurrent fetches
+    if (isFetching.current) {
+      console.log('[CollaborativeSync] Fetch already in progress, skipping');
+      return;
+    }
+
+    isFetching.current = true;
+
     try {
       setError(null);
+      
+      // Log para debug
+      console.log('[CollaborativeSync] Fetching note update for:', noteId);
       
       const { data: noteData, error: noteError } = await supabase
         .from("public_notes")
@@ -75,10 +90,12 @@ export function useCollaborativeNoteSync({
         .single();
 
       if (noteError) {
+        console.error('[CollaborativeSync] Supabase error:', noteError);
         throw noteError;
       }
 
       if (!noteData) {
+        console.warn('[CollaborativeSync] Note not found:', noteId);
         throw new Error('Note not found');
       }
 
@@ -88,8 +105,11 @@ export function useCollaborativeNoteSync({
       if (lastFetchedVersion.current === currentVersion) {
         // No changes, just update last check time
         setLastUpdated(new Date());
+        console.log('[CollaborativeSync] No changes detected');
         return;
       }
+
+      console.log('[CollaborativeSync] Note has changes, updating...');
 
       // Decrypt the note data
       const decryptedTitle = decrypt(noteData.title);
@@ -104,20 +124,28 @@ export function useCollaborativeNoteSync({
         type: 'public'
       };
 
-      // Check for conflicts if user has been editing
+      // Check for conflicts if user has been editing or is in edit mode
       const hasLocalEdits = localStorage.getItem(`fair-note-edit-title-${noteId}`) || 
                            localStorage.getItem(`fair-note-edit-content-${noteId}`);
       
-      if (hasLocalEdits && userEditTimestamp.current) {
+      if ((hasLocalEdits || editMode) && userEditTimestamp.current) {
         const serverUpdateTime = new Date(noteData.updated_at || noteData.created_at);
         
         // If server was updated after user started editing, there might be a conflict
         if (serverUpdateTime > userEditTimestamp.current) {
-          console.log('Potential conflict detected');
+          console.log('[CollaborativeSync] Potential conflict detected during editing');
           setHasConflict(true);
           setConflictNote(updatedNote);
           return; // Don't automatically update, let user decide
         }
+      }
+
+      // In edit mode, be more careful about auto-updating
+      if (editMode && hasLocalEdits) {
+        console.log('[CollaborativeSync] Edit mode active with local changes, showing conflict for user decision');
+        setHasConflict(true);
+        setConflictNote(updatedNote);
+        return;
       }
 
       setNote(updatedNote);
@@ -127,25 +155,37 @@ export function useCollaborativeNoteSync({
       setConflictNote(null);
 
     } catch (err) {
-      console.error('Error fetching note update:', err);
+      console.error('[CollaborativeSync] Error fetching note update:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch note updates');
+    } finally {
+      isFetching.current = false;
     }
-  }, [noteId, user, isOnline, noteType]);
+  }, [noteId, user, isOnline, noteType, isEnabled, editMode]);
 
-  // Initial fetch
+  // Initial fetch - Only run once when component is ready
   useEffect(() => {
-    if (isEnabled && noteType === 'public') {
+    if (isEnabled && noteType === 'public' && noteId && user) {
+      console.log('[CollaborativeSync] Initial fetch for noteId:', noteId, 'editMode:', editMode);
       setLoading(true);
       fetchNoteUpdate().finally(() => setLoading(false));
     }
-  }, [isEnabled, fetchNoteUpdate, noteType]);
+  }, [isEnabled, noteType, noteId, user]); // Removed fetchNoteUpdate and editMode from deps to avoid unnecessary re-runs
 
   // Setup polling interval
   useEffect(() => {
-    if (!isEnabled || noteType !== 'public' || !isOnline) {
+    // Don't poll if disabled, not public note, offline, or missing data
+    if (!isEnabled || noteType !== 'public' || !isOnline || !noteId || !user) {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
         intervalRef.current = null;
+        console.log('[CollaborativeSync] Polling disabled - Conditions:', {
+          isEnabled,
+          noteType,
+          isOnline,
+          hasNoteId: !!noteId,
+          hasUser: !!user,
+          editMode
+        });
       }
       return;
     }
@@ -155,18 +195,22 @@ export function useCollaborativeNoteSync({
       clearInterval(intervalRef.current);
     }
 
-    // Setup new interval for 2-second polling
+    console.log('[CollaborativeSync] Starting polling interval for noteId:', noteId, 'editMode:', editMode);
+
+    // Setup polling with different intervals for edit vs view mode
+    const pollInterval = editMode ? 3000 : 2000; // Slightly slower during edit to reduce interruptions
     intervalRef.current = setInterval(() => {
       fetchNoteUpdate();
-    }, 0);
+    }, pollInterval);
 
     return () => {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
         intervalRef.current = null;
+        console.log('[CollaborativeSync] Cleaning up polling interval');
       }
     };
-  }, [isEnabled, fetchNoteUpdate, noteType, isOnline]);
+  }, [isEnabled, fetchNoteUpdate, noteType, isOnline, noteId, user, editMode]);
 
   // Cleanup on unmount
   useEffect(() => {

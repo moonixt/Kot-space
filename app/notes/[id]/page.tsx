@@ -94,7 +94,8 @@ export default function NotePage() {
     noteId: noteId,
     noteType: noteType,
     user: user,
-    isEnabled: !!noteId && !!user && noteType === 'public' && !editMode // Only sync when not editing
+    isEnabled: !!noteId && !!user && noteType === 'public', // Always enabled for public notes
+    editMode: editMode // Pass editMode to control polling
   }) as any; // Temporary type cast to avoid TS issues
   
   // For private notes, we don't need real-time collaboration
