@@ -33,10 +33,11 @@ import { useTranslation } from "react-i18next"; // Import the translation hook
 
 interface EditorProps {
   initialNoteType?: 'private' | 'public';
+  noteId?: string; // Add noteId to know if we're editing an existing note
 }
 
 
-function Editor({ initialNoteType = 'private' }: EditorProps) {
+function Editor({ initialNoteType = 'private', noteId }: EditorProps) {
   //main function for the editor component
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -58,6 +59,19 @@ function Editor({ initialNoteType = 'private' }: EditorProps) {
   const [selectedNoteType, setSelectedNoteType] = useState<'private' | 'public'>(initialNoteType);
   const [showNoteTypeDropdown, setShowNoteTypeDropdown] = useState(false);
   const [, setHasReadOnlyAccess] = useState(false);
+  
+  // Add flag to track if component has finished initializing
+  const [isInitialized, setIsInitialized] = useState(false);
+  
+  // Add state to track if this is editing an existing note
+  const [isEditingExistingNote, setIsEditingExistingNote] = useState(false);
+  
+  // Add state to track the current note ID after creation
+  const [currentNoteId, setCurrentNoteId] = useState<string | null>(noteId || null);
+  
+  // Add state to track if user is trying to change note type
+  const [showNoteTypeChangeDialog, setShowNoteTypeChangeDialog] = useState(false);
+  const [pendingNoteType, setPendingNoteType] = useState<'private' | 'public' | null>(null);
 
   // Add state for folders and folder selection
   const [folders, setFolders] = useState<Array<{ id: string; name: string }>>([]);
@@ -163,19 +177,30 @@ function Editor({ initialNoteType = 'private' }: EditorProps) {
       }
     }
 
+    // Check if we're editing an existing note
+    if (noteId) {
+      setIsEditingExistingNote(true);
+    }
+
     // Fetch folders when component mounts
     if (user) {
       fetchFolders();
     }
 
+    // Mark component as initialized after loading data
+    setIsInitialized(true);
+
     // Cleanup function - limpa localStorage quando o componente é desmontado
     return () => {
-      localStorage.removeItem("fair-note-title");
-      localStorage.removeItem("fair-note-content");
-      localStorage.removeItem("fair-note-tags");
-      localStorage.removeItem("fair-note-folder");
+      // Only clear localStorage if we're creating a new note, not editing existing
+      if (!noteId) {
+        localStorage.removeItem("fair-note-title");
+        localStorage.removeItem("fair-note-content");
+        localStorage.removeItem("fair-note-tags");
+        localStorage.removeItem("fair-note-folder");
+      }
     };
-  }, [user]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [user, noteId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Add fetchFolders function using useCallback to prevent dependency issues
   const fetchFolders = useCallback(async () => {
@@ -236,6 +261,86 @@ function Editor({ initialNoteType = 'private' }: EditorProps) {
     setContent((prev) => prev + emojiData.emoji);
     setShowEmojiPickerContent(false);
   };
+
+  // Function to handle note type change with content check
+  const handleNoteTypeChange = (newType: 'private' | 'public') => {
+    // If no content yet, allow immediate change
+    if (!title.trim() && !content.trim() && !isEditingExistingNote) {
+      setSelectedNoteType(newType);
+      setShowNoteTypeDropdown(false);
+      return;
+    }
+
+    // If there's content or we're editing an existing note, show confirmation dialog
+    setPendingNoteType(newType);
+    setShowNoteTypeChangeDialog(true);
+    setShowNoteTypeDropdown(false);
+  };
+
+  // Check if there's significant content
+  const hasContent = () => {
+    return title.trim().length > 0 || content.trim().length > 0 || isEditingExistingNote;
+  };
+
+  // Function to confirm note type change
+  const confirmNoteTypeChange = async () => {
+    if (!pendingNoteType) return;
+
+    try {
+      // If we're editing an existing note, save it first
+      if (isEditingExistingNote && currentNoteId) {
+        await saveNote();
+      }
+
+      // Reset state for new note type
+      setSelectedNoteType(pendingNoteType);
+      setIsEditingExistingNote(false);
+      setCurrentNoteId(null);
+
+      // Clear localStorage to start fresh
+      localStorage.removeItem("fair-note-title");
+      localStorage.removeItem("fair-note-content");
+      localStorage.removeItem("fair-note-tags");
+      localStorage.removeItem("fair-note-folder");
+
+      // Keep current content but mark as new note
+      // Content stays in the form, but will be saved as new note type
+
+      setShowNoteTypeChangeDialog(false);
+      setPendingNoteType(null);
+    } catch (error) {
+      console.error("Error saving before note type change:", error);
+      // Show error but still allow the change
+      setSelectedNoteType(pendingNoteType);
+      setIsEditingExistingNote(false);
+      setCurrentNoteId(null);
+      setShowNoteTypeChangeDialog(false);
+      setPendingNoteType(null);
+    }
+  };
+
+  // Function to cancel note type change
+  const cancelNoteTypeChange = () => {
+    setShowNoteTypeChangeDialog(false);
+    setPendingNoteType(null);
+  };
+
+  // Handle ESC key for dialog
+  useEffect(() => {
+    const handleEscapeKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && showNoteTypeChangeDialog) {
+        cancelNoteTypeChange();
+      }
+    };
+
+    if (showNoteTypeChangeDialog) {
+      document.addEventListener('keydown', handleEscapeKey);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscapeKey);
+    };
+  }, [showNoteTypeChangeDialog]);
 
   const insertMarkdown = (markdownSyntax: string) => {
     //main function to insert markdown in the text area
@@ -322,8 +427,8 @@ function Editor({ initialNoteType = 'private' }: EditorProps) {
 
   const saveNote = async () => {
     //main fuction to save the notes in the database
-    // Permitir salvar notas vazias (removido a validação que impedia isso)
-    // if (!title.trim() && !content.trim()) return; //if the title is with space, removed it
+    // Don't save if both title and content are empty for new notes
+    if (!isEditingExistingNote && !title.trim() && !content.trim()) return;
 
     // Verify if the user is verified
     if (!user) {
@@ -345,8 +450,8 @@ function Editor({ initialNoteType = 'private' }: EditorProps) {
     }
 
     try {
-      // Check user limits before saving (only for private notes for now)
-      if (selectedNoteType === 'private') {
+      // Check user limits before saving (only for private notes and new notes)
+      if (selectedNoteType === 'private' && !isEditingExistingNote) {
         const userLimits = await checkUserLimits(user.id);
 
         if (!userLimits.canCreateNote) {
@@ -379,53 +484,100 @@ function Editor({ initialNoteType = 'private' }: EditorProps) {
       setSaving(true); // Change the state to true
 
       if (selectedNoteType === 'public') {
-        // Save as public note using the realtime manager with encryption
-        const encryptedContent = encrypt(content);
-        const encryptedTitle = encrypt(title || "Untitled");
-        
-        const result = await realtimeManager.createPublicNote(
-          encryptedTitle, 
-          encryptedContent,
-          {
-            allowAnonymousView: false,
-            allowAnonymousEdit: false
-          }
-        );
+        if (isEditingExistingNote && currentNoteId) {
+          // Update existing public note
+          const encryptedContent = encrypt(content);
+          const encryptedTitle = encrypt(title || "Untitled");
+          
+          const result = await realtimeManager.updatePublicNote(
+            currentNoteId,
+            {
+              title: encryptedTitle,
+              content: encryptedContent
+            }
+          );
 
-        if (!result.success) {
-          throw new Error(result.error || 'Failed to create public note');
+          if (!result.success) {
+            throw new Error(result.error || 'Failed to update public note');
+          }
+        } else {
+          // Create new public note using the realtime manager with encryption
+          const encryptedContent = encrypt(content);
+          const encryptedTitle = encrypt(title || "Untitled");
+          
+          const result = await realtimeManager.createPublicNote(
+            encryptedTitle, 
+            encryptedContent,
+            {
+              allowAnonymousView: false,
+              allowAnonymousEdit: false
+            }
+          );
+
+          if (!result.success) {
+            throw new Error(result.error || 'Failed to create public note');
+          }
+
+          // After creating, mark as editing existing note for future saves
+          if (result.note && result.note.id) {
+            setCurrentNoteId(result.note.id);
+            setIsEditingExistingNote(true);
+          }
         }
       } else {
-        // Save as private note (existing logic)
-        // Criptografar o conteúdo da nota antes de salvar
+        // Handle private notes
         const encryptedContent = encrypt(content);
-        const encryptedTitle = encrypt(title || "Untitled"); // Usar "Untitled" se o título estiver vazio
+        const encryptedTitle = encrypt(title || "Untitled");
 
-        const { error } = await supabase //call the supabase client
-          .from("notes") //from the notes table
-          .insert([
-            //insert the following values
-            {
-              title: encryptedTitle, // Salvar título criptografado
-              content: encryptedContent, // Salvar conteúdo criptografado
-              user_id: user.id, // Add the user id in the note
-              tags: selectedTags, // Add the selected tags in the dabase
-              folder_id: selectedFolder ? selectedFolder.id : null, // Add the folder id if selected
-            },
-          ])
-          .select(); //return and apply the values in the database
+        if (isEditingExistingNote && currentNoteId) {
+          // Update existing private note
+          const { error } = await supabase
+            .from("notes")
+            .update({
+              title: encryptedTitle,
+              content: encryptedContent,
+              tags: selectedTags,
+              folder_id: selectedFolder ? selectedFolder.id : null,
+            })
+            .eq("id", currentNoteId)
+            .eq("user_id", user.id);
 
-        if (error) throw error; //if error trow a error saved in the variable
+          if (error) throw error;
+        } else {
+          // Create new private note
+          const { data, error } = await supabase
+            .from("notes")
+            .insert([
+              {
+                title: encryptedTitle,
+                content: encryptedContent,
+                user_id: user.id,
+                tags: selectedTags,
+                folder_id: selectedFolder ? selectedFolder.id : null,
+              },
+            ])
+            .select();
+
+          if (error) throw error;
+
+          // After creating, mark as editing existing note and save the noteId for future updates
+          if (data && data[0]) {
+            setCurrentNoteId(data[0].id);
+            setIsEditingExistingNote(true);
+          }
+        }
       }
 
       // If success, this flow will be executed:
       // Status é controlado pelo autosave
 
-      // Limpar localStorage após salvar com sucesso para evitar duplicação
-      localStorage.removeItem("fair-note-title");
-      localStorage.removeItem("fair-note-content");
-      localStorage.removeItem("fair-note-tags");
-      localStorage.removeItem("fair-note-folder");
+      // Only clear localStorage after saving a new note successfully
+      if (!isEditingExistingNote) {
+        localStorage.removeItem("fair-note-title");
+        localStorage.removeItem("fair-note-content");
+        localStorage.removeItem("fair-note-tags");
+        localStorage.removeItem("fair-note-folder");
+      }
 
       // NÃO limpar os campos do editor - manter o conteúdo após salvar
       // Os campos devem permanecer com o conteúdo atual para permitir edições contínuas
@@ -455,8 +607,11 @@ function Editor({ initialNoteType = 'private' }: EditorProps) {
 
   // Auto-save effect
   useEffect(() => {
-    // Permitir salvar notas vazias (removido a condição que impedia isso)
-    // if (!title.trim() && !content.trim()) return;
+    // Don't auto-save during component initialization
+    if (!isInitialized) return;
+    
+    // Don't auto-save if both title and content are empty for new notes
+    if (!isEditingExistingNote && !title.trim() && !content.trim()) return;
     
     if (autoSaveTimeout.current) clearTimeout(autoSaveTimeout.current);
     
@@ -477,13 +632,17 @@ function Editor({ initialNoteType = 'private' }: EditorProps) {
     return () => {
       if (autoSaveTimeout.current) clearTimeout(autoSaveTimeout.current);
     };
-  }, [title, content, selectedTags, selectedFolder, selectedNoteType]);
+  }, [title, content, selectedTags, selectedFolder, selectedNoteType, isInitialized, isEditingExistingNote, currentNoteId]);
 
   // Keyboard shortcut for save (Ctrl+S / Cmd+S)
   useEffect(() => {
     const handler = async (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key === 's') {
         e.preventDefault();
+        
+        // Only allow manual save if component is initialized
+        if (!isInitialized) return;
+        
         setAutoSaveStatus('saving');
         try {
           await saveNote();
@@ -496,7 +655,7 @@ function Editor({ initialNoteType = 'private' }: EditorProps) {
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-  }, [title, content, selectedTags, selectedFolder, selectedNoteType]);
+  }, [title, content, selectedTags, selectedFolder, selectedNoteType, isInitialized, isEditingExistingNote, currentNoteId]);
 
   const isImageFile = (file: File) => {
     const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
@@ -510,7 +669,7 @@ function Editor({ initialNoteType = 'private' }: EditorProps) {
     const file = files[0];
 
     if (!isImageFile(file)) {
-      alert("Only image files are allowed.");
+      alert("Apenas arquivos de imagem são permitidos.");
       return;
     }
 
@@ -696,7 +855,7 @@ function Editor({ initialNoteType = 'private' }: EditorProps) {
                   <span className="max-w-[200px] sm:max-w-[100px] truncate">
                     {selectedFolder
                       ? selectedFolder.name
-                      : t("editor.noFolder", { defaultValue: "" })}
+                      : t("editor.noFolder")}
                   </span>
                   <ChevronDown size={14} className="ml-auto" />
                 </button>
@@ -715,7 +874,7 @@ function Editor({ initialNoteType = 'private' }: EditorProps) {
                             : "hover:bg-[var(--container)] text-[var(--foreground)]"
                         }`}
                       >
-                        {t("editor.noFolder", { defaultValue: "" })}
+                        {t("editor.noFolder")}
                       </button>
 
                       {folders.map((folder) => (
@@ -755,7 +914,7 @@ function Editor({ initialNoteType = 'private' }: EditorProps) {
               <div className="relative" ref={noteTypeDropdownRef}>
                 <button
                   onClick={() => setShowNoteTypeDropdown(!showNoteTypeDropdown)}
-                  className={`flex items-center gap-1 px-3 py-1.5 rounded-md hover:bg-opacity-80 text-sm transition-colors w-full sm:w-auto ${
+                  className={`flex items-center gap-1 px-3 py-1.5 rounded-md hover:bg-opacity-80 text-sm transition-colors w-full sm:w-auto relative ${
                     selectedNoteType === 'private' 
                       ? 'bg-gray-500 text-white' 
                       : 'bg-blue-500 text-white'
@@ -764,26 +923,35 @@ function Editor({ initialNoteType = 'private' }: EditorProps) {
                 >
                   {selectedNoteType === 'private' ? <Lock size={16} /> : <Users size={16} />}
                   <span className="max-w-[200px] sm:max-w-[100px] truncate">
-                    {selectedNoteType === 'private' ? t('editor.privateNote') : t('editor.publicNote')}
+                    {selectedNoteType === 'private' ? t('editor.privateNote') : t('noteTypeSelector.collaborativeNotes')}
                   </span>
                   <ChevronDown size={14} className="ml-auto" />
+                  
+                  {/* Content indicator */}
+                  {hasContent() && (
+                    <div className="absolute -top-1 -right-1 w-3 h-3 bg-blue-500 rounded-full border-2 border-[var(--background)]" 
+                         title={t('editor.hasContent', { defaultValue: 'Esta nota possui conteúdo' })} />
+                  )}
                 </button>
 
                 {showNoteTypeDropdown && (
                     <div className="absolute left-0 mt-1 w-full sm:w-48 sm:right-0 sm:left-auto rounded-md bg-[var(--container)] shadow-lg z-50">
                       <div className="py-1">
+                        {hasContent() && (
+                          <div className="px-3 py-2 text-xs text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 border-b border-[var(--border-color)] flex items-center gap-2">
+                            <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                            {t('editor.changingTypeWillSave', { defaultValue: 'Trocar o tipo salvará automaticamente o conteúdo atual' })}
+                          </div>
+                        )}
+                        
                         <button
-                          onClick={() => {
-                            setSelectedNoteType('private');
-                            setShowNoteTypeDropdown(false);
-                          }}
-                          className={`flex items-center gap-2 w-full text-left px-3 py-2 text-sm ${
+                          onClick={() => handleNoteTypeChange('private')}
+                          className={`flex items-center gap-3 w-full text-left px-3 py-2 text-sm ${
                             selectedNoteType === 'private'
                               ? "bg-[var(--accent-color)] text-white"
                               : "hover:bg-[var(--container)] text-[var(--foreground)]"
                           }`}
                         >
-                          <Lock size={16} />
                           <div>
                             <div className="font-medium">{t('editor.privateNote')}</div>
                             <div className="text-xs opacity-70">{t('editor.onlyYouCanSee')}</div>
@@ -791,17 +959,13 @@ function Editor({ initialNoteType = 'private' }: EditorProps) {
                         </button>
 
                         <button
-                          onClick={() => {
-                            setSelectedNoteType('public');
-                            setShowNoteTypeDropdown(false);
-                          }}
-                          className={`flex items-center gap-2 w-full text-left px-3 py-2 text-sm ${
+                          onClick={() => handleNoteTypeChange('public')}
+                          className={`flex items-center gap-3 w-full text-left px-3 py-2 text-sm ${
                             selectedNoteType === 'public'
                               ? "bg-[var(--accent-color)] text-white"
                               : "hover:bg-[var(--container)] text-[var(--foreground)]"
                           }`}
                         >
-                          <Users size={16} />
                           <div>
                             <div className="font-medium">{t('editor.publicNote')}</div>
                             <div className="text-xs opacity-70">{t('editor.realtimeCollaboration')}</div>
@@ -1224,6 +1388,75 @@ function Editor({ initialNoteType = 'private' }: EditorProps) {
             </div>
           </div>
         </div>
+
+        {/* Note Type Change Confirmation Dialog */}
+        {showNoteTypeChangeDialog && (
+          <div 
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+            onClick={(e) => {
+              if (e.target === e.currentTarget) {
+                cancelNoteTypeChange();
+              }
+            }}
+          >
+            <div className="bg-[var(--background)] rounded-lg shadow-xl max-w-md w-full border border-[var(--border-color)]">
+              <div className="p-6">
+                <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
+                  {t('editor.changeNoteType', { defaultValue: 'Trocar Tipo de Nota?' })}
+                </h3>
+                
+                <div className="mb-6">
+                  <p className="text-[var(--foreground)] opacity-80 mb-3">
+                    {isEditingExistingNote 
+                      ? t('editor.saveCurrentNoteFirst', { defaultValue: 'O conteúdo da sua nota atual será salvo automaticamente e você continuará editando ela com o novo tipo:' })
+                      : t('editor.startNewNoteAs', { defaultValue: 'O que você já escreveu será salvo como uma nova nota do tipo atual. A partir daqui, você continuará escrevendo com o novo tipo:' })
+                    }
+                  </p>
+                  
+                  <div className={`flex items-center gap-3 px-3 py-2 rounded-md ${
+                    pendingNoteType === 'private' 
+                      ? 'bg-[var(--foreground)] text-[var(--background)]' 
+                      : 'bg-[var(--foreground)] text-[var(--background)]'
+                  }`}>
+                    <div className={`w-3 h-3 rounded-full ${
+                      pendingNoteType === 'private' ? 'bg-gray-500' : 'bg-blue-500'
+                    }`}></div>
+                    <span className="font-medium">
+                      {pendingNoteType === 'private' ? t('editor.privateNote') : t('editor.publicNote')}
+                    </span>
+                  </div>
+
+                  <div className="mt-4 p-3 bg-[var(--foreground)]  rounded-md  ">
+                    <div className="flex items-start gap-2">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                      <p className="text-sm text-[var(--background)] ">
+                        {pendingNoteType === 'public' 
+                          ? t('editor.noteTypeSwitchExplanation', { defaultValue: 'Seu conteúdo atual será salvo como nota privada e o novo conteúdo será colaborativo, podendo ser compartilhado.' })
+                          : 'Seu conteúdo será mantido como privado, visível apenas para você.'
+                        }
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex gap-3">
+                  <button
+                    onClick={cancelNoteTypeChange}
+                    className="flex-1 px-4 py-2 text-[var(--foreground)] bg-[var(--container)] hover:bg-opacity-80 rounded-md transition-colors"
+                  >
+                    {t('editor.cancel')}
+                  </button>
+                  <button
+                    onClick={confirmNoteTypeChange}
+                    className="flex-1 px-4 py-2 bg-[var(--foreground)] text-[var(--background)]  hover:bg-opacity-90 rounded-md transition-colors"
+                  >
+                    {t('editor.continue', { defaultValue: 'Confirmar Troca' })}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -883,6 +883,7 @@ export default function Settings() {
 
 // ProfileUpdateForm component
 function ProfileUpdateForm({ user }: { user: any }) {
+  const { t } = useTranslation();
   const [name, setName] = useState(user?.user_metadata?.full_name || "");
   const [email, setEmail] = useState(user?.email || "");
   const [loading, setLoading] = useState(false);
@@ -915,12 +916,12 @@ function ProfileUpdateForm({ user }: { user: any }) {
       const data = await res.json();
       
       if (res.ok) {
-        setSuccess("Perfil atualizado com sucesso!");
+        setSuccess(t("settings.account.profileForm.successMessage"));
       } else {
-        setError(data.error || "Falha ao atualizar perfil.");
+        setError(data.error || t("settings.account.profileForm.errorMessage"));
       }
     } catch (err) {
-      setError("Falha ao atualizar perfil.");
+      setError(t("settings.account.profileForm.errorGeneral"));
     } finally {
       setLoading(false);
     }
@@ -929,12 +930,12 @@ function ProfileUpdateForm({ user }: { user: any }) {
   return (
     <div className="bg-[var(--theme)]/10 rounded-lg p-6 mb-6">
       <h3 className="text-lg font-medium text-[var(--foreground)] mb-4">
-        Informações do Perfil
+        {t("settings.account.profileForm.title")}
       </h3>
       <form onSubmit={handleSubmit} className="space-y-4 max-w-md">
         <div>
           <label className="block text-sm font-medium mb-1 text-[var(--foreground)]" htmlFor="name">
-            Nome
+            {t("settings.account.profileForm.nameLabel")}
           </label>
           <input
             id="name"
@@ -943,12 +944,12 @@ function ProfileUpdateForm({ user }: { user: any }) {
             value={name}
             onChange={(e) => setName(e.target.value)}
             disabled={loading}
-            placeholder="Digite seu nome"
+            placeholder={t("settings.account.profileForm.namePlaceholder")}
           />
         </div>
         <div>
           <label className="block text-sm font-medium mb-1 text-[var(--foreground)]" htmlFor="email">
-            Email
+            {t("settings.account.profileForm.emailLabel")}
           </label>
           <input
             id="email"
@@ -957,12 +958,12 @@ function ProfileUpdateForm({ user }: { user: any }) {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             disabled={loading}
-            placeholder="Digite seu email"
+            placeholder={t("settings.account.profileForm.emailPlaceholder")}
           />
         </div>
         <div className="flex gap-2 items-center">
           <Button type="submit" disabled={loading} className="bg-[var(--theme)] text-white hover:bg-[var(--theme)]/80">
-            {loading ? "Salvando..." : "Salvar Alterações"}
+            {loading ? t("settings.account.profileForm.saving") : t("settings.account.profileForm.saveButton")}
           </Button>
           {success && <span className="text-green-500 text-sm">{success}</span>}
           {error && <span className="text-red-500 text-sm">{error}</span>}

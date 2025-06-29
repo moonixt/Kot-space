@@ -403,7 +403,7 @@
     "backToDashboard": "Volver al dashboard",
     "folderDisabledPublic": "Las carpetas no están disponibles para notas públicas",
     "privateNote": "Nota Privada",
-    "publicNote": "Nota Pública",
+    "publicNote": "Nota Colaborativa",
     "onlyYouCanSee": "Solo tú puedes ver",
     "realtimeCollaboration": "Colaboración en tiempo real",
     "connected": "Conectado",
@@ -411,7 +411,14 @@
     "selectNoteType": "Seleccionar tipo de nota",
     "saving": "Guardando...",
     "saved": "¡Guardado!",
-    "exitEditMode": "Salir"
+    "exitEditMode": "Salir",
+    "changeNoteType": "¿Cambiar Tipo de Nota?",
+    "saveCurrentNoteFirst": "El contenido de tu nota actual se guardará automáticamente y continuarás editándola con el nuevo tipo:",
+    "startNewNoteAs": "Lo que ya has escrito se guardará como una nueva nota del tipo actual. A partir de aquí, continuarás escribiendo con el nuevo tipo:",
+    "noteTypeSwitchExplanation": "Tu contenido actual se guardará como nota privada y el nuevo contenido será colaborativo, pudiendo ser compartido.",
+    "continue": "Confirmar Cambio",
+    "changingTypeWillSave": "Cambiar el tipo guardará automáticamente el contenido actual",
+    "hasContent": "Esta nota tiene contenido"
   },
   "profile": {
     "profile": "Perfil",
@@ -494,7 +501,19 @@
       "title": "Configuración de la Cuenta",
       "description": "Administra tu configuración y preferencias personales",
       "deleteAccount": "Eliminar Cuenta",
-      "deleteDescription": "Elimina permanentemente tu cuenta y datos"
+      "deleteDescription": "Elimina permanentemente tu cuenta y datos",
+      "profileForm": {
+        "title": "Información del Perfil",
+        "nameLabel": "Nombre",
+        "emailLabel": "Correo electrónico",
+        "namePlaceholder": "Ingresa tu nombre",
+        "emailPlaceholder": "Ingresa tu correo electrónico",
+        "saveButton": "Guardar Cambios",
+        "saving": "Guardando...",
+        "successMessage": "¡Perfil actualizado exitosamente!",
+        "errorMessage": "Error al actualizar el perfil.",
+        "errorGeneral": "Error al actualizar el perfil."
+      }
     },
     "privacy": {
       "title": "Privacidad y Seguridad",

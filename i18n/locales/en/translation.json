@@ -413,14 +413,21 @@
     "backToDashboard": "Back to dashboard",
     "folderDisabledPublic": "Folders are not available for public notes",
     "privateNote": "Private Note",
-    "publicNote": "Public Note",
+    "publicNote": "Collaborative Note",
     "onlyYouCanSee": "Only you can see",
     "realtimeCollaboration": "Real-time collaboration",
     "connected": "Connected",
     "disconnected": "Disconnected",
     "selectNoteType": "Select note type",
     "saving": "Saving...",
-    "saved": "Saved!"
+    "saved": "Saved!",
+    "changeNoteType": "Change Note Type?",
+    "saveCurrentNoteFirst": "Your current note content will be automatically saved and you will continue editing it with the new type:",
+    "startNewNoteAs": "What you have already written will be saved as a new note of the current type. From here, you will continue writing with the new type:",
+    "noteTypeSwitchExplanation": "Your current content will be saved as a private note and the new content will be collaborative, allowing it to be shared.",
+    "continue": "Confirm Change",
+    "changingTypeWillSave": "Changing the type will automatically save the current content",
+    "hasContent": "This note has content"
   },
   "notes": {
     "backToHome": "Back to home",
@@ -630,7 +637,19 @@
       "title": "Account Settings",
       "description": "Manage your personal account settings and preferences",
       "deleteAccount": "Delete Account",
-      "deleteDescription": "Permanently delete your account and data"
+      "deleteDescription": "Permanently delete your account and data",
+      "profileForm": {
+        "title": "Profile Information",
+        "nameLabel": "Name",
+        "emailLabel": "Email",
+        "namePlaceholder": "Enter your name",
+        "emailPlaceholder": "Enter your email",
+        "saveButton": "Save Changes",
+        "saving": "Saving...",
+        "successMessage": "Profile updated successfully!",
+        "errorMessage": "Failed to update profile.",
+        "errorGeneral": "Failed to update profile."
+      }
     },
     "privacy": {
       "title": "Privacy & Security",
