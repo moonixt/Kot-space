@@ -34,7 +34,7 @@ import { useTranslation } from "next-i18next";
 
 export default function Settings() {
   const { t } = useTranslation();
-  const [activeCategory, setActiveCategory] = useState("subscription");
+  const [activeCategory, setActiveCategory] = useState("account");
   const [isMobile, setIsMobile] = useState(false);
   const [, setShowSidebar] = useState(true);
   const [isLoadingPortal, setIsLoadingPortal] = useState(false);
@@ -125,21 +125,21 @@ export default function Settings() {
   }, []);
   const categories = [
     {
-      id: "subscription",
-      name: t("settings.categories.subscription", "Subscription"),
-      icon: <CreditCard className="mr-2 h-4 w-4" />,
-      description: t(
-        "settings.descriptions.subscription",
-        "Manage your subscription plan",
-      ),
-    },
-    {
       id: "account",
       name: t("settings.categories.account", "Account"),
       icon: <User className="mr-2 h-4 w-4" />,
       description: t(
         "settings.descriptions.account",
         "Manage your personal account details",
+      ),
+    },
+    {
+      id: "subscription",
+      name: t("settings.categories.subscription", "Subscription"),
+      icon: <CreditCard className="mr-2 h-4 w-4" />,
+      description: t(
+        "settings.descriptions.subscription",
+        "Manage your subscription plan",
       ),
     },
     {

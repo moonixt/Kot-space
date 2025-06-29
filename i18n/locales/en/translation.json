@@ -68,6 +68,36 @@
       "required": "Please complete the security verification",
       "error": "Security verification error. Please try again",
       "loading": "Loading security verification..."
+    },
+    "loginProblems": "Login problems?",
+    "helpModal": {
+      "title": "Login Problems?",
+      "commonProblem": "Most common problem: System time",
+      "problemDescription": "Most login issues (including 429 errors, invalid JWT, immediate logout) happen when your device's time is incorrect.",
+      "howToFix": "How to fix:",
+      "windows": "Windows:",
+      "windowsSteps": {
+        "step1": "Settings → Time & language",
+        "step2": "Click 'Sync now'",
+        "step3": "Enable 'Set time automatically'"
+      },
+      "mac": "Mac:",
+      "macSteps": {
+        "step1": "System Preferences → Date & Time",
+        "step2": "Check 'Set date and time automatically'"
+      },
+      "linux": "Linux:",
+      "otherProblems": "Other problems:",
+      "problems": {
+        "error429": "Error 429: Too many attempts - wait a few minutes",
+        "captcha": "Captcha not working: Disable ad blockers",
+        "googleLogin": "Google login fails: Clear browser cookies",
+        "unsafeBrowser": "iOS/Embedded browsers: Google login in unsafe or embedded browsers (iOS) - Use Safari or Chrome directly",
+        "immediateLogout": "Immediate logout: Always related to system time"
+      },
+      "tip": "Tip:",
+      "tipText": "After fixing the time, wait 1-2 minutes before attempting to log in again.",
+      "understood": "Got it"
     }
   },
   "signup": {
@@ -534,13 +564,27 @@
     "volunteering": "volunteering"
   },
   "profile": {
+    "profile": "Profile",
+    "email": "Email",
+    "changePassword": "Change Password",
+    "logout": "Logout",
+    "deleteAccount": "Delete Account",
+    "deleteAccountConfirm": "Are you sure you want to delete your account? This action cannot be undone.",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "bio": "Bio",
+    "bioPlaceholder": "Capture your thoughts",
+    "saveBio": "Save Bio",
+    "bioSaved": "Bio saved successfully!",
+    "bioError": "Error saving bio",
+    "setUsername": "Set Name",
+    "setUsernameTooltip": "You need to set a name to display on your profile",
     "wallpaper": {
       "upload": "Upload wallpaper",
       "positionTop": "Align top",
       "positionCenter": "Align center",
       "positionBottom": "Align bottom"
-    },
-    "bioPlaceholder": "Capture your thoughts"
+    }
   },
   "settings": {
     "subscription": {
@@ -1096,5 +1140,20 @@
       "termsOfService": "Terms of Service",
       "allRightsReserved": "All rights reserved."
     }
+  },
+  "theme": {
+    "light": "Light",
+    "dark": "Dark",
+    "eclipse": "Eclipse",
+    "blue": "Blue",
+    "purple": "Purple",
+    "green": "Green",
+    "red": "Red",
+    "yellow": "Yellow",
+    "system": "System",
+    "systemPreference": "System Preference",
+    "choose": "Choose a theme",
+    "basic": "Basic",
+    "colors": "Colors"
   }
 }

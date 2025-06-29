@@ -21,6 +21,7 @@ function LoginForm() {
   const [error, setError] = useState<string | null>(null);
   const [showEmailForm, setShowEmailForm] = useState(false); // Add state to control email form visibility
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const [showHelpModal, setShowHelpModal] = useState(false);
   const turnstileRef = useRef<any>(null);
   const searchParams = useSearchParams();
   const message = searchParams?.get("message");
@@ -313,17 +314,113 @@ function LoginForm() {
             </Link>
           </div>
 
-          <div className="mt-4 text-center text-sm text-[var(--foreground)]">
+          <div className="mt-4 text-center text-sm text-[var(--foreground)] flex flex-wrap justify-center items-center gap-2">
             <Link href="/terms" className="text-blue-400 hover:underline">
               {t("login.termsOfUse")}
             </Link>
-            {" • "}
+            <span>•</span>
             <Link href="/privacy" className="text-blue-400 hover:underline">
               {t("login.privacyPolicy")}
             </Link>
+            <span>•</span>
+            <button
+              onClick={() => setShowHelpModal(true)}
+              className="text-blue-400 hover:underline focus:outline-none"
+            >
+              {t("login.loginProblems")}
+            </button>
           </div>
         </div>
       </div>
+
+      {/* Modal de ajuda para problemas de login */}
+      {showHelpModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-[var(--background)] border border-slate-700 rounded-xl max-w-md w-full max-h-[80vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-xl font-bold text-[var(--foreground)]">
+                  {t("login.helpModal.title")}
+                </h3>
+                <button
+                  onClick={() => setShowHelpModal(false)}
+                  className="text-[var(--foreground)] opacity-60 hover:opacity-100 transition-opacity"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              
+              <div className="space-y-4 text-sm text-[var(--foreground)]">
+                <div>
+                  <h4 className="font-semibold text-[var(--foreground)] mb-2">{t("login.helpModal.commonProblem")}</h4>
+                  <p className="text-[var(--foreground)] opacity-80 mb-3">
+                    {t("login.helpModal.problemDescription")}
+                  </p>
+                </div>
+
+                <div>
+                  <h4 className="font-semibold text-[var(--foreground)] mb-2">{t("login.helpModal.howToFix")}</h4>
+                  
+                  <div className="space-y-3">
+                    <div>
+                      <strong className="text-[var(--foreground)]">{t("login.helpModal.windows")}</strong>
+                      <ol className="list-decimal list-inside ml-4 text-[var(--foreground)] opacity-80 text-xs">
+                        <li>{t("login.helpModal.windowsSteps.step1")}</li>
+                        <li>{t("login.helpModal.windowsSteps.step2")}</li>
+                        <li>{t("login.helpModal.windowsSteps.step3")}</li>
+                      </ol>
+                    </div>
+
+                    <div>
+                      <strong className="text-[var(--foreground)]">{t("login.helpModal.mac")}</strong>
+                      <ol className="list-decimal list-inside ml-4 text-[var(--foreground)] opacity-80 text-xs">
+                        <li>{t("login.helpModal.macSteps.step1")}</li>
+                        <li>{t("login.helpModal.macSteps.step2")}</li>
+                      </ol>
+                    </div>
+
+                    <div>
+                      <strong className="text-[var(--foreground)]">{t("login.helpModal.linux")}</strong>
+                      <code className="block bg-[var(--background)] border border-slate-600 p-2 rounded text-xs mt-1 text-[var(--foreground)]">
+                        sudo ntpdate -s time.nist.gov
+                      </code>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <h4 className="font-semibold text-[var(--foreground)] mb-2">{t("login.helpModal.otherProblems")}</h4>
+                  <ul className="list-disc list-inside space-y-1 text-[var(--foreground)] opacity-80 text-xs">
+                    <li>{t("login.helpModal.problems.error429")}</li>
+                    <li>{t("login.helpModal.problems.captcha")}</li>
+                    <li>{t("login.helpModal.problems.googleLogin")}</li>
+                    <li>{t("login.helpModal.problems.unsafeBrowser")}</li>
+                    <li>{t("login.helpModal.problems.immediateLogout")}</li>
+                  </ul>
+                </div>
+
+                <div className="bg-[var(--background)] border border-slate-600 rounded-lg p-3">
+                  <div className="text-[var(--foreground)] font-medium text-xs">{t("login.helpModal.tip")}</div>
+                  <div className="text-[var(--foreground)] opacity-80 text-xs mt-1">
+                    {t("login.helpModal.tipText")}
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-6 flex justify-end">
+                <button
+                  onClick={() => setShowHelpModal(false)}
+                  className="px-4 py-2 bg-[var(--foreground)] hover:opacity-90 text-[var(--background)] rounded-lg transition-opacity text-sm"
+                >
+                  {t("login.helpModal.understood")}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

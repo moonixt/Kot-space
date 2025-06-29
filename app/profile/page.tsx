@@ -25,6 +25,8 @@ const Profile = memo(() => {
   const { user } = useAuth();
   const [bio, setBio] = useState<string | null>(null);
   const [bioLoading, setBioLoading] = useState(true);
+  const [username, setUsername] = useState<string | null>(null);
+  const [usernameLoading, setUsernameLoading] = useState(true);
   const [notes, setNotes] = useState<number | null>(null);
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
@@ -102,10 +104,11 @@ const Profile = memo(() => {
     if (!user?.id || dataLoaded) return;
 
     setBioLoading(true);
+    setUsernameLoading(true);
     try {
       const { data, error } = await supabase
         .from("profiles")
-        .select("bio")
+        .select("bio, full_name")
         .eq("id", user.id)
         .single();
 
@@ -116,13 +119,19 @@ const Profile = memo(() => {
       } else {
         setBio(t("profile.bioPlaceholder"));
       }
+
+      setUsername(data?.full_name || null);
     } catch (error) {
-      console.error("Error fetching bio:", error);
+      console.error("Error fetching bio and username:", error);
       setBio(t("profile.bioPlaceholder"));
+      setUsername(null);
     } finally {
       setBioLoading(false);
+      setUsernameLoading(false);
     }
-  }, [user?.id, dataLoaded]);
+  }, [user?.id, dataLoaded, t]);
+
+
 
   const getUserNotes = useCallback(async () => {
     if (!user?.id || dataLoaded) return;
@@ -652,7 +661,7 @@ const Profile = memo(() => {
             </div>
 
             {/* Informações do usuário e data */}
-            <div className="absolute bottom-6 right-2 sm:right-auto sm:left-2 flex flex-col gap-1">
+            <div className="absolute bottom-6 right-2 sm:right-auto sm:left-2 flex flex-col gap-1 z-20">
               <div className="bg-black/70 backdrop-blur-sm text-white text-sm px-3 py-1.5 rounded-md shadow-sm">
                 {new Date().toLocaleDateString(undefined, {
                   weekday: "short",
@@ -663,8 +672,23 @@ const Profile = memo(() => {
               </div>
 
               {user && (
-                <div className="bg-black/70 backdrop-blur-sm text-white text-sm px-3 py-1.5 rounded-md shadow-sm flex items-center gap-2">
-                  <span>{user?.email?.split("@")[0] || "Guest"}</span>
+                <div className="bg-black/70 backdrop-blur-sm text-white text-sm px-3 py-1.5 rounded-md shadow-sm flex items-center gap-2 relative z-30">
+                  {usernameLoading ? (
+                    <div className="w-16 h-4 bg-gray-500 animate-pulse rounded"></div>
+                  ) : username ? (
+                    <span>{username}</span>
+                  ) : (
+                    <>
+                      <span 
+                        className="text-yellow-300 hover:text-yellow-100 transition-colors underline cursor-pointer relative z-50"
+                        onClick={() => {
+                          window.location.href = '/settings';
+                        }}
+                      >
+                        {t('profile.setUsername')}
+                      </span>
+                    </>
+                  )}
                   <span className="h-4 w-px bg-[var(--foreground)]/30"></span>
                   <span className="flex items-center gap-1">
                     <svg
@@ -689,7 +713,7 @@ const Profile = memo(() => {
 
             {/* Pesquisa rápida */}
             <div
-              className="absolute top-20 sm:top-24 left-1/2 transform -translate-x-1/2 z-5 "
+              className="absolute top-20 sm:top-24 left-1/2 transform -translate-x-1/2 z-10 "
               ref={searchResultsRef}
             >
               <div className="flex items-center bg-black/70 backdrop-blur-sm rounded-md shadow-sm p-1">

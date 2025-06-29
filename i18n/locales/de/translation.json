@@ -63,7 +63,37 @@
     "resetPassword": "Passwort zurücksetzen",
     "termsOfUse": "Nutzungsbedingungen",
     "privacyPolicy": "Datenschutzrichtlinie",
-    "backToOptions": "Zurück zu den Optionen"
+    "backToOptions": "Zurück zu den Optionen",
+    "loginProblems": "Anmeldeprobleme?",
+    "helpModal": {
+      "title": "Anmeldeprobleme?",
+      "commonProblem": "Häufigstes Problem: Systemzeit",
+      "problemDescription": "Die meisten Anmeldeprobleme (einschließlich 429-Fehler, ungültiges JWT, sofortige Abmeldung) treten auf, wenn die Zeit Ihres Geräts falsch ist.",
+      "howToFix": "So beheben Sie es:",
+      "windows": "Windows:",
+      "windowsSteps": {
+        "step1": "Einstellungen → Zeit und Sprache",
+        "step2": "Klicken Sie auf 'Jetzt synchronisieren'",
+        "step3": "Aktivieren Sie 'Zeit automatisch festlegen'"
+      },
+      "mac": "Mac:",
+      "macSteps": {
+        "step1": "Systemeinstellungen → Datum und Uhrzeit",
+        "step2": "Markieren Sie 'Datum und Uhrzeit automatisch einstellen'"
+      },
+      "linux": "Linux:",
+      "otherProblems": "Andere Probleme:",
+      "problems": {
+        "error429": "Fehler 429: Zu viele Versuche - warten Sie einige Minuten",
+        "captcha": "Captcha funktioniert nicht: Werbeblocker deaktivieren",
+        "googleLogin": "Google-Anmeldung schlägt fehl: Browser-Cookies löschen",
+        "unsafeBrowser": "iOS/Eingebettete Browser: Google-Anmeldung in unsicheren oder eingebetteten Browsern (iOS) - Safari oder Chrome direkt verwenden",
+        "immediateLogout": "Sofortige Abmeldung: Immer in Bezug auf die Systemzeit"
+      },
+      "tip": "Tipp:",
+      "tipText": "Warten Sie nach der Zeitkorrektur 1-2 Minuten, bevor Sie sich erneut anmelden.",
+      "understood": "Verstanden"
+    }
   },
   "signup": {
     "title": "Lynxky-Konto erstellen",
@@ -335,13 +365,27 @@
     "exitEditMode": "Beenden"
   },
   "profile": {
+    "profile": "Profil",
+    "email": "E-Mail",
+    "changePassword": "Passwort ändern",
+    "logout": "Abmelden",
+    "deleteAccount": "Konto löschen",
+    "deleteAccountConfirm": "Sind Sie sicher, dass Sie Ihr Konto löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
+    "cancel": "Abbrechen",
+    "confirm": "Bestätigen",
+    "bio": "Biografie",
+    "bioPlaceholder": "Halte deine Gedanken fest",
+    "saveBio": "Biografie speichern",
+    "bioSaved": "Biografie erfolgreich gespeichert!",
+    "bioError": "Fehler beim Speichern der Biografie",
+    "setUsername": "Name festlegen",
+    "setUsernameTooltip": "Sie müssen einen Namen festlegen, der in Ihrem Profil angezeigt wird",
     "wallpaper": {
       "upload": "Hintergrundbild hochladen",
       "positionTop": "Oben ausrichten",
       "positionCenter": "Zentrieren",
       "positionBottom": "Unten ausrichten"
-    },
-    "bioPlaceholder": "Halte deine Gedanken fest"
+    }
   },
   "theme": {
     "light": "Hell",
