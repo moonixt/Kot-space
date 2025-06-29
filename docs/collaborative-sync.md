@@ -1,35 +1,43 @@
-# Sistema de Sincronização Colaborativa
-
-Este documento descreve o sistema otimizado de sincronização em tempo real para notas colaborativas implementado no FairNote.
+# Sistema de Sincronização Colaborativa do FairNote
 
 ## Visão Geral
+O sistema de sincronização colaborativa permite que múltiplos usuários visualizem e editem notas públicas simultaneamente, com atualizações em tempo real e detecção de conflitos.
 
-O sistema implementa uma solução de polling otimizado que verifica atualizações na nota colaborativa a cada 2 segundos quando a nota está aberta e sendo visualizada.
+## Funcionalidades
 
-## Componentes
+### Sincronização em Tempo Real
+- **Polling automático**: Verifica atualizações a cada 2-3 segundos
+- **Modo de visualização**: Polling a cada 2 segundos
+- **Modo de edição**: Polling a cada 3 segundos (ligeiramente mais lento para reduzir interrupções)
+- **Funcionamento contínuo**: O polling agora funciona tanto no modo visualização quanto no modo edição
 
-### 1. Hook `useCollaborativeNoteSync`
+### Detecção de Conflitos
+- **Detecção automática**: Identifica quando múltiplos usuários editam simultaneamente
+- **Prevenção de sobrescrita**: Não atualiza automaticamente se há edições locais
+- **Interface de resolução**: Permite ao usuário escolher entre manter suas alterações ou aceitar a versão do servidor
+- **Controle inteligente**: Em modo de edição, todas as atualizações externas são tratadas como potenciais conflitos
 
-**Localização:** `hooks/useCollaborativeNoteSync.ts`
+### Controle de Estado
+- **Status de sincronização**: Exibe se a nota está sincronizada
+- **Indicador de conflitos**: Mostra quando há versões conflitantes
+- **Status de conectividade**: Monitora se o usuário está online/offline
 
-**Funcionalidades:**
-- Polling automático a cada 2 segundos para notas públicas
-- Detecção de status online/offline
-- Sistema de detecção de conflitos
-- Caching inteligente (só atualiza se houve mudanças)
-- Tratamento de erros
+## Componentes Principais
 
-**Parâmetros:**
+### Hook `useCollaborativeNoteSync`
+
+#### Props
 ```typescript
 interface UseCollaborativeNoteSyncProps {
   noteId: string | null;
   noteType: 'private' | 'public';
   user: any;
-  isEnabled: boolean; // Só sincroniza quando habilitado
+  isEnabled: boolean;
+  editMode?: boolean; // Controla o comportamento durante edição
 }
 ```
 
-**Retorno:**
+#### Retorno
 ```typescript
 interface SyncResult {
   note: Note | null;
@@ -45,9 +53,127 @@ interface SyncResult {
 }
 ```
 
-### 2. Integração na Página de Notas
+#### Comportamento por Modo
 
-**Localização:** `app/notes/[id]/page.tsx`
+**Modo Visualização (editMode = false)**:
+- Polling ativo a cada 2 segundos
+- Atualizações automáticas da interface
+- Detecção de conflitos baseada em edições locais salvas
+
+**Modo Edição (editMode = true)**:
+- Polling ativo a cada 3 segundos
+- Todas as atualizações externas são tratadas como potenciais conflitos
+- Requer decisão do usuário para aplicar mudanças
+- Permite visualizar atualizações de outros colaboradores em tempo real
+
+### Algoritmo de Detecção de Conflitos
+
+1. **Timestamp de edição**: Registra quando o usuário inicia uma edição
+2. **Verificação de versão**: Compara a última atualização do servidor com o timestamp local
+3. **Edições locais**: Verifica se há dados salvos no localStorage
+4. **Resolução**: Apresenta opções para o usuário quando detecta conflito
+
+## Configuração e Uso
+
+### Integração na Página de Nota
+
+```typescript
+const {
+  note: syncedNote,
+  loading: syncLoading,
+  hasConflict,
+  conflictNote,
+  markUserEditStart,
+  resolveConflict
+} = useCollaborativeNoteSync({
+  noteId: note?.id || null,
+  noteType: note?.type || 'private',
+  user,
+  isEnabled: true,
+  editMode: isEditing // Novo: controla comportamento durante edição
+});
+```
+
+### Tratamento de Conflitos na Interface
+
+```typescript
+// Quando detectar conflito, mostrar opções ao usuário
+if (hasConflict && conflictNote) {
+  return (
+    <ConflictResolutionDialog
+      localVersion={note}
+      serverVersion={conflictNote}
+      onResolve={(useServerVersion) => {
+        resolveConflict(useServerVersion);
+        if (useServerVersion) {
+          // Atualizar interface com versão do servidor
+        }
+      }}
+    />
+  );
+}
+```
+
+## Melhorias Implementadas
+
+### Versão 2.0 (Atual)
+- ✅ **Polling contínuo**: Funciona tanto em modo visualização quanto edição
+- ✅ **Intervalos otimizados**: 2s para visualização, 3s para edição
+- ✅ **Detecção robusta de conflitos**: Especialmente sensível durante edição
+- ✅ **Controle de concorrência**: Previne múltiplos fetches simultâneos
+- ✅ **Logs detalhados**: Facilita debug e monitoramento
+- ✅ **Interface de status**: Indicadores visuais de sincronização e conflitos
+
+### Versão 1.0 (Corrigida)
+- ✅ **Correção crítica**: Fixado intervalo de polling de 0ms para 2000ms
+- ✅ **Controle de dependências**: Prevenção de loops infinitos
+- ✅ **Validações rigorosas**: Verificações antes de cada fetch
+- ✅ **Tratamento de erros**: Logs e recuperação de falhas
+
+## Cenários de Uso
+
+### 1. Edição Simultânea
+- **Usuário A** está editando uma nota
+- **Usuário B** também abre a mesma nota para edição
+- Sistema detecta e alerta sobre atualizações de outros usuários
+- Cada usuário pode decidir se quer aplicar as mudanças externas
+
+### 2. Visualização com Atualizações
+- **Usuário A** está visualizando uma nota
+- **Usuário B** faz alterações
+- Sistema atualiza automaticamente a visualização do Usuário A
+- Transição suave sem perda de contexto
+
+### 3. Recuperação de Conectividade
+- Sistema detecta quando usuário fica offline
+- Pausa sincronização automaticamente
+- Retoma quando conectividade é restaurada
+- Sincroniza mudanças pendentes
+
+## Considerações Técnicas
+
+### Performance
+- **Debouncing**: Controle de frequência de requests
+- **Cache local**: Evita fetches desnecessários quando não há mudanças
+- **Cleanup**: Limpeza adequada de intervals ao desmontar componente
+
+### Segurança
+- **Criptografia**: Todas as notas são criptografadas antes do armazenamento
+- **Validação**: Verificações de permissão antes de cada operação
+- **Sanitização**: Limpeza de dados antes da exibição
+
+### Escalabilidade
+- **Polling eficiente**: Apenas para notas públicas ativas
+- **Cleanup automático**: Remove listeners inativos
+- **Rate limiting**: Controle de frequência de requests
+
+## Próximos Passos
+
+1. **WebSocket integration**: Substituir polling por conexões em tempo real
+2. **Operational transforms**: Algoritmos mais sofisticados para resolução de conflitos
+3. **Presence indicators**: Mostrar quais usuários estão editando
+4. **Collaborative cursors**: Indicadores de posição de outros editores
+5. **Merge automático**: Fusão inteligente de mudanças não-conflitantes
 
 **Implementação:**
 - Hook ativado apenas para notas públicas
@@ -152,6 +278,37 @@ O sistema produz logs úteis no console:
 - Status de conexão
 - Timestamp da última sincronização
 - Contagem de erros
+
+## Correções e Melhorias Implementadas
+
+### Problemas Identificados e Solucionados
+
+1. **❌ Bug Crítico: Intervalo de Polling = 0ms**
+   - **Problema:** `setInterval(() => {}, 0)` causava chamadas infinitas
+   - **Solução:** Corrigido para `setInterval(() => {}, 2000)` (2 segundos)
+
+2. **❌ Chamadas Concorrentes**
+   - **Problema:** Múltiplas chamadas simultâneas ao `fetchNoteUpdate`
+   - **Solução:** Adicionado flag `isFetching` para prevenir concorrência
+
+3. **❌ Logs de Debug Insuficientes**
+   - **Problema:** Dificuldade para diagnosticar problemas
+   - **Solução:** Adicionados logs detalhados com prefixo `[CollaborativeSync]`
+
+4. **❌ Dependências Instáveis no useEffect**
+   - **Problema:** Hook recriado desnecessariamente causando loops
+   - **Solução:** Otimizadas dependências e removida `fetchNoteUpdate` de algumas deps
+
+5. **❌ Controle de Edit Mode**
+   - **Problema:** Hook era recriado quando entrava/saía do modo de edição
+   - **Solução:** Movido controle para dentro do hook com parâmetro `editMode`
+
+### Otimizações Adicionais
+
+- **Validação Rigorosa:** Múltiplas validações antes de fazer fetch
+- **Prevenção de Loops:** Flag de controle para chamadas concorrentes  
+- **Logging Detalhado:** Console logs para debugging e monitoramento
+- **Gestão de Estado:** Melhor controle de estados de loading e error
 
 ## Extensões Futuras
 
