@@ -12,12 +12,12 @@ interface Note {
   type: 'private' | 'public';
 }
 
-interface UseCollaborativeNoteSyncProps {
+interface UseRealtimeNoteSyncProps {
   noteId: string | null;
   noteType: 'private' | 'public';
   user: any;
-  isEnabled: boolean; // Only sync when note is open and user is viewing it
-  editMode?: boolean; // Optional: controls behavior during edit mode
+  isEnabled: boolean;
+  editMode?: boolean;
 }
 
 interface SyncResult {
@@ -26,18 +26,18 @@ interface SyncResult {
   error: string | null;
   lastUpdated: Date | null;
   isOnline: boolean;
-  hasConflict: boolean; // indicates if there's a potential conflict
-  conflictNote: Note | null; // the conflicting version from server
-  connectionStatus: 'connecting' | 'connected' | 'disconnected' | 'error'; // realtime connection status
+  hasConflict: boolean;
+  conflictNote: Note | null;
+  connectionStatus: 'connecting' | 'connected' | 'disconnected' | 'error';
 }
 
-export function useCollaborativeNoteSync({
+export function useRealtimeNoteSync({
   noteId,
   noteType,
   user,
   isEnabled,
   editMode = false
-}: UseCollaborativeNoteSyncProps): SyncResult {
+}: UseRealtimeNoteSyncProps): SyncResult {
   const [note, setNote] = useState<Note | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -75,7 +75,7 @@ export function useCollaborativeNoteSync({
       setError(null);
       setLoading(true);
       
-      console.log('[CollaborativeSync] Fetching initial note for:', noteId);
+      console.log('[RealtimeSync] Fetching initial note for:', noteId);
       
       const { data: noteData, error: noteError } = await supabase
         .from("public_notes")
@@ -84,12 +84,12 @@ export function useCollaborativeNoteSync({
         .single();
 
       if (noteError) {
-        console.error('[CollaborativeSync] Supabase error:', noteError);
+        console.error('[RealtimeSync] Supabase error:', noteError);
         throw noteError;
       }
 
       if (!noteData) {
-        console.warn('[CollaborativeSync] Note not found:', noteId);
+        console.warn('[RealtimeSync] Note not found:', noteId);
         throw new Error('Note not found');
       }
 
@@ -110,10 +110,10 @@ export function useCollaborativeNoteSync({
       setLastUpdated(new Date());
       lastFetchedVersion.current = noteData.updated_at || noteData.created_at;
       
-      console.log('[CollaborativeSync] Initial note loaded successfully');
+      console.log('[RealtimeSync] Initial note loaded successfully');
 
     } catch (err) {
-      console.error('[CollaborativeSync] Error fetching initial note:', err);
+      console.error('[RealtimeSync] Error fetching initial note:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch note');
     } finally {
       setLoading(false);
@@ -122,13 +122,13 @@ export function useCollaborativeNoteSync({
 
   // Handle realtime updates
   const handleRealtimeUpdate = useCallback((payload: any) => {
-    console.log('[CollaborativeSync] Received realtime update:', payload);
+    console.log('[RealtimeSync] Received realtime update:', payload);
 
     try {
       const updatedData = payload.new;
       
       if (!updatedData) {
-        console.warn('[CollaborativeSync] No data in update payload');
+        console.warn('[RealtimeSync] No data in update payload');
         return;
       }
 
@@ -136,7 +136,7 @@ export function useCollaborativeNoteSync({
       const currentVersion = updatedData.updated_at || updatedData.created_at;
       
       if (lastFetchedVersion.current === currentVersion) {
-        console.log('[CollaborativeSync] Received duplicate update, ignoring');
+        console.log('[RealtimeSync] Received duplicate update, ignoring');
         return;
       }
 
@@ -162,7 +162,7 @@ export function useCollaborativeNoteSync({
         
         // If server was updated after user started editing, there might be a conflict
         if (serverUpdateTime > userEditTimestamp.current) {
-          console.log('[CollaborativeSync] Potential conflict detected during editing');
+          console.log('[RealtimeSync] Potential conflict detected during editing');
           setHasConflict(true);
           setConflictNote(updatedNote);
           return; // Don't automatically update, let user decide
@@ -171,7 +171,7 @@ export function useCollaborativeNoteSync({
 
       // In edit mode, be more careful about auto-updating
       if (editMode && hasLocalEdits) {
-        console.log('[CollaborativeSync] Edit mode active with local changes, showing conflict for user decision');
+        console.log('[RealtimeSync] Edit mode active with local changes, showing conflict for user decision');
         setHasConflict(true);
         setConflictNote(updatedNote);
         return;
@@ -184,10 +184,10 @@ export function useCollaborativeNoteSync({
       setHasConflict(false);
       setConflictNote(null);
 
-      console.log('[CollaborativeSync] Note updated successfully via realtime');
+      console.log('[RealtimeSync] Note updated successfully via realtime');
 
     } catch (err) {
-      console.error('[CollaborativeSync] Error processing realtime update:', err);
+      console.error('[RealtimeSync] Error processing realtime update:', err);
       setError(err instanceof Error ? err.message : 'Failed to process realtime update');
     }
   }, [noteId, editMode]);
@@ -197,7 +197,7 @@ export function useCollaborativeNoteSync({
     if (!isEnabled || noteType !== 'public' || !noteId || !user || !isOnline) {
       // Cleanup existing channel
       if (channelRef.current) {
-        console.log('[CollaborativeSync] Cleaning up channel due to disabled conditions');
+        console.log('[RealtimeSync] Cleaning up channel due to disabled conditions');
         channelRef.current.unsubscribe();
         channelRef.current = null;
         setConnectionStatus('disconnected');
@@ -206,7 +206,7 @@ export function useCollaborativeNoteSync({
     }
 
     // Create realtime channel
-    console.log('[CollaborativeSync] Setting up realtime channel for note:', noteId);
+    console.log('[RealtimeSync] Setting up realtime channel for note:', noteId);
     setConnectionStatus('connecting');
 
     const channel = supabase
@@ -222,7 +222,7 @@ export function useCollaborativeNoteSync({
         handleRealtimeUpdate
       )
       .subscribe((status) => {
-        console.log('[CollaborativeSync] Subscription status:', status);
+        console.log('[RealtimeSync] Subscription status:', status);
         
         switch (status) {
           case 'SUBSCRIBED':
@@ -247,7 +247,7 @@ export function useCollaborativeNoteSync({
 
     // Cleanup function
     return () => {
-      console.log('[CollaborativeSync] Cleaning up realtime channel');
+      console.log('[RealtimeSync] Cleaning up realtime channel');
       if (channelRef.current) {
         channelRef.current.unsubscribe();
         channelRef.current = null;
@@ -273,14 +273,14 @@ export function useCollaborativeNoteSync({
   // Function to mark user edit start
   const markUserEditStart = useCallback(() => {
     userEditTimestamp.current = new Date();
-    console.log('[CollaborativeSync] User edit start marked at:', userEditTimestamp.current);
+    console.log('[RealtimeSync] User edit start marked at:', userEditTimestamp.current);
   }, []);
 
   // Function to resolve conflicts
   const resolveConflict = useCallback((useServerVersion: boolean) => {
     if (!conflictNote) return;
     
-    console.log('[CollaborativeSync] Resolving conflict, use server version:', useServerVersion);
+    console.log('[RealtimeSync] Resolving conflict, use server version:', useServerVersion);
     
     if (useServerVersion) {
       setNote(conflictNote);
