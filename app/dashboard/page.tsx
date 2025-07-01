@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useCallback, useRef } from "react";
 import { Analytics } from "@vercel/analytics/next";
 import { supabase } from "../../lib/supabase";
 import { useAuth } from "../../context/AuthContext";
@@ -69,6 +69,7 @@ export default function DashboardPage() {
   const { t } = useTranslation();
   const { user } = useAuth();
   const router = useRouter();
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
   
   // State for note type selection
   const [currentNoteType, setCurrentNoteType] = useState<'private' | 'public'>('private');
@@ -76,18 +77,22 @@ export default function DashboardPage() {
   // State for JoinByCode modal
   const [showJoinModal, setShowJoinModal] = useState(false);
   
-  // Use hybrid note system hooks
+  // Use hybrid note system hooks with infinite scrolling
   const { 
     notes: privateNotes, 
     loading: privateLoading, 
-    refresh: refreshPrivateNotes
+    hasMore: hasMorePrivate,
+    refresh: refreshPrivateNotes,
+    loadMore: loadMorePrivate
   } = usePrivateNotes(user?.id);
   
   const { 
     notes: publicNotes, 
     loading: publicLoading, 
     isConnected: realtimeConnected,
-    refresh: refreshPublicNotes
+    hasMore: hasMorePublic,
+    refresh: refreshPublicNotes,
+    loadMore: loadMorePublic
   } = usePublicNotes(user?.id);
 
   // Legacy state management for backward compatibility
@@ -103,6 +108,8 @@ export default function DashboardPage() {
   // Determine current notes to display based on selected type
   const currentNotes = currentNoteType === 'private' ? privateNotes : publicNotes;
   const currentLoading = currentNoteType === 'private' ? privateLoading : publicLoading;
+  const hasMore = currentNoteType === 'private' ? hasMorePrivate : hasMorePublic;
+  const loadMore = currentNoteType === 'private' ? loadMorePrivate : loadMorePublic;
 
   // Memoizar o componente Profile corretamente
   const MemoizedProfile = useMemo(() => <Profile />, [user?.id]);
@@ -152,6 +159,27 @@ export default function DashboardPage() {
     // Navigate to the note with type parameter
     router.push(`/notes/${noteId}?type=public`);
   };
+
+  // Handle infinite scrolling
+  const handleScroll = useCallback(() => {
+    const container = scrollContainerRef.current;
+    if (container && hasMore && !currentLoading) {
+      const { scrollTop, scrollHeight, clientHeight } = container;
+      // Load more when user is 200px from the bottom
+      if (scrollHeight - scrollTop - clientHeight < 200) {
+        loadMore();
+      }
+    }
+  }, [hasMore, currentLoading, loadMore]);
+
+  // Add scroll listener
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (container) {
+      container.addEventListener('scroll', handleScroll);
+      return () => container.removeEventListener('scroll', handleScroll);
+    }
+  }, [handleScroll]);
 
   // Update loading state when both hooks are loaded
   // Note: Loading state is now managed by individual hooks
@@ -208,7 +236,7 @@ export default function DashboardPage() {
     <>
       <ProtectedRoute>
         {" "}
-        <div className="smooth overflow-y-auto max-h-screen scrollbar">
+        <div ref={scrollContainerRef} className="smooth overflow-y-auto max-h-screen scrollbar">
           <div>{MemoizedProfile}</div>
 
           <div className="p-4 sm:p-0  mx-auto max-w-screen  sm:max-w-2xl md:max-w-3xl lg:max-w-5xl xl:max-w-7xl 2xl:max-w-7xl ">
@@ -369,124 +397,145 @@ export default function DashboardPage() {
               )}
             </div>
 
-            {currentLoading ? (
+            {currentLoading && currentNotes.length === 0 ? (
               <p>{t("dashboard.loading")}</p>
             ) : (
-              <div className="columns-2 sm:columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-4 pt-5 space-y-4">
-                {currentNotes.map((note: DisplayNote, index: number) => {
-                  // Handle both private and public note types with decryption
-                  const noteTitle = currentNoteType === 'private' 
-                    ? (note as Note).title  // Already decrypted in usePrivateNotes hook
-                    : decrypt((note as NoteType).title);  // Decrypt public note title
-                  
-                  const noteContent = currentNoteType === 'private'
-                    ? (note as Note).content || ''  // Already decrypted in usePrivateNotes hook
-                    : decrypt((note as NoteType).content || '');  // Decrypt public note content
-                  
-                  const firstImage = extractFirstImage(noteContent);
-                  const textPreview = getTextPreview(noteContent);
+              <>
+                <div className="columns-2 sm:columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-4 pt-5 space-y-4">
+                  {currentNotes.map((note: DisplayNote, index: number) => {
+                    // Handle both private and public note types with decryption
+                    const noteTitle = currentNoteType === 'private' 
+                      ? (note as Note).title  // Already decrypted in usePrivateNotes hook
+                      : decrypt((note as NoteType).title);  // Decrypt public note title
+                    
+                    const noteContent = currentNoteType === 'private'
+                      ? (note as Note).content || ''  // Already decrypted in usePrivateNotes hook
+                      : decrypt((note as NoteType).content || '');  // Decrypt public note content
+                    
+                    const firstImage = extractFirstImage(noteContent);
+                    const textPreview = getTextPreview(noteContent);
 
-                  const contentLength = noteContent.length;
-                  const baseHeight = firstImage ? 280 : 200;
-                  const contentHeight = Math.min(contentLength / 3, 150);
-                  const varietyHeight = (index % 3) * 70;
-                  const totalHeight = baseHeight + contentHeight + varietyHeight;
+                    const contentLength = noteContent.length;
+                    const baseHeight = firstImage ? 280 : 200;
+                    const contentHeight = Math.min(contentLength / 3, 150);
+                    const varietyHeight = (index % 3) * 70;
+                    const totalHeight = baseHeight + contentHeight + varietyHeight;
 
-                  // Determine the link based on note type
-                  const noteLink = currentNoteType === 'private' 
-                    ? `/notes/${note.id}`
-                    : `/notes/${note.id}?type=public`;
+                    // Determine the link based on note type
+                    const noteLink = currentNoteType === 'private' 
+                      ? `/notes/${note.id}`
+                      : `/notes/${note.id}?type=public`;
 
-                  return (
-                    <Link
-                      href={noteLink}
-                      key={note.id}
-                      className="block break-inside-avoid mb-4"
-                    >
-                      {" "}
-                      <div
-                        className="p-4 bg-[var(--container)]/30 backdrop-blur-sm hover:bg-opacity-60 transition-all hover:scale-[1.02] hover:shadow-lg flex flex-col rounded-lg border border-[var(--foreground)]/20 overflow-hidden"
-                        style={{ minHeight: `${totalHeight}px` }}
+                    return (
+                      <Link
+                        href={noteLink}
+                        key={note.id}
+                        className="block break-inside-avoid mb-4"
                       >
-                        <div className="flex justify-between items-center mb-2">
-                          {/* Collaboration indicator for public notes */}
-                          {currentNoteType === 'public' && (note as NoteType).is_collaborative && (
-                            <div className="flex items-center gap-1 text-xs text-blue-500">
-                              <Users size={14} />
-                              <span>Collaborative</span>
+                        {" "}
+                        <div
+                          className="p-4 bg-[var(--container)]/30 backdrop-blur-sm hover:bg-opacity-60 transition-all hover:scale-[1.02] hover:shadow-lg flex flex-col rounded-lg border border-[var(--foreground)]/20 overflow-hidden"
+                          style={{ minHeight: `${totalHeight}px` }}
+                        >
+                          <div className="flex justify-between items-center mb-2">
+                            {/* Collaboration indicator for public notes */}
+                            {currentNoteType === 'public' && (note as NoteType).is_collaborative && (
+                              <div className="flex items-center gap-1 text-xs text-blue-500">
+                                <Users size={14} />
+                                <span>Collaborative</span>
+                              </div>
+                            )}
+                            
+                            {/* Favorite button - only for private notes */}
+                            {currentNoteType === 'private' && (
+                              <button
+                                type="button"
+                                aria-label={
+                                  (note as Note).favorite
+                                    ? t("dashboard.unbookmark")
+                                    : t("dashboard.bookmark")
+                                }
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  toggleFavorite(note.id, (note as Note).favorite);
+                                }}
+                                className={`rounded-full p-1.5 transition-colors ml-auto ${(note as Note).favorite ? " text-[var(--foreground)]" : "hover:bg-[var(--foreground)] hover:text-[var(--background)]"}`}
+                              >
+                                <Star
+                                  size={18}
+                                  fill={(note as Note).favorite ? "currentColor" : "none"}
+                                />
+                              </button>
+                            )}
+                          </div>
+
+                          <h2 className="text-base font-semibold mb-3 leading-tight break-words overflow-hidden">
+                            {noteTitle || t("dashboard.note.untitled")}
+                          </h2>
+
+                          {/* Display first image if available */}
+                          {firstImage && (
+                            <div className="mb-3 overflow-hidden rounded-lg">
+                              <img
+                                src={firstImage}
+                                alt="Note preview"
+                                className="w-full h-32 object-cover object-top rounded-lg shadow-sm hover:shadow-md transition-shadow"
+                                onError={(e) => {
+                                  // Hide image if it fails to load
+                                  e.currentTarget.style.display = "none";
+                                }}
+                              />
                             </div>
                           )}
-                          
-                          {/* Favorite button - only for private notes */}
-                          {currentNoteType === 'private' && (
-                            <button
-                              type="button"
-                              aria-label={
-                                (note as Note).favorite
-                                  ? t("dashboard.unbookmark")
-                                  : t("dashboard.bookmark")
-                              }
-                              onClick={(e) => {
-                                e.preventDefault();
-                                toggleFavorite(note.id, (note as Note).favorite);
-                              }}
-                              className={`rounded-full p-1.5 transition-colors ml-auto ${(note as Note).favorite ? " text-[var(--foreground)]" : "hover:bg-[var(--foreground)] hover:text-[var(--background)]"}`}
+
+                          <p className="text-sm text-[var(--foreground)] opacity-80 mb-4 flex-grow leading-relaxed break-words overflow-hidden">
+                            {textPreview || t("dashboard.note.noContent")}
+                          </p>
+                          <div className="flex justify-between items-center text-xs text-gray-500 mt-auto pt-3 border-t border-[var(--container)]/20">
+                            <span>
+                              {new Date(note.created_at).toLocaleDateString()}
+                            </span>
+                            <svg
+                              width="14"
+                              height="14"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              className="opacity-60"
                             >
-                              <Star
-                                size={18}
-                                fill={(note as Note).favorite ? "currentColor" : "none"}
-                              />
-                            </button>
-                          )}
-                        </div>
-
-                        <h2 className="text-base font-semibold mb-3 leading-tight break-words overflow-hidden">
-                          {noteTitle || t("dashboard.note.untitled")}
-                        </h2>
-
-                        {/* Display first image if available */}
-                        {firstImage && (
-                          <div className="mb-3 overflow-hidden rounded-lg">
-                            <img
-                              src={firstImage}
-                              alt="Note preview"
-                              className="w-full h-32 object-cover object-top rounded-lg shadow-sm hover:shadow-md transition-shadow"
-                              onError={(e) => {
-                                // Hide image if it fails to load
-                                e.currentTarget.style.display = "none";
-                              }}
-                            />
+                              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1-2-2h6"></path>
+                              <polyline points="15 3 21 3 21 9"></polyline>
+                              <line x1="10" y1="14" x2="21" y2="3"></line>
+                            </svg>
                           </div>
-                        )}
-
-                        <p className="text-sm text-[var(--foreground)] opacity-80 mb-4 flex-grow leading-relaxed break-words overflow-hidden">
-                          {textPreview || t("dashboard.note.noContent")}
-                        </p>
-                        <div className="flex justify-between items-center text-xs text-gray-500 mt-auto pt-3 border-t border-[var(--container)]/20">
-                          <span>
-                            {new Date(note.created_at).toLocaleDateString()}
-                          </span>
-                          <svg
-                            width="14"
-                            height="14"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            className="opacity-60"
-                          >
-                            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1-2-2h6"></path>
-                            <polyline points="15 3 21 3 21 9"></polyline>
-                            <line x1="10" y1="14" x2="21" y2="3"></line>
-                          </svg>
                         </div>
-                      </div>
-                    </Link>
-                  );
-                })}
-              </div>
+                      </Link>
+                    );
+                  })}
+                </div>
+                
+                {/* Loading indicator for infinite scroll */}
+                {currentLoading && currentNotes.length > 0 && (
+                  <div className="flex justify-center items-center p-6">
+                    <div className="flex items-center gap-2 text-sm text-[var(--foreground)] opacity-70">
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current"></div>
+                      <span>Loading more notes...</span>
+                    </div>
+                  </div>
+                )}
+                
+                {/* End of content indicator */}
+                {!hasMore && currentNotes.length > 0 && (
+                  <div className="flex justify-center items-center p-6">
+                    <span className="text-sm text-[var(--foreground)] opacity-50">
+                      {t("dashboard.endOfNotes", "You've reached the end")}
+                    </span>
+                  </div>
+                )}
+              </>
             )}
             {!currentLoading && currentNotes.length === 0 && (
               <div className="flex flex-col items-center justify-center p-10 border border-dashed border-[var(--foreground)] bg-opacity-10 mt-4">
