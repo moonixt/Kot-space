@@ -301,7 +301,7 @@ html {
 
 /* Global styles */
 body {
-  font-family: "Caveat", "Kalam", "Dancing Script", cursive, Georgia, 'Times New Roman', Times, serif;
+  font-family: geist;
   line-height: 1.9;
   font-size: 16px;
   text-rendering: optimizeLegibility;
