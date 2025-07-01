@@ -15,10 +15,10 @@ import { useTranslation } from "react-i18next";
 import { Eye, Star, Users, Plus } from "lucide-react";
 //Info
 import { checkStripeSubscription } from "../../lib/checkStripeSubscription";
-
+// Scroll restoration
 // Import the hybrid note system
 import { usePrivateNotes, usePublicNotes, NoteType } from "../../lib/realtimeManager";
-import NoteTypeSelector, { CollaborativeStatus } from "../components/NoteTypeSelector";
+import NoteTypeSelector, { CollaborativeStatus, useNoteViewPreference } from "../components/NoteTypeSelector";
 import JoinByCode from "../components/JoinByCode";
 import { decrypt } from "../components/Encryption";
 
@@ -70,8 +70,13 @@ export default function DashboardPage() {
   const { user } = useAuth();
   const router = useRouter();
   
-  // State for note type selection
-  const [currentNoteType, setCurrentNoteType] = useState<'private' | 'public'>('private');
+  // Hook para gerenciar preferência de visualização
+  const { getSavedViewPreference } = useNoteViewPreference();
+  
+  // State for note type selection - inicializar com preferência salva
+  const [currentNoteType, setCurrentNoteType] = useState<'private' | 'public'>(() => {
+    return getSavedViewPreference();
+  });
   
   // State for JoinByCode modal
   const [showJoinModal, setShowJoinModal] = useState(false);
@@ -204,11 +209,27 @@ export default function DashboardPage() {
     };
   }, []);
 
-  return (
+//  let timeout: NodeJS.Timeout;
+//  window.addEventListener("scroll", () => {
+//   clearTimeout(timeout);
+//   timeout = setTimeout(() => {
+//         localStorage.setItem("scrollPosition", window.scrollY.toString());
+//   }, 100);
+// });
+
+
+// window.addEventListener("load", () => {
+//   const savedScrollPosition = localStorage.getItem("scrollPosition");
+//   if (savedScrollPosition !== null) {
+//     window.scrollTo(0, parseInt(savedScrollPosition));
+//   }
+// });
+
+    return (
     <>
       <ProtectedRoute>
         {" "}
-        <div className="smooth overflow-y-auto max-h-screen scrollbar">
+        <div className=" scrollbar">
           <div>{MemoizedProfile}</div>
 
           <div className="p-4 sm:p-0  mx-auto max-w-screen  sm:max-w-2xl md:max-w-3xl lg:max-w-5xl xl:max-w-7xl 2xl:max-w-7xl ">
