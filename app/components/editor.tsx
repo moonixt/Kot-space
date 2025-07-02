@@ -28,6 +28,7 @@ import EmojiPicker, { Theme } from "emoji-picker-react"; //LIbrary to enable sup
 import { EmojiClickData } from "emoji-picker-react"; //Type for the emoji click data
 // import ClientLayout from "./ClientLayout";
 import Profile from "../profile/page";
+import SlashCommandMenu, { useSlashCommands } from "./SlashCommandMenu";
 import { encrypt, decrypt } from "./Encryption"; // Importar funções de criptografia e descriptografia
 import { useTranslation } from "react-i18next"; // Import the translation hook
 
@@ -42,7 +43,6 @@ function Editor({ initialNoteType = 'private', noteId }: EditorProps) {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [saving, setSaving] = useState(false);
-  const [autoSaveStatus, setAutoSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
   const autoSaveTimeout = useRef<NodeJS.Timeout | null>(null);
   const { user } = useAuth();
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
@@ -369,26 +369,26 @@ function Editor({ initialNoteType = 'private', noteId }: EditorProps) {
     switch (markdownSyntax) {
       case "bold":
         // Wrap the selected text (or placeholder text) with double asterisks for bold formatting
-        newText = `**${selectedText || "texto"}**`; //bold text example
+        newText = `**${selectedText || t("editor.slashMenu.placeholders.bold")}**`; //bold text example
         break;
       case "italic":
         // Wrap the selected text (or placeholder text) with single asterisks for italic formatting
-        newText = `*${selectedText || "texto"}*`; //italic text example
+        newText = `*${selectedText || t("editor.slashMenu.placeholders.italic")}*`; //italic text example
         break;
       case "heading1":
         // Add a single hash symbol followed by the selected text (or placeholder) for a level 1 heading
-        newText = `# ${selectedText || "Título"}`; // heading level 1 exemple
+        newText = `# ${selectedText || t("editor.slashMenu.placeholders.heading1")}`; // heading level 1 exemple
         break;
       case "heading2":
         // Add two hash symbols followed by the selected text (or placeholder) for a level 2 heading
-        newText = `## ${selectedText || "Subtítulo"}`; //heading level 2 example
+        newText = `## ${selectedText || t("editor.slashMenu.placeholders.heading2")}`; //heading level 2 example
         break;
       case "code":
         // If the selected text contains newlines, wrap it in triple backticks for a code block
         // Otherwise, wrap it in single backticks for inline code
         newText = selectedText.includes("\n")
-          ? `\`\`\`\n${selectedText || "código aqui"}\n\`\`\``
-          : `\`${selectedText || "código"}\``;
+          ? `\`\`\`\n${selectedText || t("editor.slashMenu.placeholders.codeBlock")}\n\`\`\``
+          : `\`${selectedText || t("editor.slashMenu.placeholders.code")}\``;
         break;
       case "orderedList":
         if (selectedText) {
@@ -398,7 +398,7 @@ function Editor({ initialNoteType = 'private', noteId }: EditorProps) {
             .join("\n");
         } else {
           // if not add a basic template
-          newText = "1. Item\n2. Item\n3. Item";
+          newText = t("editor.slashMenu.placeholders.orderedList");
         }
         break;
       case "unorderedList":
@@ -407,16 +407,16 @@ function Editor({ initialNoteType = 'private', noteId }: EditorProps) {
           const lines = selectedText.split("\n");
           newText = lines.map((line) => `- ${line}`).join("\n");
         } else {
-          // Se não tiver, adicionar um template
-          newText = "- Item\n- Item\n- Item";
+          // If not, add a template
+          newText = t("editor.slashMenu.placeholders.unorderedList");
         }
         break;
       case "link":
         // Create a Markdown link with the selected text (or placeholder) as the link text and "url" as the placeholder URL
-        newText = `[${selectedText || "texto do link"}](url)`;
+        newText = `[${selectedText || t("editor.slashMenu.placeholders.linkText")}](${t("editor.slashMenu.placeholders.linkUrl")})`;
         break;
       case "image":
-        newText = `![${selectedText || "descrição da imagem"}](url_da_imagem)`;
+        newText = `![${selectedText || t("editor.slashMenu.placeholders.imageDescription")}](${t("editor.slashMenu.placeholders.imageUrl")})`;
         break;
     }
 
@@ -622,17 +622,11 @@ function Editor({ initialNoteType = 'private', noteId }: EditorProps) {
     
     if (autoSaveTimeout.current) clearTimeout(autoSaveTimeout.current);
     
-    // Resetar o status para idle primeiro
-    setAutoSaveStatus('idle');
-    
     autoSaveTimeout.current = setTimeout(async () => {
-      setAutoSaveStatus('saving');
       try {
         await saveNote();
-        setAutoSaveStatus('saved');
-        setTimeout(() => setAutoSaveStatus('idle'), 1500);
       } catch (error) {
-        setAutoSaveStatus('idle');
+        console.error('Auto-save error:', error);
       }
     }, 1500); // 1.5s debounce
     
@@ -650,13 +644,10 @@ function Editor({ initialNoteType = 'private', noteId }: EditorProps) {
         // Only allow manual save if component is initialized
         if (!isInitialized) return;
         
-        setAutoSaveStatus('saving');
         try {
           await saveNote();
-          setAutoSaveStatus('saved');
-          setTimeout(() => setAutoSaveStatus('idle'), 1500);
         } catch (error) {
-          setAutoSaveStatus('idle');
+          console.error('Manual save error:', error);
         }
       }
     };
@@ -728,120 +719,71 @@ function Editor({ initialNoteType = 'private', noteId }: EditorProps) {
   //   return t(`tags.${tagKey}`, { defaultValue: tagKey });
   // };
 
-  // Comandos disponíveis no menu de barra
-  const slashCommands = [
-    {
-      label: t("editor.bold"),
-      description: "Texto em negrito",
-      icon: "B",
-      action: () => insertMarkdown("bold"),
-      keywords: ["bold", "negrito", "b"]
-    },
-    {
-      label: t("editor.italic"),
-      description: "Texto em itálico",
-      icon: "I",
-      action: () => insertMarkdown("italic"),
-      keywords: ["italic", "italico", "i"]
-    },
-    {
-      label: t("editor.heading1"),
-      description: "Título grande",
-      icon: "H1",
-      action: () => insertMarkdown("heading1"),
-      keywords: ["heading", "titulo", "h1", "title"]
-    },
-    {
-      label: t("editor.heading2"),
-      description: "Subtítulo",
-      icon: "H2",
-      action: () => insertMarkdown("heading2"),
-      keywords: ["heading", "subtitulo", "h2", "subtitle"]
-    },
-    {
-      label: t("editor.code"),
-      description: "Bloco de código",
-      icon: "</>",
-      action: () => insertMarkdown("code"),
-      keywords: ["code", "codigo", "programming"]
-    },
-    {
-      label: t("editor.orderedList"),
-      description: "Lista numerada",
-      icon: "1.",
-      action: () => insertMarkdown("orderedList"),
-      keywords: ["list", "lista", "numbered", "numerada", "ordered"]
-    },
-    {
-      label: t("editor.unorderedList"),
-      description: "Lista com marcadores",
-      icon: "•",
-      action: () => insertMarkdown("unorderedList"),
-      keywords: ["list", "lista", "bullet", "marcadores", "unordered"]
-    },
-    {
-      label: t("editor.link"),
-      description: "Inserir link",
-      icon: "🔗",
-      action: () => insertMarkdown("link"),
-      keywords: ["link", "url", "hyperlink"]
-    },
-    {
-      label: t("editor.insertImage"),
-      description: "Inserir imagem",
-      icon: "🖼️",
-      action: () => {
-        if (fileInputRef.current) {
-          fileInputRef.current.click();
-        } else {
-          insertMarkdown("image");
-        }
-      },
-      keywords: ["image", "imagem", "photo", "foto", "picture"]
-    }
-  ];
-
-  // Filtrar comandos baseado no texto após /
-  const filteredSlashCommands = slashCommands.filter(cmd => 
-    cmd.label.toLowerCase().includes(slashMenuFilter.toLowerCase()) ||
-    cmd.description.toLowerCase().includes(slashMenuFilter.toLowerCase()) ||
-    cmd.keywords.some(keyword => keyword.toLowerCase().includes(slashMenuFilter.toLowerCase()))
-  );
+  // Use the slash commands hook
+  const slashCommands = useSlashCommands(insertMarkdown, fileInputRef);
 
   // Função para calcular a posição do menu
   const calculateMenuPosition = (textarea: HTMLTextAreaElement, cursorPosition: number) => {
-    // Calcular a posição da linha atual baseado no scroll
+    // Obter posição real do cursor usando getBoundingClientRect
+    const rect = textarea.getBoundingClientRect();
+    const style = window.getComputedStyle(textarea);
+    
+    // Pegar o texto até o cursor
     const textBeforeCursor = textarea.value.substring(0, cursorPosition);
     const lines = textBeforeCursor.split('\n');
-    const currentLine = lines.length - 1;
+    const currentLineIndex = lines.length - 1;
+    const currentLineText = lines[currentLineIndex];
     
-    // Encontrar onde está o / na linha atual
-    const currentLineText = lines[lines.length - 1];
-    const slashIndex = currentLineText.indexOf('/');
-    const columnPosition = slashIndex >= 0 ? slashIndex : currentLineText.length;
+    // Encontrar posição da barra / na linha atual
+    const slashIndex = currentLineText.lastIndexOf('/');
+    const textBeforeSlash = currentLineText.substring(0, slashIndex);
     
-    // Usar os valores corretos do CSS: fontSize: "18px", lineHeight: "1.7"
-    const fontSize = 18;
-    const lineHeight = fontSize * 1.7; // 18 * 1.7 = 30.6px
-    const charWidth = fontSize * 0.6;
+    // Criar elemento temporário para medir texto
+    const tempDiv = document.createElement('div');
+    tempDiv.style.position = 'absolute';
+    tempDiv.style.visibility = 'hidden';
+    tempDiv.style.whiteSpace = 'pre';
+    tempDiv.style.font = style.font;
+    tempDiv.style.fontSize = style.fontSize;
+    tempDiv.style.fontFamily = style.fontFamily;
+    tempDiv.style.lineHeight = style.lineHeight;
+    tempDiv.textContent = textBeforeSlash;
+    document.body.appendChild(tempDiv);
     
-    // Calcular posição considerando scroll
-    const scrollTop = textarea.scrollTop;
-    const scrollLeft = textarea.scrollLeft;
+    // Medir largura do texto antes da barra /
+    const textWidth = tempDiv.getBoundingClientRect().width;
+    document.body.removeChild(tempDiv);
     
-    // Posição relativa dentro do textarea (posição da barra /)
-    const relativeTop = (currentLine * lineHeight) - scrollTop;
-    const relativeLeft = (columnPosition * charWidth) - scrollLeft;
+    // Calcular posição baseada no padding do textarea
+    const paddingLeft = parseInt(style.paddingLeft, 10);
+    const paddingTop = parseInt(style.paddingTop, 10);
+    const lineHeight = parseInt(style.lineHeight, 10);
     
-    // Posição relativa ao container do editor (já que usamos position: absolute)
-    // Adicionar padding do textarea para alinhar corretamente
-    const paddingLeft = 20; // p-5 = 1.25rem = 20px
-    const paddingTop = 20;  // p-5 = 1.25rem = 20px
+    // Posição absoluta baseada no textarea - SEMPRE para baixo
+    const left = rect.left + paddingLeft + textWidth;
+    const top = rect.top + paddingTop + (currentLineIndex * lineHeight) + lineHeight + 8; // +8px para espaçamento
     
-    const top = paddingTop + relativeTop + lineHeight + 2; // Menu logo abaixo da linha
-    const left = paddingLeft + relativeLeft;
+    // Verificar limites da viewport
+    const viewportWidth = window.visualViewport?.width || window.innerWidth;
+    const menuWidth = 300;
     
-    return { top, left };
+    const finalTop = top; // Sempre usar posição para baixo
+    let finalLeft = left;
+    
+    // Ajustar apenas se o menu sair da tela horizontalmente
+    if (left + menuWidth > viewportWidth) {
+      finalLeft = viewportWidth - menuWidth - 10;
+    }
+    
+    // Garantir que não saia da tela pela esquerda
+    if (finalLeft < 10) {
+      finalLeft = 10;
+    }
+    
+    return { 
+      top: finalTop, 
+      left: finalLeft 
+    };
   };
 
   // Função para lidar com a entrada de texto e detectar /
@@ -894,89 +836,61 @@ function Editor({ initialNoteType = 'private', noteId }: EditorProps) {
       // Fechar o menu
       setShowSlashMenu(false);
       
-      // Remover completamente /comando da posição atual
-      const beforeSlash = content.substring(0, slashPosition);
-      const afterCommand = content.substring(endPosition);
+      // Executar a ação do comando
+      command.action();
       
-      // Determinar qual markdown inserir baseado nas keywords do comando
-      let markdownToInsert = "";
-      
-      if (command.keywords.includes("bold")) {
-        markdownToInsert = "**texto**";
-      } else if (command.keywords.includes("italic")) {
-        markdownToInsert = "*texto*";
-      } else if (command.keywords.includes("h1")) {
-        markdownToInsert = "# Título";
-      } else if (command.keywords.includes("h2")) {
-        markdownToInsert = "## Subtítulo";
-      } else if (command.keywords.includes("code")) {
-        markdownToInsert = "`código`";
-      } else if (command.keywords.includes("ordered")) {
-        markdownToInsert = "1. Item\n2. Item\n3. Item";
-      } else if (command.keywords.includes("unordered")) {
-        markdownToInsert = "- Item\n- Item\n- Item";
-      } else if (command.keywords.includes("link")) {
-        markdownToInsert = "[texto do link](url)";
-      } else if (command.keywords.includes("image")) {
-        markdownToInsert = "![descrição da imagem](url_da_imagem)";
-      } else {
-        markdownToInsert = "";
-      }
-      
-      // Criar o novo conteúdo com o markdown inserido no lugar do comando /
-      const newContent = beforeSlash + markdownToInsert + afterCommand;
-      setContent(newContent);
-      
-      // Posicionar cursor após o markdown inserido
-      setTimeout(() => {
-        textarea.focus();
-        const newCursorPos = slashPosition + markdownToInsert.length;
-        textarea.setSelectionRange(newCursorPos, newCursorPos);
-      }, 0);
-    }
-  };
-
-  // Lidar com teclas no menu slash
-  const handleSlashMenuKeyDown = (e: KeyboardEvent) => {
-    if (!showSlashMenu) return;
-    
-    switch (e.key) {
-      case 'ArrowDown':
-        e.preventDefault();
-        setSelectedSlashIndex(prev => 
-          prev < filteredSlashCommands.length - 1 ? prev + 1 : 0
-        );
-        break;
-      case 'ArrowUp':
-        e.preventDefault();
-        setSelectedSlashIndex(prev => 
-          prev > 0 ? prev - 1 : filteredSlashCommands.length - 1
-        );
-        break;
-      case 'Enter':
-      case 'Tab':
-        e.preventDefault();
-        if (filteredSlashCommands[selectedSlashIndex]) {
-          applySlashCommand(filteredSlashCommands[selectedSlashIndex]);
+      // If the command was not an image, remove the /command and insert markdown
+      if (!command.keywords.includes("image")) {
+        // Completely remove /command from current position
+        const beforeSlash = content.substring(0, slashPosition);
+        const afterCommand = content.substring(endPosition);
+        
+        // Determinar qual markdown inserir baseado nas keywords do comando
+        let markdownToInsert = "";
+        
+        if (command.keywords.includes("bold")) {
+          markdownToInsert = `**${t("editor.slashMenu.placeholders.bold")}**`;
+        } else if (command.keywords.includes("italic")) {
+          markdownToInsert = `*${t("editor.slashMenu.placeholders.italic")}*`;
+        } else if (command.keywords.includes("h1")) {
+          markdownToInsert = `# ${t("editor.slashMenu.placeholders.heading1")}`;
+        } else if (command.keywords.includes("h2")) {
+          markdownToInsert = `## ${t("editor.slashMenu.placeholders.heading2")}`;
+        } else if (command.keywords.includes("code")) {
+          markdownToInsert = `\`${t("editor.slashMenu.placeholders.code")}\``;
+        } else if (command.keywords.includes("ordered")) {
+          markdownToInsert = t("editor.slashMenu.placeholders.orderedList");
+        } else if (command.keywords.includes("unordered")) {
+          markdownToInsert = t("editor.slashMenu.placeholders.unorderedList");
+        } else if (command.keywords.includes("link")) {
+          markdownToInsert = `[${t("editor.slashMenu.placeholders.linkText")}](${t("editor.slashMenu.placeholders.linkUrl")})`;
         }
-        break;
-      case 'Escape':
-        e.preventDefault();
-        setShowSlashMenu(false);
-        break;
+        
+        // Criar o novo conteúdo com o markdown inserido no lugar do comando /
+        const newContent = beforeSlash + markdownToInsert + afterCommand;
+        setContent(newContent);
+        
+        // Posicionar cursor após o markdown inserido
+        setTimeout(() => {
+          textarea.focus();
+          const newCursorPos = slashPosition + markdownToInsert.length;
+          textarea.setSelectionRange(newCursorPos, newCursorPos);
+        }, 0);
+      } else {
+        // For image command, just remove the /image
+        const beforeSlash = content.substring(0, slashPosition);
+        const afterCommand = content.substring(endPosition);
+        const newContent = beforeSlash + afterCommand;
+        setContent(newContent);
+        
+        // Posicionar cursor onde estava o /
+        setTimeout(() => {
+          textarea.focus();
+          textarea.setSelectionRange(slashPosition, slashPosition);
+        }, 0);
+      }
     }
   };
-
-  // Effect para lidar com teclas do menu slash
-  useEffect(() => {
-    if (showSlashMenu) {
-      document.addEventListener('keydown', handleSlashMenuKeyDown);
-    }
-    
-    return () => {
-      document.removeEventListener('keydown', handleSlashMenuKeyDown);
-    };
-  }, [showSlashMenu, selectedSlashIndex, filteredSlashCommands]);
 
   // Resetar índice selecionado quando o filtro muda
   useEffect(() => {
@@ -989,23 +903,161 @@ function Editor({ initialNoteType = 'private', noteId }: EditorProps) {
       className="w-full  h-full flex flex-col bg-[var(--background)] scrollbar"
     >
       <Profile />
-      <div className="mx-auto max-w-7xl w-full h-full flex flex-col flex-grow">
+      <div className="mx-auto  w-full h-full flex flex-col flex-grow">
         <div className="bg-[var(--background)] overflow-hidden flex flex-col flex-grow h-full  transition-all duration-300">
+          {/* Toolbar Section - Moved to top */}
+          <div className="bg-[var(--container)] bg-opacity-30   text-sm px-2 sm:px-3 py-2 text-[var(--foreground)] flex justify-between items-center sticky top-0 z-10">
+            <div className="flex flex-wrap items-center gap-1 sm:gap-2">
+              <div className="flex items-center space-x-1 mr-2">
+                <button
+                  className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors flex items-center justify-center"
+                  onClick={() => insertMarkdown("orderedList")}
+                  title={t("editor.orderedList")}
+                >
+                  <ListOrdered size={18} />
+                </button>
+                <button
+                  className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors flex items-center justify-center"
+                  onClick={() => insertMarkdown("unorderedList")}
+                  title={t("editor.unorderedList")}
+                >
+                  <LayoutList size={18} />
+                </button>
+                <button
+                  className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors font-bold"
+                  onClick={() => insertMarkdown("bold")}
+                  title={t("editor.bold")}
+                >
+                  B
+                </button>
+                <button
+                  className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors italic"
+                  onClick={() => insertMarkdown("italic")}
+                  title={t("editor.italic")}
+                >
+                  I
+                </button>
+                <button
+                  className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors"
+                  onClick={() => insertMarkdown("link")}
+                  title={t("editor.link")}
+                >
+                  🔗
+                </button>
+              </div>
+
+              <div className="flex items-center space-x-1 mr-2">
+                <button
+                  className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors"
+                  onClick={() => insertMarkdown("heading1")}
+                  title={t("editor.heading1")}
+                >
+                  H1
+                </button>
+                <button
+                  className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors"
+                  onClick={() => insertMarkdown("heading2")}
+                  title={t("editor.heading2")}
+                >
+                  H2
+                </button>
+              </div>
+
+              <div className="flex items-center space-x-1 mr-2">
+                <button
+                  className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors"
+                  onClick={() => insertMarkdown("code")}
+                  title={t("editor.code")}
+                >
+                  &lt;/&gt;
+                </button>
+                <button
+                  className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors  sm:flex items-center justify-center relative"
+                  onClick={() => {
+                    if (imageUploadLoading) return;
+                    if (fileInputRef.current) {
+                      fileInputRef.current.click();
+                    } else {
+                      insertMarkdown("image");
+                    }
+                  }}
+                  title={t("editor.insertImage")}
+                >
+                  <Image size={16} />
+                  {imageUploadLoading && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-[var(--accent-color)] bg-opacity-70 rounded-md">
+                      <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    </div>
+                  )}
+                </button>
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleImageUpload}
+                  accept="image/*"
+                  style={{ display: "none" }}
+                />
+              </div>
+
+              <div className="flex items-center space-x-1 mr-2">
+                <button
+                  onClick={() =>
+                    setShowEmojiPickerContent(!showEmojiPickerContent)
+                  }
+                  className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors"
+                  title={t("editor.addEmoji")}
+                >
+                  <SmilePlus size={16} />
+                </button>
+                {showEmojiPickerContent && (
+                  <div className="absolute z-50 mt-36 right-4 shadow-xl rounded-lg overflow-hidden">
+                    <EmojiPicker
+                      onEmojiClick={handleEmojiSelectContent}
+                      skinTonesDisabled
+                      width={280}
+                      height={350}
+                      previewConfig={{ showPreview: false }}
+                      theme={Theme.DARK}
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                className={`rounded-md px-3 py-1.5 transition-all duration-200 flex items-center gap-1.5 ${
+                  isPreviewMode
+                    ? "bg-transparent text-[var(--foreground)] border border-[var(--border-color)]"
+                    : "bg-gradient-to-r from-[var(--button-theme)] to-[var(--theme2)]/40 border border-[var(--border-theme)]/30 text-[var(--text-theme)]"
+                }`}
+                onClick={() => setIsPreviewMode(false)}
+                disabled={!isPreviewMode}
+              >
+                <Edit size={16} /> {t("editor.edit")}
+              </button>
+              <button
+                className={`rounded-md px-3 py-1.5 transition-all duration-200 flex items-center gap-1.5 ${
+                  !isPreviewMode
+                    ? "bg-transparent text-[var(--foreground)] border border-[var(--border-color)]"
+                    : "bg-gradient-to-r from-[var(--button-theme)] to-[var(--theme2)]/40 border border-[var(--border-theme)]/30 text-[var(--text-theme)]"
+                }`}
+                onClick={() => setIsPreviewMode(true)}
+                disabled={isPreviewMode}
+              >
+                <Eye size={16} /> {t("editor.preview")}
+              </button>
+            </div>
+          </div>
+
           {/* Title Section */}
           <div className="p-5 sm:p-6 relative">
-            {/* Realtime Connection Indicator + Auto-save status */}
+            {/* Realtime Connection Indicator */}
             <div className="absolute top-2 right-2 flex items-center gap-3 text-xs">
               <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`}></div>
               <span className="text-[var(--foreground-light)]">
                 {isConnected ? t('editor.connected') : t('editor.disconnected')}
               </span>
-              {/* Auto-save status */}
-              {autoSaveStatus === 'saving' && (
-                <span className="text-yellow-400 animate-pulse">{t('editor.saving')}</span>
-              )}
-              {autoSaveStatus === 'saved' && (
-                <span className="text-green-400">{t('editor.saved')}</span>
-              )}
             </div>
 
             {/* Botão de salvar manual opcional, pode ser removido se quiser só autosave */}
@@ -1203,162 +1255,15 @@ function Editor({ initialNoteType = 'private', noteId }: EditorProps) {
             </div>
           </div>
 
-          {/* Toolbar Section */}
-          <div className="bg-[var(--container)] bg-opacity-30   text-sm px-2 sm:px-3 py-2 text-[var(--foreground)] flex justify-between items-center sticky top-0 z-10">
-            <div className="flex flex-wrap items-center gap-1 sm:gap-2">
-              <div className="flex items-center space-x-1 mr-2">
-                <button
-                  className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors flex items-center justify-center"
-                  onClick={() => insertMarkdown("orderedList")}
-                  title={t("editor.orderedList")}
-                >
-                  <ListOrdered size={18} />
-                </button>
-                <button
-                  className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors flex items-center justify-center"
-                  onClick={() => insertMarkdown("unorderedList")}
-                  title={t("editor.unorderedList")}
-                >
-                  <LayoutList size={18} />
-                </button>
-                <button
-                  className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors font-bold"
-                  onClick={() => insertMarkdown("bold")}
-                  title={t("editor.bold")}
-                >
-                  B
-                </button>
-                <button
-                  className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors italic"
-                  onClick={() => insertMarkdown("italic")}
-                  title={t("editor.italic")}
-                >
-                  I
-                </button>
-                <button
-                  className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors"
-                  onClick={() => insertMarkdown("link")}
-                  title={t("editor.link")}
-                >
-                  🔗
-                </button>
-              </div>
-
-              <div className="flex items-center space-x-1 mr-2">
-                <button
-                  className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors"
-                  onClick={() => insertMarkdown("heading1")}
-                  title={t("editor.heading1")}
-                >
-                  H1
-                </button>
-                <button
-                  className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors"
-                  onClick={() => insertMarkdown("heading2")}
-                  title={t("editor.heading2")}
-                >
-                  H2
-                </button>
-              </div>
-
-              <div className="flex items-center space-x-1 mr-2">
-                <button
-                  className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors"
-                  onClick={() => insertMarkdown("code")}
-                  title={t("editor.code")}
-                >
-                  &lt;/&gt;
-                </button>
-                <button
-                  className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors  sm:flex items-center justify-center relative"
-                  onClick={() => {
-                    if (imageUploadLoading) return;
-                    if (fileInputRef.current) {
-                      fileInputRef.current.click();
-                    } else {
-                      insertMarkdown("image");
-                    }
-                  }}
-                  title={t("editor.insertImage")}
-                >
-                  <Image size={16} />
-                  {imageUploadLoading && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-[var(--accent-color)] bg-opacity-70 rounded-md">
-                      <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    </div>
-                  )}
-                </button>
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  onChange={handleImageUpload}
-                  accept="image/*"
-                  style={{ display: "none" }}
-                />
-              </div>
-
-              <div className="flex items-center space-x-1 mr-2">
-                <button
-                  onClick={() =>
-                    setShowEmojiPickerContent(!showEmojiPickerContent)
-                  }
-                  className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors"
-                  title={t("editor.addEmoji")}
-                >
-                  <SmilePlus size={16} />
-                </button>
-                {showEmojiPickerContent && (
-                  <div className="absolute z-50 mt-36 right-4 shadow-xl rounded-lg overflow-hidden">
-                    <EmojiPicker
-                      onEmojiClick={handleEmojiSelectContent}
-                      skinTonesDisabled
-                      width={280}
-                      height={350}
-                      previewConfig={{ showPreview: false }}
-                      theme={Theme.DARK}
-                    />
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <button
-                className={`rounded-md px-3 py-1.5 transition-all duration-200 flex items-center gap-1.5 ${
-                  isPreviewMode
-                    ? "bg-transparent text-[var(--foreground)] border border-[var(--border-color)]"
-                    : "bg-gradient-to-r from-[var(--button-theme)] to-[var(--theme2)]/40 border border-[var(--border-theme)]/30 text-[var(--text-theme)]"
-                }`}
-                onClick={() => setIsPreviewMode(false)}
-                disabled={!isPreviewMode}
-              >
-                <Edit size={16} /> {t("editor.edit")}
-              </button>
-              <button
-                className={`rounded-md px-3 py-1.5 transition-all duration-200 flex items-center gap-1.5 ${
-                  !isPreviewMode
-                    ? "bg-transparent text-[var(--foreground)] border border-[var(--border-color)]"
-                    : "bg-gradient-to-r from-[var(--button-theme)] to-[var(--theme2)]/40 border border-[var(--border-theme)]/30 text-[var(--text-theme)]"
-                }`}
-                onClick={() => setIsPreviewMode(true)}
-                disabled={isPreviewMode}
-              >
-                <Eye size={16} /> {t("editor.preview")}
-              </button>
-            </div>
-          </div>
-
-          
-
           {/* Content Area */}
-          <div className=" scrollbar bg-[var(--background)] relative">
+          <div className=" scrollbar bg-[var(--background)] relative flex-grow">
             {!isPreviewMode ? (
               <div className="h-full relative">
                 {" "}
                 <textarea
                   ref={textareaRef}
                   className="p-5 sm:p-6 w-full bg-transparent text-[var(--foreground)] resize-none focus:outline-none min-h-[270px] sm:min-h-[370px] h-full text-base sm:text-lg overflow-auto transition-all duration-300"
-                  placeholder={t("editor.contentPlaceholder") + " " + t("editor.slashTip", { defaultValue: "Digite / para comandos rápidos" })}
+                  placeholder={t("editor.contentPlaceholder")}
                   maxLength={15000}
                   value={content}
                   onChange={handleTextareaChange}
@@ -1367,106 +1272,16 @@ function Editor({ initialNoteType = 'private', noteId }: EditorProps) {
                 />
                 
                 {/* Menu de comandos com / */}
-                {showSlashMenu && filteredSlashCommands.length > 0 && (
-                  <div 
-                    className="absolute z-50 bg-[#1f1f1f] border border-[#3f3f3f] rounded-lg shadow-2xl min-w-[280px] max-w-[320px]"
-                    style={{
-                      top: `${slashMenuPosition.top}px`,
-                      left: `${slashMenuPosition.left}px`,
-                      maxHeight: '240px',
-                      overflowY: 'auto'
-                    }}
-                  >
-                    <div className="py-1">
-                      {/* Header do menu */}
-                      <div className="px-3 py-2 text-xs font-medium text-gray-400 border-b border-[#3f3f3f] bg-[#2a2a2a]">
-                        <div className="flex items-center gap-2">
-                          <span className="text-blue-400">✨</span>
-                          {slashMenuFilter ? `Procurando por "${slashMenuFilter}"` : "COMANDOS RÁPIDOS"}
-                        </div>
-                      </div>
-
-                      {/* Lista de comandos */}
-                      <div className="py-1">
-                        {filteredSlashCommands.map((command, index) => (
-                          <button
-                            key={index}
-                            className={`w-full text-left px-3 py-2.5 transition-all duration-150 flex items-center gap-3 group ${
-                              index === selectedSlashIndex 
-                                ? 'bg-blue-600 text-white shadow-sm' 
-                                : 'text-gray-300 hover:bg-[#2a2a2a]'
-                            }`}
-                            onClick={() => applySlashCommand(command)}
-                            onMouseEnter={() => setSelectedSlashIndex(index)}
-                          >
-                            <div className={`w-8 h-8 rounded-md flex items-center justify-center text-sm font-medium ${
-                              index === selectedSlashIndex 
-                                ? 'bg-blue-500 text-white' 
-                                : 'bg-[#3f3f3f] text-gray-400 group-hover:bg-[#4f4f4f]'
-                            }`}>
-                              {command.icon}
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <div className={`font-medium text-sm ${
-                                index === selectedSlashIndex ? 'text-white' : 'text-gray-200'
-                              }`}>
-                                {command.label}
-                              </div>
-                              <div className={`text-xs truncate ${
-                                index === selectedSlashIndex ? 'text-blue-100' : 'text-gray-500'
-                              }`}>
-                                {command.description}
-                              </div>
-                            </div>
-                            {index === selectedSlashIndex && (
-                              <div className="text-xs text-blue-200 opacity-75">
-                                ↵
-                              </div>
-                            )}
-                          </button>
-                        ))}
-                      </div>
-
-                      {/* Footer com dica */}
-                      <div className="px-3 py-2 text-xs text-gray-500 border-t border-[#3f3f3f] bg-[#2a2a2a]">
-                        <div className="flex items-center justify-between">
-                          <span>↑↓ navegar</span>
-                          <span>↵ selecionar</span>
-                          <span>esc cancelar</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {filteredSlashCommands.length === 0 && showSlashMenu && (
-                  <div 
-                    className="absolute z-50 bg-[#1f1f1f] border border-[#3f3f3f] rounded-lg shadow-2xl min-w-[280px]"
-                    style={{
-                      top: `${slashMenuPosition.top}px`,
-                      left: `${slashMenuPosition.left}px`,
-                    }}
-                  >
-                    <div className="py-1">
-                      {/* Header do menu */}
-                      <div className="px-3 py-2 text-xs font-medium text-gray-400 border-b border-[#3f3f3f] bg-[#2a2a2a]">
-                        <div className="flex items-center gap-2">
-                          <span className="text-yellow-400">🔍</span>
-                          NENHUM RESULTADO
-                        </div>
-                      </div>
-                      
-                      <div className="px-3 py-4 text-center">
-                        <div className="text-gray-500 text-sm">
-                          Nenhum comando encontrado para
-                        </div>
-                        <div className="text-gray-300 font-medium">
-                          "/{slashMenuFilter}"
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
+                <SlashCommandMenu
+                  isVisible={showSlashMenu}
+                  position={slashMenuPosition}
+                  filter={slashMenuFilter}
+                  selectedIndex={selectedSlashIndex}
+                  commands={slashCommands}
+                  onSelectCommand={applySlashCommand}
+                  onSelectIndex={setSelectedSlashIndex}
+                  onClose={() => setShowSlashMenu(false)}
+                />
                 {/* <div className="absolute bottom-4 right-4">
                   <ClientLayout />
                 </div> */}
@@ -1484,16 +1299,6 @@ function Editor({ initialNoteType = 'private', noteId }: EditorProps) {
                 )}
               </div>
             )}
-          </div>
-
-         
-
-          {/* Footer Section */}
-          <div className="flex justify-between items-center p-4 sm:p-5 bg-[var(--container)]">
-            <div className="text-xs sm:text-sm text-[var(--foreground)] opacity-70">
-              <span className="font-medium">{content.length}</span> / 15000{" "}
-              {t("editor.characters")}
-            </div>
           </div>
         </div>
 

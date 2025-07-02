@@ -12,7 +12,7 @@ import Tasks from "../components/tasks";
 // import CalendarView from "../components/CalendarView";
 import { useTranslation } from "react-i18next";
 // import Tables from "../components/tables";
-import { Eye, Star, Users, Plus, ArrowRight } from "lucide-react";
+import { Eye, Star, Users, Plus, ArrowRight, Edit, Trash2, Info } from "lucide-react";
 //Info
 import { checkStripeSubscription } from "../../lib/checkStripeSubscription";
 
@@ -133,6 +133,48 @@ export default function DashboardPage() {
     } catch (error) {
       console.error("Erro ao atualizar favorito:", error);
     }
+  };
+
+  // Função para deletar uma nota
+  const deleteNote = async (noteId: string, event: React.MouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    if (!user) return;
+    
+    // Para notas públicas/colaborativas, mostrar mensagem informativa
+    if (currentNoteType === 'public') {
+      alert(t("dashboard.collaborativeDeleteInfo"));
+      return;
+    }
+    
+    const confirmed = window.confirm(t("dashboard.confirmDelete"));
+    if (!confirmed) return;
+
+    try {
+      const { error } = await supabase
+        .from("notes")
+        .delete()
+        .eq("id", noteId)
+        .eq("user_id", user.id);
+      if (error) throw error;
+      refreshPrivateNotes();
+    } catch (error) {
+      console.error("Erro ao deletar nota:", error);
+      alert(t("dashboard.deleteError"));
+    }
+  };
+
+  // Função para editar uma nota
+  const editNote = (noteId: string, event: React.MouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    const noteLink = currentNoteType === 'private' 
+      ? `/notes/${noteId}`
+      : `/notes/${noteId}?type=public`;
+    
+    router.push(noteLink);
   };
 
   // Função para verificar se o usuário tem assinatura ativa do Stripe
@@ -345,34 +387,53 @@ export default function DashboardPage() {
               {/* Toggle components dropdown */}
               <div className="">
                 <DropdownMenu>
-                  <DropdownMenuTrigger className="flex items-center gap-2 px-1 py-2 rounded-md bg-gradient-to-r from-[var(--button-theme)] to-[var(--theme2)]/40 border border-[var(--border-theme)]/30 text-[var(--text-theme)] hover:bg-[var(--container)] transition-colors">
-                    <span>
-                      <Eye />
-                    </span>
+                  <DropdownMenuTrigger className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gradient-to-r from-[var(--button-theme)] to-[var(--theme2)]/40 border border-[var(--border-theme)]/30 text-[var(--text-theme)] hover:bg-[var(--container)] hover:shadow-md transition-all duration-200 group">
+                    <Eye className="h-4 w-4 group-hover:scale-110 transition-transform duration-200" />
+                    <span className="text-sm font-medium hidden sm:inline">View</span>
                     <svg
-                      width="16"
-                      height="16"
+                      width="14"
+                      height="14"
                       viewBox="0 0 24 24"
                       fill="none"
                       stroke="currentColor"
                       strokeWidth="2"
                       strokeLinecap="round"
                       strokeLinejoin="round"
+                      className="group-hover:translate-y-0.5 transition-transform duration-200"
                     >
                       <path d="M6 9l6 6 6-6" />
                     </svg>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent className="bg-[var(--background)] border border-[var(--text-color)]">
-                    <DropdownMenuLabel className="text-[var(--text-color)]">
+                  <DropdownMenuContent className="bg-[var(--background)] border border-[var(--border-theme)]/30 rounded-lg shadow-lg backdrop-blur-sm">
+                    <DropdownMenuLabel className="text-[var(--text-color)] font-semibold px-3 py-2">
                       {t("dashboard.components")}
                     </DropdownMenuLabel>
-                    <DropdownMenuSeparator />
+                    <DropdownMenuSeparator className="bg-[var(--border-theme)]/20" />
                     <DropdownMenuCheckboxItem
                       checked={showTasks}
                       onCheckedChange={setShowTasks}
-                      className="text-[var(--text-color)]"
+                      className="text-[var(--text-color)] hover:bg-[var(--container)]/50 transition-colors duration-200 px-3 py-2 cursor-pointer"
                     >
-                      {t("dashboard.tasks")}
+                      <div className="flex items-center gap-2">
+                        <div className="w-4 h-4 flex items-center justify-center">
+                          {showTasks && (
+                            <svg
+                              width="12"
+                              height="12"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="3"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              className="text-green-500"
+                            >
+                              <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                          )}
+                        </div>
+                        <span>{t("dashboard.tasks")}</span>
+                      </div>
                     </DropdownMenuCheckboxItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -411,7 +472,7 @@ export default function DashboardPage() {
               <p>{t("dashboard.loading")}</p>
             ) : (
               <>
-                <div className="columns-2 sm:columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-4 pt-5 space-y-4">
+                <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 pt-5">
                   {currentNotes.map((note: DisplayNote, index: number) => {
                     // Handle both private and public note types with decryption
                     const noteTitle = currentNoteType === 'private' 
@@ -425,12 +486,6 @@ export default function DashboardPage() {
                     const firstImage = extractFirstImage(noteContent);
                     const textPreview = getTextPreview(noteContent);
 
-                    const contentLength = noteContent.length;
-                    const baseHeight = firstImage ? 280 : 200;
-                    const contentHeight = Math.min(contentLength / 3, 150);
-                    const varietyHeight = (index % 3) * 70;
-                    const totalHeight = baseHeight + contentHeight + varietyHeight;
-
                     // Determine the link based on note type
                     const noteLink = currentNoteType === 'private' 
                       ? `/notes/${note.id}`
@@ -439,12 +494,11 @@ export default function DashboardPage() {
                     return (
                       <div
                         key={note.id}
-                        className="group block break-inside-avoid mb-4 relative cursor-pointer"
+                        className="group block relative cursor-pointer"
                         onClick={() => router.push(noteLink)}
                       >
                         <div
-                          className="bg-[var(--container)]/30 backdrop-blur-sm flex flex-col rounded-lg border border-[var(--foreground)]/20 overflow-hidden transition-all duration-300 hover:shadow-xl"
-                          style={{ minHeight: `${totalHeight}px` }}
+                          className="bg-[var(--container)]/30 backdrop-blur-sm flex flex-col rounded-lg border border-[var(--foreground)]/20 overflow-hidden transition-all duration-300 hover:shadow-xl h-full"
                         >
                           {/* Display first image if available - moved to top */}
                           {firstImage && (
@@ -524,8 +578,30 @@ export default function DashboardPage() {
                             </div>
                           </div>
 
-                          {/* Pinterest-style hover overlay - Top bar */}
-                          <div className="absolute top-0 left-0 right-0 h-16 bg-gradient-to-b from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 rounded-t-lg">
+                          {/* Pinterest-style hover overlay - Bottom bar with action buttons */}
+                          <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 rounded-b-lg">
+                            <div className="flex justify-end items-end p-3 gap-2 h-full">
+                              <button
+                                type="button"
+                                aria-label="Edit note"
+                                onClick={(e) => editNote(note.id, e)}
+                                className="bg-white/90 hover:bg-white text-gray-800 rounded-full p-2 transition-all duration-200 hover:scale-110 shadow-lg"
+                              >
+                                <Edit size={16} />
+                              </button>
+                              <button
+                                type="button"
+                                aria-label={currentNoteType === 'public' ? "Delete info" : "Delete note"}
+                                onClick={(e) => deleteNote(note.id, e)}
+                                className={`rounded-full p-2 transition-all duration-200 hover:scale-110 shadow-lg ${
+                                  currentNoteType === 'public' 
+                                    ? "bg-blue-500/90 hover:bg-blue-500 text-white" 
+                                    : "bg-red-500/90 hover:bg-red-500 text-white"
+                                }`}
+                              >
+                                {currentNoteType === 'public' ? <Info size={16} /> : <Trash2 size={16} />}
+                              </button>
+                            </div>
                           </div>
                         </div>
                       </div>

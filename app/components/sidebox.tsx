@@ -22,7 +22,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { supabase } from "../../lib/supabase";
 import { useAuth } from "../../context/AuthContext";
 import ThemeToggle from "./ThemeToggle";
@@ -78,6 +78,12 @@ export default function Sidebox({
   const [isMobile, setIsMobile] = useState(false);
   const notesLoadedRef = useRef(false);
   const router = useRouter();
+  const pathname = usePathname();
+
+  // Function to check if a note is currently active
+  const isNoteActive = (noteId: string) => {
+    return pathname === `/notes/${noteId}`;
+  };
   const { user } = useAuth();
   const [, setError] = useState<string | null>(null);
   const { t } = useTranslation();
@@ -634,13 +640,21 @@ export default function Sidebox({
                               key={note.id}
                               onClick={() => toggleMobileSidebar()}
                             >
-                              <div className="px-3 py-2 hover:bg-[var(--container)]/50 cursor-pointer transition-all duration-200 text-sm flex items-center justify-between group rounded-lg">
+                              <div className={`px-3 py-2 hover:bg-[var(--container)]/50 cursor-pointer transition-all duration-200 text-sm flex items-center justify-between group rounded-lg ${
+                                isNoteActive(note.id) 
+                                  ? 'bg-gradient-to-r from-blue-500/10 to-purple-500/10 border-l-2 border-blue-500 shadow-sm' 
+                                  : ''
+                              }`}>
                                 <div className="flex items-center overflow-hidden">
                                   <File
                                     size={14}
-                                    className="mr-3 flex-shrink-0 text-blue-400"
+                                    className={`mr-3 flex-shrink-0 ${
+                                      isNoteActive(note.id) ? 'text-blue-500' : 'text-blue-400'
+                                    }`}
                                   />
-                                  <span className="truncate font-medium">
+                                  <span className={`truncate font-medium ${
+                                    isNoteActive(note.id) ? 'text-blue-600 dark:text-blue-400' : ''
+                                  }`}>
                                     {getTitleExcerpt(note.title) || t("sidebar.untitled")}
                                   </span>
                                 </div>
@@ -688,7 +702,11 @@ export default function Sidebox({
                 .filter((note) => note.folder_id === null)
                 .map((note) => (
                   <div key={note.id} className="relative group">
-                    <div className="p-3 rounded-xl hover:bg-[var(--container)]/40 cursor-pointer transition-all duration-200 mb-1 flex items-start border border-transparent hover:border-[var(--foreground)]/10">
+                    <div className={`p-3 rounded-xl hover:bg-[var(--container)]/40 cursor-pointer transition-all duration-200 mb-1 flex items-start border border-transparent hover:border-[var(--foreground)]/10 ${
+                      isNoteActive(note.id) 
+                        ? 'bg-gradient-to-r from-blue-500/10 to-purple-500/10 border-l-2 border-blue-500 shadow-sm !border-blue-500/30' 
+                        : ''
+                    }`}>
                       <Link
                         href={`/notes/${note.id}`}
                         onClick={() => toggleMobileSidebar()}
@@ -698,9 +716,13 @@ export default function Sidebox({
                           <div className="flex items-center">
                             <File
                               size={16}
-                              className="mr-3 text-blue-400"
+                              className={`mr-3 ${
+                                isNoteActive(note.id) ? 'text-blue-500' : 'text-blue-400'
+                              }`}
                             />
-                            <span className="text-sm font-medium truncate">
+                            <span className={`text-sm font-medium truncate ${
+                              isNoteActive(note.id) ? 'text-blue-600 dark:text-blue-400' : ''
+                            }`}>
                               {getTitleExcerpt(note.title) || t("sidebar.untitled")}
                             </span>
                           </div>
@@ -793,21 +815,31 @@ export default function Sidebox({
               <>
                 {filteredNotes.map((note) => (
                   <div key={note.id} className="relative group">
-                    <div className="p-3 sm:p-4 rounded-lg sm:rounded-xl hover:bg-[var(--container)]/40 cursor-pointer transition-all duration-200 border border-transparent hover:border-[var(--foreground)]/10 hover:shadow-sm">
+                    <div className={`p-3 sm:p-4   hover:bg-[var(--container)]/40 cursor-pointer transition-all duration-200 border border-transparent hover:border-[var(--foreground)]/10 hover:shadow-sm ${
+                      isNoteActive(note.id) 
+                        ? 'bg-gradient-to-r from-blue-500/10 to-purple-500/10 border-l-2 border-blue-500 shadow-sm !border-blue-500/30' 
+                        : ''
+                    }`}>
                       <Link
                         href={`/notes/${note.id}`}
                         onClick={() => toggleMobileSidebar()}
                         className="flex items-start space-x-2.5 sm:space-x-3 flex-1"
                       >
                         <div className="flex items-start space-x-2.5 sm:space-x-3 flex-1">
-                          <div className="p-1.5 sm:p-2  bg-gradient-to-br from-blue-500 to-purple-600 rounded-md sm:rounded-lg">
+                          <div className={`p-1.5 sm:p-2 rounded-md sm:rounded-lg ${
+                            isNoteActive(note.id) 
+                              ? 'bg-gradient-to-br from-blue-600 to-purple-700 shadow-md' 
+                              : 'bg-gradient-to-br from-blue-500 to-purple-600'
+                          }`}>
                             <BookOpenText
                               size={14}
                               className="sm:w-4 sm:h-4 text-white"
                             />
                           </div>
                           <div className="flex-1 min-w-0">
-                            <h2 className="font-semibold truncate text-xs sm:text-sm">
+                            <h2 className={`font-semibold truncate text-xs sm:text-sm ${
+                              isNoteActive(note.id) ? 'text-blue-600 dark:text-blue-400' : ''
+                            }`}>
                               {getTitleExcerpt(note.title) || t("sidebar.untitled")}
                             </h2>
                             {note.content && (

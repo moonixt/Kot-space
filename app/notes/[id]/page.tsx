@@ -32,6 +32,7 @@ import { ProtectedRoute } from "../../components/ProtectedRoute";
 import { usePublicNoteCollaboration, realtimeManager } from "../../../lib/realtimeManager";
 import CollaboratorManager from "../../components/CollaboratorManager";
 import { useCollaborativeNoteSync } from "../../../hooks/useCollaborativeNoteSync";
+import SlashCommandMenu, { useSlashCommands } from "../../components/SlashCommandMenu";
 
 interface Note {
   id: string;
@@ -65,6 +66,14 @@ export default function NotePage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [showEmojiPickerContent, setShowEmojiPickerContent] = useState(false);
   const [deleting, setDeleting] = useState(false);
+
+  // Estados para o menu de comandos com /
+  const [showSlashMenu, setShowSlashMenu] = useState(false);
+  const [slashMenuPosition, setSlashMenuPosition] = useState({ top: 0, left: 0 });
+  const [slashMenuFilter, setSlashMenuFilter] = useState('');
+  const [selectedSlashIndex, setSelectedSlashIndex] = useState(0);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [hasUserInteracted, setHasUserInteracted] = useState(false);
 
   const [canEdit, setCanEdit] = useState(true);
   const [canSave, setCanSave] = useState(true);
@@ -359,12 +368,6 @@ export default function NotePage() {
   const handleDelete = async () => {
     if (!user || !noteId) return;
 
-    // Check if user can delete before proceeding
-    if (!canEdit) {
-      showToast("You can only read this note. Upgrade to delete.", "error");
-      return;
-    }
-
     const confirmed = window.confirm(t("editor.confirmDelete"));
     if (!confirmed) return;
 
@@ -450,7 +453,7 @@ export default function NotePage() {
 
   // Função para inserir formatação Markdown
   const insertMarkdown = (markdownSyntax: string) => {
-    const textarea = document.querySelector("textarea");
+    const textarea = textareaRef.current; // Use ref instead of querySelector
     if (!textarea) return;
 
     const start = textarea.selectionStart;
@@ -461,21 +464,21 @@ export default function NotePage() {
 
     switch (markdownSyntax) {
       case "bold":
-        newText = `**${selectedText || "texto em negrito"}**`;
+        newText = `**${selectedText || t("editor.slashMenu.placeholders.bold")}**`;
         break;
       case "italic":
-        newText = `*${selectedText || "texto em itálico"}*`;
+        newText = `*${selectedText || t("editor.slashMenu.placeholders.italic")}*`;
         break;
       case "heading1":
-        newText = `# ${selectedText || " "}`;
+        newText = `# ${selectedText || t("editor.slashMenu.placeholders.heading1")}`;
         break;
       case "heading2":
-        newText = `## ${selectedText || " "}`;
+        newText = `## ${selectedText || t("editor.slashMenu.placeholders.heading2")}`;
         break;
       case "code":
         newText = selectedText.includes("\n")
-          ? `\`\`\`\n${selectedText || "código aqui"}\n\`\`\``
-          : `\`${selectedText || "código"}\``;
+          ? `\`\`\`\n${selectedText || t("editor.slashMenu.placeholders.codeBlock")}\n\`\`\``
+          : `\`${selectedText || t("editor.slashMenu.placeholders.code")}\``;
         break;
       case "orderedList":
         if (selectedText) {
@@ -484,7 +487,7 @@ export default function NotePage() {
             .map((line, index) => `${index + 1}. ${line}`)
             .join("\n");
         } else {
-          newText = "1. Primeiro item\n2. Segundo item\n3. Terceiro item";
+          newText = t("editor.slashMenu.placeholders.orderedList");
         }
         break;
       case "unorderedList":
@@ -492,14 +495,14 @@ export default function NotePage() {
           const lines = selectedText.split("\n");
           newText = lines.map((line) => `- ${line}`).join("\n");
         } else {
-          newText = "- Primeiro item\n- Segundo item\n- Terceiro item";
+          newText = t("editor.slashMenu.placeholders.unorderedList");
         }
         break;
       case "link":
-        newText = `[${selectedText || "texto do link"}](url)`;
+        newText = `[${selectedText || t("editor.slashMenu.placeholders.linkText")}](${t("editor.slashMenu.placeholders.linkUrl")})`;
         break;
       case "image":
-        newText = `![${selectedText || "descrição da imagem"}](url_da_imagem)`;
+        newText = `![${selectedText || t("editor.slashMenu.placeholders.imageDescription")}](${t("editor.slashMenu.placeholders.imageUrl")})`;
         break;
     }
 
@@ -513,6 +516,189 @@ export default function NotePage() {
       textarea.setSelectionRange(newCursorPos, newCursorPos);
     }, 0);
   };
+
+  // Use the slash commands hook
+  const slashCommands = useSlashCommands(insertMarkdown, fileInputRef);
+
+  // Função para calcular a posição do menu
+  const calculateMenuPosition = (textarea: HTMLTextAreaElement, cursorPosition: number) => {
+    // Obter posição real do cursor usando getBoundingClientRect
+    const rect = textarea.getBoundingClientRect();
+    const style = window.getComputedStyle(textarea);
+    
+    // Pegar o texto até o cursor
+    const textBeforeCursor = textarea.value.substring(0, cursorPosition);
+    const lines = textBeforeCursor.split('\n');
+    const currentLineIndex = lines.length - 1;
+    const currentLineText = lines[currentLineIndex];
+    
+    // Encontrar posição da barra / na linha atual
+    const slashIndex = currentLineText.lastIndexOf('/');
+    const textBeforeSlash = currentLineText.substring(0, slashIndex);
+    
+    // Criar elemento temporário para medir texto
+    const tempDiv = document.createElement('div');
+    tempDiv.style.position = 'absolute';
+    tempDiv.style.visibility = 'hidden';
+    tempDiv.style.whiteSpace = 'pre';
+    tempDiv.style.font = style.font;
+    tempDiv.style.fontSize = style.fontSize;
+    tempDiv.style.fontFamily = style.fontFamily;
+    tempDiv.style.lineHeight = style.lineHeight;
+    tempDiv.textContent = textBeforeSlash;
+    document.body.appendChild(tempDiv);
+    
+    // Medir largura do texto antes da barra /
+    const textWidth = tempDiv.getBoundingClientRect().width;
+    document.body.removeChild(tempDiv);
+    
+    // Calcular posição baseada no padding do textarea
+    const paddingLeft = parseInt(style.paddingLeft, 10);
+    const paddingTop = parseInt(style.paddingTop, 10);
+    const lineHeight = parseInt(style.lineHeight, 10);
+    
+    // Posição absoluta baseada no textarea - SEMPRE para baixo
+    const left = rect.left + paddingLeft + textWidth;
+    const top = rect.top + paddingTop + (currentLineIndex * lineHeight) + lineHeight + 8; // +8px para espaçamento
+    
+    // Verificar limites da viewport
+    const viewportWidth = window.visualViewport?.width || window.innerWidth;
+    const menuWidth = 300;
+    
+    const finalTop = top; // Sempre usar posição para baixo
+    let finalLeft = left;
+    
+    // Ajustar apenas se o menu sair da tela horizontalmente
+    if (left + menuWidth > viewportWidth) {
+      finalLeft = viewportWidth - menuWidth - 10;
+    }
+    
+    // Garantir que não saia da tela pela esquerda
+    if (finalLeft < 10) {
+      finalLeft = 10;
+    }
+    
+    return { 
+      top: finalTop, 
+      left: finalLeft 
+    };
+  };
+
+  // Função para lidar com a entrada de texto e detectar /
+  const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const newContent = e.target.value;
+    const cursorPosition = e.target.selectionStart;
+    
+    // Mark user as interacted to prevent auto-scroll
+    setHasUserInteracted(true);
+    
+    setEditContent(newContent);
+    
+    // Verificar se o usuário digitou / e não há caracteres antes dele na linha
+    const textBeforeCursor = newContent.substring(0, cursorPosition);
+    const currentLineStart = textBeforeCursor.lastIndexOf('\n') + 1;
+    const currentLineText = textBeforeCursor.substring(currentLineStart);
+    
+    // Detectar se começou com / e capturar o filtro
+    const slashMatch = currentLineText.match(/^\/(.*)$/);
+    
+    if (slashMatch) {
+      const filter = slashMatch[1];
+      setSlashMenuFilter(filter);
+      setSelectedSlashIndex(0);
+      
+      if (!showSlashMenu) {
+        const position = calculateMenuPosition(e.target, cursorPosition);
+        setSlashMenuPosition(position);
+        setShowSlashMenu(true);
+      }
+    } else {
+      setShowSlashMenu(false);
+      setSlashMenuFilter('');
+    }
+  };
+
+  // Função para aplicar comando do menu slash
+  const applySlashCommand = (command: typeof slashCommands[0]) => {
+    if (!textareaRef.current) return;
+    
+    const textarea = textareaRef.current;
+    const cursorPosition = textarea.selectionStart;
+    
+    // Encontrar o início do comando / na linha atual
+    const textBeforeCursor = editContent.substring(0, cursorPosition);
+    const currentLineStart = textBeforeCursor.lastIndexOf('\n') + 1;
+    const currentLineText = textBeforeCursor.substring(currentLineStart);
+    const slashMatch = currentLineText.match(/^\/(.*)$/);
+    
+    if (slashMatch) {
+      // Posição exata do / e do texto após ele
+      const slashPosition = currentLineStart;
+      const endPosition = cursorPosition;
+      
+      // Fechar o menu
+      setShowSlashMenu(false);
+      
+      // Executar a ação do comando
+      command.action();
+      
+      // Se o comando não foi de imagem, remover o /comando e inserir markdown
+      if (!command.keywords.includes("image")) {
+        // Remover completamente /comando da posição atual
+        const beforeSlash = editContent.substring(0, slashPosition);
+        const afterCommand = editContent.substring(endPosition);
+        
+        // Determinar qual markdown inserir baseado nas keywords do comando
+        let markdownToInsert = "";
+        
+        if (command.keywords.includes("bold")) {
+          markdownToInsert = `**${t("editor.slashMenu.placeholders.bold")}**`;
+        } else if (command.keywords.includes("italic")) {
+          markdownToInsert = `*${t("editor.slashMenu.placeholders.italic")}*`;
+        } else if (command.keywords.includes("h1")) {
+          markdownToInsert = `# ${t("editor.slashMenu.placeholders.heading1")}`;
+        } else if (command.keywords.includes("h2")) {
+          markdownToInsert = `## ${t("editor.slashMenu.placeholders.heading2")}`;
+        } else if (command.keywords.includes("code")) {
+          markdownToInsert = `\`${t("editor.slashMenu.placeholders.code")}\``;
+        } else if (command.keywords.includes("ordered")) {
+          markdownToInsert = t("editor.slashMenu.placeholders.orderedList");
+        } else if (command.keywords.includes("unordered")) {
+          markdownToInsert = t("editor.slashMenu.placeholders.unorderedList");
+        } else if (command.keywords.includes("link")) {
+          markdownToInsert = `[${t("editor.slashMenu.placeholders.linkText")}](${t("editor.slashMenu.placeholders.linkUrl")})`;
+        }
+        
+        // Criar o novo conteúdo com o markdown inserido no lugar do comando /
+        const newContent = beforeSlash + markdownToInsert + afterCommand;
+        setEditContent(newContent);
+        
+        // Posicionar cursor após o markdown inserido
+        setTimeout(() => {
+          textarea.focus();
+          const newCursorPos = slashPosition + markdownToInsert.length;
+          textarea.setSelectionRange(newCursorPos, newCursorPos);
+        }, 0);
+      } else {
+        // Para comando de imagem, apenas remover o /image
+        const beforeSlash = editContent.substring(0, slashPosition);
+        const afterCommand = editContent.substring(endPosition);
+        const newContent = beforeSlash + afterCommand;
+        setEditContent(newContent);
+        
+        // Posicionar cursor onde estava o comando
+        setTimeout(() => {
+          textarea.focus();
+          textarea.setSelectionRange(slashPosition, slashPosition);
+        }, 0);
+      }
+    }
+  };
+
+  // Resetar índice selecionado quando o filtro muda
+  useEffect(() => {
+    setSelectedSlashIndex(0);
+  }, [slashMenuFilter]);
 
   // Função para lidar com a seleção de emojis
   const handleEmojiSelect = (emojiData: EmojiClickData) => {
@@ -917,8 +1103,11 @@ export default function NotePage() {
     const scrollToMiddle = () => {
       // Wait for the page to fully render
       setTimeout(() => {
+        // Don't scroll if slash menu is open, user has interacted, or if user is actively typing
+        if (showSlashMenu || hasUserInteracted) return;
+        
         const viewportHeight = window.innerHeight;
-        const scrollTarget = viewportHeight * 0.50; // Scroll to 40% of viewport height
+        const scrollTarget = viewportHeight * 0.50; // Scroll to 50% of viewport height
         window.scrollTo({
           top: scrollTarget,
           behavior: 'smooth'
@@ -926,11 +1115,31 @@ export default function NotePage() {
       }, 300); // Small delay to ensure content is rendered
     };
 
-    // Only scroll on initial load, not when editMode changes
-    if (note && !loading) {
+    // Only scroll on initial load, not when editMode changes or when slash menu is active
+    if (note && !loading && !showSlashMenu && !hasUserInteracted) {
       scrollToMiddle();
     }
-  }, [note, loading]); // Only depend on note and loading state
+  }, [note, loading]); // Remove showSlashMenu and hasUserInteracted from dependencies to prevent re-triggering
+
+  // Detect user interaction to prevent unwanted auto-scrolling
+  useEffect(() => {
+    const handleUserInteraction = () => {
+      setHasUserInteracted(true);
+    };
+
+    // Add listeners for various user interactions
+    const events = ['scroll', 'mousedown', 'keydown', 'touchstart'];
+    
+    events.forEach(event => {
+      window.addEventListener(event, handleUserInteraction, { passive: true });
+    });
+
+    return () => {
+      events.forEach(event => {
+        window.removeEventListener(event, handleUserInteraction);
+      });
+    };
+  }, []);
 
   if (loading) {
     return (
@@ -1037,49 +1246,7 @@ export default function NotePage() {
           </div>
         ) : null}
 
-        {/* Conflict resolution banner for public notes */}
-        {noteType === 'public' && collaborativeSync.hasConflict && collaborativeSync.conflictNote ? (
-          <div className="bg-orange-100 dark:bg-orange-500/20 border-l-4 border-orange-500 p-4 text-orange-800 dark:text-orange-200 text-sm">
-            <div className="flex items-start gap-3">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5 text-orange-600 dark:text-orange-400 mt-0.5 flex-shrink-0"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.864-.833-2.633 0L4.168 16.5c-.77.833.192 2.5 1.732 2.5z"
-                />
-              </svg>
-              <div className="flex-1">
-                <h4 className="font-semibold mb-2">Conflicting changes detected</h4>
-                <p className="mb-3">
-                  Someone else has modified this note while you were editing. Choose how to proceed:
-                </p>
-                <div className="flex gap-3">
-                  <button
-                    onClick={() => collaborativeSync.resolveConflict(true)}
-                    className="px-4 py-2 bg-orange-600 text-white rounded-md hover:bg-orange-700 transition-colors text-sm"
-                  >
-                    Use server version (lose my changes)
-                  </button>
-                  <button
-                    onClick={() => collaborativeSync.resolveConflict(false)}
-                    className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors text-sm"
-                  >
-                    Keep my version (ignore server changes)
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        ) : null}
-
-        <div className=" sticky top-0 bg-[var(--background)]/60 bg-opacity-90 backdrop-blur-sm z-10 py-3 px-4 flex items-center">
+        <div className=" sticky top-0 bg-[var(--background)]/60 bg-opacity-90 backdrop-blur-sm z-80 py-3 px-4 flex items-center">
           <Link
             href="/dashboard"
             className="p-2 rounded-full hover:bg-[var(--container)] transition-colors mr-2"
@@ -1105,8 +1272,8 @@ export default function NotePage() {
           </div>
         </div>
         <Profile />
-        <div className="min-h-screen  flex justify-center ">
-          <div className="w-full max-w-7xl bg-[var(--background)] min-h-screen  flex flex-col">
+        <div className="min-h-screen w-full bg-[var(--background)]">
+          <div className="w-full mx-auto min-h-screen flex flex-col">
             {/* Área de colaboração e controles de edição */}
             <div className="bg-opacity-10 px-4 py-2 text-[var(--foreground)]">
               <div className="flex items-center justify-between">
@@ -1175,9 +1342,155 @@ export default function NotePage() {
               </div>
             </div>
 
-            {/* Área do título */}
+            {/* Toolbar Section - Moved to top */}
+            {editMode && canEdit && (
+              <div className="bg-[var(--container)] bg-opacity-30 border-b border-[var(--border-color)] text-sm px-2 sm:px-4 py-2 text-[var(--foreground)] flex flex-wrap items-center gap-2">
+                <div className="flex items-center space-x-1 mr-2">
+                  <button
+                    className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors font-bold"
+                    onClick={() => insertMarkdown("bold")}
+                    title={t("editor.bold")}
+                  >
+                    B
+                  </button>
+                  <button
+                    className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors italic"
+                    onClick={() => insertMarkdown("italic")}
+                    title={t("editor.italic")}
+                  >
+                    I
+                  </button>
+                  <button
+                    className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors"
+                    onClick={() => insertMarkdown("link")}
+                    title={t("editor.link")}
+                  >
+                    🔗
+                  </button>
+                </div>
+
+                <div className="flex items-center space-x-1 mr-2">
+                  <button
+                    className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors"
+                    onClick={() => insertMarkdown("heading1")}
+                    title={t("editor.heading1")}
+                  >
+                    H1
+                  </button>
+                  <button
+                    className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors"
+                    onClick={() => insertMarkdown("heading2")}
+                    title={t("editor.heading2")}
+                  >
+                    H2
+                  </button>
+                </div>
+
+                <div className="flex items-center space-x-1 mr-2">
+                  <button
+                    className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors"
+                    onClick={() => insertMarkdown("code")}
+                    title={t("editor.code")}
+                  >
+                    &lt;/&gt;
+                  </button>
+                  <button
+                    className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors flex items-center justify-center relative"
+                    onClick={() => {
+                      if (imageUploadLoading) return;
+                      if (fileInputRef.current) {
+                        fileInputRef.current.click();
+                      } else {
+                        insertMarkdown("image");
+                      }
+                    }}
+                    title="Inserir Imagem"
+                  >
+                    <Image size={16} />
+                    {imageUploadLoading && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-[var(--accent-color)] bg-opacity-70 rounded-md">
+                        <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      </div>
+                    )}
+                  </button>
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleImageUpload}
+                    accept="image/*"
+                    style={{ display: "none" }}
+                  />
+                </div>
+
+                <div className="flex items-center space-x-1 mr-2">
+                  <button
+                    className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors flex items-center justify-center"
+                    onClick={() => insertMarkdown("orderedList")}
+                    title="Lista Numerada"
+                  >
+                    <ListOrdered size={16} />
+                  </button>
+                  <button
+                    className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors flex items-center justify-center"
+                    onClick={() => insertMarkdown("unorderedList")}
+                    title="Lista com Marcadores"
+                  >
+                    <LayoutList size={16} />
+                  </button>
+                  <button
+                    onClick={() =>
+                      setShowEmojiPickerContent(!showEmojiPickerContent)
+                    }
+                    className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors"
+                    title="Adicionar emoji"
+                  >
+                    <SmilePlus size={16} />
+                  </button>
+                  {showEmojiPickerContent && (
+                    <div className="absolute z-50 mt-28 shadow-xl rounded-lg overflow-hidden">
+                      <EmojiPicker
+                        onEmojiClick={handleEmojiSelectContent}
+                        skinTonesDisabled
+                        width={280}
+                        height={350}
+                        previewConfig={{ showPreview: false }}
+                        theme={Theme.DARK}
+                      />
+                    </div>
+                  )}
+                </div>
+
+                <div className="ml-auto flex items-center gap-2">
+                  <button
+                    className={`rounded-md px-3 py-1.5 transition-all duration-200 flex items-center gap-1.5 ${
+                      isPreviewMode
+                        ? "bg-transparent text-[var(--foreground)] border border-[var(--border-color)]"
+                        : "bg-[var(--button-bg1)] text-[var(--background)]"
+                    }`}
+                    onClick={() => setIsPreviewMode(false)}
+                    disabled={!isPreviewMode}
+                  >
+                    <Edit size={16} /> Editar
+                  </button>
+                  <button
+                    className={`rounded-md px-3 py-1.5 transition-all duration-200 flex items-center gap-1.5 ${
+                      !isPreviewMode
+                        ? "bg-transparent text-[var(--foreground)] border border-[var(--border-color)]"
+                        : "bg-[var(--button-bg1)] text-[var(--background)]"
+                    }`}
+                    onClick={() => setIsPreviewMode(true)}
+                    disabled={isPreviewMode}
+                  >
+                    <Eye size={16} /> Visualizar
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Área do título - Centralizada e limitada */}
             <div className="p-4 border-b border-[var(--border-color)]">
-              {editMode ? (
+              <div className="max-w-4xl mx-auto">
+                {editMode ? (
                 <div className="flex items-center gap-3 relative">
                   <button
                     onClick={() => setShowEmojiPicker(!showEmojiPicker)}
@@ -1195,36 +1508,6 @@ export default function NotePage() {
                     disabled={!canEdit}
                     readOnly={!canEdit}
                   />
-                  
-                  {/* Auto-save status indicator */}
-                  <div className="flex items-center gap-3 text-xs">
-                    {autoSaveStatus === 'saving' && (
-                      <span className="text-yellow-400 animate-pulse">{t("editor.saving")}</span>
-                    )}
-                    {autoSaveStatus === 'saved' && (
-                      <span className="text-green-400">{t("editor.saved")}</span>
-                    )}
-                    
-                    {/* Collaborative sync indicator for public notes */}
-                    {noteType === 'public' && (
-                      <div className="flex items-center gap-2">
-                        <div className={`w-2 h-2 rounded-full ${
-                          collaborativeSync.isOnline ? 'bg-green-500' : 'bg-red-500'
-                        }`}></div>
-                        <span className="text-[var(--foreground-light)]">
-                          {collaborativeSync.isOnline 
-                            ? `Syncing ${collaborativeSync.lastUpdated ? 
-                                `(last: ${collaborativeSync.lastUpdated.toLocaleTimeString()})` 
-                                : ''}`
-                            : 'Offline'
-                          }
-                        </span>
-                        {collaborativeSync.error && (
-                          <span className="text-red-400" title={collaborativeSync.error}>⚠️</span>
-                        )}
-                      </div>
-                    )}
-                  </div>
                   
                   {showEmojiPicker && (
                     <div className="absolute z-50 top-14 left-4 shadow-xl rounded-lg overflow-hidden">
@@ -1249,195 +1532,36 @@ export default function NotePage() {
                 <Calendar size={14} />
                 <span>{formattedDate}</span>
               </div>
+              </div>
             </div>
 
-            {/* Barra de ferramentas de formatação - aparece apenas no modo de edição */}
-            {editMode && canEdit && (
-              <>
-                <div className="bg-[var(--container)] bg-opacity-30 border-b border-[var(--border-color)] text-sm px-2 sm:px-4 py-2 text-[var(--foreground)] flex flex-wrap items-center gap-2">
-                  <div className="flex items-center space-x-1 mr-2">
-                    <button
-                      className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors font-bold"
-                      onClick={() => insertMarkdown("bold")}
-                      title={t("editor.bold")}
-                    >
-                      B
-                    </button>
-                    <button
-                      className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors italic"
-                      onClick={() => insertMarkdown("italic")}
-                      title={t("editor.italic")}
-                    >
-                      I
-                    </button>
-                    <button
-                      className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors"
-                      onClick={() => insertMarkdown("link")}
-                      title={t("editor.link")}
-                    >
-                      🔗
-                    </button>
-                  </div>
-
-                  <div className="flex items-center space-x-1 mr-2">
-                    <button
-                      className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors"
-                      onClick={() => insertMarkdown("heading1")}
-                      title={t("editor.heading1")}
-                    >
-                      H1
-                    </button>
-                    <button
-                      className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors"
-                      onClick={() => insertMarkdown("heading2")}
-                      title={t("editor.heading2")}
-                    >
-                      H2
-                    </button>
-                  </div>
-
-                  <div className="flex items-center space-x-1 mr-2">
-                    <button
-                      className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors"
-                      onClick={() => insertMarkdown("code")}
-                      title={t("editor.code")}
-                    >
-                      &lt;/&gt;
-                    </button>
-                    <button
-                      className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors flex items-center justify-center relative"
-                      onClick={() => {
-                        if (imageUploadLoading) return;
-                        if (fileInputRef.current) {
-                          fileInputRef.current.click();
-                        } else {
-                          insertMarkdown("image");
-                        }
-                      }}
-                      title="Inserir Imagem"
-                    >
-                      <Image size={16} />
-                      {imageUploadLoading && (
-                        <div className="absolute inset-0 flex items-center justify-center bg-[var(--accent-color)] bg-opacity-70 rounded-md">
-                          <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                        </div>
-                      )}
-                    </button>
-                    <input
-                      type="file"
-                      ref={fileInputRef}
-                      onChange={handleImageUpload}
-                      accept="image/*"
-                      style={{ display: "none" }}
-                    />
-                  </div>
-
-                  <div className="flex items-center space-x-1 mr-2">
-                    <button
-                      className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors flex items-center justify-center"
-                      onClick={() => insertMarkdown("orderedList")}
-                      title="Lista Numerada"
-                    >
-                      <ListOrdered size={16} />
-                    </button>
-                    <button
-                      className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors flex items-center justify-center"
-                      onClick={() => insertMarkdown("unorderedList")}
-                      title="Lista com Marcadores"
-                    >
-                      <LayoutList size={16} />
-                    </button>
-                    <button
-                      onClick={() =>
-                        setShowEmojiPickerContent(!showEmojiPickerContent)
-                      }
-                      className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors"
-                      title="Adicionar emoji"
-                    >
-                      <SmilePlus size={16} />
-                    </button>
-                    {showEmojiPickerContent && (
-                      <div className="absolute z-50 mt-28 shadow-xl rounded-lg overflow-hidden">
-                        <EmojiPicker
-                          onEmojiClick={handleEmojiSelectContent}
-                          skinTonesDisabled
-                          width={280}
-                          height={350}
-                          previewConfig={{ showPreview: false }}
-                          theme={Theme.DARK}
-                        />
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="ml-auto flex items-center gap-2">
-                    <button
-                      className={`rounded-md px-3 py-1.5 transition-all duration-200 flex items-center gap-1.5 ${
-                        isPreviewMode
-                          ? "bg-transparent text-[var(--foreground)] border border-[var(--border-color)]"
-                          : "bg-[var(--button-bg1)] text-[var(--background)]"
-                      }`}
-                      onClick={() => setIsPreviewMode(false)}
-                      disabled={!isPreviewMode}
-                    >
-                      <Edit size={16} /> Editar
-                    </button>
-                    <button
-                      className={`rounded-md px-3 py-1.5 transition-all duration-200 flex items-center gap-1.5 ${
-                        !isPreviewMode
-                          ? "bg-transparent text-[var(--foreground)] border border-[var(--border-color)]"
-                          : "bg-[var(--button-bg1)] text-[var(--background)]"
-                      }`}
-                      onClick={() => setIsPreviewMode(true)}
-                      disabled={isPreviewMode}
-                    >
-                      <Eye size={16} /> Visualizar
-                    </button>
-                  </div>
-                </div>
-              </>
-            )}
-
-            {/* Área de conteúdo */}
-            <div className="flex-grow overflow-hidden p-4">
+            {/* Área de conteúdo - Centralizada e limitada */}
+            <div className="flex-grow">
+              <div className="max-w-4xl mx-auto p-4">
               {editMode ? (
                 <>
                   {!isPreviewMode ? (
-                    <div className="h-full flex flex-col">
-                      <div className="mb-4 text-xs bg-[var(--container)] bg-opacity-50 p-2 rounded flex items-center gap-2 text-[var(--foreground)]">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-4 w-4"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                          />
-                        </svg>
-                        <span>{t("editor.markdownSupport")}</span>
-                      </div>
+                    <div>
                       <textarea
+                        ref={textareaRef}
                         value={editContent}
-                        onChange={(e) => setEditContent(e.target.value)}
-                        placeholder={t("editor.noteContent")}
-                        className={`flex-1 w-full text-lg bg-transparent focus:outline-none resize-none text-[var(--foreground)] p-2 scrollbar-hide ${!canEdit ? "opacity-60 cursor-not-allowed" : ""}`}
+                        onChange={handleTextareaChange}
+                        placeholder={t("editor.contentPlaceholder")}
+                        className={`w-full min-h-32 text-lg bg-transparent focus:outline-none resize-y text-[var(--foreground)] p-2 scrollbar-hide ${!canEdit ? "opacity-60 cursor-not-allowed" : ""}`}
                         style={{ 
                           fontSize: "18px", 
                           lineHeight: "1.7",
                           scrollbarWidth: "none",
-                          msOverflowStyle: "none"
+                          msOverflowStyle: "none",
+                          height: "auto"
                         }}
                         disabled={!canEdit}
                         readOnly={!canEdit}
+                        rows={Math.max(8, editContent.split('\n').length + 2)}
                       />
                     </div>
                   ) : (
-                    <div className="markdown-content h-full w-full bg-transparent text-[var(--foreground)] text-lg overflow-y-auto scrollbar-hide p-5 rounded-md">
+                    <div className="markdown-content w-full bg-transparent text-[var(--foreground)] text-lg overflow-y-auto scrollbar-hide p-5 rounded-md">
                       {editContent ? (
                         <ReactMarkdown remarkPlugins={[remarkGfm]}>
                           {editContent}
@@ -1451,7 +1575,7 @@ export default function NotePage() {
                   )}
                 </>
               ) : (
-                <div className="h-full overflow-y-auto scrollbar-hide">
+                <div className="overflow-y-auto scrollbar-hide">
                   <div className="prose prose-invert prose-lg w-full break-words text-lg text-[var(--foreground)] leading-relaxed markdown-content">
                     <ReactMarkdown remarkPlugins={[remarkGfm]}>
                       {note.content}
@@ -1459,8 +1583,25 @@ export default function NotePage() {
                   </div>
                 </div>
               )}
+              </div>
             </div>
 
+            {/* Slash Command Menu */}
+            <SlashCommandMenu
+              isVisible={showSlashMenu}
+              position={slashMenuPosition}
+              filter={slashMenuFilter}
+              selectedIndex={selectedSlashIndex}
+              commands={slashCommands}
+              onSelectCommand={applySlashCommand}
+              onSelectIndex={setSelectedSlashIndex}
+              onClose={() => {
+                setShowSlashMenu(false);
+                setSlashMenuFilter('');
+              }}
+            />
+
+            {/* Informações e controles da nota - Largura total */}
             <div className=" p-6  items-center">
               <div className="flex flex-col gap-2 mb-4">
                 <div className="text-sm text-[var(--foreground)]">
@@ -1549,17 +1690,13 @@ export default function NotePage() {
 
                 <button
                   onClick={handleDelete}
-                  disabled={deleting || editMode || !canEdit}
+                  disabled={deleting || editMode}
                   className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
-                    deleting || editMode || !canEdit
+                    deleting || editMode
                       ? "bg-slate-700 text-slate-400 cursor-not-allowed"
                       : " hover:bg-red-500/20"
                   }`}
-                  title={
-                    !canEdit
-                      ? "Read-only mode - Cannot delete"
-                      : t("editor.deleteNote")
-                  }
+                  title={t("editor.deleteNote")}
                 >
                   {deleting ? (
                     <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
