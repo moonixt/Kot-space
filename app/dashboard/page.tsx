@@ -320,10 +320,11 @@ export default function DashboardPage() {
               </div>
             )}
           </div> */}
-            {/* Pinterest-style Header Section */}
-            <div className="relative mb-8 text-center">
+            {/* Pinterest-style Header Section relative mb-8 text-center */}
+          
+            <div className="">  
               {/* Background decoration */}
-              <div className="absolute inset-0 theme-bg-light rounded-3xl opacity-50"></div>
+              {/* <div className="absolute inset-0 theme-bg-light rounded-3xl opacity-50"></div>
               
               <div className="relative z-10 py-8 px-6">
                 <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600 bg-clip-text text-transparent mb-4">
@@ -333,27 +334,8 @@ export default function DashboardPage() {
                   Discover, organize, and share your ideas in your own workspace
                 </p>
                 
-                {/* Quick actions */}
-                {/* <div className="flex flex-wrap justify-center gap-4 mt-6">
-                  <button
-                    onClick={() => router.push("/editor")}
-                    className="group inline-flex items-center px-6 py-3 bg-gradient-to-br from-blue-500 to-purple-600 text-white font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
-                  >
-                    <Plus className="w-5 h-5 mr-2 group-hover:rotate-90 transition-transform duration-300" />
-                    Create New Note
-                  </button>
-                  
-                  {currentNoteType === 'public' && (
-                    <button
-                      onClick={() => setShowJoinModal(true)}
-                      className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
-                    >
-                      <Users className="w-5 h-5 mr-2" />
-                      Join Collaboration
-                    </button>
-                  )}
-                </div> */}
-              </div>
+                
+              </div> */}
             </div>
 
             <div className="flex justify-between items-center ">

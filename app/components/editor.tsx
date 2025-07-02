@@ -73,6 +73,13 @@ function Editor({ initialNoteType = 'private', noteId }: EditorProps) {
   const [showNoteTypeChangeDialog, setShowNoteTypeChangeDialog] = useState(false);
   const [pendingNoteType, setPendingNoteType] = useState<'private' | 'public' | null>(null);
 
+  // Estados para o menu de comandos com /
+  const [showSlashMenu, setShowSlashMenu] = useState(false);
+  const [slashMenuPosition, setSlashMenuPosition] = useState({ top: 0, left: 0 });
+  const [slashMenuFilter, setSlashMenuFilter] = useState('');
+  const [selectedSlashIndex, setSelectedSlashIndex] = useState(0);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
   // Add state for folders and folder selection
   const [folders, setFolders] = useState<Array<{ id: string; name: string }>>([]);
   const [selectedFolder, setSelectedFolder] = useState<{ id: string; name: string } | null>(null);
@@ -345,7 +352,7 @@ function Editor({ initialNoteType = 'private', noteId }: EditorProps) {
   const insertMarkdown = (markdownSyntax: string) => {
     //main function to insert markdown in the text area
     // Get the textarea element where the content is being edited
-    const textarea = document.querySelector("textarea"); // Select the textarea by its tag name
+    const textarea = textareaRef.current; // Use ref instead of querySelector
     if (!textarea) return; // Exit if no textarea is found
 
     // Get the current selection range in the textarea
@@ -362,26 +369,26 @@ function Editor({ initialNoteType = 'private', noteId }: EditorProps) {
     switch (markdownSyntax) {
       case "bold":
         // Wrap the selected text (or placeholder text) with double asterisks for bold formatting
-        newText = `**${selectedText || "text_example"}**`; //bold text example
+        newText = `**${selectedText || "texto"}**`; //bold text example
         break;
       case "italic":
         // Wrap the selected text (or placeholder text) with single asterisks for italic formatting
-        newText = `*${selectedText || "text_example"}*`; //italic text example
+        newText = `*${selectedText || "texto"}*`; //italic text example
         break;
       case "heading1":
         // Add a single hash symbol followed by the selected text (or placeholder) for a level 1 heading
-        newText = `# ${selectedText || " "}`; // heading level 1 exemple
+        newText = `# ${selectedText || "Título"}`; // heading level 1 exemple
         break;
       case "heading2":
         // Add two hash symbols followed by the selected text (or placeholder) for a level 2 heading
-        newText = `## ${selectedText || " "}`; //heading level 2 example
+        newText = `## ${selectedText || "Subtítulo"}`; //heading level 2 example
         break;
       case "code":
         // If the selected text contains newlines, wrap it in triple backticks for a code block
         // Otherwise, wrap it in single backticks for inline code
         newText = selectedText.includes("\n")
           ? `\`\`\`\n${selectedText || "código aqui"}\n\`\`\``
-          : `\`${selectedText || "code here"}\``;
+          : `\`${selectedText || "código"}\``;
         break;
       case "orderedList":
         if (selectedText) {
@@ -391,7 +398,7 @@ function Editor({ initialNoteType = 'private', noteId }: EditorProps) {
             .join("\n");
         } else {
           // if not add a basic template
-          newText = "1. \n2. \n3. ";
+          newText = "1. Item\n2. Item\n3. Item";
         }
         break;
       case "unorderedList":
@@ -401,7 +408,7 @@ function Editor({ initialNoteType = 'private', noteId }: EditorProps) {
           newText = lines.map((line) => `- ${line}`).join("\n");
         } else {
           // Se não tiver, adicionar um template
-          newText = "- \n- \n- ";
+          newText = "- Item\n- Item\n- Item";
         }
         break;
       case "link":
@@ -417,12 +424,12 @@ function Editor({ initialNoteType = 'private', noteId }: EditorProps) {
       content.substring(0, start) + newText + content.substring(end);
     setContent(newContent);
 
-    // // Reposicionar o cursor após a inserção
-    // setTimeout(() => {
-    //   textarea.focus();
-    //   const newCursorPos = start + newText.length;
-    //   textarea.setSelectionRange(newCursorPos, newCursorPos);
-    // }, 0);
+    // Reposicionar o cursor após a inserção
+    setTimeout(() => {
+      textarea.focus();
+      const newCursorPos = start + newText.length;
+      textarea.setSelectionRange(newCursorPos, newCursorPos);
+    }, 0);
   };
 
   const saveNote = async () => {
@@ -721,44 +728,260 @@ function Editor({ initialNoteType = 'private', noteId }: EditorProps) {
   //   return t(`tags.${tagKey}`, { defaultValue: tagKey });
   // };
 
+  // Comandos disponíveis no menu de barra
+  const slashCommands = [
+    {
+      label: t("editor.bold"),
+      description: "Texto em negrito",
+      icon: "B",
+      action: () => insertMarkdown("bold"),
+      keywords: ["bold", "negrito", "b"]
+    },
+    {
+      label: t("editor.italic"),
+      description: "Texto em itálico",
+      icon: "I",
+      action: () => insertMarkdown("italic"),
+      keywords: ["italic", "italico", "i"]
+    },
+    {
+      label: t("editor.heading1"),
+      description: "Título grande",
+      icon: "H1",
+      action: () => insertMarkdown("heading1"),
+      keywords: ["heading", "titulo", "h1", "title"]
+    },
+    {
+      label: t("editor.heading2"),
+      description: "Subtítulo",
+      icon: "H2",
+      action: () => insertMarkdown("heading2"),
+      keywords: ["heading", "subtitulo", "h2", "subtitle"]
+    },
+    {
+      label: t("editor.code"),
+      description: "Bloco de código",
+      icon: "</>",
+      action: () => insertMarkdown("code"),
+      keywords: ["code", "codigo", "programming"]
+    },
+    {
+      label: t("editor.orderedList"),
+      description: "Lista numerada",
+      icon: "1.",
+      action: () => insertMarkdown("orderedList"),
+      keywords: ["list", "lista", "numbered", "numerada", "ordered"]
+    },
+    {
+      label: t("editor.unorderedList"),
+      description: "Lista com marcadores",
+      icon: "•",
+      action: () => insertMarkdown("unorderedList"),
+      keywords: ["list", "lista", "bullet", "marcadores", "unordered"]
+    },
+    {
+      label: t("editor.link"),
+      description: "Inserir link",
+      icon: "🔗",
+      action: () => insertMarkdown("link"),
+      keywords: ["link", "url", "hyperlink"]
+    },
+    {
+      label: t("editor.insertImage"),
+      description: "Inserir imagem",
+      icon: "🖼️",
+      action: () => {
+        if (fileInputRef.current) {
+          fileInputRef.current.click();
+        } else {
+          insertMarkdown("image");
+        }
+      },
+      keywords: ["image", "imagem", "photo", "foto", "picture"]
+    }
+  ];
 
+  // Filtrar comandos baseado no texto após /
+  const filteredSlashCommands = slashCommands.filter(cmd => 
+    cmd.label.toLowerCase().includes(slashMenuFilter.toLowerCase()) ||
+    cmd.description.toLowerCase().includes(slashMenuFilter.toLowerCase()) ||
+    cmd.keywords.some(keyword => keyword.toLowerCase().includes(slashMenuFilter.toLowerCase()))
+  );
 
-  // Function to handle folder creation
-  // const createNewFolder = async () => {
-  //   // Prompt user for folder name
-  //   const folderName = prompt(
-  //     t("editor.enterFolderName", { defaultValue: "Enter folder name" }),
-  //   );
+  // Função para calcular a posição do menu
+  const calculateMenuPosition = (textarea: HTMLTextAreaElement, cursorPosition: number) => {
+    // Calcular a posição da linha atual baseado no scroll
+    const textBeforeCursor = textarea.value.substring(0, cursorPosition);
+    const lines = textBeforeCursor.split('\n');
+    const currentLine = lines.length - 1;
+    
+    // Encontrar onde está o / na linha atual
+    const currentLineText = lines[lines.length - 1];
+    const slashIndex = currentLineText.indexOf('/');
+    const columnPosition = slashIndex >= 0 ? slashIndex : currentLineText.length;
+    
+    // Usar os valores corretos do CSS: fontSize: "18px", lineHeight: "1.7"
+    const fontSize = 18;
+    const lineHeight = fontSize * 1.7; // 18 * 1.7 = 30.6px
+    const charWidth = fontSize * 0.6;
+    
+    // Calcular posição considerando scroll
+    const scrollTop = textarea.scrollTop;
+    const scrollLeft = textarea.scrollLeft;
+    
+    // Posição relativa dentro do textarea (posição da barra /)
+    const relativeTop = (currentLine * lineHeight) - scrollTop;
+    const relativeLeft = (columnPosition * charWidth) - scrollLeft;
+    
+    // Posição relativa ao container do editor (já que usamos position: absolute)
+    // Adicionar padding do textarea para alinhar corretamente
+    const paddingLeft = 20; // p-5 = 1.25rem = 20px
+    const paddingTop = 20;  // p-5 = 1.25rem = 20px
+    
+    const top = paddingTop + relativeTop + lineHeight + 2; // Menu logo abaixo da linha
+    const left = paddingLeft + relativeLeft;
+    
+    return { top, left };
+  };
 
-  //   // Check if folder name is valid
-  //   if (!folderName || !folderName.trim()) return;
+  // Função para lidar com a entrada de texto e detectar /
+  const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const newContent = e.target.value;
+    const cursorPosition = e.target.selectionStart;
+    
+    setContent(newContent);
+    
+    // Verificar se o usuário digitou / e não há caracteres antes dele na linha
+    const textBeforeCursor = newContent.substring(0, cursorPosition);
+    const currentLineStart = textBeforeCursor.lastIndexOf('\n') + 1;
+    const currentLineText = textBeforeCursor.substring(currentLineStart);
+    
+    // Detectar se começou com / e capturar o filtro
+    const slashMatch = currentLineText.match(/^\/(.*)$/);
+    
+    if (slashMatch) {
+      const filter = slashMatch[1];
+      setSlashMenuFilter(filter);
+      setSelectedSlashIndex(0);
+      setShowSlashMenu(true);
+      
+      // Calcular posição do menu
+      const position = calculateMenuPosition(e.target, cursorPosition);
+      setSlashMenuPosition(position);
+    } else {
+      setShowSlashMenu(false);
+    }
+  };
 
-  //   if (!user) {
-  //     alert(t("editor.loginRequired"));
-  //     return;
-  //   }
+  // Função para aplicar comando do menu slash
+  const applySlashCommand = (command: typeof slashCommands[0]) => {
+    if (!textareaRef.current) return;
+    
+    const textarea = textareaRef.current;
+    const cursorPosition = textarea.selectionStart;
+    
+    // Encontrar o início do comando / na linha atual
+    const textBeforeCursor = content.substring(0, cursorPosition);
+    const currentLineStart = textBeforeCursor.lastIndexOf('\n') + 1;
+    const currentLineText = textBeforeCursor.substring(currentLineStart);
+    const slashMatch = currentLineText.match(/^\/(.*)$/);
+    
+    if (slashMatch) {
+      // Posição exata do / e do texto após ele
+      const slashPosition = currentLineStart;
+      const endPosition = cursorPosition;
+      
+      // Fechar o menu
+      setShowSlashMenu(false);
+      
+      // Remover completamente /comando da posição atual
+      const beforeSlash = content.substring(0, slashPosition);
+      const afterCommand = content.substring(endPosition);
+      
+      // Determinar qual markdown inserir baseado nas keywords do comando
+      let markdownToInsert = "";
+      
+      if (command.keywords.includes("bold")) {
+        markdownToInsert = "**texto**";
+      } else if (command.keywords.includes("italic")) {
+        markdownToInsert = "*texto*";
+      } else if (command.keywords.includes("h1")) {
+        markdownToInsert = "# Título";
+      } else if (command.keywords.includes("h2")) {
+        markdownToInsert = "## Subtítulo";
+      } else if (command.keywords.includes("code")) {
+        markdownToInsert = "`código`";
+      } else if (command.keywords.includes("ordered")) {
+        markdownToInsert = "1. Item\n2. Item\n3. Item";
+      } else if (command.keywords.includes("unordered")) {
+        markdownToInsert = "- Item\n- Item\n- Item";
+      } else if (command.keywords.includes("link")) {
+        markdownToInsert = "[texto do link](url)";
+      } else if (command.keywords.includes("image")) {
+        markdownToInsert = "![descrição da imagem](url_da_imagem)";
+      } else {
+        markdownToInsert = "";
+      }
+      
+      // Criar o novo conteúdo com o markdown inserido no lugar do comando /
+      const newContent = beforeSlash + markdownToInsert + afterCommand;
+      setContent(newContent);
+      
+      // Posicionar cursor após o markdown inserido
+      setTimeout(() => {
+        textarea.focus();
+        const newCursorPos = slashPosition + markdownToInsert.length;
+        textarea.setSelectionRange(newCursorPos, newCursorPos);
+      }, 0);
+    }
+  };
 
-  //   try {
-  //     const { data, error } = await supabase
-  //       .from("folders")
-  //       .insert([{ name: folderName.trim(), user_id: user.id }])
-  //       .select();
+  // Lidar com teclas no menu slash
+  const handleSlashMenuKeyDown = (e: KeyboardEvent) => {
+    if (!showSlashMenu) return;
+    
+    switch (e.key) {
+      case 'ArrowDown':
+        e.preventDefault();
+        setSelectedSlashIndex(prev => 
+          prev < filteredSlashCommands.length - 1 ? prev + 1 : 0
+        );
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        setSelectedSlashIndex(prev => 
+          prev > 0 ? prev - 1 : filteredSlashCommands.length - 1
+        );
+        break;
+      case 'Enter':
+      case 'Tab':
+        e.preventDefault();
+        if (filteredSlashCommands[selectedSlashIndex]) {
+          applySlashCommand(filteredSlashCommands[selectedSlashIndex]);
+        }
+        break;
+      case 'Escape':
+        e.preventDefault();
+        setShowSlashMenu(false);
+        break;
+    }
+  };
 
-  //     if (error) throw error;
+  // Effect para lidar com teclas do menu slash
+  useEffect(() => {
+    if (showSlashMenu) {
+      document.addEventListener('keydown', handleSlashMenuKeyDown);
+    }
+    
+    return () => {
+      document.removeEventListener('keydown', handleSlashMenuKeyDown);
+    };
+  }, [showSlashMenu, selectedSlashIndex, filteredSlashCommands]);
 
-  //     if (data && data[0]) {
-  //       const newFolder = { id: data[0].id, name: data[0].name };
-  //       setFolders([...folders, newFolder]);
-  //       setSelectedFolder(newFolder);
-  //       setShowFolderDropdown(false);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error creating folder:", error);
-  //     alert(t("editor.folderCreateError", { defaultValue: "" }));
-  //   }
-  // };
-  
- 
+  // Resetar índice selecionado quando o filtro muda
+  useEffect(() => {
+    setSelectedSlashIndex(0);
+  }, [slashMenuFilter]);
 
   return (
     <div
@@ -1125,44 +1348,7 @@ function Editor({ initialNoteType = 'private', noteId }: EditorProps) {
             </div>
           </div>
 
-          {/* Mobile Toolbar */}
-          {/* <div className="bg-[var(--container)] py-2 px-2 flex justify-between items-center sm:hidden">
-            <div className="flex items-center space-x-2">
-              <button
-                className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors flex items-center justify-center"
-                onClick={() => insertMarkdown("orderedList")}
-                title={t("editor.orderedList")}
-              >
-                <ListOrdered size={18} />
-              </button>
-              <button
-                className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors flex items-center justify-center"
-                onClick={() => insertMarkdown("unorderedList")}
-                title={t("editor.unorderedList")}
-              >
-                <LayoutList size={18} />
-              </button>
-              <button
-                className="p-1.5 rounded-md hover:bg-[var(--accent-color)] hover:text-white transition-colors flex items-center justify-center relative"
-                onClick={() => {
-                  if (imageUploadLoading) return;
-                  if (fileInputRef.current) {
-                    fileInputRef.current.click();
-                  } else {
-                    insertMarkdown("image");
-                  }
-                }}
-                title={t("editor.insertImage")}
-              >
-                <Image size={18} />
-                {imageUploadLoading && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-[var(--accent-color)] bg-opacity-70 rounded-md">
-                    <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  </div>
-                )}
-              </button>
-            </div>
-          </div> */}
+          
 
           {/* Content Area */}
           <div className=" scrollbar bg-[var(--background)] relative">
@@ -1170,14 +1356,117 @@ function Editor({ initialNoteType = 'private', noteId }: EditorProps) {
               <div className="h-full relative">
                 {" "}
                 <textarea
+                  ref={textareaRef}
                   className="p-5 sm:p-6 w-full bg-transparent text-[var(--foreground)] resize-none focus:outline-none min-h-[270px] sm:min-h-[370px] h-full text-base sm:text-lg overflow-auto transition-all duration-300"
-                  placeholder={t("editor.contentPlaceholder")}
+                  placeholder={t("editor.contentPlaceholder") + " " + t("editor.slashTip", { defaultValue: "Digite / para comandos rápidos" })}
                   maxLength={15000}
                   value={content}
-                  onChange={(e) => setContent(e.target.value)}
+                  onChange={handleTextareaChange}
                   style={{ fontSize: "18px", lineHeight: "1.7" }}
                   onDragOver={(e) => e.preventDefault()}
                 />
+                
+                {/* Menu de comandos com / */}
+                {showSlashMenu && filteredSlashCommands.length > 0 && (
+                  <div 
+                    className="absolute z-50 bg-[#1f1f1f] border border-[#3f3f3f] rounded-lg shadow-2xl min-w-[280px] max-w-[320px]"
+                    style={{
+                      top: `${slashMenuPosition.top}px`,
+                      left: `${slashMenuPosition.left}px`,
+                      maxHeight: '240px',
+                      overflowY: 'auto'
+                    }}
+                  >
+                    <div className="py-1">
+                      {/* Header do menu */}
+                      <div className="px-3 py-2 text-xs font-medium text-gray-400 border-b border-[#3f3f3f] bg-[#2a2a2a]">
+                        <div className="flex items-center gap-2">
+                          <span className="text-blue-400">✨</span>
+                          {slashMenuFilter ? `Procurando por "${slashMenuFilter}"` : "COMANDOS RÁPIDOS"}
+                        </div>
+                      </div>
+
+                      {/* Lista de comandos */}
+                      <div className="py-1">
+                        {filteredSlashCommands.map((command, index) => (
+                          <button
+                            key={index}
+                            className={`w-full text-left px-3 py-2.5 transition-all duration-150 flex items-center gap-3 group ${
+                              index === selectedSlashIndex 
+                                ? 'bg-blue-600 text-white shadow-sm' 
+                                : 'text-gray-300 hover:bg-[#2a2a2a]'
+                            }`}
+                            onClick={() => applySlashCommand(command)}
+                            onMouseEnter={() => setSelectedSlashIndex(index)}
+                          >
+                            <div className={`w-8 h-8 rounded-md flex items-center justify-center text-sm font-medium ${
+                              index === selectedSlashIndex 
+                                ? 'bg-blue-500 text-white' 
+                                : 'bg-[#3f3f3f] text-gray-400 group-hover:bg-[#4f4f4f]'
+                            }`}>
+                              {command.icon}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className={`font-medium text-sm ${
+                                index === selectedSlashIndex ? 'text-white' : 'text-gray-200'
+                              }`}>
+                                {command.label}
+                              </div>
+                              <div className={`text-xs truncate ${
+                                index === selectedSlashIndex ? 'text-blue-100' : 'text-gray-500'
+                              }`}>
+                                {command.description}
+                              </div>
+                            </div>
+                            {index === selectedSlashIndex && (
+                              <div className="text-xs text-blue-200 opacity-75">
+                                ↵
+                              </div>
+                            )}
+                          </button>
+                        ))}
+                      </div>
+
+                      {/* Footer com dica */}
+                      <div className="px-3 py-2 text-xs text-gray-500 border-t border-[#3f3f3f] bg-[#2a2a2a]">
+                        <div className="flex items-center justify-between">
+                          <span>↑↓ navegar</span>
+                          <span>↵ selecionar</span>
+                          <span>esc cancelar</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {filteredSlashCommands.length === 0 && showSlashMenu && (
+                  <div 
+                    className="absolute z-50 bg-[#1f1f1f] border border-[#3f3f3f] rounded-lg shadow-2xl min-w-[280px]"
+                    style={{
+                      top: `${slashMenuPosition.top}px`,
+                      left: `${slashMenuPosition.left}px`,
+                    }}
+                  >
+                    <div className="py-1">
+                      {/* Header do menu */}
+                      <div className="px-3 py-2 text-xs font-medium text-gray-400 border-b border-[#3f3f3f] bg-[#2a2a2a]">
+                        <div className="flex items-center gap-2">
+                          <span className="text-yellow-400">🔍</span>
+                          NENHUM RESULTADO
+                        </div>
+                      </div>
+                      
+                      <div className="px-3 py-4 text-center">
+                        <div className="text-gray-500 text-sm">
+                          Nenhum comando encontrado para
+                        </div>
+                        <div className="text-gray-300 font-medium">
+                          "/{slashMenuFilter}"
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
                 {/* <div className="absolute bottom-4 right-4">
                   <ClientLayout />
                 </div> */}
@@ -1197,190 +1486,7 @@ function Editor({ initialNoteType = 'private', noteId }: EditorProps) {
             )}
           </div>
 
-          {/* Tags Search Section
-          <div className="p-3 sm:p-4 bg-[var(--container)] bg-opacity-20">
-            <div className="flex items-center gap-2">
-              <span className="text-xs sm:text-sm text-[var(--foreground)] font-medium">
-                {t("editor.tags")}
-              </span>
-              <div className="relative flex-grow">
-                <input
-                  type="text"
-                  placeholder={t("editor.searchTags")}
-                  value={tagSearchTerm}
-                  onChange={(e) => setTagSearchTerm(e.target.value)}
-                  className="w-full px-3 py-2 text-xs sm:text-sm rounded-md bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-color)] transition-all duration-200"
-                />
-              </div>
-            </div>
-          </div>
-
-          <div className="flex flex-wrap gap-1.5 sm:gap-2 p-3 sm:p-4 overflow-y-auto max-h-28 scrollbar bg-[var(--background)] ">
-            {[
-              "agenda",
-              "friendship",
-              "analysis",
-              "animation",
-              "learning",
-              "art",
-              "article",
-              "selfKnowledge",
-              "selfCare",
-              "selfEsteem",
-              "selfDiscipline",
-              "automation",
-              "adventure",
-              "evaluation",
-              "bug",
-              "checklist",
-              "quote",
-              "cloud",
-              "code",
-              "collection",
-              "community",
-              "achievement",
-              "stories",
-              "conversation",
-              "culture",
-              "resume",
-              "course",
-              "debate",
-              "vent",
-              "design",
-              "development",
-              "destination",
-              "dev",
-              "diary",
-              "tip",
-              "travelTips",
-              "diet",
-              "documentation",
-              "documentary",
-              "emotions",
-              "entrepreneurship",
-              "draft",
-              "study",
-              "event",
-              "culturalEvent",
-              "exercise",
-              "experience",
-              "family",
-              "feedback",
-              "movie",
-              "finance",
-              "fitness",
-              "focus",
-              "photography",
-              "freelance",
-              "management",
-              "habits",
-              "healthyHabits",
-              "hardware",
-              "history",
-              "hobby",
-              "idea",
-              "important",
-              "influence",
-              "inspiration",
-              "visualInspiration",
-              "artificialIntelligence",
-              "investments",
-              "game",
-              "reminder",
-              "leadership",
-              "listing",
-              "lists",
-              "book",
-              "marketing",
-              "meditation",
-              "memories",
-              "mentoring",
-              "goal",
-              "backpacking",
-              "motivation",
-              "music",
-              "nature",
-              "business",
-              "networking",
-              "notes",
-              "nutrition",
-              "objective",
-              "opinion",
-              "organization",
-              "tour",
-              "research",
-              "personal",
-              "planning",
-              "podcast",
-              "poetry",
-              "priority",
-              "programming",
-              "project",
-              "prototype",
-              "recipe",
-              "recommendations",
-              "references",
-              "reflection",
-              "relationships",
-              "summary",
-              "meeting",
-              "script",
-              "routine",
-              "salary",
-              "health",
-              "mentalHealth",
-              "security",
-              "feelings",
-              "series",
-              "system",
-              "software",
-              "sleep",
-              "task",
-              "theater",
-              "trend",
-              "therapy",
-              "thesis",
-              "tests",
-              "work",
-              "academicWork",
-              "tutorial",
-              "sales",
-              "travel",
-              "volunteering",
-            ]
-              .filter(
-                (tagKey) =>
-                  tagSearchTerm === "" ||
-                  translateTag(tagKey)
-                    .toLowerCase()
-                    .includes(tagSearchTerm.toLowerCase()),
-              )
-              .map((tagKey) => (
-                <button
-                  key={tagKey}
-                  onClick={() => toggleTag(translateTag(tagKey))}
-                  className={`px-2.5 py-1 rounded-full text-xs font-medium transition-all duration-200 ${
-                    selectedTags.includes(translateTag(tagKey))
-                      ? "bg-[var(--accent-color)] text-white shadow-sm"
-                      : "bg-[var(--container)] text-[var(--foreground)] hover:bg-opacity-80"
-                  }`}
-                >
-                  #{translateTag(tagKey)}
-                </button>
-              ))}
-            {tagSearchTerm !== "" &&
-              [
-                // List of tag keys
-              ].filter((tagKey) =>
-                translateTag(tagKey)
-                  .toLowerCase()
-                  .includes(tagSearchTerm.toLowerCase()),
-              ).length === 0 && (
-                <div className="w-full text-center py-2 text-sm text-[var(--foreground)] italic opacity-70">
-                  {t("editor.noTagsFound")} {tagSearchTerm}
-                </div>
-              )}
-          </div> */}
+         
 
           {/* Footer Section */}
           <div className="flex justify-between items-center p-4 sm:p-5 bg-[var(--container)]">
