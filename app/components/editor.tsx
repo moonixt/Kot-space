@@ -903,7 +903,7 @@ function Editor({ initialNoteType = 'private', noteId }: EditorProps) {
       className="w-full  h-full flex flex-col bg-[var(--background)] scrollbar"
     >
       <Profile />
-      <div className="mx-auto  w-full h-full flex flex-col flex-grow">
+      <div className="mx-auto max-w-7xl w-full h-full flex flex-col flex-grow">
         <div className="bg-[var(--background)] overflow-hidden flex flex-col flex-grow h-full  transition-all duration-300">
           {/* Toolbar Section - Moved to top */}
           <div className="bg-[var(--container)] bg-opacity-30   text-sm px-2 sm:px-3 py-2 text-[var(--foreground)] flex justify-between items-center sticky top-0 z-10">
