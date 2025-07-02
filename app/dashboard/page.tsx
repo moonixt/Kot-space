@@ -12,7 +12,7 @@ import Tasks from "../components/tasks";
 // import CalendarView from "../components/CalendarView";
 import { useTranslation } from "react-i18next";
 // import Tables from "../components/tables";
-import { Eye, Star, Users, Plus } from "lucide-react";
+import { Eye, Star, Users, Plus, ArrowRight } from "lucide-react";
 //Info
 import { checkStripeSubscription } from "../../lib/checkStripeSubscription";
 
@@ -320,6 +320,42 @@ export default function DashboardPage() {
               </div>
             )}
           </div> */}
+            {/* Pinterest-style Header Section */}
+            <div className="relative mb-8 text-center">
+              {/* Background decoration */}
+              <div className="absolute inset-0 theme-bg-light rounded-3xl opacity-50"></div>
+              
+              <div className="relative z-10 py-8 px-6">
+                <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600 bg-clip-text text-transparent mb-4">
+                  ✨ Your Creative Space
+                </h1>
+                <p className="text-lg text-[var(--foreground)]/70 max-w-2xl mx-auto">
+                  Discover, organize, and share your ideas in your own workspace
+                </p>
+                
+                {/* Quick actions */}
+                {/* <div className="flex flex-wrap justify-center gap-4 mt-6">
+                  <button
+                    onClick={() => router.push("/editor")}
+                    className="group inline-flex items-center px-6 py-3 bg-gradient-to-br from-blue-500 to-purple-600 text-white font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+                  >
+                    <Plus className="w-5 h-5 mr-2 group-hover:rotate-90 transition-transform duration-300" />
+                    Create New Note
+                  </button>
+                  
+                  {currentNoteType === 'public' && (
+                    <button
+                      onClick={() => setShowJoinModal(true)}
+                      className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+                    >
+                      <Users className="w-5 h-5 mr-2" />
+                      Join Collaboration
+                    </button>
+                  )}
+                </div> */}
+              </div>
+            </div>
+
             <div className="flex justify-between items-center ">
               <h1 className="text-xl font-semibold mt-4 mb-2">
                 {t("dashboard.documents")}
@@ -356,14 +392,6 @@ export default function DashboardPage() {
                     >
                       {t("dashboard.tasks")}
                     </DropdownMenuCheckboxItem>
-                    {/* Info/help item */}
-                    <DropdownMenuSeparator />
-                    {/* <Link href="/chat" passHref legacyBehavior>
-                    <a className="flex items-center gap-2 px-2 py-2 rounded-md text-[var(--text-color)] hover:bg-[var(--container)] transition-colors" title="Help & Info">
-                      <Info className="h-4 w-4" />
-                      <span>{t("dashboard.info", "Help") || "Help & Info"}</span>
-                    </a>
-                  </Link> */}
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
@@ -427,59 +455,22 @@ export default function DashboardPage() {
                       : `/notes/${note.id}?type=public`;
 
                     return (
-                      <Link
-                        href={noteLink}
+                      <div
                         key={note.id}
-                        className="block break-inside-avoid mb-4"
+                        className="group block break-inside-avoid mb-4 relative cursor-pointer"
+                        onClick={() => router.push(noteLink)}
                       >
-                        {" "}
                         <div
-                          className="p-4 bg-[var(--container)]/30 backdrop-blur-sm hover:bg-opacity-60 transition-all hover:scale-[1.02] hover:shadow-lg flex flex-col rounded-lg border border-[var(--foreground)]/20 overflow-hidden"
+                          className="bg-[var(--container)]/30 backdrop-blur-sm flex flex-col rounded-lg border border-[var(--foreground)]/20 overflow-hidden transition-all duration-300 hover:shadow-xl"
                           style={{ minHeight: `${totalHeight}px` }}
                         >
-                          <div className="flex justify-between items-center mb-2">
-                            {/* Collaboration indicator for public notes */}
-                            {currentNoteType === 'public' && (note as NoteType).is_collaborative && (
-                              <div className="flex items-center gap-1 text-xs text-blue-500">
-                                <Users size={14} />
-                                <span>Collaborative</span>
-                              </div>
-                            )}
-                            
-                            {/* Favorite button - only for private notes */}
-                            {currentNoteType === 'private' && (
-                              <button
-                                type="button"
-                                aria-label={
-                                  (note as Note).favorite
-                                    ? t("dashboard.unbookmark")
-                                    : t("dashboard.bookmark")
-                                }
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  toggleFavorite(note.id, (note as Note).favorite);
-                                }}
-                                className={`rounded-full p-1.5 transition-colors ml-auto ${(note as Note).favorite ? " text-[var(--foreground)]" : "hover:bg-[var(--foreground)] hover:text-[var(--background)]"}`}
-                              >
-                                <Star
-                                  size={18}
-                                  fill={(note as Note).favorite ? "currentColor" : "none"}
-                                />
-                              </button>
-                            )}
-                          </div>
-
-                          <h2 className="text-base font-semibold mb-3 leading-tight break-words overflow-hidden">
-                            {noteTitle || t("dashboard.note.untitled")}
-                          </h2>
-
-                          {/* Display first image if available */}
+                          {/* Display first image if available - moved to top */}
                           {firstImage && (
-                            <div className="mb-3 overflow-hidden rounded-lg">
+                            <div className="overflow-hidden relative">
                               <img
                                 src={firstImage}
                                 alt="Note preview"
-                                className="w-full h-32 object-cover object-top rounded-lg shadow-sm hover:shadow-md transition-shadow"
+                                className="w-full h-32 object-cover object-top transition-transform duration-300 group-hover:scale-110"
                                 onError={(e) => {
                                   // Hide image if it fails to load
                                   e.currentTarget.style.display = "none";
@@ -488,31 +479,74 @@ export default function DashboardPage() {
                             </div>
                           )}
 
-                          <p className="text-sm text-[var(--foreground)] opacity-80 mb-4 flex-grow leading-relaxed break-words overflow-hidden">
-                            {textPreview || t("dashboard.note.noContent")}
-                          </p>
-                          <div className="flex justify-between items-center text-xs text-gray-500 mt-auto pt-3 border-t border-[var(--container)]/20">
-                            <span>
-                              {new Date(note.created_at).toLocaleDateString()}
-                            </span>
-                            <svg
-                              width="14"
-                              height="14"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              className="opacity-60"
-                            >
-                              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1-2-2h6"></path>
-                              <polyline points="15 3 21 3 21 9"></polyline>
-                              <line x1="10" y1="14" x2="21" y2="3"></line>
-                            </svg>
+                          <div className="p-4 flex flex-col flex-grow">
+                            <div className="flex justify-between items-center mb-2">
+                              {/* Collaboration indicator for public notes */}
+                              {currentNoteType === 'public' && (note as NoteType).is_collaborative && (
+                                <div className="flex items-center gap-1 text-xs text-blue-500">
+                                  <Users size={14} />
+                                  <span>Collaborative</span>
+                                </div>
+                              )}
+                              
+                              {/* Favorite button - only for private notes */}
+                              {currentNoteType === 'private' && (
+                                <button
+                                  type="button"
+                                  aria-label={
+                                    (note as Note).favorite
+                                      ? t("dashboard.unbookmark")
+                                      : t("dashboard.bookmark")
+                                  }
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    toggleFavorite(note.id, (note as Note).favorite);
+                                  }}
+                                  className={`rounded-full p-1.5 transition-colors ml-auto z-10 ${(note as Note).favorite ? " text-[var(--foreground)]" : "hover:bg-[var(--foreground)] hover:text-[var(--background)]"}`}
+                                >
+                                  <Star
+                                    size={18}
+                                    fill={(note as Note).favorite ? "currentColor" : "none"}
+                                  />
+                                </button>
+                              )}
+                            </div>
+
+                            <h2 className="text-base font-semibold mb-3 leading-tight break-words overflow-hidden">
+                              {noteTitle || t("dashboard.note.untitled")}
+                            </h2>
+
+                            <p className="text-sm text-[var(--foreground)] opacity-80 mb-4 flex-grow leading-relaxed break-words overflow-hidden">
+                              {textPreview || t("dashboard.note.noContent")}
+                            </p>
+                            <div className="flex justify-between items-center text-xs text-gray-500 mt-auto pt-3 border-t border-[var(--container)]/20">
+                              <span>
+                                {new Date(note.created_at).toLocaleDateString()}
+                              </span>
+                              <svg
+                                width="14"
+                                height="14"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                className="opacity-60"
+                              >
+                                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1-2-2h6"></path>
+                                <polyline points="15 3 21 3 21 9"></polyline>
+                                <line x1="10" y1="14" x2="21" y2="3"></line>
+                              </svg>
+                            </div>
+                          </div>
+
+                          {/* Pinterest-style hover overlay - Top bar */}
+                          <div className="absolute top-0 left-0 right-0 h-16 bg-gradient-to-b from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 rounded-t-lg">
                           </div>
                         </div>
-                      </Link>
+                      </div>
                     );
                   })}
                 </div>

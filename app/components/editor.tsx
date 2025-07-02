@@ -757,6 +757,8 @@ function Editor({ initialNoteType = 'private', noteId }: EditorProps) {
   //     alert(t("editor.folderCreateError", { defaultValue: "" }));
   //   }
   // };
+  
+ 
 
   return (
     <div

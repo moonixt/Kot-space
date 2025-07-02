@@ -70,7 +70,6 @@ export default function NotePage() {
   const [canSave, setCanSave] = useState(true);
   const [hasReadOnlyAccess, setHasReadOnlyAccess] = useState(false);
   const [isCollaboratorWithoutEditRights, setIsCollaboratorWithoutEditRights] = useState(false);
-  const [linkCopied, setLinkCopied] = useState(false);
   // Collaboration states - only used for public notes
   const [noteCollaborators, setNoteCollaborators] = useState<any[]>([]);
   const [userPermission, setUserPermission] = useState<'owner' | 'admin' | 'write' | 'read' | null>(null);
@@ -699,33 +698,6 @@ export default function NotePage() {
     }
   }
 
-  function handleCopyNoteLink() {
-    if (!note) return;
-
-    try {
-      // Get the current URL
-      const noteUrl = window.location.href;
-      
-      // Copy to clipboard
-      navigator.clipboard.writeText(noteUrl).then(() => {
-        showToast("Link da nota copiado! ⚠️ Apenas colaboradores convidados podem acessar.", "success");
-      }).catch(() => {
-        // Fallback for older browsers
-        const textArea = document.createElement("textarea");
-        textArea.value = noteUrl;
-        document.body.appendChild(textArea);
-        textArea.focus();
-        textArea.select();
-        document.execCommand('copy');
-        document.body.removeChild(textArea);
-        showToast("Link da nota copiado! ⚠️ Apenas colaboradores convidados podem acessar.", "success");
-      });
-    } catch (error) {
-      console.error("Erro ao copiar link:", error);
-      showToast("Erro ao copiar link da nota", "error");
-    }
-  }
-
   useEffect(() => {
     const checkSubscription = async () => {
       if (!user) return;
@@ -939,6 +911,26 @@ export default function NotePage() {
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
   }, [editTitle, editContent, editMode, note]);
+
+  // Auto-scroll to middle of page on load
+  useEffect(() => {
+    const scrollToMiddle = () => {
+      // Wait for the page to fully render
+      setTimeout(() => {
+        const viewportHeight = window.innerHeight;
+        const scrollTarget = viewportHeight * 0.50; // Scroll to 40% of viewport height
+        window.scrollTo({
+          top: scrollTarget,
+          behavior: 'smooth'
+        });
+      }, 300); // Small delay to ensure content is rendered
+    };
+
+    // Only scroll on initial load, not when editMode changes
+    if (note && !loading) {
+      scrollToMiddle();
+    }
+  }, [note, loading]); // Only depend on note and loading state
 
   if (loading) {
     return (
@@ -1553,57 +1545,6 @@ export default function NotePage() {
                     <path d="M9 6h6"></path>
                   </svg>
                   <span>PDF</span>
-                </button>
-
-                <button
-                  onClick={async () => {
-                    try {
-                      const noteUrl = `${window.location.origin}/notes/${note.id}`;
-                      await navigator.clipboard.writeText(noteUrl);
-                      setLinkCopied(true);
-                      setTimeout(() => setLinkCopied(false), 2000);
-                    } catch (err) {
-                      // Fallback for browsers that don't support clipboard API
-                      const textArea = document.createElement('textarea');
-                      textArea.value = `${window.location.origin}/notes/${note.id}`;
-                      document.body.appendChild(textArea);
-                      textArea.select();
-                      document.execCommand('copy');
-                      document.body.removeChild(textArea);
-                      setLinkCopied(true);
-                      setTimeout(() => setLinkCopied(false), 2000);
-                    }
-                  }}
-                  disabled={!note}
-                  className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-colors ${
-                    linkCopied 
-                      ? 'bg-green-500/30 hover:bg-green-500/40' 
-                      : 'hover:bg-green-500/20'
-                  }`}
-                  title="Compartilhar link da nota"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="text-white"
-                  >
-                    {linkCopied ? (
-                      <path d="M20 6L9 17l-5-5" />
-                    ) : (
-                      <>
-                        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
-                        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
-                      </>
-                    )}
-                  </svg>
-                  <span>{linkCopied ? 'Copiado!' : 'Link'}</span>
                 </button>
 
                 <button
