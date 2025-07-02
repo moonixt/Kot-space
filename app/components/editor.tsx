@@ -1461,7 +1461,7 @@ function Editor({ initialNoteType = 'private', noteId }: EditorProps) {
                           Nenhum comando encontrado para
                         </div>
                         <div className="text-gray-300 font-medium">
-                          "/{slashMenuFilter}"
+                          /{slashMenuFilter}
                         </div>
                       </div>
                     </div>
